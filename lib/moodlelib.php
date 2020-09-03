@@ -2881,6 +2881,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     if (!defined('NO_SITEPOLICY_CHECK')) {
         define('NO_SITEPOLICY_CHECK', false);
     }
+    // PTL-3658 Disable site policy agree to register users (usually: students)
+    //$USER->policyagreed = true;
 
     // Check that the user has agreed to a site policy if there is one - do not test in case of admins.
     // Do not test if the script explicitly asked for skipping the site policies check.

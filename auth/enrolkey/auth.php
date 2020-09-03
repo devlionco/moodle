@@ -162,8 +162,11 @@ class auth_plugin_enrolkey extends auth_plugin_base {
         $user->deleted = 0;
         $emailconfirmation = get_config('auth_enrolkey', 'emailconfirmation');
         // Default setting confirmation not required.
-        $user->policyagreed = 1;
-        $user->confirmed = 1;
+        $user->policyagreed = 1; // Students do not need to agree to site policy.
+        $user->confirmed = 1; // We skip email confirmation.
+        // TODO: update admin setting and (nadavkav)
+        // add option (3) no need for policy and email confirmation
+        /*
         if ('1' === $emailconfirmation) {
             // No access until account confirmed via email.
             $user->policyagreed = 0;
@@ -172,6 +175,7 @@ class auth_plugin_enrolkey extends auth_plugin_base {
             // Access to course, but confirmation required before next login attempt.
             $user->confirmed = 0;
         }
+        */
         $user->id = user_create_user($user, false, false);
 
         // Save any custom profile field information.
@@ -198,9 +202,10 @@ class auth_plugin_enrolkey extends auth_plugin_base {
         $USER->site = $CFG->wwwroot;
         set_moodle_cookie($USER->username);
         list($availableenrolids, $errors) = $this->enrol_user($user->signup_token, $notify);
-        if (!$notify) {
-            return;
-        }
+        // Skip notify check and allow direct course redirect.
+        //if (!$notify) {
+        //    return;
+        //}
 
         // New Enrolkey hook, will force/add user profile fields user based on the enrolkey used.
         \auth_enrolkey\persistent\enrolkey_profile_mapping::add_fields_during_signup($user, $availableenrolids);
@@ -231,12 +236,14 @@ class auth_plugin_enrolkey extends auth_plugin_base {
 
         // New Enrolkey hook, if configured will redirect the user based on the enrolkey used.
         \auth_enrolkey\persistent\enrolkey_redirect_mapping::redirect_during_signup($availableenrolids);
-
         // If no courses found (empty key) go to dashboard.
         if (empty($availableenrolids)) {
             redirect(new moodle_url('/my/'));
         } else {
-            redirect(new moodle_url("/auth/enrolkey/view.php", ['ids' => implode(',', $availableenrolids)]));
+            // Disable option to select from a list of several courses (with same key)
+            // And redirect to the first in the list.
+            //redirect(new moodle_url("/auth/enrolkey/view.php", ['ids' => implode(',', $availableenrolids)]));
+            redirect(new moodle_url("/course/view.php", array('id' => $availableenrolids[0])));
         }
     }
 
