@@ -45,7 +45,7 @@ require_once($CFG->libdir.'/clilib.php');         // cli only functions
 require_once($CFG->libdir.'/environmentlib.php');
 
 // now get cli options
-$lang = isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
+$lang = 'en'; //isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
 list($options, $unrecognized) = cli_get_params(
     array(
         'non-interactive'   => false,
@@ -62,6 +62,8 @@ list($options, $unrecognized) = cli_get_params(
 
 if ($options['lang']) {
     $SESSION->lang = $options['lang'];
+} else {
+    $SESSION->lang = $options['lang'] = 'en';
 }
 
 $interactive = empty($options['non-interactive']);
