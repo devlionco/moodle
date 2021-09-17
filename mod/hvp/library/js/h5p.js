@@ -104,6 +104,10 @@ H5P.init = function (target) {
       metadata: contentData.metadata
     };
 
+    // Add h5p-dir-rtl|ltr to h5p-content div, based on iframe parent document directionality.
+    // TODO: remove, when we add directionality to each content based on its own language.
+    // $element.addClass('h5p-dir-' + window.parent.document.dir);
+
     H5P.getUserData(contentId, 'state', function (err, previousState) {
       if (previousState) {
         library.userDatas = {
@@ -368,7 +372,13 @@ H5P.init = function (target) {
       H5P.externalDispatcher.trigger('initialized');
     }
   });
-
+  // RTL support in iframe, based on Moodle calculated user language
+  if (H5PIntegration.contentlang == false) {
+    var rtlclass = '';
+    if (this.$body.hasClass('dir-rtl')) {
+      rtlclass = 'h5p-dir-rtl';
+    }
+  }
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
     const iframe = this;
@@ -381,7 +391,7 @@ H5P.init = function (target) {
 
     const writeDocument = function () {
       iframe.contentDocument.open();
-      iframe.contentDocument.write('<!doctype html><html class="h5p-iframe" lang="' + contentLanguage + '"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
+      iframe.contentDocument.write('<!doctype html><html class="h5p-iframe ' + rtlclass + '" lang="' + contentLanguage + '"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
       iframe.contentDocument.close();
     };
 
@@ -964,6 +974,16 @@ H5P.newRunnable = function (library, contentId, $attachTo, skipResize, extras) {
 
   if ($attachTo !== undefined) {
     $attachTo.toggleClass('h5p-standalone', standalone);
+    // User pov RTL support.
+    // No content language, then use hosting env (Moodle) directionality.
+    if (library.params.language == null || library.params.language == undefined) {
+      $attachTo.toggleClass(' h5p-dir-' + window.parent.document.dir);
+    } else {
+      // Content custom language.
+      if (library.params.language == 'he' || library.params.language == 'ar') {
+        $attachTo.toggleClass('lang-'+library.params.language+' h5p-dir-rtl');
+      }
+    }
     instance.attach($attachTo);
     H5P.trigger(instance, 'domChanged', {
       '$target': $attachTo,

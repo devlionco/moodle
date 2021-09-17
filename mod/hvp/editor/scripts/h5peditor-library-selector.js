@@ -234,13 +234,22 @@ ns.LibrarySelector.prototype.loadSemantics = function (library, params, metadata
     this.form.remove();
   }
 
+  // Add h5p-dir-rtl to h5peditor div, based on iframe's parent document directionality.
+  // Infer default directionality from hosing application.
+  // TODO: Discuss if we need this behaviour, as hosting envirument directionality
+  //       is affecting the editing (and viewing?) of content. not sure if this is desired.
+  //       Maybe, control this with system admin settings?
+  var directionality = '';
+  if (H5PIntegration.editor.editordirsupport === '1') {
+    directionality = 'h5p-dir-' + window.parent.document.dir;
+  }
+
   if (library === '-') {
     // No library chosen.
-    this.$parent.attr('class', 'h5peditor');
+    this.$parent.attr('class', 'h5peditor ' + directionality);
     return;
   }
-  this.$parent.attr('class', 'h5peditor ' + library.split(' ')[0].toLowerCase().replace('.', '-') + '-editor');
-
+  this.$parent.attr('class', 'h5peditor ' + library.split(' ')[0].toLowerCase().replace('.', '-') + '-editor ' + directionality);
   // Display loading message
   var $loading = ns.$('<div class="h5peditor-loading h5p-throbber">' + ns.t('core', 'loading') + '</div>').appendTo(this.$parent);
 
