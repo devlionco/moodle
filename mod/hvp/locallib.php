@@ -200,6 +200,7 @@ function hvp_add_editor_assets($id = null, $mformid = null) {
     $siteuuid = $interface->getOption('site_uuid', null);
     $secret   = $interface->getOption('hub_secret', null);
     $enablecontenthub = !empty($siteuuid) && !empty($secret);
+    $contentlang = get_config('mod_hvp','contentlang');
 
     $settings['editor'] = array(
       'filesPath' => $filespathbase . 'editor',
@@ -217,6 +218,10 @@ function hvp_add_editor_assets($id = null, $mformid = null) {
       'apiVersion' => H5PCore::$coreApi,
       'language' => $language,
       'formId' => $mformid,
+      // TODO: WIP - rtl support
+      'bidi' => get_config('mod_hvp','bidi'),
+      'editordirsupport' => get_config('mod_hvp','editordirsupport'),
+      'contentlang' => $contentlang,
       'hub' => [
         'contentSearchUrl' => \H5PHubEndpoints::createURL(\H5PHubEndpoints::CONTENT) . '/search',
       ],

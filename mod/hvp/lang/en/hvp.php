@@ -597,3 +597,12 @@ $string['emailaddressdescription'] = 'The email address will be used by H5P to r
 $string['copyrightwarning'] = 'Copyrighted material cannot be shared in the H5P Content Hub. If the content is licensed with a OER friendly license like Creative Commons, please choose the appropriate license. If not this content cannot be shared.';
 $string['keywordsexists'] = 'Keywords already exists!';
 $string['somekeywordsexists'] = 'Some of these keywords already exist';
+
+// Settings - ckeditor buttons
+$string['ckeditorbuttons'] = 'RTL support';
+$string['ckeditorbutton_bidi'] = 'BIDI buttons';
+$string['ckeditorbutton_bidi_help'] = 'Add BIDI RTL & LTR buttons to all CKEditor';
+$string['editordirsupport'] = 'Content editing directionality support';
+$string['editordirsupport_help'] = 'Use authoring user preferred Moodle language for content editing UI directionality.';
+$string['contentlang'] = 'Use content directionality';
+$string['contentlang_help'] = 'When checked, viewing user content directionality is based on content language, otherwise based on Moodle user calculated (system/course/user) language preferences.';

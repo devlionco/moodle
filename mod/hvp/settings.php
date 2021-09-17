@@ -93,6 +93,15 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('mod_hvp/copyright', get_string('enablecopyright', 'hvp'), '', 1));
     $settings->add(new admin_setting_configcheckbox('mod_hvp/icon', get_string('enableabout', 'hvp'), '', 1));
 
+    // CKEditor BIDI support
+    $settings->add(new admin_setting_heading('mod_hvp/ckeditor_buttons', get_string('ckeditorbuttons', 'hvp'), ''));
+    $settings->add(new admin_setting_configcheckbox('mod_hvp/bidi',
+        get_string('ckeditorbutton_bidi', 'hvp'), get_string('ckeditorbutton_bidi_help', 'hvp'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_hvp/editordirsupport',
+        get_string('editordirsupport', 'hvp'), get_string('editordirsupport_help', 'hvp'), 1));
+    $settings->add(new admin_setting_configcheckbox('mod_hvp/contentlang',
+        get_string('contentlang', 'hvp'), get_string('contentlang_help', 'hvp'), 1));
+
     // Content Types header.
     $settings->add(new admin_setting_heading('mod_hvp/hub_settings', get_string('hubsettingsheader', 'hvp'), ''));
 
