@@ -117,3 +117,16 @@ H5P.xAPICompletedListener = function (event) {
     H5P.setFinished(contentId, score, maxScore);
   }
 };
+
+// Save total user score for each 'answered' interaction.
+H5P.externalDispatcher.on('xAPI', function (event) {
+  if (event.getVerb() === 'answered') {
+    var total_score = this.parent.getUsersScore();
+    var total_maxScore = this.parent.getUsersMaxScore();
+    var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+    if (H5P.opened[contentId] === undefined) {
+      H5P.opened[contentId] = new Date();
+    }
+    H5P.setFinished(contentId, total_score, total_maxScore);
+  }
+});

@@ -58,6 +58,11 @@ if ($ADMIN->fulltree) {
     $PAGE->requires->js('/mod/hvp/library/js/jquery.js', true);
     $PAGE->requires->js('/mod/hvp/library/js/h5p-display-options.js', true);
 
+    // Should we save and grade each interaction inside an Interactive Video or a Presentation?
+    // when xAPI verb = answered
+    $settings->add(new admin_setting_configcheckbox('mod_hvp/saveeachinteraction',
+        get_string('saveeachinteraction', 'hvp'), get_string('saveeachinteraction_help', 'hvp'), 1));
+
     // Send usage statistics.
     $settings->add(
         new admin_setting_configcheckbox('mod_hvp/send_usage_statistics',

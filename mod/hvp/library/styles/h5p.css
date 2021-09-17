@@ -750,6 +750,9 @@ iframe.h5peditor-semi-fullscreen {
   direction: rtl;
   text-align: right;
 }
+.h5p-dir-rtl .h5p-course-presentation .h5p-footer .h5p-footer-left-adjusted {
+  flex: 4;
+}
 .h5p-dir-rtl .h5p-advanced-text ul,
 .h5p-dir-rtl .h5p-advanced-text ol {
   text-align: right;
