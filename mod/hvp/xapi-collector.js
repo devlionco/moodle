@@ -164,7 +164,8 @@
                 statement.context.contextActivities.parent[0].id;
 
             // Store only completed root events.
-            if (isCompleted && !isChild) {
+            // Save every "answered" interaction (nadavkav)
+            if ((isCompleted && !isChild) || (isCompleted && H5PIntegration.saveeachinteraction)) {
                 // Get xAPI data with children if possible.
                 storeXAPIData(this.contentId, event);
             }

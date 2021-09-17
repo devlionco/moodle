@@ -606,6 +606,8 @@ $string['editordirsupport'] = 'Content editing directionality support';
 $string['editordirsupport_help'] = 'Use authoring user preferred Moodle language for content editing UI directionality.';
 $string['contentlang'] = 'Use content directionality';
 $string['contentlang_help'] = 'When checked, viewing user content directionality is based on content language, otherwise based on Moodle user calculated (system/course/user) language preferences.';
+$string['saveeachinteraction'] = 'Save each answer';
+$string['saveeachinteraction_help'] = 'When checked, each user interaction and answer is saved and calculated for the final grade.';
 
 $string['styles'] = 'Styles';
 $string['css'] = 'CSS';
