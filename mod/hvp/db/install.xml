@@ -30,6 +30,7 @@
         <FIELD NAME="slug" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Human readable content identifier that is unique"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="css" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom CSS" />
         <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="shared" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="synced" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>

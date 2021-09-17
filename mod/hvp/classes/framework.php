@@ -1142,6 +1142,7 @@ class framework implements \H5PFrameworkInterface {
             'filtered' => '',
             'disable' => $content['disable'],
             'timemodified' => time(),
+            'css' => $content['css'],
         ));
 
         if (isset($content[ 'completionpass'])) {
@@ -1290,6 +1291,7 @@ class framework implements \H5PFrameworkInterface {
             hc.changes,
             hc.author_comments,
             hc.default_language,
+            hc.css,
             hc.shared,
             hc.synced,
             hc.hub_id,
@@ -1325,6 +1327,7 @@ class framework implements \H5PFrameworkInterface {
             'libraryMinorVersion' => $data->minor_version,
             'libraryEmbedTypes' => $data->embed_types,
             'libraryFullscreen' => $data->fullscreen,
+            'css' => $data->css,
         );
 
         $metadatafields = [

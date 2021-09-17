@@ -69,6 +69,7 @@ class backup_hvp_activity_structure_step extends backup_activity_structure_step 
             'timemodified',
             'authors',
             'license',
+            'css',
             'completionpass'
         ));
 
@@ -116,6 +117,7 @@ class backup_hvp_activity_structure_step extends backup_activity_structure_step 
                  h.license_extras,
                  h.author_comments,
                  h.license,
+                 h.css,
                  h.completionpass
           FROM {hvp} h
               JOIN {hvp_libraries} hl ON hl.id = h.main_library_id

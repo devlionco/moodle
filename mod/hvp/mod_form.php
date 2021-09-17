@@ -114,6 +114,12 @@ class mod_hvp_mod_form extends moodleform_mod {
         $mform->setType('maximumgrade', PARAM_INT);
         $mform->setDefault('maximumgrade', 10);
 
+        $mform->addElement('header', 'styles', get_string('styles', 'hvp'));
+        $mform->addElement('textarea', 'css', get_string('css', 'hvp'),
+                            array('cols' => 50, 'rows' => 7, 'dir' => 'auto'));
+        $mform->setType('css', PARAM_RAW);
+        $mform->setForceLtr('css', true);
+
         // Standard course module settings.
         $this->standard_coursemodule_elements();
 

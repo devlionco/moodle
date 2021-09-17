@@ -96,4 +96,16 @@ if ($hashub) {
 }
 
 $view->outputview();
+
+// HACK: Add customized CSS to each H5P activity (library).
+// Clean CSS (as JS do not like newline and linebreak chars)
+$content['css'] = str_replace(array("\n", "\r"), '', $content['css']);
+$PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    var head = $('.h5p-iframe').contents().find('head');
+    var css = '<style type=\"text/css\">".$content['css']."</style>';
+    $(head).append(css);
+});
+");
+
 echo $OUTPUT->footer();
