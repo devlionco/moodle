@@ -50,6 +50,7 @@ class mime_type_report_builder extends objectfs_report_builder {
                             WHEN mimetype =    'application/g-zip'                              THEN 'archive'
                             WHEN mimetype =    'application/x-7z-compressed'                    THEN 'archive'
                             WHEN mimetype =    'application/x-rar-compressed'                   THEN 'archive'
+                            WHEN mimetype like 'video/%'                                        THEN 'video'
                             WHEN mimetype like 'application/%'                                  THEN 'other'
                             ELSE         substr(mimetype,0,position('/' IN mimetype))
                         END AS filetype
