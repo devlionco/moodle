@@ -1,0 +1,133 @@
+<div id="accordion">
+    {{#data}}
+
+    <div class="card">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_{{questionId}}" aria-expanded="false"
+            aria-controls="collapse_{{questionId}}">
+            <div class="question-block">
+                <div class="question-title" data-colororder="{{qorder}}" style="color:{{color}}">
+                    {{#str}}question, gradingform_absquestion{{/str}} {{sequence}}
+                </div>
+                <div class="question-ico">
+                    <i class="fa fa-caret-left"></i><i class="fa fa-caret-down"></i>
+                </div>
+            </div>
+        </button>
+
+        <div id="collapse_{{questionId}}" class="collapse" aria-labelledby="heading_{{questionId}}"
+            data-parent="#accordion">
+            {{#info}}<div class="question-info">{{{info}}}</div>{{/info}}
+            <div class="question-points">{{#str}}max_points, gradingform_absquestion{{/str}}: <span id="maxpoint_{{questionId}}">{{max}}</span> / <span id="usedpoint_{{questionId}}">{{usedpoint}}</span></div>
+            {{#questionId}}
+            <div class="add-comment-btn-block">
+                <div class="add-comment-btn" data-max={{max}} data-qorder="{{sequence}}" data-subqorder="0" data-questionid="{{questionId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+            </div>
+            {{/questionId}}
+            {{#comments}}
+            <div class="comment">
+                <div class="part-top">
+                    <div>
+                        {{#isglobal}} <strong>{{#str}}global, gradingform_absquestion{{/str}}</strong> {{/isglobal}}<span class="strip-html">{{{text}}}</span>
+                    </div>
+                    <div
+                        data-id="{{id}}"
+                        data-points="{{points}}"
+                        data-text="{{text}}"
+                        data-sequence="{{qorder}}"
+                        data-questionid="{{questionId}}"
+                        class="text-right grade-move-btn"
+                    >
+                        <i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="part-bottom">
+                    {{#str}}grading_method_1, gradingform_absquestion{{/str}}: {{points}}
+                </div>
+                <div class="textarea-block-{{id}} textarea-i-block">
+                    <div></div>
+                </div>
+            </div>
+            {{/comments}}
+            {{#questionId}}
+                <div class="add-comment-btn-block {{^comments}}d-none{{/comments}}">
+                    <div class="add-comment-btn" data-max={{max}} data-qorder="{{sequence}}" data-subqorder="0" data-questionid="{{questionId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+                </div>
+            {{/questionId}}
+        </div>
+    </div>
+
+    {{#subq}}
+    <div class="card pl-3">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_{{subqId}}" aria-expanded="false"
+            aria-controls="collapse_{{subqId}}">
+            <div class="question-block">
+                <div class="question-title" data-colororder="{{qorder}}" style="color:{{color}}">
+                    {{#str}}sub_question, gradingform_absquestion{{/str}} {{sequence}}
+                </div>
+                <div class="question-ico">
+                    <i class="fa fa-caret-left"></i><i class="fa fa-caret-down"></i>
+                </div>
+            </div>
+        </button>
+
+        <div id="collapse_{{subqId}}" class="collapse" aria-labelledby="heading_{{subqId}}"
+            data-parent="#accordion">
+            {{#info}}<div class="question-info">{{{info}}}</div>{{/info}}
+            <div class="question-points">{{#str}}max_points, gradingform_absquestion{{/str}}: <span id="maxpoint_{{subqId}}">{{max}}</span> / <span id="usedpoint_{{subqId}}">{{usedpoint}}</span></div>
+            {{#subqId}}
+                <div class="add-comment-btn-block">
+                    <div class="add-comment-btn" data-max={{max}} data-qorder="{{qorder}}" data-subqorder="{{sequence}}" data-questionid="{{subqId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+                </div>
+            {{/subqId}}
+            {{#subqComments}}
+            <div class="comment">
+                <div class="part-top">
+                    <div>
+                        {{#isglobal}} <strong>{{#str}}global, gradingform_absquestion{{/str}}</strong> {{/isglobal}}<span class="strip-html">{{{text}}}</span>
+                    </div>
+                    <div
+                        data-id="{{id}}"
+                        data-points="{{points}}"
+                        data-text="{{text}}"
+                        data-sequence="{{qorder}}"
+                        data-questionid="{{subqId}}"
+                        class="text-right grade-move-btn"
+                    >
+                        <i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="part-bottom">
+                    {{#str}}grading_method_1, gradingform_absquestion{{/str}}: {{points}}
+                </div>
+                <div class="textarea-block-{{id}} textarea-i-block">
+                    <div></div>
+                </div>
+            </div>
+            {{/subqComments}}
+            {{#subqId}}
+                <div class="add-comment-btn-block {{^subqComments}}d-none{{/subqComments}}">
+                    <div class="add-comment-btn" data-max={{max}} data-qorder="{{qorder}}" data-subqorder="{{sequence}}" data-questionid="{{subqId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+                </div>
+            {{/subqId}}
+        </div>
+    </div>
+    {{/subq}}
+
+    {{/data}}
+</div>
+<div class="modal" id="warning_modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{#str}}warning, gradingform_absquestion{{/str}}</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body">
+                {{#str}}warning_max_grade, gradingform_absquestion{{/str}}
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-primary">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

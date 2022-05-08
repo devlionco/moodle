@@ -1,0 +1,93 @@
+<div id="accordion">
+    {{#data}}
+
+    <div class="card">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_{{questionId}}" aria-expanded="false"
+            aria-controls="collapse_{{questionId}}">
+            <div class="question-block">
+                <div class="question-title">
+                    {{#str}}question, gradingform_absquestion{{/str}} {{sequence}}
+                </div>
+                <div class="question-ico">
+                    <i class="fa fa-caret-left"></i><i class="fa fa-caret-down"></i>
+                </div>
+            </div>
+        </button>
+
+        <div id="collapse_{{questionId}}" class="collapse" aria-labelledby="heading_{{questionId}}"
+            data-parent="#accordion">
+            {{#questionId}}
+            <div class="add-comment-btn-block">
+                <div class="add-comment-btn" data-qorder="{{sequence}}" data-subqorder="0" data-point="{{maxpoints}}" data-questionid="{{questionId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+            </div>
+            {{/questionId}}
+            {{#comments}}
+            <div class="comment">
+                <div class="part-top">
+                    <div>
+                        {{#isglobal}}{{#str}}global, gradingform_absquestion{{/str}}<br>{{/isglobal}}
+                        {{{text}}}
+                    </div>
+                    <div>
+                        <div class="delete-comment-btn" data-id="{{id}}" data-sequence="{{sequence}}">{{#str}}delete, gradingform_absquestion{{/str}}</div>
+                        <div class="edit-comment-btn" data-point="{{maxpoints}}" data-id="{{id}}" data-questionid={{questionId}} data-sequence="{{sequence}}">{{#str}}edit, gradingform_absquestion{{/str}}</div>
+                    </div>
+                </div>
+                <div class="part-bottom">
+                    {{points}}
+                </div>
+                <div class="textarea-block-{{id}} textarea-i-block">
+                    <div></div>
+                </div>
+            </div>
+            {{/comments}}
+        </div>
+    </div>
+
+    {{#subq}}
+    <div class="card ml-3">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_{{subqId}}" aria-expanded="false"
+            aria-controls="collapse_{{subqId}}">
+            <div class="question-block">
+                <div class="question-title">
+                    {{#str}}sub_question, gradingform_absquestion{{/str}} {{sequence}}
+                </div>
+                <div class="question-ico">
+                    <i class="fa fa-caret-left"></i><i class="fa fa-caret-down"></i>
+                </div>
+            </div>
+        </button>
+
+        <div id="collapse_{{subqId}}" class="collapse" aria-labelledby="heading_{{subqId}}"
+            data-parent="#accordion">
+            {{#subqId}}
+            <div class="add-comment-btn-block">
+                <div class="add-comment-btn" data-qorder="{{qOrder}}" data-subqorder="{{sequence}}" data-point="{{maxpoint}}" data-questionid="{{subqId}}" data-sequence="{{sequence}}">{{#str}}add_comment, gradingform_absquestion{{/str}}</div>
+            </div>
+            {{/subqId}}
+            {{#subqComments}}
+            <div class="comment">
+                <div class="part-top">
+                    <div>
+                        {{#isglobal}}{{#str}}global, gradingform_absquestion{{/str}}<br>{{/isglobal}}
+                        {{{text}}}
+                    </div>
+                    <div>
+                        <div class="delete-comment-btn" data-id="{{id}}" data-sequence="{{sequence}}">{{#str}}delete, gradingform_absquestion{{/str}}</div>
+                        <div class="edit-comment-btn" data-point="{{maxpoint}}" data-id="{{id}}" data-questionid={{subqId}} data-sequence="{{sequence}}">{{#str}}edit, gradingform_absquestion{{/str}}</div>
+                    </div>
+                </div>
+                <div class="part-bottom">
+                    {{points}}
+                </div>
+                <div class="textarea-block-{{id}} textarea-i-block">
+                    <div></div>
+                </div>
+            </div>
+            {{/subqComments}}
+        </div>
+    </div>
+    {{/subq}}
+
+    {{/data}}
+</div>

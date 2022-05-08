@@ -1,0 +1,10 @@
+{
+  "name": "moodle-gradingform_absquestion-comment",
+  "builds": {
+    "moodle-gradingform_absquestion-comment": {
+      "jsfiles": [
+        "comment.js"
+      ]
+    }
+  }
+}

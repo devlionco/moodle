@@ -1,0 +1,98 @@
+#accordion {
+    padding: 10px 40px;
+    .btn-link {
+        text-align: right;
+        border: 0;
+        outline: none;
+        box-shadow: none;
+        color: #000;
+        text-decoration: none;
+        font-weight: 700;
+        padding-left: 0;
+        padding-right: 0;
+        position: relative;
+    }
+
+    .comment {
+        border: 1px solid #ababab;
+        margin-bottom: 10px;
+
+        textarea {
+            display: none;
+            width: 100%;
+        }
+    }
+
+    .card {
+        border: 0;
+    }
+
+    .part-top {
+        display: flex;
+        justify-content: space-between;
+        background: #f2f2f2;
+        padding: 10px;
+        text-align: right;
+        border-bottom: 1px solid #ababab;
+    }
+
+    .part-bottom {
+        background: #d9d8db;
+        padding: 10px;
+        text-align: left;
+    }
+
+    // caret
+    .fa-caret-left,
+    .fa-caret-down {
+        font-size: 18px;
+        position: relative;
+        top: 1px;
+    }
+
+    .fa-caret-left {
+        margin-left: 3px;
+    }
+
+    .btn-link[aria-expanded="false"] {
+        .fa-caret-left {
+            display: inline-block;
+        }
+        .fa-caret-down {
+            display: none;
+        }
+    }
+
+    .btn-link[aria-expanded="true"] {
+        .fa-caret-left {
+            display: none;
+        }
+        .fa-caret-down {
+            display: inline-block;
+        }
+    }
+
+    .btn-link[aria-controls="collapse_"] {
+        .fa-caret-left {
+            display: inline-block;
+        }
+        .fa-caret-down {
+            display: none;
+        }
+    }
+
+    .edit-comment-btn,
+    .delete-comment-btn,
+    .add-comment-btn {
+        display: inline-block;
+        color: #0f6fc5;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .add-comment-btn{
+        margin-bottom: 4px;
+    }
+}

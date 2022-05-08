@@ -1,0 +1,75 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+}}
+{{!
+@template gradingform_rubric/grades/grader/gradingpanel
+
+Classes required for JS:
+* none
+
+Data attributes required for JS:
+* none
+
+Context variables required for this template:
+* instanceid: Instance of the module this grading form belongs too
+* criteria: A gradeable item in the Marking Guide
+* id: The ID of the criteria
+* description: Description of the criteria
+* levels: The level that a criteria can be graded at
+* criterionid: The ID of the criteria
+* checked: Flag for if this is the currently selected level
+* definition: Definition of the level
+* remark: Text input for the teacher to relay to the student
+
+Example context (json):
+{
+"elementid": "abccomments_0",
+"comments": "<div>html string</div>"
+
+}
+}}
+<textarea class="textarea-add-comment" id="{{textareaid}}" name="editorhtml">{{{comments}}}</textarea>
+<div class="mt-4 d-flex justify-content-between after-textarea">
+    <lable class="lable-left">
+        <span>{{gradingMethod}}</span>
+        <input
+            data-placement="top"
+            data-template="<div class='tooltip' style='z-index: 2210' role='tooltip'><div
+                class='arrow'></div><div class='tooltip-inner tooltip-wide'></div></div>"
+            data-container=".lable-left"
+            class="points-add-comment" 
+            type="text" 
+            name="accumulategrade" 
+            size="4" 
+            value=""
+            data-point={{point}}
+            data-questionid={{questionId}}
+        >
+    </lable>
+    <lable class="lable-right">
+        <span>{{#str}}view_comment_on_each_question, gradingform_absquestion{{/str}}</span>
+        <input 
+            class="bonus-checkbox isglobal-add-comment" 
+            data-questionid={{questionId}} 
+            type="checkbox" 
+            name="sharecomment" 
+            value="1"
+            data-point={{point}}
+        >
+    </lable>
+</div>
+<div class="error-comment-accumulate" data-questionid={{questionId}}></div>

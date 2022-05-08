@@ -1,0 +1,459 @@
+#root_absolute_q #main_modal {
+    padding-right: 0 !important;
+}
+
+#root_absolute_q #main_modal .modal-dialog {
+    max-width: 98%;
+}
+
+#root_absolute_q #main_modal .modal-body {
+    text-align: left;
+}
+
+#root_absolute_q #main_modal .modal-body ul {
+    padding-left: 0;
+}
+
+#root_absolute_q #main_modal .modal-body ul li {
+    list-style-type: none;
+}
+
+#root_absolute_q #main_modal .modal-body ul .title {
+    font-weight: 700;
+}
+
+#root_absolute_q #main_modal select.form-control {
+    width: auto;
+    display: inline-block;
+}
+
+#root_absolute_q #cancel_modal,
+#root_absolute_q #error_modal,
+#root_absolute_q #manage_modal {
+    z-index: 2000;
+}
+
+#root_absolute_q #add_comment_modal,
+#root_absolute_q #info_modal {
+    z-index: 2200;
+}
+
+#root_absolute_q #choice_modal {
+    z-index: 2500;
+}
+
+#root_absolute_q #add_comment_modal #add-comment-body,
+#root_absolute_q #info_modal #add-comment-body {
+    padding: 16px;
+}
+
+#root_absolute_q #add_comment_modal .modal-dialog,
+#root_absolute_q #info_modal .modal-dialog {
+    min-width: 760px;
+}
+
+#root_absolute_q #add_comment_modal .editor_atto_content,
+#root_absolute_q #info_modal .editor_atto_content {
+    height: 200px !important;
+    border: 1px solid #a7a7a7;
+}
+
+#root_absolute_q #add_comment_modal .close,
+#root_absolute_q #info_modal .close {
+    margin: -1rem -1rem -1rem -1rem;
+}
+
+#root_absolute_q #manage_modal .modal-dialog {
+    min-width: 700px;
+}
+
+#root_absolute_q #manage_modal .editor_atto_content {
+    height: 100px !important;
+    border: 1px solid #a7a7a7;
+}
+
+#root_absolute_q #manage_modal .editor_atto {
+    padding: 16px 16px 0 16px;
+}
+
+#root_absolute_q #manage_modal .after-textarea {
+    padding: 0 16px 16px;
+}
+
+#root_absolute_q #manage_modal .after-textarea .lable-right {
+    text-align: right;
+}
+
+#root_absolute_q #manage_modal .edit-comment-bottom {
+    padding: 16px;
+    text-align: right;
+}
+
+#root_absolute_q #manage_modal .modal-header,
+#root_absolute_q #manage_modal #accordion .card,
+#root_absolute_q #manage_modal #manage-modal-body {
+    background: #F0F3F4;
+}
+
+#root_absolute_q .toast {
+    background: #00c851;
+    font-family: "Roboto", sans-serif;
+    color: #ffffff;
+    border-radius: 0;
+    padding-right: 20px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
+
+#root_absolute_q .modal {
+    overflow-y: auto;
+}
+
+#root_absolute_q #manage-modal-body #accordion .btn-link {
+    text-align: left;
+}
+
+#root_absolute_q #manage-modal-body #accordion .add-comment-btn-block {
+    text-align: left;
+}
+
+#root_absolute_q .question-block {
+    display: flex;
+}
+
+#root_absolute_q .question-block .question-ico .fa-caret-left {
+    transform: scale(-1, 1);
+}
+
+#root_absolute_q .question-block .question-title {
+    padding-right: 4px;
+}
+
+#root_absolute_q .bonus-checkbox {
+    width: 22px;
+    height: 22px;
+}
+
+#root_absolute_q .ul-settings li {
+    padding-bottom: 3px;
+}
+
+#root_absolute_q .grouppas-line {
+    padding-bottom: 26px;
+}
+
+#root_absolute_q .help-icon {
+    cursor: pointer;
+    color: #0f6fc5;
+}
+
+#root_absolute_q .help-icon.top-select {
+    position: relative;
+    top: -8px;
+}
+
+#root_absolute_q .draft-label {
+    position: relative;
+    left: -70px;
+    padding: 10px;
+}
+
+#root_absolute_q .error-comment-accumulate {
+    display: none;
+    position: relative;
+    background-color: #e1b0b0;
+    color: #000;
+    font-weight: 600;
+    font-size: 11px;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    padding: .25rem .5rem;
+    text-align: center;
+    top: 4px;
+}
+
+#root_absolute_q #accordion {
+    padding: 10px 40px;
+}
+
+#root_absolute_q #accordion .btn-link {
+    text-align: right;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    color: #000;
+    text-decoration: none;
+    font-weight: 700;
+    padding-left: 0;
+    padding-right: 0;
+    position: relative;
+}
+
+#root_absolute_q #accordion .comment {
+    border: 1px solid #ababab;
+    margin-bottom: 10px;
+}
+
+#root_absolute_q #accordion .comment textarea {
+    display: none;
+    width: 100%;
+}
+
+#root_absolute_q #accordion .card {
+    border: 0;
+}
+
+#root_absolute_q #accordion .part-top {
+    display: flex;
+    justify-content: space-between;
+    background: #f2f2f2;
+    padding: 10px;
+    text-align: right;
+    border-bottom: 1px solid #ababab;
+}
+
+#root_absolute_q #accordion .part-bottom {
+    background: #d9d8db;
+    padding: 10px;
+    text-align: left;
+}
+
+#root_absolute_q #accordion .fa-caret-left,
+#root_absolute_q #accordion .fa-caret-down {
+    font-size: 18px;
+    position: relative;
+    top: 1px;
+}
+
+#root_absolute_q #accordion .fa-caret-left {
+    margin-left: 3px;
+}
+
+#root_absolute_q #accordion .btn-link[aria-expanded="false"] .fa-caret-left {
+    display: inline-block;
+}
+
+#root_absolute_q #accordion .btn-link[aria-expanded="false"] .fa-caret-down {
+    display: none;
+}
+
+#root_absolute_q #accordion .btn-link[aria-expanded="true"] .fa-caret-left {
+    display: none;
+}
+
+#root_absolute_q #accordion .btn-link[aria-expanded="true"] .fa-caret-down {
+    display: inline-block;
+}
+
+#root_absolute_q #accordion .btn-link[aria-controls="collapse_"] .fa-caret-left {
+    display: inline-block;
+}
+
+#root_absolute_q #accordion .btn-link[aria-controls="collapse_"] .fa-caret-down {
+    display: none;
+}
+
+#root_absolute_q #accordion .edit-comment-btn,
+#root_absolute_q #accordion .delete-comment-btn,
+#root_absolute_q #accordion .add-comment-btn {
+    display: inline-block;
+    color: #0f6fc5;
+    cursor: pointer;
+}
+
+#root_absolute_q #accordion .edit-comment-btn:hover,
+#root_absolute_q #accordion .delete-comment-btn:hover,
+#root_absolute_q #accordion .add-comment-btn:hover {
+    text-decoration: underline;
+}
+
+#root_absolute_q #accordion .add-comment-btn {
+    margin-bottom: 4px;
+}
+
+#root_absolute_q.grade #accordion {
+    padding: 0;
+}
+
+#root_absolute_q.grade #accordion .card {
+    padding: 0 10px;
+}
+
+#root_absolute_q.grade #accordion .grade-move-btn {
+    position: relative;
+    display: inline-block;
+    padding: 0 4px;
+    left: 4px;
+    cursor: pointer;
+}
+
+body#page-mod-assign-view .tooltip,
+body#page-mod-assign-grader .tooltip,
+body#page-grade-grading-manage .tooltip {
+    opacity: 1;
+}
+
+body#page-mod-assign-view .tooltip .tooltip-inner,
+body#page-mod-assign-grader .tooltip .tooltip-inner,
+body#page-grade-grading-manage .tooltip .tooltip-inner {
+    background-color: #e1b0b0;
+    color: #000000;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+body#page-mod-assign-view .tooltip.bs-tooltip-top,
+body#page-mod-assign-grader .tooltip.bs-tooltip-top,
+body#page-grade-grading-manage .tooltip.bs-tooltip-top {
+    top: 4px !important;
+}
+
+body#page-mod-assign-view .tooltip .tooltip-wide,
+body#page-mod-assign-grader .tooltip .tooltip-wide,
+body#page-grade-grading-manage .tooltip .tooltip-wide {
+    max-width: 100%;
+    min-width: 80%;
+}
+
+body#page-mod-assign-view .bs-tooltip-top .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-top .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-top .arrow::before {
+    border-top-color: #e1b0b0;
+}
+
+body#page-mod-assign-view .bs-tooltip-right .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-right .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-right .arrow::before {
+    border-right-color: #e1b0b0;
+}
+
+body#page-mod-assign-view .bs-tooltip-bottom .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-bottom .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #e1b0b0;
+}
+
+body#page-mod-assign-view .bs-tooltip-left .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-left .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-left .arrow::before {
+    border-left-color: #e1b0b0;
+}
+
+body#page-mod-assign-view .output_error,
+body#page-mod-assign-grader .output_error,
+body#page-grade-grading-manage .output_error {
+    display: inline-block;
+    float: right;
+    background: #e1b0b0;
+    color: #000000;
+    font-weight: 600;
+}
+
+body#page-mod-assign-view .help-tooltip,
+body#page-mod-assign-grader .help-tooltip,
+body#page-grade-grading-manage .help-tooltip {
+    opacity: 1;
+}
+
+body#page-mod-assign-view .help-tooltip .tooltip-inner,
+body#page-mod-assign-grader .help-tooltip .tooltip-inner,
+body#page-grade-grading-manage .help-tooltip .tooltip-inner {
+    background-color: #ffffff;
+    border: 1px solid #8f959e;
+    color: #000000;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+body#page-mod-assign-view .bs-tooltip-top.help-tooltip .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-top.help-tooltip .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-top.help-tooltip .arrow::before {
+    display: none;
+}
+
+body#page-mod-assign-view .bs-tooltip-right.help-tooltip .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-right.help-tooltip .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-right.help-tooltip .arrow::before {
+    display: none;
+}
+
+body#page-mod-assign-view .bs-tooltip-bottom.help-tooltip .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-bottom.help-tooltip .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-bottom.help-tooltip .arrow::before {
+    display: none;
+}
+
+body#page-mod-assign-view .bs-tooltip-left.help-tooltip .arrow::before,
+body#page-mod-assign-grader .bs-tooltip-left.help-tooltip .arrow::before,
+body#page-grade-grading-manage .bs-tooltip-left.help-tooltip .arrow::before {
+    display: none;
+}
+
+body#page-mod-assign-view div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt,
+body#page-mod-assign-grader div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt,
+body#page-grade-grading-manage div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt {
+    display: none;
+}
+
+body#page-mod-assign-grader .form-inline[data-fieldtype="grading"] {
+    display: block;
+}
+
+body#page-mod-assign-grader .absqcommentdrawable {
+    background-color: rgba(242, 242, 242, 0.2);
+    padding: 5px;
+}
+
+body#page-mod-assign-grader button.atto_title_button.atto_hasmenu span.editor_atto_menu_icon i {
+    display: none;
+}
+
+body#page-mod-assign-grader button.atto_title_button.atto_hasmenu span.editor_atto_menu_icon i:first-child {
+    display: inline-block;
+}
+
+body#page-mod-assign-grader button.atto_title_button.atto_hasmenu span.editor_atto_menu_expand i {
+    display: none;
+}
+
+body#page-mod-assign-grader button.atto_title_button.atto_hasmenu span.editor_atto_menu_expand i:first-child {
+    display: inline-block;
+}
+
+html[dir="rtl"] body#page-mod-assign-view .tooltip .arrow:before,
+html[dir="rtl"] body#page-mod-assign-grader .tooltip .arrow:before,
+html[dir="rtl"] body#page-grade-grading-manage .tooltip .arrow:before {
+    display: none;
+}
+
+html[dir="rtl"] body#page-mod-assign-view #add_comment_modal .modal-footer,
+html[dir="rtl"] body#page-mod-assign-view #info_modal .modal-footer,
+html[dir="rtl"] body#page-mod-assign-grader #add_comment_modal .modal-footer,
+html[dir="rtl"] body#page-mod-assign-grader #info_modal .modal-footer,
+html[dir="rtl"] body#page-grade-grading-manage #add_comment_modal .modal-footer,
+html[dir="rtl"] body#page-grade-grading-manage #info_modal .modal-footer {
+    justify-content: flex-start;
+}
+
+html[dir="rtl"] body#page-mod-assign-view #manage_modal .edit-comment-bottom,
+html[dir="rtl"] body#page-mod-assign-grader #manage_modal .edit-comment-bottom,
+html[dir="rtl"] body#page-grade-grading-manage #manage_modal .edit-comment-bottom {
+    text-align: left;
+}
+
+html[dir="rtl"] body#page-mod-assign-view #accordion .btn-link,
+html[dir="rtl"] body#page-mod-assign-grader #accordion .btn-link,
+html[dir="rtl"] body#page-grade-grading-manage #accordion .btn-link {
+    text-align: left;
+}
+
+html[dir="rtl"] body#page-mod-assign-view #root_absolute_q .question-block .question-ico .fa-caret-left,
+html[dir="rtl"] body#page-mod-assign-grader #root_absolute_q .question-block .question-ico .fa-caret-left,
+html[dir="rtl"] body#page-grade-grading-manage #root_absolute_q .question-block .question-ico .fa-caret-left {
+    transform: none;
+}
+
+/* fix atto editor plugin - fontcolor */
+.atto_fontcolor_button.atto_menu a {
+    margin: 0 !important;
+}

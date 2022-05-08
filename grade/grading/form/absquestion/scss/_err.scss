@@ -1,0 +1,60 @@
+.tooltip {
+    opacity: 1;
+    .tooltip-inner {
+        background-color: #e1b0b0;
+        color: #000000;
+        font-weight: 600;
+        font-size: 11px;
+    }
+    &.bs-tooltip-top {
+        top: 4px!important;
+    }
+    .tooltip-wide {
+        max-width: 100%;
+        min-width: 80%;
+    }
+}
+
+.bs-tooltip-top .arrow::before {
+    border-top-color: #e1b0b0;
+}
+.bs-tooltip-right .arrow::before {
+    border-right-color: #e1b0b0;
+}
+.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #e1b0b0;
+}
+.bs-tooltip-left .arrow::before {
+    border-left-color: #e1b0b0;
+}
+.output_error {
+    display: inline-block;
+    float: right;
+    background: #e1b0b0;
+    color: #000000;
+    font-weight: 600;
+}
+
+.help-tooltip{
+    opacity: 1;
+    .tooltip-inner {
+        background-color: #ffffff;
+        border: 1px solid #8f959e;
+        color: #000000;
+        font-weight: 600;
+        font-size: 11px;
+    }
+}
+
+.bs-tooltip-top.help-tooltip .arrow::before {
+    display: none;
+}
+.bs-tooltip-right.help-tooltip .arrow::before {
+    display: none;
+}
+.bs-tooltip-bottom.help-tooltip .arrow::before {
+    display: none;
+}
+.bs-tooltip-left.help-tooltip .arrow::before {
+    display: none;
+}

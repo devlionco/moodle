@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "require-jsdoc": "off",
+        "no-console": "off",
+        "no-debugger":"off"
+    }
+}

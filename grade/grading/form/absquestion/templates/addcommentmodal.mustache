@@ -1,0 +1,22 @@
+<div class="modal" id="add_comment_modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h4 class="modal-title">{{#str}}add_comment, gradingform_absquestion{{/str}}</h4>
+                <h4 class="modal-title">{{#str}}question, gradingform_absquestion{{/str}}: {{qOrder}}.{{subqOrder}}</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div id="add-comment-body">
+                {{> gradingform_absquestion/addcomment}}
+            </div>
+            <div class="modal-footer">
+                <button data-questionid="{{questionId}}" data-dismiss="modal" data-sequence="{{sequence}}" id="{{btnSaveId}}" class="btn btn-primary save-comment-btn comment_disable_btn">
+                    {{#str}}save, gradingform_absquestion{{/str}}
+                </button>
+                <button data-dismiss="modal" class="btn btn-secondary">
+                    {{#str}}cancel, gradingform_absquestion{{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

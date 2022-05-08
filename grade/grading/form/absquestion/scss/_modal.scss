@@ -1,0 +1,120 @@
+#main_modal {
+    padding-right: 0 !important;
+    .modal-dialog {
+        max-width: 98%;
+    }
+    .modal-body {
+        text-align: left;
+        ul {
+            padding-left: 0;
+            li {
+                list-style-type: none;
+            }
+            .title {
+                font-weight: 700;
+            }
+        }
+    }
+    select.form-control {
+        width: auto;
+        display: inline-block;
+    }
+}
+
+#cancel_modal,
+#error_modal,
+#manage_modal {
+    z-index: 2000;
+}
+
+#add_comment_modal,
+#info_modal {
+    z-index: 2200;
+}
+
+#choice_modal {
+    z-index: 2500;
+}
+
+#add_comment_modal,
+#info_modal {
+    #add-comment-body {
+        padding: 16px;
+    }
+    .modal-dialog {
+        min-width: 760px;
+    }
+    .editor_atto_content {
+        height: 200px !important; //!
+        border: 1px solid #a7a7a7;
+    }
+    .close{
+        margin: -1rem -1rem -1rem -1rem;
+    }
+}
+
+#manage_modal {
+    .modal-dialog {
+        min-width: 700px;
+    }
+    .editor_atto_content {
+        height: 100px !important; //!
+        border: 1px solid #a7a7a7;
+    }
+    .editor_atto {
+        padding: 16px 16px 0 16px;
+    }
+    .after-textarea {
+        padding: 0 16px 16px;
+        .lable-right {
+            text-align: right;
+        }
+    }
+    .edit-comment-bottom {
+        padding: 16px;
+        text-align: right;
+    }
+    .modal-header,
+    #accordion .card,
+    #manage-modal-body{
+        background: #F0F3F4;
+    }
+}
+
+.toast {
+    background: #00c851;
+    font-family: "Roboto", sans-serif;
+    color: #ffffff;
+    border-radius: 0;
+    padding-right: 20px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
+
+.modal {
+    overflow-y: auto;
+}
+
+#manage-modal-body{
+    #accordion {
+        .btn-link {
+            text-align: left;
+        }
+        .add-comment-btn-block{
+            text-align: left;
+        }
+    }
+}
+
+.question-block{
+    display: flex;
+    .question-ico{
+        .fa-caret-left{
+            transform: scale(-1, 1);
+        }
+    }
+    .question-title{
+        padding-right: 4px;
+    }
+}

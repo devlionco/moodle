@@ -1,0 +1,7 @@
+{
+  "moodle-gradingform_absquestion-comment": {
+    "requires": [
+        "moodle-assignfeedback_editpdf-editor"
+    ]
+  }
+}

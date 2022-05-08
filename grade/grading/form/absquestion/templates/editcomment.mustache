@@ -1,0 +1,20 @@
+<textarea class="textarea-add-comment" id="{{textareaid}}" name="editorhtml">{{{comments}}}</textarea>
+<div class="mt-4 d-flex justify-content-between after-textarea">
+    <lable class="lable-left">
+        <span>{{gradingMethod}}</span>
+        <input class="points-add-comment" type="text" data-questionid="{{questionId}}" data-point={{maxPoint}} name="accumulategrade" size="4" value="{{{points}}}">
+    </lable>
+    <lable class="lable-right">
+        <span>{{#str}}view_comment_on_each_question, gradingform_absquestion{{/str}}</span>
+        <input class="bonus-checkbox isglobal-add-comment" data-point={{maxPoint}} type="checkbox" data-questionid="{{questionId}}" name="sharecomment" {{{isglobal}}}>
+    </lable>
+</div>
+<div class="error-comment-accumulate" data-questionid={{questionId}}></div>
+<div class="edit-comment-bottom">
+    <button data-id={{id}} data-questionid="{{questionId}}" data-sequence="{{sequence}}" class="btn btn-primary edit_comment_save comment_disable_btn">
+        {{#str}}save, gradingform_absquestion{{/str}}
+    </button>
+    <button class="btn btn-secondary edit_comment_cancel">
+        {{#str}}cancel, gradingform_absquestion{{/str}}
+    </button>
+</div>

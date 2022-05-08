@@ -1,0 +1,124 @@
+<div class="modal" id="main_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{#str}}title, gradingform_absquestion{{/str}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="container"></div>
+            <div class="modal-body">
+                <ul class="ul-settings">
+                    <li class="title">
+                        {{#str}}general_settings, gradingform_absquestion{{/str}}
+                    </li>
+                    <li>
+                        {{#str}}maximum_grade, gradingform_absquestion{{/str}}: {{maxgrade}}
+                        <i
+                            data-placement="top"
+                            data-toggle="tooltip"
+                            data-template="<div class='tooltip help-tooltip' role='tooltip'><div
+                                class='arrow'></div><div class='tooltip-inner'></div></div>"
+                            title="{{#str}}maximum_grade_desc, gradingform_absquestion{{/str}}"
+                            class="fa fa-question-circle help-icon" aria-hidden="true"
+                        ></i>
+                    </li>
+                    <li>
+                        {{#str}}total_questions, gradingform_absquestion{{/str}}:
+                        <select id="total_questions" class="form-control" {{#freese}}disabled{{/freese}}>
+                            <option value="0" selected="selected">{{#str}}total_q_0, gradingform_absquestion{{/str}}
+                            </option>
+                            {{#qtotalmaxArr}}
+                            <option value="{{key}}">{{#str}}total_q, gradingform_absquestion, {{key}}{{/str}}</option>
+                            {{/qtotalmaxArr}}
+                        </select>
+                        <i
+                            data-placement="top"
+                            data-toggle="tooltip"
+                            data-template="<div class='tooltip help-tooltip' role='tooltip'><div
+                                class='arrow'></div><div class='tooltip-inner'></div></div>"
+                            title="{{#str}}total_questions_desc, gradingform_absquestion{{/str}}"
+                            class="fa fa-question-circle help-icon top-select" aria-hidden="true"
+                        ></i>
+                    </li>
+                    <li>
+                        {{#str}}total_questions_groups, gradingform_absquestion{{/str}}:
+                        <select id="total_questions_groups" class="form-control" {{#freese}}disabled{{/freese}}>
+                            <option value="0" selected="selected">{{#str}}total_q_groups_0,
+                                gradingform_absquestion{{/str}}</option>
+                            {{#questions}}
+                            <option value="{{sequence}}">{{sequence}}</option>
+                            {{/questions}}
+                        </select>
+                        <i
+                            data-placement="top"
+                            data-toggle="tooltip"
+                            data-template="<div class='tooltip help-tooltip' role='tooltip'><div
+                                class='arrow'></div><div class='tooltip-inner'></div></div>"
+                            title="{{#str}}total_questions_groups_desc, gradingform_absquestion{{/str}}"
+                            class="fa fa-question-circle help-icon top-select" aria-hidden="true"
+                        ></i>
+                    </li>
+                    <li class="d-flex justify-content-between">
+                        <div>
+                            {{#str}}grading_methods, gradingform_absquestion{{/str}}:
+                            <select id="grading_methods" class="form-control" {{#freese}}disabled{{/freese}}>
+                                <option value="0" selected="selected">{{#str}}grading_method_0,
+                                    gradingform_absquestion{{/str}}</option>
+                                <option value="1">{{#str}}grading_method_1, gradingform_absquestion{{/str}}</option>
+                                <option value="2">{{#str}}grading_method_2, gradingform_absquestion{{/str}}</option>
+                            </select>
+                            <i
+                                data-placement="top"
+                                data-toggle="tooltip"
+                                data-template="<div class='tooltip help-tooltip' role='tooltip'><div
+                                    class='arrow'></div><div class='tooltip-inner'></div></div>"
+                                title="{{#str}}grading_methods_desc, gradingform_absquestion{{/str}}"
+                                class="fa fa-question-circle help-icon top-select" aria-hidden="true"
+                            ></i>
+                        </div>
+
+                        <div class="d-inline-block draft-label"></div>
+
+                        <button type="button"
+                            class="btn btn-primary manage-comments float-right">{{#str}}manage_comments,
+                            gradingform_absquestion{{/str}}</button>
+                    </li>
+                </ul>
+
+                <div id="tableBlock"></div>
+
+                <div id="grouppas"></div>
+
+                <div id="output">
+                    {{> gradingform_absquestion/output}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit_form" class="btn btn-primary" {{#freese}}disabled{{/freese}}>
+                    {{#str}}submit_form, gradingform_absquestion{{/str}}
+                </button>
+                <button type="button" id="save_form" class="btn btn-primary" {{#freese}}disabled{{/freese}}>
+                    {{#str}}save_form, gradingform_absquestion{{/str}}
+                </button>
+                <button type="button" data-toggle="modal" href="#cancel_modal" id="cancel" class="btn btn-primary">
+                    {{#str}}cancel, gradingform_absquestion{{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="toast" role="alert">
+    <div class="toast-body">
+        <i class="fa fa-check" aria-hidden="true"></i>
+        {{#str}}saved_successfully, gradingform_absquestion{{/str}}
+    </div>
+</div>
+{{> gradingform_absquestion/cancelmodal}}
+{{> gradingform_absquestion/errormodal}}
+{{> gradingform_absquestion/managemodal}}
+<div id="add_comment_block">
+    {{> gradingform_absquestion/addcommentmodal}}
+</div>
+<div id="add_info_block">
+</div>
+{{> gradingform_absquestion/modalchoice}}

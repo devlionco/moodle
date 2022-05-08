@@ -1,0 +1,17 @@
+&.grade{
+    #accordion{
+        padding: 0;
+
+        .card{
+            padding: 0 10px;
+        }
+
+        .grade-move-btn{
+            position: relative;
+            display: inline-block;
+            padding: 0 4px;
+            left: 4px;
+            cursor: pointer;
+        }
+    }
+}

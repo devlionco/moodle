@@ -1,0 +1,20 @@
+{{#output}}
+<div>
+    {{#str}}total, gradingform_absquestion{{/str}}: {{totalQuestions}}
+</div>
+<div>
+    {{#str}}total_bonuses_questions, gradingform_absquestion{{/str}}: {{totalqbonus}}
+</div>
+{{#totalqgroup}}
+<div>
+    {{#str}}total_question_to_choose, gradingform_absquestion{{/str}}: {{totalqgroup}}
+</div>
+{{/totalqgroup}}
+<div>
+    {{#str}}total_max_grade, gradingform_absquestion{{/str}}: {{totalmax}}
+    {{#totalqbonus}}
+    + {{totalqbonusValue}} <span class="text-lowercase">{{#str}}bonus, gradingform_absquestion{{/str}}</span>
+    {{/totalqbonus}}
+</div>
+<div class="output_error">{{error}}</div>
+{{/output}}

@@ -1,0 +1,56 @@
+#root_absolute_q {
+    @import "modal";
+    @import "table";
+    @import "comments";
+    @import "grade";
+}
+
+body#page-mod-assign-view,
+body#page-mod-assign-grader,
+body#page-grade-grading-manage {
+    @import "err";
+
+    div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt{
+        display:none;
+    }
+}
+
+body#page-mod-assign-grader {
+    .form-inline[data-fieldtype="grading"] {
+        display: block;
+    }
+
+    // comments background
+    .absqcommentdrawable{
+        background-color: rgba(242, 242, 242, 0.2);
+        padding: 5px;
+    }
+
+    button.atto_title_button.atto_hasmenu {
+        span.editor_atto_menu_icon i{
+            display: none;
+        }
+        span.editor_atto_menu_icon i:first-child{
+            display: inline-block;
+        }
+        span.editor_atto_menu_expand i{
+            display: none;
+        }
+        span.editor_atto_menu_expand i:first-child{
+            display: inline-block;
+        }
+    }
+}
+
+html[dir="rtl"] {
+    body#page-mod-assign-view,
+    body#page-mod-assign-grader,
+    body#page-grade-grading-manage {
+        @import "rtl";
+    }
+}
+
+/* fix atto editor plugin - fontcolor */
+.atto_fontcolor_button.atto_menu a{
+    margin: 0!important;
+}

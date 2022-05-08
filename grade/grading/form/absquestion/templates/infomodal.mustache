@@ -1,0 +1,26 @@
+<div class="modal" id="info_modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h4 class="modal-title">{{#str}}info, gradingform_absquestion{{/str}}</h4>
+                <h4 class="modal-title">{{#str}}question, gradingform_absquestion{{/str}}: {{qOrder}}.{{subqOrder}}</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div id="add-comment-body">
+                <textarea 
+                    class="textarea-info" 
+                    id="{{textareaid}}" 
+                    name="editorhtml">{{{value}}}
+                </textarea>
+            </div>
+            <div class="modal-footer">
+                <button data-questionid="{{questionId}}" data-dismiss="modal" class="btn btn-primary save-info-btn">
+                    {{#str}}save, gradingform_absquestion{{/str}}
+                </button>
+                <button data-dismiss="modal" class="btn btn-secondary">
+                    {{#str}}cancel, gradingform_absquestion{{/str}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
