@@ -201,6 +201,7 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
+    absqeditorwindow: null,
     htmleditorwindow: null,
 
     /**
@@ -237,6 +238,7 @@ EDITOR.prototype = {
      * @type Boolean
      * @public
      */
+    editingabsqcomment: false,
     editinghtmlcomment: false,
 
     /**
@@ -410,6 +412,10 @@ EDITOR.prototype = {
      * @method link_handler
      */
     link_handler: function(e) {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw link_handler');
+
         var drawingcanvas;
         var resize = true;
         e.preventDefault();
@@ -624,7 +630,7 @@ EDITOR.prototype = {
      * @method prepare_pages_for_display
      */
     prepare_pages_for_display: function(data) {
-        var i, j, comment, htmlcomment, error, annotation, readonly;
+        var i, j, comment, htmlcomment, absqcomment, error, annotation, readonly;
 
         if (!data.pagecount) {
             if (this.dialogue) {
@@ -639,6 +645,8 @@ EDITOR.prototype = {
         this.pages = data.pages;
 
         for (i = 0; i < this.pages.length; i++) {
+            // eslint-disable-next-line no-console
+            console.log(this.pages[i]);
             for (j = 0; j < this.pages[i].comments.length; j++) {
                 comment = this.pages[i].comments[j];
                 this.pages[i].comments[j] = new M.assignfeedback_editpdf.comment(this,
@@ -649,6 +657,21 @@ EDITOR.prototype = {
                                                                                  comment.width,
                                                                                  comment.colour,
                                                                                  comment.rawtext);
+            }
+
+            for (j = 0; j < this.pages[i].absqcomments.length; j++) {
+                absqcomment = this.pages[i].absqcomments[j];
+                this.pages[i].absqcomments[j] = new M.assignfeedback_editpdf.absqcomment(this,
+                    absqcomment.gradeid,
+                    absqcomment.pageno,
+                    absqcomment.x,
+                    absqcomment.y,
+                    absqcomment.width,
+                    absqcomment.colour,
+                    absqcomment.rawtext,
+                    absqcomment.points,
+                    absqcomment.sequence,
+                    absqcomment.questionid);
             }
             for (j = 0; j < this.pages[i].htmlcomments.length; j++) {
                 htmlcomment = this.pages[i].htmlcomments[j];
@@ -765,7 +788,14 @@ EDITOR.prototype = {
     handle_response_data: function(response) {
         var data;
         try {
+            // eslint-disable-next-line no-console
+            console.log('response.responseText', response.responseText);
+
             data = Y.JSON.parse(response.responseText);
+
+            // eslint-disable-next-line no-console
+            console.log('data ---->', data);
+
             if (data.error) {
                 if (this.dialogue) {
                     this.dialogue.hide();
@@ -829,13 +859,16 @@ EDITOR.prototype = {
             stampfiles,
             picker,
             filename,
-            htmleditorbutton;
+            htmleditorbutton,
+            absqeditorbutton;
 
         htmleditorbutton = this.get_dialogue_element(SELECTOR.HTMLEDITORBUTTON);
         if(htmleditorbutton !== null &&  htmleditorbutton !== 'unknown') {
             htmleditorbutton.on('click', this.open_htmleditor, this);
             htmleditorbutton.on('key', this.open_htmleditor, 'down:13', this);
         }
+
+        absqeditorbutton = this.get_dialogue_element(SELECTOR.ABSQEDITORBUTTON);
         searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
@@ -950,7 +983,12 @@ EDITOR.prototype = {
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
 
-        if (tool !== "htmleditor" && tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
+        if (tool !== "absqeditor" &&
+        tool !== "htmleditor" &&
+        tool !== "comment" &&
+        tool !== "select" &&
+        tool !== "drag" &&
+        tool !== "stamp") {
             this.lastannotationtool = tool;
         }
 
@@ -965,10 +1003,15 @@ EDITOR.prototype = {
      */
     stringify_current_page: function() {
         var comments = [],
+            absqcomments = [],
             htmlcomments = [],
             annotations = [],
             page,
             i = 0;
+
+        for (i = 0; i < this.pages[this.currentpage].absqcomments.length; i++) {
+            absqcomments[i] = this.pages[this.currentpage].absqcomments[i].clean();
+        }
         for (i = 0; i < this.pages[this.currentpage].htmlcomments.length; i++) {
             htmlcomments[i] = this.pages[this.currentpage].htmlcomments[i].clean();
         }
@@ -979,7 +1022,7 @@ EDITOR.prototype = {
             annotations[i] = this.pages[this.currentpage].annotations[i].clean();
         }
 
-        page = {comments: comments, annotations: annotations, htmlcomments: htmlcomments};
+        page = {comments: comments, annotations: annotations, htmlcomments: htmlcomments, absqcomments: absqcomments};
 
         return Y.JSON.stringify(page);
     },
@@ -991,6 +1034,7 @@ EDITOR.prototype = {
      */
     get_current_drawable: function() {
         var comment,
+            absqcomment,
             htmlcomment,
             annotation,
             drawable = false;
@@ -1002,6 +1046,9 @@ EDITOR.prototype = {
         if (this.currentedit.tool === 'comment') {
             comment = new M.assignfeedback_editpdf.comment(this);
             drawable = comment.draw_current_edit(this.currentedit);
+        } else if (this.currentedit.tool === 'absqeditor') {
+                absqcomment = new M.assignfeedback_editpdf.absqcomment(this);
+                drawable = absqcomment.draw_current_edit(this.currentedit);
         } else if (this.currentedit.tool === 'htmleditor') {
                 htmlcomment = new M.assignfeedback_editpdf.htmlcomment(this);
                 drawable = htmlcomment.draw_current_edit(this.currentedit);
@@ -1063,8 +1110,10 @@ EDITOR.prototype = {
         if (this.currentedit.starttime) {
             return;
         }
-
         if (this.editingcomment) {
+            return;
+        }
+        if (this.editingabsqcomment) {
             return;
         }
         if (this.editinghtmlcomment) {
@@ -1181,6 +1230,7 @@ EDITOR.prototype = {
     edit_end: function() {
         var duration,
             comment,
+            absqcomment,
             htmlcomment,
             annotation,
             needsaved;
@@ -1190,6 +1240,36 @@ EDITOR.prototype = {
 
         if (duration < CLICKTIMEOUT || this.currentedit.start === false) {
             return;
+        }
+        if (this.currentedit.tool === 'absqeditor') {
+            if (this.currentdrawable) {
+                this.currentdrawable.erase();
+                needsaved = true;
+            }
+            this.currentdrawable = false;
+            absqcomment = new M.assignfeedback_editpdf.absqcomment(this);
+            if (absqcomment.init_from_edit(this.currentedit)) {
+                this.pages[this.currentpage].absqcomments.push(absqcomment);
+                this.drawables.push(absqcomment.draw());
+                needsaved = true;
+                // custom change
+                // custom - only one element added to editor
+                var currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
+                currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
+                currenttoolnode.setAttribute('aria-pressed', 'false');
+
+                var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+                drawingcanvas.setStyle('cursor', 'default');
+
+                this.currentedit.starttime = 0;
+                this.currentedit.start = false;
+                this.currentedit.end = false;
+                this.currentedit.path = [];
+                this.currentedit.tool = 'select';
+
+                // eslint-disable-next-line no-console
+                console.log('this current ', this.currentedit, this.currentedit.tool);
+            }
         }
         if (this.currentedit.tool === 'htmleditor') {
             if (this.currentdrawable) {
@@ -1233,9 +1313,9 @@ EDITOR.prototype = {
         }
 
         // Save the changes.
-        if (needsaved) {
+        // if (needsaved) {
         this.save_current_page();
-        }
+        // }
 
         // Reset the current edit.
         this.currentedit.starttime = 0;
@@ -1250,6 +1330,10 @@ EDITOR.prototype = {
      * @method resize
      */
     resize: function() {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw resize');
+
         var drawingregion, drawregionheight;
 
         if (this.dialogue) {
@@ -1292,6 +1376,8 @@ EDITOR.prototype = {
             return new M.assignfeedback_editpdf.annotationhighlight(data);
         } else if (type === "stamp") {
             return new M.assignfeedback_editpdf.annotationstamp(data);
+        } else if (type === "absqeditor") {
+            return new M.assignfeedback_editpdf.absqcomment(data);
         } else if (type === "htmleditor") {
             return new M.assignfeedback_editpdf.htmlcomment(data);
         }
@@ -1369,6 +1455,17 @@ EDITOR.prototype = {
      * @protected
      * @method open_htmleditor
      */
+    open_absqeditor: function(e) {
+        // custom change
+        // if (!this.htmleditorwindow) {
+        //     this.htmleditorwindow = new M.assignfeedback_editpdf.htmleditor({
+        //         editor: this
+        //     });
+        // }
+        // this.htmleditorwindow.show();
+        // eslint-disable-next-line no-console
+        // console.log('here');
+    },
     open_htmleditor: function(e) {
         if (!this.htmleditorwindow) {
             this.htmleditorwindow = new M.assignfeedback_editpdf.htmleditor({
@@ -1404,6 +1501,10 @@ EDITOR.prototype = {
      * @method redraw
      */
     redraw: function() {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw');
+
         var i,
             page;
 
@@ -1420,6 +1521,11 @@ EDITOR.prototype = {
         }
         for (i = 0; i < page.comments.length; i++) {
             this.drawables.push(page.comments[i].draw(false));
+        }
+        for (i = 0; i < page.absqcomments.length; i++) {
+            // eslint-disable-next-line no-console
+            console.log('page', page.absqcomments[i]);
+            this.drawables.push(page.absqcomments[i].draw());
         }
         for (i = 0; i < page.htmlcomments.length; i++) {
             this.drawables.push(page.htmlcomments[i].draw());
@@ -1659,6 +1765,10 @@ EDITOR.prototype = {
                          * Update Position of htmlcomments with relation to canvas coordinates.
                          * Without this code, the htmlcomments will stay at their positions in windows/document coordinates.
                          */
+                        var oldabsqcomments = page.absqcomments;
+                        for (i = 0; i < oldabsqcomments.length; i++) {
+                            oldabsqcomments[i].updatePosition();
+                        }
                         var oldhtmlcomments = page.htmlcomments;
                         for (i = 0; i < oldhtmlcomments.length; i++) {
                             oldhtmlcomments[i].updatePosition();

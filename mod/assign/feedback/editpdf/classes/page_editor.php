@@ -152,6 +152,30 @@ class page_editor {
     }
 
     /**
+     * Get all absqcomments for a page.
+     * @param int $gradeid
+     * @param int $pageno
+     * @param bool $draft
+     * @return absqcomment[]
+     */
+    public static function get_absqcomments($gradeid, $pageno, $draft) {
+        global $DB;
+
+        $absqcomments = array();
+        $params = array('gradeid'=>$gradeid, 'pageno'=>$pageno, 'draft'=>1);
+        if (!$draft) {
+            $params['draft'] = 0;
+        }
+        // Fetch comments ordered by position on the page.
+        $records = $DB->get_records('assignfeedback_editpdf_absq', $params, 'y, x');
+        foreach ($records as $record) {
+            array_push($absqcomments, new absqcomment($record));
+        }
+
+        return $absqcomments;
+    }
+
+    /**
      * Set all htmlcomments for a page.
      * @param int $gradeid
      * @param int $pageno
@@ -185,7 +209,42 @@ class page_editor {
         return $added;
     }
 
-    /**
+        /**
+     * Set all absqcomments for a page.
+     * @param int $gradeid
+     * @param int $pageno
+     * @param absqcomment[] $absqcomments
+     * @return int - the number of absqcomments.
+     */
+    public static function set_absqcomments($gradeid, $pageno, $absqcomments) {
+        global $DB;
+
+        $DB->delete_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'pageno'=>$pageno, 'draft'=>1));
+
+        $added = 0;
+        foreach ($absqcomments as $record) {
+            // Force these.
+            if (!($record instanceof absqcomment)) {
+                $absqcomment = new absqcomment($record);
+            } else {
+                $absqcomment = $record;
+            }
+            if (trim($absqcomment->rawtext) === '') {
+                continue;
+            }
+            $absqcomment->gradeid = $gradeid;
+            $absqcomment->pageno = $pageno;
+            $absqcomment->draft = 1;
+
+            if (self::add_absqcomment($absqcomment)) {
+                $added++;
+            }
+        }
+
+        return $added;
+    }
+
+        /**
      * Get a single htmlcomment by id.
      * @param int $htmlcommentid
      * @return htmlcomment or false
@@ -199,7 +258,21 @@ class page_editor {
         return false;
     }
 
-    /**
+        /**
+     * Get a single absqcomment by id.
+     * @param int $absqcommentid
+     * @return absqcomment or false
+     */
+    public static function get_absqcomment($absqcommentid) {
+        global $DB;
+        $record = $DB->get_record('assignfeedback_editpdf_absq', array('id'=>$absqcommentid), '*', IGNORE_MISSING);
+        if ($record) {
+            return new absqcomment($record);
+        }
+        return false;
+    }
+
+        /**
      * Add a htmlcomment to a page.
      * @param htmlcomment $htmlcomment
      * @return bool
@@ -210,7 +283,18 @@ class page_editor {
         return $DB->insert_record('assignfeedback_editpdf_htcm', $htmlcomment);
     }
 
-    /**
+     /**
+     * Add a absqcomment to a page.
+     * @param absqcomment $absqcomment
+     * @return bool
+     */
+    public static function add_absqcomment(absqcomment $absqcomment) {
+        global $DB;
+        $absqcomment->id = null;
+        return $DB->insert_record('assignfeedback_editpdf_absq', $absqcomment);
+    }
+
+        /**
      * Remove a htmlcomment from a page.
      * @param int $htmlcommentid
      * @return bool
@@ -218,6 +302,16 @@ class page_editor {
     public static function remove_htmlcomment($htmlcommentid) {
         global $DB;
         return $DB->delete_records('assignfeedback_editpdf_htcm', array('id'=>$htmlcommentid));
+    }
+
+        /**
+     * Remove a absqcomment from a page.
+     * @param int $absqcommentid
+     * @return bool
+     */
+    public static function remove_absqcomment($absqcommentid) {
+        global $DB;
+        return $DB->delete_records('assignfeedback_editpdf_absq', array('id'=>$absqcommentid));
     }
 
     /**
@@ -298,6 +392,7 @@ class page_editor {
 
         // Delete the non-draft annotations and comments.
         $result = $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>0));
+        $result = $DB->delete_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'draft'=>0)) && $result;
         $result = $DB->delete_records('assignfeedback_editpdf_htcm', array('gradeid'=>$gradeid, 'draft'=>0)) && $result;
         $result = $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>0)) && $result;
         return $result;
@@ -313,6 +408,7 @@ class page_editor {
 
         // Delete the previous non-draft annotations and comments.
         $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>0));
+        $DB->delete_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'draft'=>0));
         $DB->delete_records('assignfeedback_editpdf_htcm', array('gradeid'=>$gradeid, 'draft'=>0));
         $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>0));
 
@@ -335,6 +431,12 @@ class page_editor {
             $record->draft = 0;
             $DB->insert_record('assignfeedback_editpdf_htcm', $record);
         }
+        $records = $DB->get_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'draft'=>1));
+        foreach ($records as $record) {
+            unset($record->id);
+            $record->draft = 0;
+            $DB->insert_record('assignfeedback_editpdf_absq', $record);
+        }
 
         return true;
     }
@@ -351,6 +453,9 @@ class page_editor {
             $params['draft'] = 0;
         }
         if ($DB->count_records('assignfeedback_editpdf_cmnt', $params)) {
+            return true;
+        }
+        if ($DB->count_records('assignfeedback_editpdf_absq', $params)) {
             return true;
         }
         if ($DB->count_records('assignfeedback_editpdf_htcm', $params)) {
@@ -372,6 +477,7 @@ class page_editor {
 
         // Delete the previous non-draft annotations and comments.
         $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>1));
+        $DB->delete_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'draft'=>1));
         $DB->delete_records('assignfeedback_editpdf_htcm', array('gradeid'=>$gradeid, 'draft'=>1));
         $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>1));
 
@@ -388,7 +494,12 @@ class page_editor {
             $record->draft = 0;
             $DB->insert_record('assignfeedback_editpdf_annot', $record);
         }
-
+        $records = $DB->get_records('assignfeedback_editpdf_absq', array('gradeid'=>$gradeid, 'draft'=>0));
+        foreach ($records as $record) {
+            unset($record->id);
+            $record->draft = 0;
+            $DB->insert_record('assignfeedback_editpdf_annot', $record);
+        }
         $records = $DB->get_records('assignfeedback_editpdf_htcm', array('gradeid'=>$gradeid, 'draft'=>0));
         foreach ($records as $record) {
             unset($record->id);
@@ -437,11 +548,13 @@ class page_editor {
         // Delete any existing annotations and comments from current user.
         $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $grade->id));
         $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid' => $grade->id));
+        $DB->delete_records('assignfeedback_editpdf_absq', array('gradeid' => $grade->id));
         $DB->delete_records('assignfeedback_editpdf_htcm', array('gradeid' => $grade->id));
         // Get gradeid, annotations and comments from sourceuserid.
         $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
         $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
         $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $absqcomments = $DB->get_records('assignfeedback_editpdf_absq', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
         $htmlcomments = $DB->get_records('assignfeedback_editpdf_htcm', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
         $contextid = $assignment->get_context()->id;
         $sourceitemid = $sourceusergrade->id;
@@ -455,7 +568,10 @@ class page_editor {
             $comment->gradeid = $grade->id;
             $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
         }
-
+        foreach ($absqcomments as $absqcomment) {
+            $comment->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_absq', $absqcomment);
+        }
         foreach ($htmlcomments as $htmlcomment) {
             $comment->gradeid = $grade->id;
             $DB->insert_record('assignfeedback_editpdf_htcm', $htmlcomment);
@@ -513,6 +629,7 @@ class page_editor {
         $conditions = array('gradeid' => $gradeid, 'draft' => 1);
         $result = $DB->delete_records('assignfeedback_editpdf_annot', $conditions);
         $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
+        $result = $result && $DB->delete_records('assignfeedback_editpdf_absq', $conditions);
         $result = $result && $DB->delete_records('assignfeedback_editpdf_htcm', $conditions);
         return $result;
     }

@@ -31,7 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Davo Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_editpdf_renderer extends plugin_renderer_base {
+class assignfeedback_editpdf_renderer extends plugin_renderer_base
+{
 
     /**
      * Return the PDF button shortcut.
@@ -39,16 +40,19 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
      * @param string $name the name of a specific button.
      * @return string the specific shortcut.
      */
-    private function get_shortcut($name) {
+    private function get_shortcut($name)
+    {
 
-        $shortcuts = array('navigate-previous-button' => 'j',
+        $shortcuts = array(
+            'navigate-previous-button' => 'j',
             'rotateleft' => 'q',
             'rotateright' => 'w',
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
             'expcolcomments' => 'g',
-                'expcolhtmlcomments' => 'g',
+            'expcolabsqcomments' => 'g',
+            'expcolhtmlcomments' => 'g',
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
@@ -60,7 +64,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'highlight' => 'p',
             'annotationcolour' => 'r',
             'stamp' => 'n',
-            'currentstamp' => 'm');
+            'currentstamp' => 'm'
+        );
 
 
         // Return the shortcut.
@@ -76,7 +81,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
      * @param bool $disabled Optional - Is this button disabled.
      * @return string
      */
-    private function render_toolbar_button($icon, $tool, $accesskey = null, $disabled=false) {
+    private function render_toolbar_button($icon, $tool, $accesskey = null, $disabled = false)
+    {
 
         // Build button alt text.
         $alttext = new stdClass();
@@ -89,7 +95,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $iconalt = get_string('toolbarbutton', 'assignfeedback_editpdf', $alttext);
 
         $iconhtml = $this->image_icon($icon, $iconalt, 'assignfeedback_editpdf');
-        $iconparams = array('data-tool'=>$tool, 'class'=>$tool . 'button');
+        $iconparams = array('data-tool' => $tool, 'class' => $tool . 'button');
         if ($disabled) {
             $iconparams['disabled'] = 'true';
         }
@@ -106,7 +112,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
      * @param assignfeedback_editpdf_widget $widget - Renderable widget containing assignment, user and attempt number.
      * @return string
      */
-    public function render_assignfeedback_editpdf_widget(assignfeedback_editpdf_widget $widget) {
+    public function render_assignfeedback_editpdf_widget(assignfeedback_editpdf_widget $widget)
+    {
         global $CFG;
 
         $html = '';
@@ -114,13 +121,17 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $html .= html_writer::div(get_string('jsrequired', 'assignfeedback_editpdf'), 'hiddenifjs');
         $linkid = html_writer::random_id();
         if ($widget->readonly) {
-            $launcheditorlink = html_writer::tag('a',
-                                              get_string('viewfeedbackonline', 'assignfeedback_editpdf'),
-                                              array('id'=>$linkid, 'class'=>'btn', 'href'=>'#'));
+            $launcheditorlink = html_writer::tag(
+                'a',
+                get_string('viewfeedbackonline', 'assignfeedback_editpdf'),
+                array('id' => $linkid, 'class' => 'btn', 'href' => '#')
+            );
         } else {
-            $launcheditorlink = html_writer::tag('a',
-                                              get_string('launcheditor', 'assignfeedback_editpdf'),
-                                              array('id'=>$linkid, 'class'=>'btn', 'href'=>'#'));
+            $launcheditorlink = html_writer::tag(
+                'a',
+                get_string('launcheditor', 'assignfeedback_editpdf'),
+                array('id' => $linkid, 'class' => 'btn', 'href' => '#')
+            );
         }
         $links = $launcheditorlink;
         $html .= '<input type="hidden" name="assignfeedback_editpdf_haschanges" value="false"/>';
@@ -145,21 +156,27 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $iconshortcut = $this->get_shortcut('navigate-previous-button');
         $iconalt = get_string('navigateprevious', 'assignfeedback_editpdf', $iconshortcut);
         $iconhtml = $this->image_icon($nav_prev, $iconalt, 'assignfeedback_editpdf');
-        $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
-            'class'=>'navigate-previous-button', 'accesskey' => $this->get_shortcut('navigate-previous-button')));
-        $navigation1 .= html_writer::tag('select', null, array('disabled'=>'true',
-            'aria-label' => get_string('gotopage', 'assignfeedback_editpdf'), 'class'=>'navigate-page-select',
-            'accesskey' => $this->get_shortcut('navigate-page-select')));
+        $navigation1 .= html_writer::tag('button', $iconhtml, array(
+            'disabled' => 'true',
+            'class' => 'navigate-previous-button', 'accesskey' => $this->get_shortcut('navigate-previous-button')
+        ));
+        $navigation1 .= html_writer::tag('select', null, array(
+            'disabled' => 'true',
+            'aria-label' => get_string('gotopage', 'assignfeedback_editpdf'), 'class' => 'navigate-page-select',
+            'accesskey' => $this->get_shortcut('navigate-page-select')
+        ));
         $iconshortcut = $this->get_shortcut('navigate-next-button');
         $iconalt = get_string('navigatenext', 'assignfeedback_editpdf', $iconshortcut);
         $iconhtml = $this->image_icon($nav_next, $iconalt, 'assignfeedback_editpdf');
-        $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
-            'class'=>'navigate-next-button', 'accesskey' => $this->get_shortcut('navigate-next-button')));
+        $navigation1 .= html_writer::tag('button', $iconhtml, array(
+            'disabled' => 'true',
+            'class' => 'navigate-next-button', 'accesskey' => $this->get_shortcut('navigate-next-button')
+        ));
 
-        $navigation1 = html_writer::div($navigation1, 'navigation', array('role'=>'navigation'));
+        $navigation1 = html_writer::div($navigation1, 'navigation', array('role' => 'navigation'));
 
         $navigation2 .= $this->render_toolbar_button('comment_search', 'searchcomments', $this->get_shortcut('searchcomments'));
-        $navigation2 = html_writer::div($navigation2, 'navigation-search', array('role'=>'navigation'));
+        $navigation2 = html_writer::div($navigation2, 'navigation-search', array('role' => 'navigation'));
 
         $navigation3 .= $this->render_toolbar_button('comment_expcol', 'expcolcomments', $this->get_shortcut('expcolcomments'));
         $navigation3 = html_writer::div($navigation3, 'navigation-expcol', array('role' => 'navigation'));
@@ -200,34 +217,48 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar4 = '';
             $toolbar4 .= $this->render_toolbar_button('stamp', 'stamp', $this->get_shortcut('stamp'));
             $toolbar4 .= $this->render_toolbar_button('background_colour_clear', 'currentstamp', $this->get_shortcut('currentstamp'));
-            $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role'=>'toolbar'));
+            $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role' => 'toolbar'));
 
             // Html
+            $toolbarabsq = '';
+            $toolbarabsq .= $this->render_toolbar_button('math', 'absqeditor');
+            $toolbarabsq = html_writer::div($toolbarabsq, 'toolbar', array('role' => 'toolbar', 'class' => 'absqtoolbar'));
+
             $toolbar5 = '';
             $toolbar5 .= $this->render_toolbar_button('math', 'htmleditor');
-            $toolbar5 = html_writer::div($toolbar5, 'toolbar', array('role' => 'toolbar'));
+            $toolbar5 = html_writer::div($toolbar5, 'toolbar', array('role' => 'toolbar', 'class' => 'htmltoolbar'));
 
             // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
-            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4 . $toolbar5;
+            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4 . $toolbar5 . $toolbarabsq;
+
             $toolbargroup = html_writer::div($toolbars, 'toolbar_group', array('role' => 'toolbar_group'));
         }
 
-        $pageheader = html_writer::div($navigation1 .
-                                       $navigation2 .
-                                       $navigation3 .
-                                       $toolbargroup .
-                                       $clearfix,
-                                       'pageheader');
+        $pageheader = html_writer::div(
+            $navigation1 .
+                $navigation2 .
+                $navigation3 .
+                $toolbargroup .
+                $clearfix,
+            'pageheader'
+        );
         $body = $pageheader;
 
         // Loading progress bar.
         $progressbar = html_writer::div('', 'bar', array('style' => 'width: 0%'));
-        $progressbar = html_writer::div($progressbar, 'progress progress-info progress-striped active',
-            array('title' => get_string('loadingeditor', 'assignfeedback_editpdf'),
-                  'role'=> 'progressbar', 'aria-valuenow' => 0, 'aria-valuemin' => 0,
-                  'aria-valuemax' => 100));
-        $progressbarlabel = html_writer::div(get_string('generatingpdf', 'assignfeedback_editpdf'),
-            'progressbarlabel');
+        $progressbar = html_writer::div(
+            $progressbar,
+            'progress progress-info progress-striped active',
+            array(
+                'title' => get_string('loadingeditor', 'assignfeedback_editpdf'),
+                'role' => 'progressbar', 'aria-valuenow' => 0, 'aria-valuemin' => 0,
+                'aria-valuemax' => 100
+            )
+        );
+        $progressbarlabel = html_writer::div(
+            get_string('generatingpdf', 'assignfeedback_editpdf'),
+            'progressbarlabel'
+        );
         $loading = html_writer::div($progressbar . $progressbarlabel, 'loading');
 
         $canvas = html_writer::div($loading, 'drawingcanvas');
@@ -241,8 +272,10 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $canvas .= $infomessage;
 
         $body .= $canvas;
-        $textarea = html_writer::tag('textarea', '', ["id" => "html_editor",
-                "class" => "htmleditor", "rows" => "20", "cols" => "50"]);
+        $textarea = html_writer::tag('textarea', '', [
+            "id" => "html_editor",
+            "class" => "htmleditor", "rows" => "20", "cols" => "50"
+        ]);
         $textcontainer = html_writer::tag('div', $textarea);
         $body .= html_writer::tag('div', $textcontainer, ["id" => "editorcontainer", "class" => "hidden"]);
         $footer = '';
@@ -261,9 +294,11 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             )
         );
 
-        $this->page->requires->yui_module('moodle-assignfeedback_editpdf-editor',
-                                          'M.assignfeedback_editpdf.editor.init',
-                                          $editorparams);
+        $this->page->requires->yui_module(
+            'moodle-assignfeedback_editpdf-editor',
+            'M.assignfeedback_editpdf.editor.init',
+            $editorparams
+        );
 
         $this->page->requires->strings_for_js(array(
             'yellow',
@@ -287,17 +322,19 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'cannotopenpdf',
             'pagenumber',
             'partialwarning',
-                'draftchangessaved',
-                'add',
-                'htmleditor',
-                'edithtml'
+            'draftchangessaved',
+            'add',
+            'htmleditor',
+            'edithtml'
         ), 'assignfeedback_editpdf');
 
         $textareaid = 'html_editor';
-        $options = array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0, 'changeformat' => 0,
-                'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED, 'context' => $this->page->context, 'noclean' => 0,
-                'trusttext' => 0, 'return_types' => 15, 'enable_filemanagement' => true, 'removeorphaneddrafts' => true,
-                'autosave' => false, 'trusted');
+        $options = array(
+            'subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0, 'changeformat' => 0,
+            'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED, 'context' => $this->page->context, 'noclean' => 0,
+            'trusttext' => 0, 'return_types' => 15, 'enable_filemanagement' => true, 'removeorphaneddrafts' => true,
+            'autosave' => false, 'trusted'
+        );
         $configstr = "collapse = collapse
                     style1 = title, bold, italic, fontcolor, backcolor
                     list = unorderedlist, orderedlist, indent
@@ -335,8 +372,10 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
                 }
 
                 // Remove manage files if requested.
-                if ($plugin == 'managefiles' && isset($options['enable_filemanagement']) &&
-                        !$options['enable_filemanagement']) {
+                if (
+                    $plugin == 'managefiles' && isset($options['enable_filemanagement']) &&
+                    !$options['enable_filemanagement']
+                ) {
                     continue;
                 }
 
@@ -346,8 +385,11 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
                 $modules[] = 'moodle-atto_' . $plugin . '-button';
 
                 component_callback('atto_' . $plugin, 'strings_for_js');
-                $extra = component_callback('atto_' . $plugin, 'params_for_js',
-                        array($textareaid, $options, null));
+                $extra = component_callback(
+                    'atto_' . $plugin,
+                    'params_for_js',
+                    array($textareaid, $options, null)
+                );
 
                 if ($extra) {
                     $jsplugin = array_merge($jsplugin, $extra);
@@ -360,26 +402,31 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         }
 
         $this->page->requires->strings_for_js(array(
-                'editor_command_keycode',
-                'editor_control_keycode',
-                'plugin_title_shortcut',
-                'textrecovered',
-                'autosavefailed',
-                'autosavesucceeded',
-                'errortextrecovery'
+            'editor_command_keycode',
+            'editor_control_keycode',
+            'plugin_title_shortcut',
+            'textrecovered',
+            'autosavefailed',
+            'autosavesucceeded',
+            'errortextrecovery'
         ), 'editor_atto');
         $this->page->requires->strings_for_js(array(
-                'warning',
-                'info'
+            'warning',
+            'info'
         ), 'moodle');
-        $this->page->requires->yui_module($modules,
-                'Y.M.editor_atto.Editor.init',
-                array($this->get_init_params_atto($textareaid, $options, null, $jsplugins)), '', true);
+        $this->page->requires->yui_module(
+            $modules,
+            'Y.M.editor_atto.Editor.init',
+            array($this->get_init_params_atto($textareaid, $options, null, $jsplugins)),
+            '',
+            true
+        );
 
         return $html;
     }
 
-    function get_init_params_atto($elementid, array $options = null, array $fpoptions = null, $plugins = null) {
+    function get_init_params_atto($elementid, array $options = null, array $fpoptions = null, $plugins = null)
+    {
         global $PAGE;
 
         $directionality = get_string('thisdirection', 'langconfig');
@@ -398,16 +445,16 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         // Note <> is a safe separator, because it will not appear in the output of s().
         $pagehash = sha1($PAGE->url . '<>');
         $params = array(
-                'elementid' => $elementid,
-                'content_css' => $contentcss,
-                'contextid' => $options['context']->id,
-                'autosaveEnabled' => $autosave,
-                'autosaveFrequency' => $autosavefrequency,
-                'language' => $lang,
-                'directionality' => $directionality,
-                'filepickeroptions' => array(),
-                'plugins' => $plugins,
-                'pageHash' => $pagehash,
+            'elementid' => $elementid,
+            'content_css' => $contentcss,
+            'contextid' => $options['context']->id,
+            'autosaveEnabled' => $autosave,
+            'autosaveFrequency' => $autosavefrequency,
+            'language' => $lang,
+            'directionality' => $directionality,
+            'filepickeroptions' => array(),
+            'plugins' => $plugins,
+            'pageHash' => $pagehash,
         );
         return $params;
     }

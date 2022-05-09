@@ -691,6 +691,7 @@ EOD;
         page_editor::release_drafts($grade->id);
 
         $allcomments = array();
+        $allabsqcomments = array();
         $allhtmlcomments = array();
 
         for ($i = 0; $i < $pagecount; $i++) {
@@ -709,6 +710,7 @@ EOD;
             }
 
             $comments = page_editor::get_comments($grade->id, $i, false);
+            $absqcomments = page_editor::get_absqcomments($grade->id, $i, false);
             $htmlcomments = page_editor::get_htmlcomments($grade->id, $i, false);
             $annotations = page_editor::get_annotations($grade->id, $i, false);
 
@@ -716,6 +718,9 @@ EOD;
                 $allcomments[$i] = $comments;
             }
 
+            if (!empty($absqcomments)) {
+                $allabsqcomments[$i] = $absqcomments;
+            }
             if (!empty($htmlcomments)) {
                 $allhtmlcomments[$i] = $htmlcomments;
             }
@@ -756,6 +761,14 @@ EOD;
             }
         }
 
+        if (!empty($allabsqcomments)) {
+            // Add the comment markers with links.
+            foreach ($allabsqcomments as $pageno => $absqcomments) {
+                foreach ($absqcomments as $index => $absqcomment) {
+                    $pdf->add_absqcomment($absqcomment->pageno, $absqcomment->width , $absqcomment->x, $absqcomment->y, $absqcomment->rawtext, $absqcomment->sequence);
+                }
+            }
+        }
 
         fulldelete($stamptmpdir);
 

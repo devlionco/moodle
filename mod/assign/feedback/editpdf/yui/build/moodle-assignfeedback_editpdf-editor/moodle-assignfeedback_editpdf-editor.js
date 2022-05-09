@@ -41,6 +41,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         SAVE: '.savebutton',
         COMMENTCOLOURBUTTON: '.commentcolourbutton',
         COMMENTMENU: '.commentdrawable a',
+        ABSQCOMMENTMENU: '.absqcommentdrawable a',
         HTMLCOMMENTMENU: '.htmlcommentdrawable a',
         ANNOTATIONCOLOURBUTTON:  '.annotationcolourbutton',
         DELETEANNOTATIONBUTTON: '.deleteannotationbutton',
@@ -52,6 +53,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         USERINFOREGION: '[data-region="user-info"]',
         ROTATELEFTBUTTON: '.rotateleftbutton',
         ROTATERIGHTBUTTON: '.rotaterightbutton',
+        ABSQEDITORBUTTON: '.absqeditorbutton',
         HTMLEDITORBUTTON: '.htmleditorbutton',
         DIALOGUE: '.' + CSS.DIALOGUE
     },
@@ -85,6 +87,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'select': '.selectbutton',
         'drag': '.dragbutton',
         'highlight': '.highlightbutton',
+        'absqeditor': '.absqeditorbutton',
         'htmleditor': '.htmleditorbutton'
     },
     STROKEWEIGHT = 4;
@@ -3490,6 +3493,7 @@ EDITOR.prototype = {
      * @type M.core.dialogue
      * @protected
      */
+    absqeditorwindow: null,
     htmleditorwindow: null,
 
     /**
@@ -3526,6 +3530,7 @@ EDITOR.prototype = {
      * @type Boolean
      * @public
      */
+    editingabsqcomment: false,
     editinghtmlcomment: false,
 
     /**
@@ -3699,6 +3704,10 @@ EDITOR.prototype = {
      * @method link_handler
      */
     link_handler: function(e) {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw link_handler');
+
         var drawingcanvas;
         var resize = true;
         e.preventDefault();
@@ -3913,7 +3922,7 @@ EDITOR.prototype = {
      * @method prepare_pages_for_display
      */
     prepare_pages_for_display: function(data) {
-        var i, j, comment, htmlcomment, error, annotation, readonly;
+        var i, j, comment, htmlcomment, absqcomment, error, annotation, readonly;
 
         if (!data.pagecount) {
             if (this.dialogue) {
@@ -3928,6 +3937,8 @@ EDITOR.prototype = {
         this.pages = data.pages;
 
         for (i = 0; i < this.pages.length; i++) {
+            // eslint-disable-next-line no-console
+            console.log(this.pages[i]);
             for (j = 0; j < this.pages[i].comments.length; j++) {
                 comment = this.pages[i].comments[j];
                 this.pages[i].comments[j] = new M.assignfeedback_editpdf.comment(this,
@@ -3938,6 +3949,21 @@ EDITOR.prototype = {
                                                                                  comment.width,
                                                                                  comment.colour,
                                                                                  comment.rawtext);
+            }
+
+            for (j = 0; j < this.pages[i].absqcomments.length; j++) {
+                absqcomment = this.pages[i].absqcomments[j];
+                this.pages[i].absqcomments[j] = new M.assignfeedback_editpdf.absqcomment(this,
+                    absqcomment.gradeid,
+                    absqcomment.pageno,
+                    absqcomment.x,
+                    absqcomment.y,
+                    absqcomment.width,
+                    absqcomment.colour,
+                    absqcomment.rawtext,
+                    absqcomment.points,
+                    absqcomment.sequence,
+                    absqcomment.questionid);
             }
             for (j = 0; j < this.pages[i].htmlcomments.length; j++) {
                 htmlcomment = this.pages[i].htmlcomments[j];
@@ -4054,7 +4080,14 @@ EDITOR.prototype = {
     handle_response_data: function(response) {
         var data;
         try {
+            // eslint-disable-next-line no-console
+            console.log('response.responseText', response.responseText);
+
             data = Y.JSON.parse(response.responseText);
+
+            // eslint-disable-next-line no-console
+            console.log('data ---->', data);
+
             if (data.error) {
                 if (this.dialogue) {
                     this.dialogue.hide();
@@ -4118,13 +4151,16 @@ EDITOR.prototype = {
             stampfiles,
             picker,
             filename,
-            htmleditorbutton;
+            htmleditorbutton,
+            absqeditorbutton;
 
         htmleditorbutton = this.get_dialogue_element(SELECTOR.HTMLEDITORBUTTON);
         if(htmleditorbutton !== null &&  htmleditorbutton !== 'unknown') {
             htmleditorbutton.on('click', this.open_htmleditor, this);
             htmleditorbutton.on('key', this.open_htmleditor, 'down:13', this);
         }
+
+        absqeditorbutton = this.get_dialogue_element(SELECTOR.ABSQEDITORBUTTON);
         searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
@@ -4239,7 +4275,12 @@ EDITOR.prototype = {
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
 
-        if (tool !== "htmleditor" && tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
+        if (tool !== "absqeditor" &&
+        tool !== "htmleditor" &&
+        tool !== "comment" &&
+        tool !== "select" &&
+        tool !== "drag" &&
+        tool !== "stamp") {
             this.lastannotationtool = tool;
         }
 
@@ -4254,10 +4295,15 @@ EDITOR.prototype = {
      */
     stringify_current_page: function() {
         var comments = [],
+            absqcomments = [],
             htmlcomments = [],
             annotations = [],
             page,
             i = 0;
+
+        for (i = 0; i < this.pages[this.currentpage].absqcomments.length; i++) {
+            absqcomments[i] = this.pages[this.currentpage].absqcomments[i].clean();
+        }
         for (i = 0; i < this.pages[this.currentpage].htmlcomments.length; i++) {
             htmlcomments[i] = this.pages[this.currentpage].htmlcomments[i].clean();
         }
@@ -4268,7 +4314,7 @@ EDITOR.prototype = {
             annotations[i] = this.pages[this.currentpage].annotations[i].clean();
         }
 
-        page = {comments: comments, annotations: annotations, htmlcomments: htmlcomments};
+        page = {comments: comments, annotations: annotations, htmlcomments: htmlcomments, absqcomments: absqcomments};
 
         return Y.JSON.stringify(page);
     },
@@ -4280,6 +4326,7 @@ EDITOR.prototype = {
      */
     get_current_drawable: function() {
         var comment,
+            absqcomment,
             htmlcomment,
             annotation,
             drawable = false;
@@ -4291,6 +4338,9 @@ EDITOR.prototype = {
         if (this.currentedit.tool === 'comment') {
             comment = new M.assignfeedback_editpdf.comment(this);
             drawable = comment.draw_current_edit(this.currentedit);
+        } else if (this.currentedit.tool === 'absqeditor') {
+                absqcomment = new M.assignfeedback_editpdf.absqcomment(this);
+                drawable = absqcomment.draw_current_edit(this.currentedit);
         } else if (this.currentedit.tool === 'htmleditor') {
                 htmlcomment = new M.assignfeedback_editpdf.htmlcomment(this);
                 drawable = htmlcomment.draw_current_edit(this.currentedit);
@@ -4352,8 +4402,10 @@ EDITOR.prototype = {
         if (this.currentedit.starttime) {
             return;
         }
-
         if (this.editingcomment) {
+            return;
+        }
+        if (this.editingabsqcomment) {
             return;
         }
         if (this.editinghtmlcomment) {
@@ -4470,6 +4522,7 @@ EDITOR.prototype = {
     edit_end: function() {
         var duration,
             comment,
+            absqcomment,
             htmlcomment,
             annotation,
             needsaved;
@@ -4479,6 +4532,36 @@ EDITOR.prototype = {
 
         if (duration < CLICKTIMEOUT || this.currentedit.start === false) {
             return;
+        }
+        if (this.currentedit.tool === 'absqeditor') {
+            if (this.currentdrawable) {
+                this.currentdrawable.erase();
+                needsaved = true;
+            }
+            this.currentdrawable = false;
+            absqcomment = new M.assignfeedback_editpdf.absqcomment(this);
+            if (absqcomment.init_from_edit(this.currentedit)) {
+                this.pages[this.currentpage].absqcomments.push(absqcomment);
+                this.drawables.push(absqcomment.draw());
+                needsaved = true;
+                // custom change
+                // custom - only one element added to editor
+                var currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
+                currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
+                currenttoolnode.setAttribute('aria-pressed', 'false');
+
+                var drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+                drawingcanvas.setStyle('cursor', 'default');
+
+                this.currentedit.starttime = 0;
+                this.currentedit.start = false;
+                this.currentedit.end = false;
+                this.currentedit.path = [];
+                this.currentedit.tool = 'select';
+
+                // eslint-disable-next-line no-console
+                console.log('this current ', this.currentedit, this.currentedit.tool);
+            }
         }
         if (this.currentedit.tool === 'htmleditor') {
             if (this.currentdrawable) {
@@ -4522,9 +4605,9 @@ EDITOR.prototype = {
         }
 
         // Save the changes.
-        if (needsaved) {
+        // if (needsaved) {
         this.save_current_page();
-        }
+        // }
 
         // Reset the current edit.
         this.currentedit.starttime = 0;
@@ -4539,6 +4622,10 @@ EDITOR.prototype = {
      * @method resize
      */
     resize: function() {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw resize');
+
         var drawingregion, drawregionheight;
 
         if (this.dialogue) {
@@ -4581,6 +4668,8 @@ EDITOR.prototype = {
             return new M.assignfeedback_editpdf.annotationhighlight(data);
         } else if (type === "stamp") {
             return new M.assignfeedback_editpdf.annotationstamp(data);
+        } else if (type === "absqeditor") {
+            return new M.assignfeedback_editpdf.absqcomment(data);
         } else if (type === "htmleditor") {
             return new M.assignfeedback_editpdf.htmlcomment(data);
         }
@@ -4658,6 +4747,17 @@ EDITOR.prototype = {
      * @protected
      * @method open_htmleditor
      */
+    open_absqeditor: function(e) {
+        // custom change
+        // if (!this.htmleditorwindow) {
+        //     this.htmleditorwindow = new M.assignfeedback_editpdf.htmleditor({
+        //         editor: this
+        //     });
+        // }
+        // this.htmleditorwindow.show();
+        // eslint-disable-next-line no-console
+        // console.log('here');
+    },
     open_htmleditor: function(e) {
         if (!this.htmleditorwindow) {
             this.htmleditorwindow = new M.assignfeedback_editpdf.htmleditor({
@@ -4693,6 +4793,10 @@ EDITOR.prototype = {
      * @method redraw
      */
     redraw: function() {
+
+        // eslint-disable-next-line no-console
+        console.log('redraw');
+
         var i,
             page;
 
@@ -4709,6 +4813,11 @@ EDITOR.prototype = {
         }
         for (i = 0; i < page.comments.length; i++) {
             this.drawables.push(page.comments[i].draw(false));
+        }
+        for (i = 0; i < page.absqcomments.length; i++) {
+            // eslint-disable-next-line no-console
+            console.log('page', page.absqcomments[i]);
+            this.drawables.push(page.absqcomments[i].draw());
         }
         for (i = 0; i < page.htmlcomments.length; i++) {
             this.drawables.push(page.htmlcomments[i].draw());
@@ -4948,6 +5057,10 @@ EDITOR.prototype = {
                          * Update Position of htmlcomments with relation to canvas coordinates.
                          * Without this code, the htmlcomments will stay at their positions in windows/document coordinates.
                          */
+                        var oldabsqcomments = page.absqcomments;
+                        for (i = 0; i < oldabsqcomments.length; i++) {
+                            oldabsqcomments[i].updatePosition();
+                        }
                         var oldhtmlcomments = page.htmlcomments;
                         for (i = 0; i < oldhtmlcomments.length; i++) {
                             oldhtmlcomments[i].updatePosition();
@@ -5079,6 +5192,852 @@ M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || f
     M.assignfeedback_editpdf.instance = new EDITOR(params);
     return M.assignfeedback_editpdf.instance;
 };
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
+ * Class representing a list of reach text.
+ *
+ * @namespace M.assignfeedback_editpdf
+ * @class absqeditor
+ * @constructor
+ * @extends M.core.dialogue
+ */
+var ABSQEDITOR = function(config) {
+    config.draggable = true;
+    config.centered = true;
+    config.width = 'auto';
+    config.visible = false;
+    config.headerContent = M.util.get_string('absqeditor', 'assignfeedback_editpdf');
+    config.footerContent = '';
+    config.closeButton = false;
+    ABSQEDITOR.superclass.constructor.apply(this, [config]);
+};
+
+var ABSQEDITORNAME = "absqeditor";
+
+
+Y.extend(ABSQEDITOR, M.core.dialogue, {
+    /**
+     * Initialise the menu.
+     *
+     * @method initializer
+     * @return void
+     */
+    editor: null,
+    initializer: function(config) {
+        var editorr,
+            container,
+            textarea,
+            bb;
+        this.editor = config.editor || null;
+        bb = this.get('boundingBox');
+        bb.addClass('assignfeedback_editpdf_absqeditor');
+        editorr = this.get('editor');
+        container = Y.Node.create('<div/>');
+        textarea = Y.one('#editorcontainer');
+        textarea.removeClass('hidden');
+        container.append(textarea);
+
+        Y.one('[name="savechanges"]').on('click', this.removeeditor);
+        Y.one('[name="saveandshownext"]').on('click', this.removeeditor);
+        // Set the body content.
+        this.set('bodyContent', container);
+        ABSQEDITOR.superclass.initializer.call(this, config);
+        this.addButton({
+            name: 'confirm',
+            label: M.util.get_string('confirm', 'moodle'),
+            action: function(e) {
+                e.preventDefault();
+                this.hide();
+            },
+            classNames: 'btn btn-primary',
+            section: Y.WidgetStdMod.FOOTER
+        });
+        this.addButton({
+            name: 'cancel',
+            label: M.util.get_string('cancel', 'moodle'),
+            action: function(e) {
+                e.preventDefault();
+                Y.one('#absq_editor').set('value', ' ');
+                this.hide();
+            },
+            classNames: 'btn btn-secondary',
+            section: Y.WidgetStdMod.FOOTER
+        });
+
+    },
+    removeeditor: function () {
+        if (Y.one(".assignfeedback_editpdf_absqeditor")) {
+            Y.one(".assignfeedback_editpdf_absqeditor").remove();
+        }
+    }
+},{
+    NAME: ABSQEDITORNAME,
+    ATTRS: {
+        /**
+         * The editor this search window is attached to.
+         *
+         * @attribute editor
+         * @type M.assignfeedback_editpdf.editor
+         * @default null
+         */
+        editor: {
+            value: null
+        }
+
+    }
+});
+Y.Base.modifyAttrs(ABSQEDITOR, {
+    /**
+     * Whether the widget should be modal or not.
+     *
+     * Moodle override: We override this for commentsearch to force it always true.
+     *
+     * @attribute Modal
+     * @type Boolean
+     * @default true
+     */
+    modal: {
+        getter: function() {
+            return true;
+        }
+    }
+});
+M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
+M.assignfeedback_editpdf.absqeditor = ABSQEDITOR;
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
+ * Class representing a list of absqcomments.
+ *
+ * @namespace M.assignfeedback_editpdf
+ * @class absqcomment
+ * @param M.assignfeedback_editpdf.editor editor
+ * @param Int gradeid
+ * @param Int pageno
+ * @param Int x
+ * @param Int y
+ * @param Int width
+ * @param String colour
+ * @param String rawtext
+ */
+var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext, points, sequence, questionid) {
+
+    /**
+     * Reference to M.assignfeedback_editpdf.editor.
+     * @property editor
+     * @type M.assignfeedback_editpdf.editor
+     * @public
+     */
+    this.editor = editor;
+
+    /**
+     * Grade id
+     * @property gradeid
+     * @type Int
+     * @public
+     */
+    this.gradeid = gradeid || 0;
+
+    /**
+     * X position
+     * @property x
+     * @type Int
+     * @public
+     */
+    this.x = parseInt(x, 10) || 0;
+
+    /**
+     * Y position
+     * @property y
+     * @type Int
+     * @public
+     */
+    this.y = parseInt(y, 10) || 0;
+
+    /**
+     * absqcomment width
+     * @property width
+     * @type Int
+     * @public
+     */
+    this.width = parseInt(width, 10) || 0;
+
+    /**
+     * absqcomment rawtext
+     * @property rawtext
+     * @type String
+     * @public
+     */
+    this.rawtext = rawtext || '';
+
+    /**
+     * absqcomment points
+     * @property points
+     * @type Int
+     * @public
+     */
+    this.points = parseInt(points, 10) || 0;
+
+    /**
+     * absqcomment sequence
+     * @property sequence
+     * @type Int
+     * @public
+     */
+    this.sequence = parseInt(sequence, 10) || 0;
+
+     /**
+     * absqcomment question id
+     * @property questionid
+     * @type Int
+     * @public
+     */
+    this.questionid = parseInt(questionid, 10) || 0;
+
+    /**
+     * absqcomment page number
+     * @property pageno
+     * @type Int
+     * @public
+     */
+    this.pageno = pageno || 0;
+
+    /**
+     * absqcomment background colour.
+     * @property colour
+     * @type String
+     * @public
+     */
+    this.colour = colour || '0';
+
+    /**
+     * Reference to M.assignfeedback_editpdf.drawable
+     * @property drawable
+     * @type M.assignfeedback_editpdf.drawable
+     * @public
+     */
+    this.drawable = false;
+
+    /**
+     * Boolean used by a timeout to delete empty absqcomments after a short delay.
+     * @property deleteme
+     * @type Boolean
+     * @public
+     */
+    this.deleteme = false;
+
+    /**
+     * Reference to the link that opens the menu.
+     * @property menulink
+     * @type Y.Node
+     * @public
+     */
+    this.menulink = null;
+
+    /**
+     * Reference to the dialogue that is the context menu.
+     * @property menu
+     * @type M.assignfeedback_editpdf.dropdown
+     * @public
+     */
+    this.menu = null;
+
+    /**
+     * Clean a absqcomment record, returning an oject with only fields that are valid.
+     * @public
+     * @method clean
+     * @return {}
+     */
+    this.clean = function() {
+        return {
+            gradeid: this.gradeid,
+            x: parseInt(this.x, 10),
+            y: parseInt(this.y, 10),
+            width: parseInt(this.width, 10),
+            rawtext: this.rawtext,
+            pageno: parseInt(this.pageno, 10),
+            points: parseInt(this.points, 10),
+            colour: this.colour,
+            sequence: parseInt(this.sequence, 10),
+            questionid: parseInt(this.questionid, 10),
+        };
+    };
+
+    // chack if string is number
+    this.isNumeric = function(str) {
+        if (typeof str == "number") {return true;}
+        if (typeof str != "string") {return false;}
+        return !isNaN(str) && !isNaN(parseFloat(str));
+    };
+
+    /**
+     * Draw a absqcomment.
+     * @public
+     * @method draw
+     * @return M.assignfeedback_editpdf.drawable
+     */
+    this.draw = function(editnode) {
+
+        // eslint-disable-next-line no-console
+        console.log('add component');
+
+        var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
+            drawingcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
+            container,
+            node,
+            menu,
+            position,
+            scrollheight,
+            textarea;
+
+        // custom change rawtext
+        var absqEdBtn = Y.one('#page-mod-assign-grader .absqeditorbutton');
+        if (absqEdBtn) {
+            var commentId = absqEdBtn.getAttribute('data-id');
+            var commentSequence = absqEdBtn.getAttribute('data-sequence');
+            var commentPoint = absqEdBtn.getAttribute('data-points');
+            var commentText = absqEdBtn.getAttribute('data-text');
+            var questionIdAttr = +absqEdBtn.getAttribute('data-questionid');
+
+            if (!this.questionid && questionIdAttr){
+                this.questionid = questionIdAttr;
+            }
+
+            if (!this.points) {
+                this.points = commentPoint || 0;
+            }
+
+            if (commentSequence && this.sequence === 0) {
+                this.sequence = +commentSequence;
+            }
+
+            if (commentId && !this.rawtext){
+                if (document.getElementsByClassName('dir-rtl').length !== 0) {
+                    this.rawtext = '<p dir="rtl" style="text-align: right;">' + commentText + '</p>';
+                } else {
+                    this.rawtext = '<p dir="ltr" style="text-align: left;">' + commentText + '</p>';
+                }
+            }
+
+            var usedpointEl = Y.one('#usedpoint_' + this.questionid);
+            var usedpoint = +usedpointEl._node.innerHTML;
+            var maxpoint = +Y.one('#maxpoint_' + this.questionid)._node.innerHTML;
+            var absqBtn = Y.one('body#page-mod-assign-grader .absqeditorbutton');
+            var absqBtnValue = absqBtn._node.attributes['aria-pressed'].nodeValue;
+
+            // eslint-disable-next-line no-console
+            console.log('now ddd ', this.isNumeric(this.points),
+            this.points, this.isNumeric(usedpoint), usedpoint, this.isNumeric(maxpoint), maxpoint, absqBtnValue);
+
+            if (this.isNumeric(usedpoint) &&
+                this.isNumeric(maxpoint) &&
+                this.isNumeric(this.points) &&
+                absqBtnValue === "true"){
+                if (+this.points + usedpoint <= maxpoint){
+                    // add comment and change usedpoint
+                    usedpointEl._node.innerHTML = +this.points + usedpoint;
+                } else {
+                    // error, can't add comment
+                    $('#warning_modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return;
+                }
+            }
+        }
+
+        var colorArr = [
+            "#CFEFCF",
+            "#262949",
+            "#700460",
+            "#A02C5D",
+            "#EC0F47",
+            "#EE6B3B",
+            "#FBBF54",
+            "#ABD96D",
+            "#15C286",
+            "#087353",
+            "#65aee7",
+        ];
+        var colorNow = this.sequence <= 10 ? colorArr[this.sequence] : colorArr[0];
+
+        menu = Y.Node.create('<a href="#"><img src="' + M.util.image_url('t/contextmenu', 'core') + '"/></a>');
+        // // Lets add a contenteditable div.
+        node = editnode || Y.Node.create('<div/>');
+        node.addClass('absqcomment');
+        // eslint-disable-next-line max-len
+        container = Y.Node.create('<div data-questionid="'+this.questionid+'" data-points="'+this.points+'" style="border:5px solid '+colorNow+';" class="absqcommentdrawable" data-sequence="'+this.sequence+'" />');
+        // questionTitle = Y.Node.create('<span class="test"> Question </span>');
+        this.menulink = menu;
+        if (this.rawtext.replace(/^\s+|\s+$/g, "") === '') {
+            textarea = Y.one('#absq_editor');
+            this.rawtext = textarea.get('value');
+        }
+        menu.setAttribute('tabindex', '0');
+        if (!this.editor.get('readonly')) {
+            container.append(menu);
+            // container.append(questionTitle);
+        } else {
+            node.setAttribute('readonly', 'readonly');
+        }
+        if (this.width < 200) {
+            this.width = 200;
+        }
+        node.set('innerHTML', this.rawtext);
+        Y.use('mathjax', function() {
+            window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
+        });
+        scrollheight = node.get('scrollHeight');
+        node.setStyles({
+            // 'height': scrollheight + 'px'
+        });
+        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
+        node.setStyles({
+            width: this.width + 'px'
+        });
+        container.append(node);
+        drawingcanvas.append(container);
+        container.setStyle('position', 'absolute');
+        container.setX(position.x);
+        container.setY(position.y);
+        drawable.store_position(container, position.x, position.y);
+
+        // Bind events only when editing.
+        if (!this.editor.get('readonly')) {
+            // Pass through the event handlers on the div.
+            node.on('gesturemovestart', this.editor.edit_start, null, this.editor);
+            node.on('gesturemove', this.editor.edit_move, null, this.editor);
+            node.on('gesturemoveend', this.editor.edit_end, null, this.editor);
+        }
+        drawable.nodes.push(container);
+
+        this.attach_events(node, menu);
+
+
+
+        this.drawable = drawable;
+
+        node.focus();
+        this.width = parseInt(node.getStyle('width'), 10);
+
+        // Trim.
+        // if (this.rawtext.replace(/^\s+|\s+$/g, "") === '') {
+        //     // Delete empty absqcomments.
+        //     this.deleteme = true;
+        //     Y.later(400, this, this.delete_absqcomment_later);
+        //     if (document.getElementsByClassName('dir-rtl').length !== 0) {
+        //         Y.one('#absq_editoreditable').set('innerHTML', '<p dir="rtl" style="text-align: right;"><br></p>');
+        //     } else {
+        //         Y.one('#absq_editoreditable').set('innerHTML', '<p dir="ltr" style="text-align: left;"><br></p>');
+        //     }
+        //     if (!this.editor.absqeditorwindow) {
+        //         this.editor.absqeditorwindow = new M.assignfeedback_editpdf.absqeditor({
+        //             editor: this
+        //         });
+        //     }
+        // }
+        // node.active = false;
+        // if (this.rawtext.replace(/^\s+|\s+$/g, "") !== '') {
+        //     if (editnode) {
+        //         this.editor.save_current_page();
+        //     }
+        //     this.drawable = drawable;
+        //     if (textarea) {
+        //         textarea.set('value', ' ');
+        //         if (document.getElementsByClassName('dir-rtl').length !== 0) {
+        //             Y.one('#absq_editoreditable').set('innerHTML', '<p dir="rtl" style="text-align: right;"><br></p>');
+        //         } else {
+        //             Y.one('#absq_editoreditable').set('innerHTML', '<p dir="ltr" style="text-align: left;"><br></p>');
+        //         }
+        //     }
+        // }
+
+        return drawable;
+    };
+
+    /**
+     * Delete an empty absqcomment if it's menu hasn't been opened in time.
+     * @method delete_absqcomment_later
+     */
+    this.delete_absqcomment_later = function() {
+        if (this.deleteme) {
+            this.remove();
+        }
+    };
+
+    /**
+     * absqcomment nodes have a bunch of event handlers attached to them directly.
+     * This is all done here for neatness.
+     *
+     * @protected
+     * @method attach_absqcomment_events
+     * @param node - The Y.Node representing the absqcomment.
+     * @param menu - The Y.Node representing the menu.
+     */
+    this.attach_events = function(node, menu) {
+        var container = node.ancestor('div');
+        // eslint-disable-next-line no-console
+        console.log('start move', container);
+
+        if (!this.editor.get('readonly')) {
+            // eslint-disable-next-line no-console
+            console.log('start move');
+
+            // For delegated event handler.
+            menu.setData('absqcomment', this);
+
+            node.on('gesturemovestart', function(e) {
+                if (editor.currentedit.tool === 'select') {
+                    e.preventDefault();
+                    // eslint-disable-next-line no-console
+                    console.log('start move');
+
+                    node.setData('offsetx', e.clientX - container.getX());
+                    node.setData('offsety', e.clientY - container.getY());
+                }
+            });
+            node.on('gesturemove', function(e) {
+                if (editor.currentedit.tool === 'select') {
+                    var x = e.clientX - node.getData('offsetx'),
+                        y = e.clientY - node.getData('offsety'),
+                        newlocation,
+                        windowlocation,
+                        bounds;
+
+                    if (node.getData('clicking') !== true) {
+                        node.setData('clicking', true);
+                    }
+
+                    newlocation = this.editor.get_canvas_coordinates(new M.assignfeedback_editpdf.point(x, y));
+                    bounds = this.editor.get_canvas_bounds(true);
+                    bounds.x = 0;
+                    bounds.y = 0;
+
+                    bounds.width -= 24;
+                    bounds.height -= 24;
+                    // Clip to the window size - the comment icon size.
+                    newlocation.clip(bounds);
+
+                    this.x = newlocation.x;
+                    this.y = newlocation.y;
+
+                    windowlocation = this.editor.get_window_coordinates(newlocation);
+                    container.setX(windowlocation.x);
+                    container.setY(windowlocation.y);
+                    this.drawable.store_position(container, windowlocation.x, windowlocation.y);
+                }
+            }, null, this);
+            this.menu = new M.assignfeedback_editpdf.absqcommentmenu({
+                buttonNode: this.menulink,
+                absqcomment: this
+            });
+        }
+    };
+
+    /**
+     * Delete a absqcomment.
+     * @method remove
+     */
+    this.remove = function() {
+
+        // eslint-disable-next-line no-console
+        console.log('remove component');
+
+        var i = 0;
+        var absqcomments;
+
+        absqcomments = this.editor.pages[this.editor.currentpage].absqcomments;
+        for (i = 0; i < absqcomments.length; i++) {
+            if (absqcomments[i] === this) {
+                absqcomments.splice(i, 1);
+                this.drawable.erase();
+                this.editor.save_current_page();
+
+                // change current points
+                var usedpointEl = Y.one('#usedpoint_' + this.questionid);
+                var usedpoint = +usedpointEl._node.innerHTML;
+                if (usedpoint && +this.points){
+                    usedpointEl._node.innerHTML = usedpoint - +this.points;
+                }
+
+                return;
+            }
+        }
+    };
+
+    /**
+     * Draw the in progress edit.
+     *
+     * @public
+     * @method draw_current_edit
+     * @param M.assignfeedback_editpdf.edit edit
+     */
+    this.draw_current_edit = function(edit) {
+        var bounds = new M.assignfeedback_editpdf.rect(),
+            drawable = new M.assignfeedback_editpdf.drawable(this.editor),
+            drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
+            node,
+            position;
+
+        bounds.bound([edit.start, edit.end]);
+        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(bounds.x, bounds.y));
+
+        node = Y.Node.create('<div/>');
+        node.setStyles({
+            'position': 'absolute',
+            'display': 'inline-block',
+            'width': bounds.width,
+            'height': bounds.height,
+            'backgroundSize': '100% 100%'
+        });
+
+        drawingregion.append(node);
+        node.setX(position.x);
+        node.setY(position.y);
+        drawable.store_position(node, position.x, position.y);
+
+        drawable.nodes.push(node);
+
+        return drawable;
+    };
+
+    /**
+     * Promote the current edit to a real absqcomment.
+     *
+     * @public
+     * @method init_from_edit
+     * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if absqcomment bound is more than min width/height, else false.
+     */
+    this.init_from_edit = function(edit) {
+        // eslint-disable-next-line no-console
+        console.log('INIT FRM EDIT');
+        // eslint-disable-next-line no-console
+        console.log(edit);
+        var bounds = new M.assignfeedback_editpdf.rect();
+        bounds.bound([edit.start, edit.end]);
+
+        if (bounds.width < 40) {
+            bounds.width = 40;
+        }
+        if (bounds.height < 40) {
+            bounds.height = 40;
+        }
+        this.gradeid = this.editor.get('gradeid');
+        this.pageno = this.editor.currentpage;
+        this.x = bounds.x;
+        this.y = bounds.y;
+        this.endx = bounds.x + bounds.width;
+        this.endy = bounds.y + bounds.height;
+        this.rawtext = '';
+        this.points = 0;
+        this.sequence = 0;
+        this.questionid = 0;
+
+        // Min width and height is always more than 40px.
+        return true;
+    };
+
+    /**
+     * Update absqcomment position when rotating page.
+     * @public
+     * @method updatePosition
+     */
+    this.updatePosition = function() {
+        var node = this.drawable.nodes[0].one('div');
+        var container = node.ancestor('div');
+
+        var newlocation = new M.assignfeedback_editpdf.point(this.x, this.y);
+        var windowlocation = this.editor.get_window_coordinates(newlocation);
+
+        container.setX(windowlocation.x);
+        container.setY(windowlocation.y);
+        this.drawable.store_position(container, windowlocation.x, windowlocation.y);
+    };
+
+    /**
+     * Edit exist absq comment
+     * @public
+     * @method edit_absqcomment
+     * @param e
+     */
+    this.edit_absqcomment = function(e) {
+        var absqeditor,
+            origtext,
+            node;
+        e.preventDefault();
+        this.menu.hide();
+        node = this.drawable.nodes[0].one('div');
+        absqeditor = Y.one('#absq_editoreditable');
+        origtext = this.rawtext;
+        absqeditor.set('innerHTML', this.rawtext);
+        if (!this.editor.absqeditorwindow) {
+            this.editor.absqeditorwindow = new M.assignfeedback_editpdf.absqeditor({
+                editor: this
+            });
+        }
+        var absqeditorwindow = this.editor.absqeditorwindow;
+        // custom change
+        // var cancelbuton = absqeditorwindow.getButton('cancel', Y.WidgetStdMod.FOOTER);
+        // cancelbuton.on('click', function (e) {
+        //     e.preventDefault();
+        //     this.rawtext = origtext;
+        //     absqeditorwindow.hide();
+        // }, this);
+        // var confirmbutton = absqeditorwindow.getButton('confirm', Y.WidgetStdMod.FOOTER);
+        // confirmbutton.on('click', function (){
+        //     // Save the changes back to the comment.
+        //     var textarea = Y.one('#absq_editor');
+        //     this.rawtext = textarea.get('value');
+        //     this.draw(node);
+        //     absqeditorwindow.hide();
+        // }, this);
+        absqeditorwindow.show();
+    };
+
+};
+
+M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
+M.assignfeedback_editpdf.absqcomment = ABSQCOMMENT;
+var ABSQCOMMENTMENUNAME = "Absqcommentmenu",
+    ABSQCOMMENTMENU;
+
+/**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
+ * ABSQCOMMENTMENU
+ * This is a drop down list of comment context functions.
+ *
+ * @namespace M.assignfeedback_editpdf
+ * @class commentmenu
+ * @constructor
+ * @param {Object} config
+ * @extends M.assignfeedback_editpdf.dropdown
+ */
+ABSQCOMMENTMENU = function(config) {
+    ABSQCOMMENTMENU.superclass.constructor.apply(this, [config]);
+};
+
+Y.extend(ABSQCOMMENTMENU, M.assignfeedback_editpdf.dropdown, {
+
+    /**
+     * Initialise the menu.
+     *
+     * @method initializer
+     * @param {Object} config
+     */
+    initializer: function(config) {
+        var absqcommentlinks,
+            link,
+            body,
+            absqcomment;
+
+        absqcomment = this.get('absqcomment');
+        // Build the list of menu items.
+        absqcommentlinks = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
+        // custom change
+        // link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+        //        M.util.get_string('editabsq', 'assignfeedback_editpdf') +
+        //        '</a></li>');
+        // link.on('click', absqcomment.edit_absqcomment, absqcomment);
+        // link.on('key', absqcomment.edit_absqcomment, 'enter,space', absqcomment);
+
+        // absqcommentlinks.append(link);
+
+        link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+               M.util.get_string('deletecomment', 'assignfeedback_editpdf') +
+               '</a></li>');
+        link.on('click', function(e) {
+            e.preventDefault();
+            this.menu.hide();
+            this.remove();
+        }, absqcomment);
+
+        link.on('key', function() {
+            absqcomment.menu.hide();
+            absqcomment.remove();
+        }, 'enter,space', absqcomment);
+
+        absqcommentlinks.append(link);
+
+        link = Y.Node.create('<li><hr/></li>');
+        absqcommentlinks.append(link);
+
+        // Set the accessible header text.
+        this.set('headerText', M.util.get_string('commentcontextmenu', 'assignfeedback_editpdf'));
+
+        body = Y.Node.create('<div/>');
+
+        // Set the body content.
+        body.append(absqcommentlinks);
+        this.set('bodyContent', body);
+
+        ABSQCOMMENTMENU.superclass.initializer.call(this, config);
+    }
+}, {
+    NAME: ABSQCOMMENTMENUNAME,
+    ATTRS: {
+        /**
+         * The comment this menu is attached to.
+         *
+         * @attribute comment
+         * @type M.assignfeedback_editpdf.comment
+         * @default null
+         */
+        absqcomment: {
+            value: null
+        }
+
+    }
+});
+
+M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
+M.assignfeedback_editpdf.absqcommentmenu = ABSQCOMMENTMENU;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify

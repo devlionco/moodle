@@ -24,6 +24,9 @@
         "quickcomment.js",
         "quickcommentlist.js",
         "editor.js",
+        "absqeditor.js",
+        "absqcomment.js",
+        "absqcommentmenu.js",
         "htmleditor.js",
         "htmlcomment.js",
         "htmlcommentmenu.js"

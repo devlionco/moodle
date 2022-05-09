@@ -93,7 +93,11 @@ define(['core/ajax', 'core/log',], function(Ajax, log) {
         }
 
         async saveAndContinues(validated) {
-            let obj = this.getData(validated);
+            let state = this.obsItem.getState();
+            state.validated = validated;
+            this.obsItem.setState(state);
+
+            let obj = this.getData();
 
             // eslint-disable-next-line no-console
             console.log('obj=>', JSON.stringify(obj));

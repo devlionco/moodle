@@ -33,13 +33,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
+class restore_assignfeedback_editpdf_subplugin extends restore_subplugin
+{
 
     /**
      * Returns the paths to be handled by the subplugin at assignment level
      * @return array
      */
-    protected function define_grade_subplugin_structure() {
+    protected function define_grade_subplugin_structure()
+    {
 
         $paths = array();
 
@@ -69,14 +71,25 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
      * Processes one feedback_editpdf_files element
      * @param mixed $data
      */
-    public function process_assignfeedback_editpdf_files($data) {
+    public function process_assignfeedback_editpdf_files($data)
+    {
         $data = (object)$data;
 
         // In this case the id is the old gradeid which will be mapped.
-        $this->add_related_files('assignfeedback_editpdf',
-            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA, 'grade', null, $data->gradeid);
-        $this->add_related_files('assignfeedback_editpdf',
-            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA, 'grade', null, $data->gradeid);
+        $this->add_related_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA,
+            'grade',
+            null,
+            $data->gradeid
+        );
+        $this->add_related_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA,
+            'grade',
+            null,
+            $data->gradeid
+        );
         $this->add_related_files('assignfeedback_editpdf', 'stamps', 'grade', null, $data->gradeid);
     }
 
@@ -84,7 +97,8 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
      * Processes one feedback_editpdf_annotations/annotation element
      * @param mixed $data
      */
-    public function process_assignfeedback_editpdf_annotation($data) {
+    public function process_assignfeedback_editpdf_annotation($data)
+    {
         global $DB;
 
         $data = (object)$data;
@@ -94,14 +108,14 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
 
         $DB->insert_record('assignfeedback_editpdf_annot', $data);
-
     }
 
     /**
      * Processes one feedback_editpdf_comments/comment element
      * @param mixed $data
      */
-    public function process_assignfeedback_editpdf_comment($data) {
+    public function process_assignfeedback_editpdf_comment($data)
+    {
         global $DB;
 
         $data = (object)$data;
@@ -111,14 +125,14 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
 
         $DB->insert_record('assignfeedback_editpdf_cmnt', $data);
-
     }
 
     /**
      * Processes one feedback_editpdf_htmlcomments/htmlcomment element
      * @param mixed $data
      */
-    public function process_assignfeedback_editpdf_htmlcomment($data) {
+    public function process_assignfeedback_editpdf_htmlcomment($data)
+    {
         global $DB;
 
         $data = (object)$data;
@@ -128,14 +142,31 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
 
         $DB->insert_record('assignfeedback_editpdf_htcm', $data);
+    }
 
+    /**
+     * Processes one feedback_editpdf_htmlcomments/absqcomment element
+     * @param mixed $data
+     */
+    public function process_assignfeedback_editpdf_absqcomment($data)
+    {
+        global $DB;
+
+        $data = (object)$data;
+        $oldgradeid = $data->gradeid;
+        // The mapping is set in the restore for the core assign activity
+        // when a grade node is processed.
+        $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
+
+        $DB->insert_record('assignfeedback_editpdf_absq', $data);
     }
 
     /**
      * Processes one /feedback_editpdf_rotation/pagerotation element
      * @param mixed $data
      */
-    public function process_assignfeedback_editpdf_pagerotation($data) {
+    public function process_assignfeedback_editpdf_pagerotation($data)
+    {
         global $DB;
         $data = (object)$data;
         $oldgradeid = $data->gradeid;

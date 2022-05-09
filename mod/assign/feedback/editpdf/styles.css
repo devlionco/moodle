@@ -73,9 +73,23 @@
 .yui3-colourpicker-hidden,
 .yui3-commentsearch-hidden,
 .yui3-commentmenu-hidden,
+.yui3-absqcommentmenu-hidden,
+.yui3-absqeditor-hidden,
 .yui3-htmlcommentmenu-hidden,
 .yui3-htmleditor-hidden {
     display: none;
+}
+
+.assignfeedback_editpdf_widget .pageheader .absqtoolbar.toolbar{
+    border: 0;
+}
+
+.assignfeedback_editpdf_widget .absqtoolbar .absqeditorbutton{
+    display: none;
+}
+
+html[dir="rtl"] .assignfeedback_editpdf_widget .absqcommentdrawable{
+    text-align: right;
 }
 
 .assignfeedback_editpdf_widget .pageheader button img {
@@ -405,6 +419,10 @@ ul.assignfeedback_editpdf_menu {
 
 .assignfeedback_editpdf_widget #editorcontainer {
     position: relative;
+}
+
+.assignfeedback_editpdf_widget #editorcontainer #absq_editor_tbl {
+    margin: auto;
 }
 
 .assignfeedback_editpdf_widget #editorcontainer #html_editor_tbl {

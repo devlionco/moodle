@@ -269,6 +269,29 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                         return true;
                     }
                 }
+
+                 // Select all absqcomments.
+                 $draftabsqcomments = page_editor::get_absqcomments($sourcegrade->id, $i, true);
+                 $nondraftabsqcomments = page_editor::get_absqcomments($grade->id, $i, false);
+                 if (count($draftabsqcomments) != count($nondraftabsqcomments)) {
+                     return true;
+                 } else {
+                     // Go for a closer inspection.
+                     $matches = 0;
+                     foreach ($nondraftabsqcomments as $ndabsqcomment) {
+                         foreach ($draftabsqcomments as $dabsqcomment) {
+                             foreach ($ndabsqcomment as $key => $value) {
+                                 if ($key != 'id' && $value != $dabsqcomment->{$key}) {
+                                     continue 2;
+                                 }
+                             }
+                             $matches++;
+                         }
+                     }
+                     if ($matches !== count($nondraftabsqcomments)) {
+                         return true;
+                     }
+                 }
             }
         }
         return false;
@@ -342,9 +365,11 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         global $DB;
 
         $comments = $DB->count_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$grade->id, 'draft'=>0));
-        $htmlcomments = $DB->count_records('assignfeedback_editpdf_htcm', array('gradeid'=>$grade->id, 'draft'=>0));
+        $absqcomments = $DB->count_records('assignfeedback_editpdf_absq', array('gradeid'=>$grade->id, 'draft'=>0));
         $annotations = $DB->count_records('assignfeedback_editpdf_annot', array('gradeid'=>$grade->id, 'draft'=>0));
-        return $comments == 0 && $annotations == 0 && $htmlcomments == 0;
+        $htmlcomments = $DB->count_records('assignfeedback_editpdf_htcm', array('gradeid'=>$grade->id, 'draft'=>0));
+
+        return $comments == 0 && $annotations == 0 && $htmlcomments == 0 && $absqcomments == 0;
     }
 
     /**
@@ -359,6 +384,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             list($gradeids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED);
             $DB->delete_records_select('assignfeedback_editpdf_annot', 'gradeid ' . $gradeids, $params);
             $DB->delete_records_select('assignfeedback_editpdf_cmnt', 'gradeid ' . $gradeids, $params);
+            $DB->delete_records_select('assignfeedback_editpdf_absq', 'gradeid ' . $gradeids, $params);
             $DB->delete_records_select('assignfeedback_editpdf_htcm', 'gradeid ' . $gradeids, $params);
         }
         return true;

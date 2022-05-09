@@ -108,6 +108,7 @@ if ($action === 'pollconversions') {
             $index = count($response->pages);
             $page = new stdClass();
             $comments = page_editor::get_comments($grade->id, $index, $draft);
+            $absqcomments = page_editor::get_absqcomments($grade->id, $index, $draft);
             $htmlcomments = page_editor::get_htmlcomments($grade->id, $index, $draft);
             $page->url = moodle_url::make_pluginfile_url($context->id,
                                                         'assignfeedback_editpdf',
@@ -116,6 +117,7 @@ if ($action === 'pollconversions') {
                                                         '/',
                                                         $pagefile->get_filename())->out();
             $page->comments = $comments;
+            $page->absqcomments = $absqcomments;
             $page->htmlcomments = $htmlcomments;
             if ($imageinfo = $pagefile->get_imageinfo()) {
                 $page->width = $imageinfo['width'];
@@ -155,6 +157,12 @@ if ($action === 'pollconversions') {
     if ($added != count($page->comments)) {
         array_push($response->errors, get_string('couldnotsavepage', 'assignfeedback_editpdf', $index+1));
     }
+
+    $added = page_editor::set_absqcomments($grade->id, $index, $page->absqcomments);
+    if ($added != count($page->absqcomments)) {
+        array_push($response->errors, get_string('couldnotsavepage', 'assignfeedback_editpdf', $index+1));
+    }
+
     $added = page_editor::set_htmlcomments($grade->id, $index, $page->htmlcomments);
     if ($added != count($page->htmlcomments)) {
         array_push($response->errors, get_string('couldnotsavepage', 'assignfeedback_editpdf', $index+1));
