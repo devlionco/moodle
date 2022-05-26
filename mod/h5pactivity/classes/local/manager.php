@@ -172,11 +172,9 @@ class manager {
         global $USER;
         if (!$this->instance->enabletracking) {
             return false;
+        } else {
+            return true;
         }
-        if (empty($user)) {
-            $user = $USER;
-        }
-        return has_capability('mod/h5pactivity:submit', $this->context, $user, false);
     }
 
     /**

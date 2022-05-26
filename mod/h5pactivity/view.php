@@ -93,7 +93,8 @@ if (isset($reviewurl)) {
     echo $OUTPUT->render($widget);
 }
 
-if (!$manager->is_tracking_enabled()) {
+if ($manager->is_tracking_enabled() && !has_capability('mod/h5pactivity:submit', $context, $USER, false)
+        && !has_capability('mod/h5pactivity:reviewattempts', $context, $USER, false )) {
     $message = get_string('previewmode', 'mod_h5pactivity');
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
 }
