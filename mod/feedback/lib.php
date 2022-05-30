@@ -1636,9 +1636,10 @@ function feedback_delete_item($itemid, $renumber = true, $template = false) {
  *
  * @global object
  * @param int $feedbackid
+ * @param array $excludeditemsid array of excluded items ids that could not be deleted
  * @return void
  */
-function feedback_delete_all_items($feedbackid) {
+function feedback_delete_all_items($feedbackid, $excludeditemsid = []) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/completionlib.php');
 
@@ -1658,6 +1659,9 @@ function feedback_delete_all_items($feedbackid) {
         return;
     }
     foreach ($items as $item) {
+        if (in_array($item->id, $excludeditemsid)) {
+            continue;
+        }
         feedback_delete_item($item->id, false);
     }
     if ($completeds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
