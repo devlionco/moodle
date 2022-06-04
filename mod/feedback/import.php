@@ -80,7 +80,7 @@ if ($choosefile) {
         throw new \moodle_exception('cannotloadxml', 'feedback', 'edit.php?id='.$id);
     }
 
-    $importerror = feedback_import_loaded_data($xmldata, $feedback->id);
+    $importerror = feedback_import_loaded_data($xmldata, $feedback->id, $context);
     if ($importerror->stat == true) {
         $url = 'edit.php?id='.$id.'&do_show=templates';
         redirect($url, get_string('import_successfully', 'feedback'), 3);
@@ -141,7 +141,15 @@ function feedback_load_xml_data($xmlcontent) {
     return $data;
 }
 
-function feedback_import_loaded_data(&$data, $feedbackid) {
+/**
+ * loaded data from xml file
+ *
+ * @param object $data
+ * @param int $feedbackid
+ * @param object $context
+ * @return object
+ */
+function feedback_import_loaded_data(&$data, $feedbackid, $context) {
     global $CFG, $DB;
 
     feedback_load_feedback_items();
@@ -159,7 +167,6 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
     }
 
     if ($deleteolditems) {
-        feedback_delete_all_items($feedbackid);
         $position = 0;
     } else {
         //items will be add to the end of the existing items
@@ -170,6 +177,7 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
     //we also store a mapping of all items array(oldid => newid)
     $dependitemsmap = array();
     $itembackup = array();
+    $newitemsid = array();
     foreach ($data as $item) {
         $position++;
         //check the typ
@@ -260,18 +268,36 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
         $newitem->required = intval($item['@']['REQUIRED']);
         $newitem->position = $position;
         $newid = $DB->insert_record('feedback_item', $newitem);
-
+        $newitemsid[] = $newid;
         $itembackup[$olditemid] = $newid;
         if ($newitem->dependitem) {
             $dependitemsmap[$newid] = $newitem->dependitem;
         }
 
+        $fs = get_file_storage();
+        $draftfiles = $fs->get_area_files($context->id, 'mod_feedback', 'item', $olditemid, 'itemid', 0);
+        foreach ($draftfiles as $file) {
+            $filerecord = [
+                'component' => $file->get_component(),
+                'filearea' => $file->get_filearea(),
+                'itemid' => $file->get_itemid(),
+                'contextid' => $file->get_contextid(),
+                'filepath' => '/',
+                'filename' => $file->get_filename()
+            ];
+            file_copy_file_to_file_area($filerecord, $file->get_filename(), $newid);
+        }
     }
+
     //remapping the dependency
     foreach ($dependitemsmap as $key => $dependitem) {
         $newitem = $DB->get_record('feedback_item', array('id'=>$key));
         $newitem->dependitem = $itembackup[$newitem->dependitem];
         $DB->update_record('feedback_item', $newitem);
+    }
+
+    if ($deleteolditems) {
+        feedback_delete_all_items($feedbackid, $newitemsid);
     }
 
     return $error;
