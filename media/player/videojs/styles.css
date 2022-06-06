@@ -1804,3 +1804,8 @@ video::-webkit-media-text-track-display {
   left: auto;
   right: -0.5em;
 }
+
+.dir-rtl .vjs-loading-spinner:before,
+.dir-rtl .vjs-loading-spinner:after {
+   right: 0;
+ }
