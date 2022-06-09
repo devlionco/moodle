@@ -21673,6 +21673,10 @@ div.editor_atto_toolbar button .icon {
     margin-bottom: 25px; }
   .tertiary-navigation .navitem:not(:last-child) {
     margin-right: 20px; }
+  .tertiary-navigation .column-gup-space {
+    column-gap: 20px; }
+    .tertiary-navigation .column-gup-space .navitem:not(:last-child) {
+      margin-right: 0; }
 
 @media print {
   .tertiary-navigation {

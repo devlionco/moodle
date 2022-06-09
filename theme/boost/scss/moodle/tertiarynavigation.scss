@@ -14,6 +14,14 @@
     .navitem:not(:last-child) {
         margin-right: 20px;
     }
+
+    .column-gup-space {
+        column-gap: 20px;
+
+        .navitem:not(:last-child) {
+            margin-right: 0;
+        }
+    }
 }
 
 @media print {
