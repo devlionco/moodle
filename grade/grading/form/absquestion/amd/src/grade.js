@@ -12,12 +12,18 @@ require([
     Templates,
     translateFn,
     Observer,
-    // ManageCl,
-    // CommentsCl,
     ) {
     async function start() {
         let rootabsoluteEl = document.querySelector("#root_absolute_q");
+        if (!rootabsoluteEl) {
+            return;
+        }
+
         let settings = rootabsoluteEl.getAttribute('data-settings');
+        if (!settings) {
+            return;
+        }
+
         settings = JSON.parse(settings);
         settings = {
             assignid: settings[0],

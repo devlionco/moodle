@@ -1,20 +1,20 @@
 .tooltip {
-    .arrow{
-        &:before{
+    .arrow {
+        &:before {
             display: none;
         }
     }
 }
 
 #add_comment_modal,
-#info_modal{
-    .modal-footer{
+#info_modal {
+    .modal-footer {
         justify-content: flex-start;
     }
 }
 
-#manage_modal{
-    .edit-comment-bottom{
+#manage_modal {
+    .edit-comment-bottom {
         text-align: left;
     }
 }
@@ -25,10 +25,10 @@
     }
 }
 
-#root_absolute_q{
-    .question-block{
-        .question-ico{
-            .fa-caret-left{
+#root_absolute_q {
+    .question-block {
+        .question-ico {
+            .fa-caret-left {
                 transform: none;
             }
         }
