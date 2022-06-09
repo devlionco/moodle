@@ -80,15 +80,15 @@
     display: none;
 }
 
-.assignfeedback_editpdf_widget .pageheader .absqtoolbar.toolbar{
+.assignfeedback_editpdf_widget .pageheader .absqtoolbar.toolbar {
     border: 0;
 }
 
-.assignfeedback_editpdf_widget .absqtoolbar .absqeditorbutton{
+.assignfeedback_editpdf_widget .absqtoolbar .absqeditorbutton {
     display: none;
 }
 
-html[dir="rtl"] .assignfeedback_editpdf_widget .absqcommentdrawable{
+html[dir="rtl"] .assignfeedback_editpdf_widget .absqcommentdrawable {
     text-align: right;
 }
 
@@ -376,6 +376,7 @@ ul.assignfeedback_editpdf_menu {
     z-index: 52;
     height: 0;
 }
+
 .assignfeedback_editpdf_widget .annotation {
     z-index: 51;
 }

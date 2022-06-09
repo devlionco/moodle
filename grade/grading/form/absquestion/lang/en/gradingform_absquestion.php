@@ -92,12 +92,9 @@ $string['global'] = 'GLOBAL';
 // help icons
 $string['maximum_grade_desc'] = 'Maximum score comes from the task definitions';
 $string['total_questions_desc'] = 'Total test questions';
-$string['total_questions_groups_desc'] = '
-If there is a choice of questions, question sets must be defined, for each group you can define how many questions to answer. Each set of questions should have an equal score.';
-$string['grading_methods_desc'] ='
-Scoring: Score starts at 0 and points are added
-Scoring lower: A score starts from the full score on the question and points are deducted
-';
+$string['total_questions_groups_desc'] = 'If there is a choice of questions, question sets must be defined, for each group you can define how many questions to answer. Each set of questions should have an equal score.';
+$string['grading_methods_desc'] = 'Scoring: Score starts at 0 and points are added
+Scoring lower: A score starts from the full score on the question and points are deducted';
 $string['question_desc'] = 'Number of question';
 $string['sub_question_desc'] = 'Sections can be added to the question';
 $string['max_points_desc'] = 'Maximum score on question and sections';

@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_group extends persistent
-{
+class absquestion_group extends persistent {
     const TABLE = 'absquestion_group';
 
     protected $json;
@@ -35,25 +34,24 @@ class absquestion_group extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
-            'absid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'sequence' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'name' => array(
-                'type' => PARAM_TEXT,
-                'default' => NULL
-            ),
-            'grouppass' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
+                'absid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'sequence' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'name' => array(
+                        'type' => PARAM_TEXT,
+                        'default' => null
+                ),
+                'grouppass' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
         );
     }
 
@@ -69,10 +67,10 @@ class absquestion_group extends persistent
         foreach ($data['groups'] as $groupvalue) {
             $sequence = $groupvalue['sequence'];
             $groupdata = (object) [
-                'absid' => $data['id'],
-                'name' => $groupvalue['value'],
-                'sequence' => $sequence,
-                'grouppass' => $grouppass[$sequence]['value'] ?? 0
+                    'absid' => $data['id'],
+                    'name' => $groupvalue['value'],
+                    'sequence' => $sequence,
+                    'grouppass' => $grouppass[$sequence]['value'] ?? 0
             ];
 
             if ($groups[$groupvalue['id']]) {
@@ -96,8 +94,7 @@ class absquestion_group extends persistent
         return $groupidsbysequence;
     }
 
-    public function after_delete($result)
-    {
+    public function after_delete($result) {
         $questions = absquestion_question::get_records(['absgid' => $this->get('id')]);
         foreach ($questions as $question) {
             $question->delete();
@@ -106,22 +103,22 @@ class absquestion_group extends persistent
 
     public static function fetch_data($absid) {
         $data = [
-            'groups' => [],
-            'grouppass' => [],
+                'groups' => [],
+                'grouppass' => [],
         ];
 
         $groups = static::get_records(['absid' => $absid], 'sequence');
         $groupsbyid = [];
         foreach ($groups as $group) {
             $data['groups'][] = [
-                'id' => $group->get('id'),
-                'value' => $group->get('name'),
-                'sequence' => $group->get('sequence'),
+                    'id' => $group->get('id'),
+                    'value' => $group->get('name'),
+                    'sequence' => $group->get('sequence'),
             ];
 
             $data['grouppass'][] = [
-                'value' => $group->get('grouppass'),
-                'sequence' => $group->get('sequence'),
+                    'value' => $group->get('grouppass'),
+                    'sequence' => $group->get('sequence'),
             ];
 
             $groupsbyid[$group->get('id')] = $group;

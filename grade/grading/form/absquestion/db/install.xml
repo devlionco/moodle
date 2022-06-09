@@ -3,96 +3,96 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
-  <TABLES>
-    <TABLE NAME="absquestion" COMMENT="Main settings.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="definitionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the grading form instance"/>
-        <FIELD NAME="qtotal" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="0" COMMENT="Number of questions"/>
-        <FIELD NAME="groupnum" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="0" COMMENT="Number of groups"/>
-        <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0-additive, 1-substractive"/>
-        <FIELD NAME="totalqbonus" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of questions with bonuses"/>
-        <FIELD NAME="totalmaxgrade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="total max grade"/>
-        <FIELD NAME="validated" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is structure validated?"/>
-        <FIELD NAME="questioncolor" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Setting for color question header"/>
-        <FIELD NAME="qtotalmax" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="10" COMMENT="Max number of questions"/>
-        <FIELD NAME="subqnummax" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="10" COMMENT="Max number of subquestions"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_definitionid" TYPE="foreign" FIELDS="definitionid" REFTABLE="grading_definitions" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="absquestion_group" COMMENT="Group settings.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="absid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the absquestion instance"/>
-        <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="group sequence"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Number of questions"/>
-        <FIELD NAME="grouppass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of questions selected for pass"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_absid" TYPE="foreign" FIELDS="absid" REFTABLE="absquestion" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="absquestion_question" COMMENT="Question settings.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="absid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the absquestion instance"/>
-        <FIELD NAME="absgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the group"/>
-        <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="order num"/>
-        <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="parent question id"/>
-        <FIELD NAME="qmax" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="qmax"/>
-        <FIELD NAME="bonus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="is bonus?"/>
-        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="superior info"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_absid" TYPE="foreign" FIELDS="absid" REFTABLE="absquestion" REFFIELDS="id"/>
-        <KEY NAME="fk_absgid" TYPE="foreign" FIELDS="absgid" REFTABLE="absquestion_group" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="absquestion_comment" COMMENT="Question settings.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="text" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comment text"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Comment grade"/>
-        <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Method"/>
-        <FIELD NAME="isglobal" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is comment global?"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="absquestion_comment_link" COMMENT="Question links to comment">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="assignid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="assign id"/>
-        <FIELD NAME="absqid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="question id"/>
-        <FIELD NAME="absqcid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="comment id"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_assignid" TYPE="foreign" FIELDS="assignid" REFTABLE="assign" REFFIELDS="id"/>
-        <KEY NAME="fk_absqcid" TYPE="foreign" FIELDS="absqcid" REFTABLE="absquestion_comment" REFFIELDS="id"/>
-        <KEY NAME="fk_absqid" TYPE="foreign" FIELDS="absqid" REFTABLE="absquestion_question" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-  </TABLES>
+    <TABLES>
+        <TABLE NAME="absquestion" COMMENT="Main settings.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="definitionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the grading form instance"/>
+                <FIELD NAME="qtotal" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="0" COMMENT="Number of questions"/>
+                <FIELD NAME="groupnum" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="0" COMMENT="Number of groups"/>
+                <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0-additive, 1-substractive"/>
+                <FIELD NAME="totalqbonus" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of questions with bonuses"/>
+                <FIELD NAME="totalmaxgrade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="total max grade"/>
+                <FIELD NAME="validated" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is structure validated?"/>
+                <FIELD NAME="questioncolor" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Setting for color question header"/>
+                <FIELD NAME="qtotalmax" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="10" COMMENT="Max number of questions"/>
+                <FIELD NAME="subqnummax" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" DEFAULT="10" COMMENT="Max number of subquestions"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_definitionid" TYPE="foreign" FIELDS="definitionid" REFTABLE="grading_definitions" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="absquestion_group" COMMENT="Group settings.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="absid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the absquestion instance"/>
+                <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="group sequence"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Number of questions"/>
+                <FIELD NAME="grouppass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of questions selected for pass"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_absid" TYPE="foreign" FIELDS="absid" REFTABLE="absquestion" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="absquestion_question" COMMENT="Question settings.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="absid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the absquestion instance"/>
+                <FIELD NAME="absgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the group"/>
+                <FIELD NAME="sequence" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="order num"/>
+                <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="parent question id"/>
+                <FIELD NAME="qmax" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="qmax"/>
+                <FIELD NAME="bonus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="is bonus?"/>
+                <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="superior info"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_absid" TYPE="foreign" FIELDS="absid" REFTABLE="absquestion" REFFIELDS="id"/>
+                <KEY NAME="fk_absgid" TYPE="foreign" FIELDS="absgid" REFTABLE="absquestion_group" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="absquestion_comment" COMMENT="Question settings.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="text" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comment text"/>
+                <FIELD NAME="grade" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Comment grade"/>
+                <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Method"/>
+                <FIELD NAME="isglobal" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is comment global?"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="absquestion_comment_link" COMMENT="Question links to comment">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="assignid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="assign id"/>
+                <FIELD NAME="absqid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="question id"/>
+                <FIELD NAME="absqcid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="comment id"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_assignid" TYPE="foreign" FIELDS="assignid" REFTABLE="assign" REFFIELDS="id"/>
+                <KEY NAME="fk_absqcid" TYPE="foreign" FIELDS="absqcid" REFTABLE="absquestion_comment" REFFIELDS="id"/>
+                <KEY NAME="fk_absqid" TYPE="foreign" FIELDS="absqid" REFTABLE="absquestion_question" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
 </XMLDB>

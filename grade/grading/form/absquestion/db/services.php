@@ -26,68 +26,68 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
 
-    'gradingform_absquestion_save_settings' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'save_settings',
-        'description' => 'Save table',
-        'type'        => 'write',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_get_settings' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'get_settings',
-        'description' => 'Get table',
-        'type'        => 'read',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_get_comments' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'get_comments',
-        'description' => 'Get comments',
-        'type'        => 'read',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_get_comments_for_template' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'get_comments_for_template',
-        'description' => 'Get comments for template',
-        'type'        => 'read',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_set_comments' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'set_comments',
-        'description' => 'Save user comments',
-        'type'        => 'write',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_delete_comments' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'delete_comments',
-        'description' => 'Delete user comments',
-        'type'        => 'write',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_get_editor' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'get_editor',
-        'description' => 'Get editor config',
-        'type'        => 'read',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'gradingform_absquestion_set_info' => array(
-        'classname'   => 'gradingform_absquestion\external',
-        'methodname'  => 'set_info',
-        'description' => 'Save question info',
-        'type'        => 'write',
-        'ajax'          => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'gradingform_absquestion_save_settings' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'save_settings',
+                'description' => 'Save table',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_get_settings' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'get_settings',
+                'description' => 'Get table',
+                'type' => 'read',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_get_comments' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'get_comments',
+                'description' => 'Get comments',
+                'type' => 'read',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_get_comments_for_template' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'get_comments_for_template',
+                'description' => 'Get comments for template',
+                'type' => 'read',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_set_comments' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'set_comments',
+                'description' => 'Save user comments',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_delete_comments' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'delete_comments',
+                'description' => 'Delete user comments',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_get_editor' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'get_editor',
+                'description' => 'Get editor config',
+                'type' => 'read',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
+        'gradingform_absquestion_set_info' => array(
+                'classname' => 'gradingform_absquestion\external',
+                'methodname' => 'set_info',
+                'description' => 'Save question info',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
 );

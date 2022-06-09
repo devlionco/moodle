@@ -43,16 +43,16 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
         $paths = array();
 
         $paths[] = new restore_path_element('gradingform_absquestion_criterion',
-            $this->get_pathfor('/absquestioncriteria/absquestion'));
+                $this->get_pathfor('/absquestioncriteria/absquestion'));
 
         $paths[] = new restore_path_element('gradingform_absquestion_group',
-            $this->get_pathfor('/absquestioncriteria/absquestion/groups/group'));
+                $this->get_pathfor('/absquestioncriteria/absquestion/groups/group'));
 
         $paths[] = new restore_path_element('gradingform_absquestion_question',
-            $this->get_pathfor('/absquestioncriteria/absquestion/questions/question'));
+                $this->get_pathfor('/absquestioncriteria/absquestion/questions/question'));
 
         $paths[] = new restore_path_element('gradingform_absquestion_commentlink',
-            $this->get_pathfor('/absquestioncriteria/absquestion/questions/question/comments/comment'));
+                $this->get_pathfor('/absquestioncriteria/absquestion/questions/question/comments/comment'));
 
         return $paths;
     }
@@ -84,7 +84,7 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
     public function process_gradingform_absquestion_criterion($data) {
         global $DB, $USER;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->definitionid = $this->get_new_parentid('grading_definition');
 
@@ -107,7 +107,7 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
     public function process_gradingform_absquestion_group($data) {
         global $DB, $USER;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->absid = $this->get_new_parentid('gradingform_absquestion_criterion');
 
@@ -130,7 +130,7 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
     public function process_gradingform_absquestion_question($data) {
         global $DB, $USER;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
 
         $data->absid = $this->get_new_parentid('gradingform_absquestion_criterion');
@@ -158,7 +158,7 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
     public function process_gradingform_absquestion_commentlink($data) {
         global $DB, $USER;
 
-        $data = (object)$data;
+        $data = (object) $data;
 
         $sql = "SELECT instance FROM {course_modules} cm 
                     LEFT JOIN {context} c ON c.instanceid = cm.id 

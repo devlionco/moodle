@@ -28,10 +28,10 @@ use gradingform_absquestion\absquestion_question;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/grade/grading/form/lib.php');
+require_once($CFG->dirroot . '/grade/grading/form/lib.php');
 
-CONST GRADINGFORM_ABSQUESTION_METHOD_ACCUMULATIVE = 0;
-CONST GRADINGFORM_ABSQUESTION_METHOD_SUBSTRACTIVE = 1;
+const GRADINGFORM_ABSQUESTION_METHOD_ACCUMULATIVE = 0;
+const GRADINGFORM_ABSQUESTION_METHOD_SUBSTRACTIVE = 1;
 
 /**
  * This controller encapsulates the absquestion grading logic
@@ -62,7 +62,7 @@ class gradingform_absquestion_controller extends gradingform_controller {
         }
     }
 
-    function extend_navigation(global_navigation $navigation, navigation_node $modulenode=null) {
+    function extend_navigation(global_navigation $navigation, navigation_node $modulenode = null) {
         global $CFG, $PAGE, $OUTPUT, $DB;
 
         if (!has_capability('moodle/grade:managegradingforms', $PAGE->context)) {
@@ -89,7 +89,7 @@ class gradingform_absquestion_controller extends gradingform_controller {
             $groupplugins = array();
             foreach ($plugins as $plugin) {
                 // Do not die on missing plugin.
-                if (!\core_component::get_component_directory('atto_' . $plugin))  {
+                if (!\core_component::get_component_directory('atto_' . $plugin)) {
                     continue;
                 }
                 // Remove manage files if requested.
@@ -113,14 +113,14 @@ class gradingform_absquestion_controller extends gradingform_controller {
 
                 $groupplugins[] = $jsplugin;
             }
-            $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
+            $jsplugins[] = array('group' => $group, 'plugins' => $groupplugins);
         }
 
         // ======================
 
         $pagesworking = [
-            'mod-assign-view' => '#page-mod-assign-view #intro',
-            'grade-grading-manage' => '#page-grade-grading-manage div.actions'
+                'mod-assign-view' => '#page-mod-assign-view #intro',
+                'grade-grading-manage' => '#page-grade-grading-manage div.actions'
         ];
 
         if (!in_array($PAGE->pagetype, array_keys($pagesworking))) {
@@ -142,24 +142,27 @@ class gradingform_absquestion_controller extends gradingform_controller {
             if ($absquestion = absquestion::get_record(['definitionid' => $definition->id])) {
                 $qtotalmax = $absquestion->get('qtotalmax');
                 $subqnummax = $absquestion->get('subqnummax');
-                if ($questions = $DB->get_fieldset_select(absquestion_question::TABLE, 'id', 'absid = ?', [$absquestion->get('id')])) {
+                if ($questions =
+                        $DB->get_fieldset_select(absquestion_question::TABLE, 'id', 'absid = ?', [$absquestion->get('id')])) {
                     list($insql, $inparams) = $DB->get_in_or_equal($questions, SQL_PARAMS_NAMED, 'absqid');
                     $inparams['draft'] = 0;
-                    $hassubmissions = $DB->record_exists_select('assignfeedback_editpdf_absq', "questionid $insql AND draft = :draft", $inparams);
+                    $hassubmissions =
+                            $DB->record_exists_select('assignfeedback_editpdf_absq', "questionid $insql AND draft = :draft",
+                                    $inparams);
                 }
 
             }
         }
 
         $PAGE->requires->js_call_amd('gradingform_absquestion/main', 'init',
-            [
-                $pagesworking[$PAGE->pagetype],
-                $assign->id,
-                $assign->grade,
-                $qtotalmax,
-                $subqnummax,
-                $hassubmissions
-            ]
+                [
+                        $pagesworking[$PAGE->pagetype],
+                        $assign->id,
+                        $assign->grade,
+                        $qtotalmax,
+                        $subqnummax,
+                        $hassubmissions
+                ]
         );
 
         return;
@@ -172,7 +175,7 @@ class gradingform_absquestion_controller extends gradingform_controller {
      * @return gradingform_absquestion_renderer
      */
     public function get_renderer(moodle_page $page) {
-        return $page->get_renderer('gradingform_'. $this->get_method_name());
+        return $page->get_renderer('gradingform_' . $this->get_method_name());
     }
 
     /**
@@ -265,7 +268,8 @@ class gradingform_absquestion_instance extends gradingform_instance {
             $absmaxgrade = $this->absquestion->get('totalmaxgrade');
             $totalmaxgrade = $this->assign->grade;
             $gradeid = $this->get_data('itemid');
-            $points = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND draft = ?', [$gradeid, 1]));
+            $points = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND draft = ?',
+                    [$gradeid, 1]));
 
             switch ($this->absquestion->get('method')) {
                 case GRADINGFORM_ABSQUESTION_METHOD_SUBSTRACTIVE:
@@ -275,7 +279,7 @@ class gradingform_absquestion_instance extends gradingform_instance {
                     break;
             }
 
-            $grade = round($points/$absmaxgrade * $totalmaxgrade);
+            $grade = round($points / $absmaxgrade * $totalmaxgrade);
         }
 
         return $grade > $totalmaxgrade ? $totalmaxgrade : $grade;
@@ -313,7 +317,7 @@ class gradingform_absquestion_instance extends gradingform_instance {
             $groupplugins = array();
             foreach ($plugins as $plugin) {
                 // Do not die on missing plugin.
-                if (!\core_component::get_component_directory('atto_' . $plugin))  {
+                if (!\core_component::get_component_directory('atto_' . $plugin)) {
                     continue;
                 }
                 // Remove manage files if requested.
@@ -337,7 +341,7 @@ class gradingform_absquestion_instance extends gradingform_instance {
 
                 $groupplugins[] = $jsplugin;
             }
-            $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
+            $jsplugins[] = array('group' => $group, 'plugins' => $groupplugins);
         }
 
         $controller = $gradingformelement->get_gradinginstance()->get_controller();
@@ -349,7 +353,8 @@ class gradingform_absquestion_instance extends gradingform_instance {
 
         // Check if groups submittions is enabled.
         $assign = $DB->get_record('assign', array('id' => $PAGE->cm->instance));
-        $area = $DB->get_record('grading_areas', array('contextid' => $PAGE->context->id, 'activemethod' => \gradingform_absquestion_controller::ABSQUESTION));
+        $area = $DB->get_record('grading_areas',
+                array('contextid' => $PAGE->context->id, 'activemethod' => \gradingform_absquestion_controller::ABSQUESTION));
         if (empty($assign) || empty($area)) {
             return;
         }
@@ -362,19 +367,21 @@ class gradingform_absquestion_instance extends gradingform_instance {
         $questioncolor = $absquestion ? $absquestion->get('questioncolor') : 0;
         $method = $absquestion ? $absquestion->get('method') : 0;
 
-        $settings = (object)[
-            $assign->id,
-            $assign->grade,
-            $qtotalmax,
-            $subqnummax,
-            $questioncolor,
-            $method,
+        $settings = (object) [
+                $assign->id,
+                $assign->grade,
+                $qtotalmax,
+                $subqnummax,
+                $questioncolor,
+                $method,
         ];
 
         $settings = json_encode($settings);
         $PAGE->requires->js("/grade/grading/form/absquestion/amd/build/grade.min.js");
 
-        return "<div data-settings='{$settings}' id='root_absolute_q' class='grade'>" . $OUTPUT->render_from_template('gradingform_absquestion/gradecomments', ['data' => $groupedcomments]) . "<div id='add_comment_block'></div></div>";
+        return "<div data-settings='{$settings}' id='root_absolute_q' class='grade'>" .
+                $OUTPUT->render_from_template('gradingform_absquestion/gradecomments', ['data' => $groupedcomments]) .
+                "<div id='add_comment_block'></div></div>";
     }
 }
 
@@ -402,7 +409,7 @@ function gradingform_absquestion_coursemodule_standard_elements($formwrapper, $m
 
             $choices = [];
 
-            for($i=0;$i<11;$i++) {
+            for ($i = 0; $i < 11; $i++) {
                 $choices[$i] = $i;
             }
 
@@ -439,16 +446,16 @@ function gradingform_absquestion_coursemodule_edit_post_actions($data, $course) 
         $absquestion->update();
     } else {
         $absquestiondata = [
-            'definitionid' => $definition->id,
-            'qtotal' => 0,
-            'groupnum' => 0,
-            'method' => 0,
-            'totalqbonus' => 0,
-            'totalmaxgrade' => 0,
-            'validated' => 0,
-            'questioncolor' => $data->questioncolor,
-            'qtotalmax' => $data->qtotalmax,
-            'subqnummax' => $data->subqnummax,
+                'definitionid' => $definition->id,
+                'qtotal' => 0,
+                'groupnum' => 0,
+                'method' => 0,
+                'totalqbonus' => 0,
+                'totalmaxgrade' => 0,
+                'validated' => 0,
+                'questioncolor' => $data->questioncolor,
+                'qtotalmax' => $data->qtotalmax,
+                'subqnummax' => $data->subqnummax,
         ];
 
         $absquestion = new absquestion(0, (object) $absquestiondata);

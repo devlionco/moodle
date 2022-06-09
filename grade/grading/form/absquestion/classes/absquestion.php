@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion extends persistent
-{
+class absquestion extends persistent {
     const TABLE = 'absquestion';
 
     const QTOTALMAXDEFAULT = 10;
@@ -38,49 +37,48 @@ class absquestion extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
-            'definitionid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'qtotal' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'groupnum' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'method' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'totalqbonus' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'totalmaxgrade' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'validated' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'questioncolor' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'qtotalmax' => array(
-                'type' => PARAM_INT,
-                'default' => 10
-            ),
-            'subqnummax' => array(
-                'type' => PARAM_INT,
-                'default' => 10
-            ),
+                'definitionid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'qtotal' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'groupnum' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'method' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'totalqbonus' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'totalmaxgrade' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'validated' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'questioncolor' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'qtotalmax' => array(
+                        'type' => PARAM_INT,
+                        'default' => 10
+                ),
+                'subqnummax' => array(
+                        'type' => PARAM_INT,
+                        'default' => 10
+                ),
         );
     }
 
@@ -88,20 +86,20 @@ class absquestion extends persistent
         $controller = static::fetch_controller($data['assignid']);
         if ($definition = $controller->get_definition(true)) {
             $absquestiondata = [
-                'definitionid' => $definition->id,
-                'qtotal' => $data['qtotal'],
-                'groupnum' => isset($data['groups'])? count($data['groups']) : 0,
-                'method' => $data['method'],
-                'totalqbonus' => $data['totalqbonus'],
-                'totalmaxgrade' => $data['totalmaxgrade'],
-                'validated' => $data['validated'],
+                    'definitionid' => $definition->id,
+                    'qtotal' => $data['qtotal'],
+                    'groupnum' => isset($data['groups']) ? count($data['groups']) : 0,
+                    'method' => $data['method'],
+                    'totalqbonus' => $data['totalqbonus'],
+                    'totalmaxgrade' => $data['totalmaxgrade'],
+                    'validated' => $data['validated'],
             ];
 
             $this->from_record((object) $absquestiondata);
 
             if ($this->get('id')) {
                 $this->update();
-            } elseif (!static::get_record(['definitionid' => $definition->id])) {
+            } else if (!static::get_record(['definitionid' => $definition->id])) {
                 $this->set('questioncolor', 0);
                 $this->set('qtotalmax', static::QTOTALMAXDEFAULT);
                 $this->set('subqnummax', static::SUBQNUMMAXDEFAULT);
@@ -120,7 +118,8 @@ class absquestion extends persistent
                 absquestion_question::save_data($data, $groupidsbysequence);
             }
 
-            $definition->status = $data['validated'] ? \gradingform_absquestion_controller::DEFINITION_STATUS_READY : \gradingform_absquestion_controller::DEFINITION_STATUS_DRAFT;
+            $definition->status = $data['validated'] ? \gradingform_absquestion_controller::DEFINITION_STATUS_READY :
+                    \gradingform_absquestion_controller::DEFINITION_STATUS_DRAFT;
             $controller->update_definition($definition);
         }
     }
@@ -163,14 +162,14 @@ class absquestion extends persistent
         $absquestion = static::get_record(['definitionid' => $definition->id]);
         if ($absquestion) {
             $data = [
-                'id' => $absquestion->get('id'),
-                'assignid' => $assignid,
-                'totalmaxgrade' => $absquestion->get('totalmaxgrade'),
-                'qtotal' => $absquestion->get('qtotal'),
-                'totalqbonus' => $absquestion->get('totalqbonus'),
-                'method' => $absquestion->get('method'),
-                'validated' => $absquestion->get('validated'),
-                'questioncolor' => $absquestion->get('questioncolor'),
+                    'id' => $absquestion->get('id'),
+                    'assignid' => $assignid,
+                    'totalmaxgrade' => $absquestion->get('totalmaxgrade'),
+                    'qtotal' => $absquestion->get('qtotal'),
+                    'totalqbonus' => $absquestion->get('totalqbonus'),
+                    'method' => $absquestion->get('method'),
+                    'validated' => $absquestion->get('validated'),
+                    'questioncolor' => $absquestion->get('questioncolor'),
             ];
 
             $data = array_merge($data, absquestion_group::fetch_data($absquestion->get('id')));

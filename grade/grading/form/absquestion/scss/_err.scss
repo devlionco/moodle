@@ -2,12 +2,12 @@
     opacity: 1;
     .tooltip-inner {
         background-color: #e1b0b0;
-        color: #000000;
+        color: #000;
         font-weight: 600;
         font-size: 11px;
     }
     &.bs-tooltip-top {
-        top: 4px!important;
+        top: 4px !important; /* stylelint-disable-line declaration-no-important */
     }
     .tooltip-wide {
         max-width: 100%;
@@ -31,16 +31,16 @@
     display: inline-block;
     float: right;
     background: #e1b0b0;
-    color: #000000;
+    color: #000;
     font-weight: 600;
 }
 
-.help-tooltip{
+.help-tooltip {
     opacity: 1;
     .tooltip-inner {
-        background-color: #ffffff;
+        background-color: #fff;
         border: 1px solid #8f959e;
-        color: #000000;
+        color: #000;
         font-weight: 600;
         font-size: 11px;
     }

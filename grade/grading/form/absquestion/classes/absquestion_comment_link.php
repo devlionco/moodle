@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_comment_link extends persistent
-{
+class absquestion_comment_link extends persistent {
     const TABLE = 'absquestion_comment_link';
 
     protected $json;
@@ -35,28 +34,27 @@ class absquestion_comment_link extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
-            'assignid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'absqid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'absqcid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
+                'assignid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'absqid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'absqcid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
         );
     }
 
     public static function get_assign_comments($assignid, $questionid = null, $isglobal = null) {
         $data = [];
         $params = [
-            'assignid' => $assignid,
+                'assignid' => $assignid,
         ];
         if ($questionid) {
             $params['absqid'] = $questionid;
@@ -65,7 +63,7 @@ class absquestion_comment_link extends persistent
         $links = static::get_records($params);
         foreach ($links as $link) {
             $commentparams = [
-                'id' => $link->get('absqcid'),
+                    'id' => $link->get('absqcid'),
             ];
 
             if (!is_null($isglobal)) {
@@ -76,11 +74,11 @@ class absquestion_comment_link extends persistent
 
             if (!empty($comment)) {
                 $data[] = (object) [
-                    'id' => $link->get('id'),
-                    'text' => $comment->get('text'),
-                    'isglobal' => $comment->get('isglobal'),
-                    'points' => $comment->get('grade'),
-                    'qid' => $link->get('absqid')
+                        'id' => $link->get('id'),
+                        'text' => $comment->get('text'),
+                        'isglobal' => $comment->get('isglobal'),
+                        'points' => $comment->get('grade'),
+                        'qid' => $link->get('absqid')
                 ];
             }
         }
@@ -95,7 +93,8 @@ class absquestion_comment_link extends persistent
 
         try {
             if (isset($data['id']) && !empty($data['id'])) {
-                if(!empty($link = static::get_record(['id' => $data['id']])) && !empty($comment = absquestion_comment::get_record(['id' => $link->get('absqcid')]))) {
+                if (!empty($link = static::get_record(['id' => $data['id']])) &&
+                        !empty($comment = absquestion_comment::get_record(['id' => $link->get('absqcid')]))) {
                     $link->set('assignid', $data['assignid']);
                     $link->set('absqid', $data['qid']);
                     $link->update();
@@ -107,19 +106,19 @@ class absquestion_comment_link extends persistent
                 }
             } else {
                 $commentdata = (object) [
-                    'text' => $data['text'],
-                    'grade' => $data['points'],
-                    'method' => $data['method'],
-                    'isglobal' => $data['isglobal']
+                        'text' => $data['text'],
+                        'grade' => $data['points'],
+                        'method' => $data['method'],
+                        'isglobal' => $data['isglobal']
                 ];
 
                 $comment = new absquestion_comment(0, $commentdata);
                 $comment->create();
 
                 $linkdata = (object) [
-                    'assignid' => $data['assignid'],
-                    'absqid' => $data['qid'],
-                    'absqcid' => $comment->get('id')
+                        'assignid' => $data['assignid'],
+                        'absqid' => $data['qid'],
+                        'absqcid' => $comment->get('id')
                 ];
 
                 $link = new static(0, $linkdata);

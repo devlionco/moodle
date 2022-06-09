@@ -24,22 +24,21 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_comment extends persistent
-{
+class absquestion_comment extends persistent {
     const TABLE = 'absquestion_comment';
 
     const COLORARRAY = [
-        "",
-        "#262949",
-        "#700460",
-        "#A02C5D",
-        "#EC0F47",
-        "#EE6B3B",
-        "#FBBF54",
-        "#ABD96D",
-        "#15C286",
-        "#087353",
-        "#65aee7",
+            "",
+            "#262949",
+            "#700460",
+            "#A02C5D",
+            "#EC0F47",
+            "#EE6B3B",
+            "#FBBF54",
+            "#ABD96D",
+            "#15C286",
+            "#087353",
+            "#65aee7",
     ];
 
     protected $json;
@@ -49,38 +48,35 @@ class absquestion_comment extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
-            'text' => array(
-                'type' => PARAM_RAW,
-                'default' => NULL
-            ),
-            'grade' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'method' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'isglobal' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
+                'text' => array(
+                        'type' => PARAM_RAW,
+                        'default' => null
+                ),
+                'grade' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'method' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'isglobal' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
         );
     }
 
-    protected function after_delete($result)
-    {
+    protected function after_delete($result) {
         $links = absquestion_comment_link::get_records(['absqcid' => $this->get('id')]);
         foreach ($links as $link) {
             $link->delete();
         }
     }
 
-    public static function get_assign_comments_for_template($assignid)
-    {
+    public static function get_assign_comments_for_template($assignid) {
         global $DB;
 
         $return = [];
@@ -94,7 +90,8 @@ class absquestion_comment extends persistent
 
             $globalcomments = absquestion_comment_link::get_assign_comments($assignid, null, 1);
 
-            $gradeid = $DB->get_field('grade_items', 'id', ['itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $assignid]);
+            $gradeid = $DB->get_field('grade_items', 'id',
+                    ['itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $assignid]);
 
             foreach ($questions as $question) {
 
@@ -103,7 +100,8 @@ class absquestion_comment extends persistent
                 $qid = $question->get('id');
 
                 if ($gradeid) {
-                    $usedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $qid, 0]));
+                    $usedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points',
+                            'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $qid, 0]));
                 }
 
                 $name = get_string('question', 'gradingform_absquestion') . ' ' . $sequence;
@@ -113,29 +111,31 @@ class absquestion_comment extends persistent
 
                 foreach ($comments as $comment) {
 
-                    $commenttext = $name .' ('. $comment->points . ')' . '<br/>' . $comment->text;
+                    $commenttext = $name . ' (' . $comment->points . ')' . '<br/>' . $comment->text;
 
-                    $commentsdata[] = (object)[
-                        'text' => $commenttext,
-                        'id' => $comment->id,
-                        'points' => $comment->points,
-                        'isglobal' => $comment->isglobal
+                    $commentsdata[] = (object) [
+                            'text' => $commenttext,
+                            'id' => $comment->id,
+                            'points' => $comment->points,
+                            'isglobal' => $comment->isglobal
                     ];
                 }
 
                 foreach ($globalcomments as $globalcomment) {
 
-                    $globalcommenttext = $name .' ('. $globalcomment->points . ')' . '<br/>' . $globalcomment->text;
+                    $globalcommenttext = $name . ' (' . $globalcomment->points . ')' . '<br/>' . $globalcomment->text;
 
-                    $commentsdata[] = (object)[
-                        'text' => $globalcommenttext,
-                        'id' => $globalcomment->id,
-                        'points' => $globalcomment->points,
-                        'isglobal' => $globalcomment->isglobal
+                    $commentsdata[] = (object) [
+                            'text' => $globalcommenttext,
+                            'id' => $globalcomment->id,
+                            'points' => $globalcomment->points,
+                            'isglobal' => $globalcomment->isglobal
                     ];
                 }
 
-                $subquestions = absquestion_question::get_records(['absid' => $activeabs->get('id'), 'parentid' => $question->get('id')], 'sequence');
+                $subquestions =
+                        absquestion_question::get_records(['absid' => $activeabs->get('id'), 'parentid' => $question->get('id')],
+                                'sequence');
                 $subquestionsdata = [];
 
                 foreach ($subquestions as $subquestion) {
@@ -145,7 +145,8 @@ class absquestion_comment extends persistent
                     $subqid = $subquestion->get('id');
 
                     if ($gradeid) {
-                        $subusedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $subqid, 0]));
+                        $subusedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points',
+                                'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $subqid, 0]));
                     }
 
                     $subname = $name . '.' . $subsequence;
@@ -154,48 +155,50 @@ class absquestion_comment extends persistent
                     $subcomments = absquestion_comment_link::get_assign_comments($assignid, $subqid, 0);
 
                     foreach ($subcomments as $subcomment) {
-                        $subtext = $subname .' ('. $subcomment->points . ')' . '<br/>' . $subcomment->text;
+                        $subtext = $subname . ' (' . $subcomment->points . ')' . '<br/>' . $subcomment->text;
 
                         $subquestionscommentsdata[] = [
-                            'text' => $subtext,
-                            'id' => $subcomment->id,
-                            'points' => $subcomment->points,
-                            'isglobal' => $subcomment->isglobal
+                                'text' => $subtext,
+                                'id' => $subcomment->id,
+                                'points' => $subcomment->points,
+                                'isglobal' => $subcomment->isglobal
                         ];
                     }
 
                     foreach ($globalcomments as $globalcomment) {
-                        $globalcommentsubtext = $subname .' ('. $globalcomment->points . ')' . '<br/>' . $globalcomment->text;
+                        $globalcommentsubtext = $subname . ' (' . $globalcomment->points . ')' . '<br/>' . $globalcomment->text;
 
-                        $subquestionscommentsdata[] = (object)[
-                            'text' => $globalcommentsubtext,
-                            'id' => $globalcomment->id,
-                            'points' => $globalcomment->points,
-                            'isglobal' => $globalcomment->isglobal
+                        $subquestionscommentsdata[] = (object) [
+                                'text' => $globalcommentsubtext,
+                                'id' => $globalcomment->id,
+                                'points' => $globalcomment->points,
+                                'isglobal' => $globalcomment->isglobal
                         ];
                     }
 
-                    $subquestionsdata[] = (object)[
-                        'subqComments' => $subquestionscommentsdata,
-                        'subqId' => $subqid,
-                        'usedpoint' => $subusedpoints,
-                        'max' => $subquestion->get('qmax'),
-                        'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ? static::COLORARRAY[$sequence] : static::COLORARRAY[0],
-                        'sequence' => $subsequence,
-                        'info' => $subquestion->get('info'),
+                    $subquestionsdata[] = (object) [
+                            'subqComments' => $subquestionscommentsdata,
+                            'subqId' => $subqid,
+                            'usedpoint' => $subusedpoints,
+                            'max' => $subquestion->get('qmax'),
+                            'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ?
+                                    static::COLORARRAY[$sequence] : static::COLORARRAY[0],
+                            'sequence' => $subsequence,
+                            'info' => $subquestion->get('info'),
                     ];
                 }
 
-                $return[] = (object)[
-                    'comments' => $commentsdata,
-                    'subq' => $subquestionsdata,
-                    'sequence' => $sequence,
-                    'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ? static::COLORARRAY[$sequence] : static::COLORARRAY[0],
-                    'max' => $question->get('qmax'),
-                    'info' => $question->get('info'),
-                    'questionId' => $qid,
-                    'usedpoint' => $usedpoints,
-                    'qorder' => $sequence,
+                $return[] = (object) [
+                        'comments' => $commentsdata,
+                        'subq' => $subquestionsdata,
+                        'sequence' => $sequence,
+                        'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ?
+                                static::COLORARRAY[$sequence] : static::COLORARRAY[0],
+                        'max' => $question->get('qmax'),
+                        'info' => $question->get('info'),
+                        'questionId' => $qid,
+                        'usedpoint' => $usedpoints,
+                        'qorder' => $sequence,
                 ];
             }
         }

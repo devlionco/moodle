@@ -52,47 +52,47 @@ class backup_gradingform_absquestion_plugin extends backup_gradingform_plugin {
         $criteria = new backup_nested_element('absquestioncriteria');
 
         $criterion = new backup_nested_element('absquestion', ['id'],
-            [
-                'qtotal',
-                'groupnum',
-                'method',
-                'totalqbonus',
-                'totalmaxgrade',
-                'validated',
-                'questioncolor',
-                'qtotalmax',
-                'subqnummax',
-            ]
+                [
+                        'qtotal',
+                        'groupnum',
+                        'method',
+                        'totalqbonus',
+                        'totalmaxgrade',
+                        'validated',
+                        'questioncolor',
+                        'qtotalmax',
+                        'subqnummax',
+                ]
         );
 
         $groups = new backup_nested_element('groups');
 
         $group = new backup_nested_element('group', ['id'],
-            [
-                'sequence',
-                'name',
-                'grouppass'
-            ]
+                [
+                        'sequence',
+                        'name',
+                        'grouppass'
+                ]
         );
 
         $questions = new backup_nested_element('questions');
 
         $question = new backup_nested_element('question', ['id'],
-            [
-                'absgid',
-                'sequence',
-                'parentid',
-                'qmax',
-                'bonus',
-                'info',
-            ]
+                [
+                        'absgid',
+                        'sequence',
+                        'parentid',
+                        'qmax',
+                        'bonus',
+                        'info',
+                ]
         );
 
         $commentlinks = new backup_nested_element('comments');
         $commentlink = new backup_nested_element('comment', ['id'],
-            [
-                'absqcid'
-            ]
+                [
+                        'absqcid'
+                ]
         );
 
         // Build elements hierarchy
@@ -116,10 +116,10 @@ class backup_gradingform_absquestion_plugin extends backup_gradingform_plugin {
 
         $question->set_source_sql('SELECT *
                 FROM {absquestion_question} WHERE absid = :absid ORDER BY parentid ASC',
-            ['absid' => backup::VAR_PARENTID]);
+                ['absid' => backup::VAR_PARENTID]);
 
         $commentlink->set_source_table('absquestion_comment_link',
-            ['assignid' => backup::VAR_ACTIVITYID, 'absqid' => backup::VAR_PARENTID]);
+                ['assignid' => backup::VAR_ACTIVITYID, 'absqid' => backup::VAR_PARENTID]);
         // no need to annotate ids or files yet (one day when criterion definition supports
         // embedded files, they must be annotated here)
 
@@ -132,44 +132,10 @@ class backup_gradingform_absquestion_plugin extends backup_gradingform_plugin {
     protected function define_instance_plugin_structure() {
 
         //TODO HERE WE SHALL PROCESS FILES DATA
-
-
         // Append data only if the ancestor 'definition' element has 'method' set to 'rubric'
         $plugin = $this->get_plugin_element(null, '../../../../method', 'absquestion');
-
-        /*
-        // Create a visible container for our data
-        $pluginwrapper = new backup_nested_element($this->get_recommended_name());
-
-        // Connect our visible container to the parent
-        $plugin->add_child($pluginwrapper);
-
-        // Define our elements
-
-        $fillings = new backup_nested_element('fillings');
-
-        $filling = new backup_nested_element('filling', array('id'), array(
-            'criterionid', 'levelid', 'remark', 'remarkformat'));
-
-        // Build elements hierarchy
-
-        $pluginwrapper->add_child($fillings);
-        $fillings->add_child($filling);
-
-        // Set sources to populate the data
-
-        // Binding criterionid to ensure it's existence
-        $filling->set_source_sql('SELECT rf.*
-                FROM {gradingform_rubric_fillings} rf
-                JOIN {grading_instances} gi ON gi.id = rf.instanceid
-                JOIN {gradingform_rubric_criteria} rc ON rc.id = rf.criterionid AND gi.definitionid = rc.definitionid
-                WHERE rf.instanceid = :instanceid',
-                array('instanceid' => backup::VAR_PARENTID));
-
-        // no need to annotate ids or files yet (one day when remark field supports
-        // embedded fileds, they must be annotated here)
-        */
 
         return $plugin;
     }
 }
+

@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_question extends persistent
-{
+class absquestion_question extends persistent {
     const TABLE = 'absquestion_question';
 
     protected $json;
@@ -35,53 +34,53 @@ class absquestion_question extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
-            'absid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'absgid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'sequence' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'parentid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'qmax' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'bonus' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'info' => array(
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ),
+                'absid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'absgid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'sequence' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'parentid' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'qmax' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'bonus' => array(
+                        'type' => PARAM_INT,
+                        'default' => 0
+                ),
+                'info' => array(
+                        'type' => PARAM_RAW,
+                        'default' => null,
+                        'null' => NULL_ALLOWED
+                ),
         );
     }
 
     public static function save_data($data, $groupidsbysequence) {
         //we should use get_records_select since get_records come unkeyed
-        $questions = static::get_records_select('parentid = :parentid AND absid = :absid', ['parentid' => 0, 'absid' => $data['id']]);
+        $questions =
+                static::get_records_select('parentid = :parentid AND absid = :absid', ['parentid' => 0, 'absid' => $data['id']]);
 
         foreach ($data['questions'] as $questionvalue) {
             $questiondata = (object) [
-                'absid' => $data['id'],
-                'absgid' => !empty($questionvalue['group']) ? $groupidsbysequence[$questionvalue['group']] : 0,
-                'sequence' => $questionvalue['sequence'],
-                'qmax' => $questionvalue['qmax'],
-                'bonus' => $questionvalue['bonus'],
-                'parentid' => 0
+                    'absid' => $data['id'],
+                    'absgid' => !empty($questionvalue['group']) ? $groupidsbysequence[$questionvalue['group']] : 0,
+                    'sequence' => $questionvalue['sequence'],
+                    'qmax' => $questionvalue['qmax'],
+                    'bonus' => $questionvalue['bonus'],
+                    'parentid' => 0
             ];
 
             if ($questions[$questionvalue['id']]) {
@@ -96,16 +95,17 @@ class absquestion_question extends persistent
             }
 
             if (isset($questionvalue['subq']) && is_array($questionvalue['subq'])) {
-                $subquestions = static::get_records_select('parentid = :parentid AND absid = :absid', ['parentid' => $question->get('id'), 'absid' => $data['id']]);
+                $subquestions = static::get_records_select('parentid = :parentid AND absid = :absid',
+                        ['parentid' => $question->get('id'), 'absid' => $data['id']]);
 
                 foreach ($questionvalue['subq'] as $subquestionvalue) {
                     $subquestiondata = (object) [
-                        'absid' => $data['id'],
-                        'absgid' => 0,
-                        'sequence' => $subquestionvalue['sequence'],
-                        'qmax' => $subquestionvalue['qmax'],
-                        'bonus' => 0,
-                        'parentid' => $question->get('id')
+                            'absid' => $data['id'],
+                            'absgid' => 0,
+                            'sequence' => $subquestionvalue['sequence'],
+                            'qmax' => $subquestionvalue['qmax'],
+                            'bonus' => 0,
+                            'parentid' => $question->get('id')
                     ];
 
                     if ($subquestions[$subquestionvalue['id']]) {
@@ -131,8 +131,7 @@ class absquestion_question extends persistent
         }
     }
 
-    public function after_delete($result)
-    {
+    public function after_delete($result) {
         $subquestions = static::get_records(['parentid' => $this->get('id')]);
         foreach ($subquestions as $subquestion) {
             $subquestion->delete();
@@ -145,23 +144,23 @@ class absquestion_question extends persistent
         $questions = static::get_records(['parentid' => 0, 'absid' => $absid], 'sequence');
         foreach ($questions as $question) {
             $questiondata = [
-                'id' => $question->get('id'),
-                'sequence' => $question->get('sequence'),
-                'group' => isset($groups[$question->get('absgid')]) ? $groups[$question->get('absgid')]->get('sequence') : 0,
-                'qmax' => $question->get('qmax'),
-                'bonus' => $question->get('bonus'),
-                'info' => $question->get('info'),
-                'parentid' => 0
+                    'id' => $question->get('id'),
+                    'sequence' => $question->get('sequence'),
+                    'group' => isset($groups[$question->get('absgid')]) ? $groups[$question->get('absgid')]->get('sequence') : 0,
+                    'qmax' => $question->get('qmax'),
+                    'bonus' => $question->get('bonus'),
+                    'info' => $question->get('info'),
+                    'parentid' => 0
             ];
 
             if ($subquestions = static::get_records(['parentid' => $question->get('id'), 'absid' => $absid], 'sequence')) {
                 $questiondata['subq'] = [];
                 foreach ($subquestions as $subquestion) {
                     $questiondata['subq'][] = [
-                        'id' => $subquestion->get('id'),
-                        'sequence' => $subquestion->get('sequence'),
-                        'qmax' => $subquestion->get('qmax'),
-                        'info' => $subquestion->get('info'),
+                            'id' => $subquestion->get('id'),
+                            'sequence' => $subquestion->get('sequence'),
+                            'qmax' => $subquestion->get('qmax'),
+                            'info' => $subquestion->get('info'),
                     ];
                 }
             }

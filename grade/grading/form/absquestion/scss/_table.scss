@@ -3,41 +3,53 @@
     height: 22px;
 }
 
-.ul-settings{
-    li{
+.ul-settings {
+    li {
         padding-bottom: 3px;
     }
 }
 
-.grouppas-line{
+.grouppas-line {
     padding-bottom: 26px;
 }
 
-.help-icon{
+.help-icon {
     cursor: pointer;
     color: #0f6fc5;
 }
 
-.help-icon.top-select{
+.help-icon.top-select {
     position: relative;
     top: -8px;
 }
 
-.draft-label{
+.draft-label {
     position: relative;
     left: -70px;
     padding: 10px;
 }
 
-.error-comment-accumulate{
+.error-comment-accumulate {
     display: none;
     position: relative;
     background-color: #e1b0b0;
     color: #000;
     font-weight: 600;
     font-size: 11px;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-    padding: .25rem .5rem;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        "Noto Sans",
+        sans-serif,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji";
+    padding: 0.25rem 0.5rem;
     text-align: center;
     top: 4px;
 }

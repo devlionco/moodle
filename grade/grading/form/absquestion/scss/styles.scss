@@ -10,8 +10,8 @@ body#page-mod-assign-grader,
 body#page-grade-grading-manage {
     @import "err";
 
-    div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt{
-        display:none;
+    div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt {
+        display: none;
     }
 }
 
@@ -21,22 +21,22 @@ body#page-mod-assign-grader {
     }
 
     // comments background
-    .absqcommentdrawable{
+    .absqcommentdrawable {
         background-color: rgba(242, 242, 242, 0.2);
         padding: 5px;
     }
 
     button.atto_title_button.atto_hasmenu {
-        span.editor_atto_menu_icon i{
+        span.editor_atto_menu_icon i {
             display: none;
         }
-        span.editor_atto_menu_icon i:first-child{
+        span.editor_atto_menu_icon i:first-child {
             display: inline-block;
         }
-        span.editor_atto_menu_expand i{
+        span.editor_atto_menu_expand i {
             display: none;
         }
-        span.editor_atto_menu_expand i:first-child{
+        span.editor_atto_menu_expand i:first-child {
             display: inline-block;
         }
     }
@@ -51,6 +51,6 @@ html[dir="rtl"] {
 }
 
 /* fix atto editor plugin - fontcolor */
-.atto_fontcolor_button.atto_menu a{
-    margin: 0!important;
+.atto_fontcolor_button.atto_menu a {
+    margin: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
