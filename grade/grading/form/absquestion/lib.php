@@ -340,12 +340,15 @@ class gradingform_absquestion_instance extends gradingform_instance {
             $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
         }
 
-        $controller = $gradingformelement->get_gradinginstance()->get_controller();
+        $gradinginstance = $gradingformelement->get_gradinginstance();
+
+        $controller = $gradinginstance->get_controller();
+        $gradeid = $gradinginstance->get_data('itemid');
 
         $context = $controller->get_context();
         $cm = $DB->get_record('course_modules', ['id' => $context->instanceid]);
 
-        $groupedcomments = \gradingform_absquestion\absquestion_comment::get_assign_comments_for_template($cm->instance);
+        $groupedcomments = \gradingform_absquestion\absquestion_comment::get_assign_comments_for_template($cm->instance, $gradeid);
 
         // Check if groups submittions is enabled.
         $assign = $DB->get_record('assign', array('id' => $PAGE->cm->instance));
@@ -369,6 +372,7 @@ class gradingform_absquestion_instance extends gradingform_instance {
             $subqnummax,
             $questioncolor,
             $method,
+            $gradeid
         ];
 
         $settings = json_encode($settings);

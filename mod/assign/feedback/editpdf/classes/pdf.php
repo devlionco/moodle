@@ -1997,12 +1997,7 @@ class pdf extends TcpdfFpdi
             $split = $this->rgb2hex2rgb($colors[0]);
         }
 
-        // $this->SetFillColor(intval($split["r"]), intval($split["g"]), intval($split["b"]));
-        $this->SetFillColor(255, 255, 255);
-        // === end colors
-
         $this->setCellPaddings(2, 2, 2, 2);
-        // $this->writeHTMLCell($width, 0, $x, $y, $rawtext, 0, 0, false, true, 'C');
         $this->writeHTMLCell(
             150, 
             0, 
@@ -2019,7 +2014,7 @@ class pdf extends TcpdfFpdi
                     )
                 )),
             0, 
-            1, 
+            0, 
             true, 
             'J'
         );

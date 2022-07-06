@@ -33,7 +33,7 @@
  * @param String colour
  * @param String rawtext
  */
-var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext, points, sequence, questionid) {
+var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext, points, sequence, questionid, commentid) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.
@@ -42,6 +42,14 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
      * @public
      */
     this.editor = editor;
+
+    /**
+     * Comment id
+     * @property commentid
+     * @type Int
+     * @public
+     */
+    this.commentid = commentid || 0;
 
     /**
      * Grade id
@@ -173,6 +181,7 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
             colour: this.colour,
             sequence: parseInt(this.sequence, 10),
             questionid: parseInt(this.questionid, 10),
+            commentid: parseInt(this.commentid, 10),
         };
     };
 
@@ -224,6 +233,13 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
                 this.sequence = +commentSequence;
             }
 
+            if (commentId && this.commentid === 0){
+                this.commentid = +commentId;
+            }
+
+            // eslint-disable-next-line no-console
+            console.log('nnn ', this.commentid, commentId);
+
             if (commentId && !this.rawtext){
                 if (document.getElementsByClassName('dir-rtl').length !== 0) {
                     this.rawtext = '<p dir="rtl" style="text-align: right;">' + commentText + '</p>';
@@ -234,29 +250,14 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
 
             var usedpointEl = Y.one('#usedpoint_' + this.questionid);
             var usedpoint = +usedpointEl._node.innerHTML;
-            var maxpoint = +Y.one('#maxpoint_' + this.questionid)._node.innerHTML;
             var absqBtn = Y.one('body#page-mod-assign-grader .absqeditorbutton');
             var absqBtnValue = absqBtn._node.attributes['aria-pressed'].nodeValue;
 
-            // eslint-disable-next-line no-console
-            console.log('now ddd ', this.isNumeric(this.points),
-            this.points, this.isNumeric(usedpoint), usedpoint, this.isNumeric(maxpoint), maxpoint, absqBtnValue);
-
             if (this.isNumeric(usedpoint) &&
-                this.isNumeric(maxpoint) &&
                 this.isNumeric(this.points) &&
-                absqBtnValue === "true"){
-                if (+this.points + usedpoint <= maxpoint){
-                    // add comment and change usedpoint
-                    usedpointEl._node.innerHTML = +this.points + usedpoint;
-                } else {
-                    // error, can't add comment
-                    $('#warning_modal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    return;
-                }
+                absqBtnValue === "true"
+                ) {
+                usedpointEl._node.innerHTML = +this.points + usedpoint;
             }
         }
 
@@ -547,6 +548,7 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
         this.points = 0;
         this.sequence = 0;
         this.questionid = 0;
+        this.commentid = 0;
 
         // Min width and height is always more than 40px.
         return true;

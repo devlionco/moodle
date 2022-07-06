@@ -671,7 +671,8 @@ EDITOR.prototype = {
                     absqcomment.rawtext,
                     absqcomment.points,
                     absqcomment.sequence,
-                    absqcomment.questionid);
+                    absqcomment.questionid,
+                    absqcomment.commentid);
             }
             for (j = 0; j < this.pages[i].htmlcomments.length; j++) {
                 htmlcomment = this.pages[i].htmlcomments[j];

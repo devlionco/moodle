@@ -364,6 +364,52 @@ define([
             });
         }
 
+        async maxPointChange(value, addCommentEl){
+            let self = this;
+            let state = self.obsItem.getState();
+            let inputCorrectValue = self.obsItem.callMethodReturn({
+                value: value,
+                zero: false,
+            }, 'isIntPositiveNum');
+
+            if (inputCorrectValue){
+                const saveForm = await self.obsItem.callMethodReturn(0, 'saveAndContinues');
+                if (saveForm) {
+                    console.log('saved');
+                    addCommentEl.setAttribute('data-point', value);
+
+                    const qId = +addCommentEl.getAttribute('data-questionid');
+
+                    let minPoint = Number.POSITIVE_INFINITY;
+                    state.questions.forEach(function(qEl) {
+                        if (qEl.id === qId){
+                            qEl.maxpoints = value;
+                        }
+                        const maxpoint = +qEl.maxpoints;
+                        if (minPoint > maxpoint){
+                            minPoint = maxpoint;
+                        }
+                        qEl.subq.forEach(function(sEl) {
+                            if (sEl.id === qId){
+                                sEl.maxpoint = value;
+                            }
+                            const maxpoint = +sEl.maxpoint;
+                            if (minPoint > maxpoint){
+                                minPoint = maxpoint;
+                            }
+                        });
+                    });
+
+                    state.globalMaxGrade.minPoint = minPoint;
+                    self.obsItem.setState(state);
+
+                    self.obsItem.callMethodReturn(false, "toastSuccessShow");
+                } else {
+                    console.log('error max-point-input');
+                }
+            }
+        }
+
         actions() {
             let self = this;
 
@@ -437,6 +483,8 @@ define([
                 const group = groupEl.options[groupEl.selectedIndex].text;
                 // Const parrentId = parrent.getAttribute('id');
 
+                const addCommentEl = parrent.querySelector('.add-comments');
+
                 if (group) {
                     self.setGroupMaxPoint(group, +this.value);
                 }
@@ -447,6 +495,8 @@ define([
                 self.obsItem.callMethodReturn(false, 'allErr');
 
                 self.obsItem.callMethodReturn(false, 'changeDraftMode');
+
+                self.maxPointChange(+this.value, addCommentEl);
             });
 
             // Bonus change
@@ -469,6 +519,12 @@ define([
                 self.obsItem.callMethod(state, 'outputDraw');
 
                 self.obsItem.callMethodReturn(false, 'changeDraftMode');
+
+                const parrent = this.closest('tr');
+
+                const addCommentEl = parrent.querySelector('.add-comments');
+
+                self.maxPointChange(+this.value, addCommentEl);
             });
         }
     };

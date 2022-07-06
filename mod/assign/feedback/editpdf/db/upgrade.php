@@ -180,5 +180,16 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022050200, 'assignfeedback', 'editpdf');
     }
 
+    if ($oldversion < 2022070500) {
+        $table = new xmldb_table('assignfeedback_editpdf_absq');
+        $field = new \xmldb_field('commentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'sequence');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2022070500, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }

@@ -29,6 +29,7 @@ require([
             assignid: settings[0],
             decorateQuestions: settings[4],
             gradingMethod: settings[5],
+            gradeId: settings[6],
         };
 
         const translateArr = [
@@ -80,6 +81,13 @@ require([
         // ====
 
         let obsItem = new Observer(state);
+
+        // chack if string is number
+        const isNumeric = function(str) {
+            if (typeof str == "number") {return true;}
+            if (typeof str != "string") {return false;}
+            return !isNaN(str) && !isNaN(parseFloat(str));
+        };
 
         obsItem.on('body', 'click', '#root_absolute_q .add-comment-btn', async function() {
             let sequence = +this.getAttribute('data-sequence');
@@ -168,7 +176,28 @@ require([
             }
 
             editPdfCommentBtn.attr('data-points', self.attr("data-points"));
-            // editPdfCommentBtn.innerHTML =
+
+            // check usedpoint
+            let questionid = self.attr("data-questionid");
+            let usedpointEl = $('#usedpoint_' + questionid);
+            let usedpoint = +usedpointEl.html();
+            let maxpoint = +$('#maxpoint_' + questionid).html();
+            let point = +self.attr("data-points");
+
+            console.log(usedpointEl, usedpoint, maxpoint, point);
+
+            if (isNumeric(usedpoint) &&
+                isNumeric(maxpoint) &&
+                isNumeric(point)){
+                if (+point + usedpoint > +maxpoint){
+                    // error, can't add comment
+                    $('#warning_modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return;
+                }
+            }
 
             $("body#page-mod-assign-grader .absqeditorbutton").trigger("click");
         });
@@ -348,7 +377,8 @@ require([
         async function refreshComments(){
             const promise = Ajax.call([
                 {methodname: 'gradingform_absquestion_get_comments_for_template', args: {
-                    assignid: state.assignid
+                    assignid: state.assignid,
+                    gradeid: state.gradeId,
                 }}
             ])[0].done((data) => {
                 // eslint-disable-next-line no-console

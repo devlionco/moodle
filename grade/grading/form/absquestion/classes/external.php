@@ -257,6 +257,7 @@ class external extends external_api {
         return new external_function_parameters(
             array(
                 'assignid' => new external_value(PARAM_INT, 'Assign id', VALUE_REQUIRED),
+                'gradeid' => new external_value(PARAM_INT, 'Assign grades id', VALUE_REQUIRED),
             )
         );
     }
@@ -265,20 +266,23 @@ class external extends external_api {
      * Return the Atto editor init with comments object if exists.
      *
      * @param $assignid
+     * @param $gradeid
      * @return array data
+     * @throws \restricted_context_exception
      * @throws dml_exception
      * @throws invalid_parameter_exception
      * @since  Moodle 3.8
      */
-    public static function get_comments_for_template($assignid) {
+    public static function get_comments_for_template($assignid, $gradeid) {
 
         self::validate_context(context_system::instance());
-        self::validate_parameters(self::get_comments_parameters(), [
+        self::validate_parameters(self::get_comments_for_template_parameters(), [
                 'assignid' => $assignid,
+                'gradeid' => $gradeid,
             ]
         );
 
-        return \gradingform_absquestion\absquestion_comment::get_assign_comments_for_template($assignid);
+        return \gradingform_absquestion\absquestion_comment::get_assign_comments_for_template($assignid, $gradeid);
     }
 
 

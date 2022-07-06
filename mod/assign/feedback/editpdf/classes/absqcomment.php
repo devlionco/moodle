@@ -60,13 +60,16 @@ class absqcomment {
 
     /** @var string The comment sequence. */
     public $sequence = 0;
+
+    /** @var string The comment sequence. */
+    public $commentid = 0;
     /**
      * Convert a compatible stdClass into an instance of a comment.
      * @param \stdClass $record
      */
     public function __construct(\stdClass $record = null) {
         if ($record) {
-            $intcols = array('width', 'x', 'y', 'points', 'sequence', 'questionid');
+            $intcols = array('width', 'x', 'y', 'points', 'sequence', 'questionid', 'commentid');
             foreach ($this as $key => $value) {
                 if (isset($record->$key)) {
                     if (in_array($key, $intcols)) {

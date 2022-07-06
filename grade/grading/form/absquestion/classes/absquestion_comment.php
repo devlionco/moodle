@@ -79,7 +79,7 @@ class absquestion_comment extends persistent
         }
     }
 
-    public static function get_assign_comments_for_template($assignid)
+    public static function get_assign_comments_for_template($assignid, $gradeid)
     {
         global $DB;
 
@@ -89,12 +89,9 @@ class absquestion_comment extends persistent
 
         $activeabs = absquestion::get_record(['definitionid' => $definition->id, 'validated' => 1]);
         if ($activeabs) {
-
             $questions = absquestion_question::get_records(['absid' => $activeabs->get('id'), 'parentid' => 0], 'sequence');
 
             $globalcomments = absquestion_comment_link::get_assign_comments($assignid, null, 1);
-
-            $gradeid = $DB->get_field('grade_items', 'id', ['itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $assignid]);
 
             foreach ($questions as $question) {
 
@@ -103,7 +100,7 @@ class absquestion_comment extends persistent
                 $qid = $question->get('id');
 
                 if ($gradeid) {
-                    $usedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $qid, 0]));
+                    $usedpoints = static::get_usedpoints($gradeid, $qid);
                 }
 
                 $name = get_string('question', 'gradingform_absquestion') . ' ' . $sequence;
@@ -119,7 +116,7 @@ class absquestion_comment extends persistent
                         'text' => $commenttext,
                         'id' => $comment->id,
                         'points' => $comment->points,
-                        'isglobal' => $comment->isglobal
+                        'isglobal' => $comment->isglobal,
                     ];
                 }
 
@@ -131,7 +128,7 @@ class absquestion_comment extends persistent
                         'text' => $globalcommenttext,
                         'id' => $globalcomment->id,
                         'points' => $globalcomment->points,
-                        'isglobal' => $globalcomment->isglobal
+                        'isglobal' => $globalcomment->isglobal,
                     ];
                 }
 
@@ -145,7 +142,7 @@ class absquestion_comment extends persistent
                     $subqid = $subquestion->get('id');
 
                     if ($gradeid) {
-                        $subusedpoints = array_sum($DB->get_fieldset_select('assignfeedback_editpdf_absq', 'points', 'gradeid = ? AND questionid = ? AND draft = ?', [$gradeid, $subqid, 0]));
+                        $usedpoints = static::get_usedpoints($gradeid, $subqid);
                     }
 
                     $subname = $name . '.' . $subsequence;
@@ -160,7 +157,7 @@ class absquestion_comment extends persistent
                             'text' => $subtext,
                             'id' => $subcomment->id,
                             'points' => $subcomment->points,
-                            'isglobal' => $subcomment->isglobal
+                            'isglobal' => $subcomment->isglobal,
                         ];
                     }
 
@@ -201,5 +198,35 @@ class absquestion_comment extends persistent
         }
 
         return $return;
+    }
+
+    public static function get_usedpoints($gradeid, $questionid) {
+        global $DB;
+        $usedpoints = 0;
+        $draftedcount = $undraftedcount = [];
+        $draftedcomments = $DB->get_records('assignfeedback_editpdf_absq', ['gradeid' => $gradeid, 'questionid' => $questionid, 'draft' => 1]);
+        $undraftedcomments = $DB->get_records('assignfeedback_editpdf_absq', ['gradeid' => $gradeid, 'questionid' => $questionid, 'draft' => 0]);
+
+        foreach ($undraftedcomments as $undraftedcomment) {
+            $key = $questionid . '_' . $undraftedcomment->commentid;
+            if (!isset($undraftedcount[$key])) {
+                $undraftedcount[$key] = 0;
+            }
+            $undraftedcount[$key]++;
+            $usedpoints += $undraftedcomment->points;
+        }
+
+        foreach ($draftedcomments as $draftedcomment) {
+            $key = $questionid . '_' . $draftedcomment->commentid;
+            if (!isset($draftedcount[$key])) {
+                $draftedcount[$key] = 0;
+            }
+            $draftedcount[$key]++;
+            if ($draftedcount[$key] > $undraftedcount[$key]) {
+                $usedpoints += $draftedcomment->points;
+            }
+        }
+
+        return $usedpoints;
     }
 }
