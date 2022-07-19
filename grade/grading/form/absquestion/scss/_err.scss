@@ -58,3 +58,16 @@
 .bs-tooltip-left.help-tooltip .arrow::before {
     display: none;
 }
+
+.grading_info_block{
+    display: inline-block;
+    position: absolute;
+    margin-left: 10px;
+    margin-top: 14px;
+    #grading_method_error{
+        display: inline-block;
+        background: #e1b0b0;
+        color: #000;
+        font-weight: 600;
+    }
+}

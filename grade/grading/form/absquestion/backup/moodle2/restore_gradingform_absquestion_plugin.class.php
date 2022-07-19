@@ -22,8 +22,6 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Restores the absquestion specific data from grading.xml file
  *
@@ -64,14 +62,7 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
      */
     protected function define_instance_plugin_structure() {
 
-        $paths = array();
-
-        //TODO RESTORE FILES
-        /*
-        $paths[] = new restore_path_element('gradinform_absquestion_filling',
-            $this->get_pathfor('/fillings/filling'));
-        */
-        return $paths;
+        return [];
     }
 
     /**
@@ -160,9 +151,9 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
 
         $data = (object)$data;
 
-        $sql = "SELECT instance FROM {course_modules} cm 
-                    LEFT JOIN {context} c ON c.instanceid = cm.id 
-                    LEFT JOIN {grading_areas} ga ON c.id = ga.contextid 
+        $sql = "SELECT instance FROM {course_modules} cm
+                    LEFT JOIN {context} c ON c.instanceid = cm.id
+                    LEFT JOIN {grading_areas} ga ON c.id = ga.contextid
                         WHERE ga.id = ?";
 
         $assignid = $DB->get_field_sql($sql, [$this->get_new_parentid('grading_area')]);
@@ -180,26 +171,4 @@ class restore_gradingform_absquestion_plugin extends restore_gradingform_plugin 
 
         $DB->insert_record('absquestion_comment_link', $data);
     }
-
-    /**
-     * Processes filling element data
-     *
-     * @param stdClass|array $data
-     */
-
-    /*TODO
-    public function process_gradinform_absquestion_filling($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $data->instanceid = $this->get_new_parentid('grading_instance');
-        $data->criterionid = $this->get_mappingid('gradingform_absquestion_criterion', $data->criterionid);
-        $data->levelid = $this->get_mappingid('gradingform_absquestion_level', $data->levelid);
-
-        if (!empty($data->criterionid)) {
-            $DB->insert_record('gradingform_absquestion_fillings', $data);
-        }
-
-    }
-    */
 }

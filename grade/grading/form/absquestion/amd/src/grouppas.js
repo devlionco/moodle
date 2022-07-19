@@ -36,7 +36,7 @@ define(['gradingform_absquestion/grouppas_template'], function(GrouppasFn) {
 
                 if (!grouppas[group]) {
                     grouppas[group] = {num: 1};
-                    grouppas[group].current = 0;
+                    grouppas[group].current = 1;
                     grouppas[group].qmaxpoints = qmaxpoints;
                 } else {
                     grouppas[group].num = +grouppas[group].num + 1;

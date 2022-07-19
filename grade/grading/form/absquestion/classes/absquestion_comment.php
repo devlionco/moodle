@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_comment extends persistent
-{
+class absquestion_comment extends persistent {
     const TABLE = 'absquestion_comment';
 
     const COLORARRAY = [
@@ -49,12 +48,11 @@ class absquestion_comment extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
             'text' => array(
                 'type' => PARAM_RAW,
-                'default' => NULL
+                'default' => null
             ),
             'grade' => array(
                 'type' => PARAM_INT,
@@ -71,16 +69,14 @@ class absquestion_comment extends persistent
         );
     }
 
-    protected function after_delete($result)
-    {
+    protected function after_delete($result) {
         $links = absquestion_comment_link::get_records(['absqcid' => $this->get('id')]);
         foreach ($links as $link) {
             $link->delete();
         }
     }
 
-    public static function get_assign_comments_for_template($assignid, $gradeid)
-    {
+    public static function get_assign_comments_for_template($assignid, $gradeid) {
         global $DB;
 
         $return = [];
@@ -89,6 +85,7 @@ class absquestion_comment extends persistent
 
         $activeabs = absquestion::get_record(['definitionid' => $definition->id, 'validated' => 1]);
         if ($activeabs) {
+            $grademethodstr = get_string('grading_method_' . $activeabs->get('method'), 'gradingform_absquestion');
             $questions = absquestion_question::get_records(['absid' => $activeabs->get('id'), 'parentid' => 0], 'sequence');
 
             $globalcomments = absquestion_comment_link::get_assign_comments($assignid, null, 1);
@@ -96,12 +93,9 @@ class absquestion_comment extends persistent
             foreach ($questions as $question) {
 
                 $sequence = $question->get('sequence');
-                $usedpoints = 0;
                 $qid = $question->get('id');
 
-                if ($gradeid) {
-                    $usedpoints = static::get_usedpoints($gradeid, $qid);
-                }
+                $usedpoints = $gradeid ? static::get_usedpoints($gradeid, $qid) : 0;
 
                 $name = get_string('question', 'gradingform_absquestion') . ' ' . $sequence;
 
@@ -132,18 +126,22 @@ class absquestion_comment extends persistent
                     ];
                 }
 
-                $subquestions = absquestion_question::get_records(['absid' => $activeabs->get('id'), 'parentid' => $question->get('id')], 'sequence');
+                $subquestions = absquestion_question::get_records(
+                    [
+                        'absid' => $activeabs->get('id'),
+                        'parentid' => $question->get('id')
+                    ],
+                    'sequence'
+                );
                 $subquestionsdata = [];
 
                 foreach ($subquestions as $subquestion) {
 
                     $subsequence = $subquestion->get('sequence');
-                    $subusedpoints = 0;
                     $subqid = $subquestion->get('id');
 
-                    if ($gradeid) {
-                        $usedpoints = static::get_usedpoints($gradeid, $subqid);
-                    }
+                    $subusedpoints = $gradeid ? static::get_usedpoints($gradeid, $subqid) : 0;
+                    $usedpoints += $subusedpoints;
 
                     $subname = $name . '.' . $subsequence;
 
@@ -177,9 +175,12 @@ class absquestion_comment extends persistent
                         'subqId' => $subqid,
                         'usedpoint' => $subusedpoints,
                         'max' => $subquestion->get('qmax'),
-                        'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ? static::COLORARRAY[$sequence] : static::COLORARRAY[0],
+                        'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence])
+                                ? static::COLORARRAY[$sequence]
+                                : static::COLORARRAY[0],
                         'sequence' => $subsequence,
-                        'info' => $subquestion->get('info'),
+                        'info' => $subquestion->get('info') ?? '',
+                        'grademethod' => $grademethodstr,
                     ];
                 }
 
@@ -187,12 +188,15 @@ class absquestion_comment extends persistent
                     'comments' => $commentsdata,
                     'subq' => $subquestionsdata,
                     'sequence' => $sequence,
-                    'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence]) ? static::COLORARRAY[$sequence] : static::COLORARRAY[0],
+                    'color' => !empty($activeabs->get('questioncolor')) && isset(static::COLORARRAY[$sequence])
+                        ? static::COLORARRAY[$sequence]
+                        : static::COLORARRAY[0],
                     'max' => $question->get('qmax'),
-                    'info' => $question->get('info'),
+                    'info' => $question->get('info') ?? '',
                     'questionId' => $qid,
                     'usedpoint' => $usedpoints,
                     'qorder' => $sequence,
+                    'grademethod' => $grademethodstr,
                 ];
             }
         }
@@ -204,8 +208,20 @@ class absquestion_comment extends persistent
         global $DB;
         $usedpoints = 0;
         $draftedcount = $undraftedcount = [];
-        $draftedcomments = $DB->get_records('assignfeedback_editpdf_absq', ['gradeid' => $gradeid, 'questionid' => $questionid, 'draft' => 1]);
-        $undraftedcomments = $DB->get_records('assignfeedback_editpdf_absq', ['gradeid' => $gradeid, 'questionid' => $questionid, 'draft' => 0]);
+        $draftedcomments = $DB->get_records('assignfeedback_editpdf_absq',
+            [
+                'gradeid' => $gradeid,
+                'questionid' => $questionid,
+                'draft' => 1
+            ]
+        );
+        $undraftedcomments = $DB->get_records('assignfeedback_editpdf_absq',
+            [
+                'gradeid' => $gradeid,
+                'questionid' => $questionid,
+                'draft' => 0
+            ]
+        );
 
         foreach ($undraftedcomments as $undraftedcomment) {
             $key = $questionid . '_' . $undraftedcomment->commentid;

@@ -16,7 +16,7 @@ define([], function() {
             }
 
             const select = selectDraw(num, current, key);
-            result = result + line(key, select);
+            result = result + line(key, select, num);
         }
 
         return result;
@@ -31,7 +31,7 @@ define([], function() {
             title=""
             ${state.freese ? "disabled" : ""}
             >`;
-            for (let i = 0; i <= lengthSelect; i++) {
+            for (let i = 1; i <= lengthSelect; i++) {
                 if (+currentSelect === i) {
                     result = result + `<option selected="selected" value="${i}">${i}</option>`;
                 } else {
@@ -42,9 +42,9 @@ define([], function() {
             return result;
         }
 
-        function line(letter, select) {
+        function line(letter, select, num) {
             // eslint-disable-next-line max-len
-            return `<div class="grouppas-line">${state.translate.group} ${letter} ${state.translate.from} ${select} ${state.translate.questions}</div>`;
+            return `<div class="grouppas-line">${state.translate.group} ${letter}: ${select} ${state.translate.from} ${num} <span class="text-lowercase">${state.translate.questions}</span></div>`;
         }
     };
 });

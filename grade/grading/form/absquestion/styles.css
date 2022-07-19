@@ -1,5 +1,6 @@
 #root_absolute_q #main_modal {
-    padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
+    padding-right: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
 }
 
 #root_absolute_q #main_modal .modal-dialog {
@@ -54,7 +55,8 @@
 
 #root_absolute_q #add_comment_modal .editor_atto_content,
 #root_absolute_q #info_modal .editor_atto_content {
-    height: 200px !important; /* stylelint-disable-line declaration-no-important */
+    height: 200px !important;
+    /* stylelint-disable-line declaration-no-important */
     border: 1px solid #a7a7a7;
 }
 
@@ -68,7 +70,8 @@
 }
 
 #root_absolute_q #manage_modal .editor_atto_content {
-    height: 100px !important; /* stylelint-disable-line declaration-no-important */
+    height: 100px !important;
+    /* stylelint-disable-line declaration-no-important */
     border: 1px solid #a7a7a7;
 }
 
@@ -305,7 +308,8 @@ body#page-grade-grading-manage .tooltip .tooltip-inner {
 body#page-mod-assign-view .tooltip.bs-tooltip-top,
 body#page-mod-assign-grader .tooltip.bs-tooltip-top,
 body#page-grade-grading-manage .tooltip.bs-tooltip-top {
-    top: 4px !important; /* stylelint-disable-line declaration-no-important */
+    top: 4px !important;
+    /* stylelint-disable-line declaration-no-important */
 }
 
 body#page-mod-assign-view .tooltip .tooltip-wide,
@@ -389,6 +393,24 @@ body#page-grade-grading-manage .bs-tooltip-left.help-tooltip .arrow::before {
     display: none;
 }
 
+body#page-mod-assign-view .grading_info_block,
+body#page-mod-assign-grader .grading_info_block,
+body#page-grade-grading-manage .grading_info_block {
+    display: inline-block;
+    position: absolute;
+    margin-left: 10px;
+    margin-top: 14px;
+}
+
+body#page-mod-assign-view .grading_info_block #grading_method_error,
+body#page-mod-assign-grader .grading_info_block #grading_method_error,
+body#page-grade-grading-manage .grading_info_block #grading_method_error {
+    display: inline-block;
+    background: #e1b0b0;
+    color: #000;
+    font-weight: 600;
+}
+
 body#page-mod-assign-view div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt,
 body#page-mod-assign-grader div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt,
 body#page-grade-grading-manage div#fitem_id_advancedgrading a[data-region="popout-button"] i.fa-arrows-alt {
@@ -455,5 +477,6 @@ html[dir="rtl"] body#page-grade-grading-manage #root_absolute_q .question-block 
 
 /* fix atto editor plugin - fontcolor */
 .atto_fontcolor_button.atto_menu a {
-    margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+    margin: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
 }

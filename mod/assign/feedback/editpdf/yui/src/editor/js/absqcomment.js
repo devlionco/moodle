@@ -253,11 +253,20 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
             var absqBtn = Y.one('body#page-mod-assign-grader .absqeditorbutton');
             var absqBtnValue = absqBtn._node.attributes['aria-pressed'].nodeValue;
 
+            var questionStructureObj = JSON.parse($('#root_absolute_q').attr('data-settings'));
+            var parentQuestionId = questionStructureObj[7][this.questionid];
+
             if (this.isNumeric(usedpoint) &&
                 this.isNumeric(this.points) &&
                 absqBtnValue === "true"
                 ) {
                 usedpointEl._node.innerHTML = +this.points + usedpoint;
+
+                if (parentQuestionId && parentQuestionId !== 0){
+                    var parentpointEl = Y.one('#usedpoint_' + parentQuestionId);
+                    var usedparentpoint = +parentpointEl._node.innerHTML;
+                    parentpointEl._node.innerHTML = +this.points + usedparentpoint;
+                }
             }
         }
 
@@ -462,6 +471,9 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
         var absqcomments;
 
         absqcomments = this.editor.pages[this.editor.currentpage].absqcomments;
+
+        var questionStructureObj = JSON.parse($('#root_absolute_q').attr('data-settings'));
+
         for (i = 0; i < absqcomments.length; i++) {
             if (absqcomments[i] === this) {
                 absqcomments.splice(i, 1);
@@ -471,8 +483,16 @@ var ABSQCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
                 // change current points
                 var usedpointEl = Y.one('#usedpoint_' + this.questionid);
                 var usedpoint = +usedpointEl._node.innerHTML;
+                var parentQuestionId = questionStructureObj[7][this.questionid];
+
                 if (usedpoint && +this.points){
                     usedpointEl._node.innerHTML = usedpoint - +this.points;
+
+                    if (parentQuestionId && parentQuestionId !== 0){
+                        var parentpointEl = Y.one('#usedpoint_' + parentQuestionId);
+                        var usedparentpoint = +parentpointEl._node.innerHTML;
+                        parentpointEl._node.innerHTML = usedparentpoint - +this.points;
+                    }
                 }
 
                 return;

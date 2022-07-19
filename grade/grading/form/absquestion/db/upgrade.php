@@ -57,8 +57,15 @@ function xmldb_gradingform_absquestion_upgrade($oldversion) {
             $definition = \gradingform_absquestion\absquestion::fetch_definition($comment->assignid);
             $absquestion = \gradingform_absquestion\absquestion::get_record(['definitionid' => $definition->id]);
             if ($absquestion) {
-                if ($question = \gradingform_absquestion\absquestion_question::get_record(['absid' => $absquestion->get('id'), 'sequence' => $comment->qsequence])) {
-                    $DB->set_field(\gradingform_absquestion\absquestion_comment_link::TABLE, 'absqid', $question->get('id'), ['id' => $comment->id]);
+                $question = \gradingform_absquestion\absquestion_question::get_record(
+                    [
+                        'absid' => $absquestion->get('id'),
+                        'sequence' => $comment->qsequence
+                    ]
+                );
+                if ($question) {
+                    $commentlinktable = \gradingform_absquestion\absquestion_comment_link::TABLE;
+                    $DB->set_field($commentlinktable, 'absqid', $question->get('id'), ['id' => $comment->id]);
                 }
             }
         }
@@ -87,11 +94,29 @@ function xmldb_gradingform_absquestion_upgrade($oldversion) {
 
     if ($oldversion < 2022050201) {
         $table = new \xmldb_table('absquestion');
-        $field = new \xmldb_field('qtotalmax', XMLDB_TYPE_INTEGER, 1, true, true, false, absquestion::QTOTALMAXDEFAULT, 'questioncolor');
+        $field = new \xmldb_field(
+            'qtotalmax',
+            XMLDB_TYPE_INTEGER,
+            1,
+            true,
+            true,
+            false,
+            absquestion::QTOTALMAXDEFAULT,
+            'questioncolor'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new \xmldb_field('subqnummax', XMLDB_TYPE_INTEGER, 1, true, true, false, absquestion::SUBQNUMMAXDEFAULT, 'qtotalmax');
+        $field = new \xmldb_field(
+            'subqnummax',
+            XMLDB_TYPE_INTEGER,
+            1,
+            true,
+            true,
+            false,
+            absquestion::SUBQNUMMAXDEFAULT,
+            'qtotalmax'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

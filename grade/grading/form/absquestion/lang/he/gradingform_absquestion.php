@@ -58,7 +58,7 @@ $string['save_form'] = 'שמירת שינויים והמשך עריכה';
 $string['cancel_changes'] = 'לבטל שינויים';
 $string['error'] = 'שגיאה';
 $string['err_total_max_grade'] = 'הציון המרבי הכולל לא יעלה על הציון המרבי';
-$string['err_grading_method'] = 'אנא בחר שיטת דירוג';
+$string['err_grading_method'] = 'אנא בחר שיטת ניקוד';
 $string['err_submit_modal'] = 'הניקוד לא מסתכם לציון הכולל למטלה (אם יישאר כך, יחושב כמשקלים בהתאמה)';
 $string['actions'] = 'פעולות';
 
@@ -78,7 +78,7 @@ $string['add'] = 'הוסף הערות לבודקים';
 $string['manage_comments'] = 'ניהול הערות';
 $string['must_be_number'] = 'חייב להיות מספר יותר מ-0';
 
-// Comments
+// Comments.
 $string['lowergrade'] = 'הורדת ניקוד';
 $string['accumulate_grade'] = 'צבירת ניקוד';
 $string['view_comment_on_each_question'] = 'הצגת ההערה בכל השאלות';
@@ -91,11 +91,11 @@ $string['yes'] = 'כן';
 $string['no'] = 'לא';
 $string['global'] = 'מוצג בכל השאלות';
 
-// help icons
+// Help icons.
 $string['maximum_grade_desc'] = 'ציון מרבי מגיע מהגדרות המטלה';
 $string['total_questions_desc'] = 'סה"כ שאלות במבחן';
 $string['total_questions_groups_desc'] = 'אם יש בחירת שאלות, יש להגדיר מקבצי שאלות, לכל מקבץ ניתן להגדיר על כמה שאלות יש לענות. בכל מקבץ השאלות צריכות להיות שוות ערך בניקוד.';
-$string['grading_methods_desc'] = 'צבירת ניקוד: ציון מתחיל מ 0 ומוסיפים נקודות 
+$string['grading_methods_desc'] = 'צבירת ניקוד: ציון מתחיל מ 0 ומוסיפים נקודות
 הורדת ניקוד: ציון מתחיל ממלוא הניקוד על השאלה ומורידים נקודות
 ';
 $string['question_desc'] = 'מס. שאלה';

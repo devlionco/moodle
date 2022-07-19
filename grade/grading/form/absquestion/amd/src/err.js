@@ -70,6 +70,7 @@ define([
 
         allErr() {
             let self = this;
+            let state = this.obsItem.getState();
             let result = false;
             let questions = document.querySelectorAll('#root_absolute_q #tableBlock tbody');
             this.errorsArr.length = 0;
@@ -107,13 +108,17 @@ define([
                 this.errorsArr.push('maxgrade');
             }
 
-            if (this.grouppasErr()) {
-                result = true;
-            }
+            // if (this.grouppasErr()) {
+            //     result = true;
+            // }
 
             if (this.gradingMethodsErr()) {
                 result = true;
                 this.errorsArr.push('gradingMethod');
+
+                $('#grading_method_error').html(state.translate.err_grading_method);
+            } else {
+                $('#grading_method_error').html('');
             }
 
             this.errSetState();
@@ -153,7 +158,7 @@ define([
                     errorStr.push(`${state.translate.error}: ${state.translate.err_total_max_grade}`);
                 }
                 if (el === 'gradingMethod') {
-                    errorStr.push(`${state.translate.error}: ${state.translate.err_grading_method}`);
+                    // errorStr.push(`${state.translate.error}: ${state.translate.err_grading_method}`);
                 }
             });
 
@@ -183,24 +188,24 @@ define([
             return false;
         }
 
-        grouppasErr() {
-            let self = this;
-            let result = false;
+        // grouppasErr() {
+        //     let self = this;
+        //     let result = false;
 
-            // Draw tooltips
-            let allGrouppasEls = document.querySelectorAll("#root_absolute_q .select-grouppas");
+        //     // Draw tooltips
+        //     let allGrouppasEls = document.querySelectorAll("#root_absolute_q .select-grouppas");
 
-            allGrouppasEls.forEach(function(el) {
-                if (+el.selectedIndex === 0) {
-                    result = true;
-                    el.setAttribute('data-original-title', self.state.translate.must_be_number);
-                    $(el).tooltip({trigger: 'manual'}).tooltip('show');
-                } else {
-                    $(el).tooltip({trigger: 'manual'}).tooltip('hide');
-                }
-            });
+        //     allGrouppasEls.forEach(function(el) {
+        //         if (+el.selectedIndex === 0) {
+        //             result = true;
+        //             el.setAttribute('data-original-title', self.state.translate.must_be_number);
+        //             $(el).tooltip({trigger: 'manual'}).tooltip('show');
+        //         } else {
+        //             $(el).tooltip({trigger: 'manual'}).tooltip('hide');
+        //         }
+        //     });
 
-            return result;
-        }
+        //     return result;
+        // }
     };
 });

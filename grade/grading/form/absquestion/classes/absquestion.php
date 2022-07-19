@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion extends persistent
-{
+class absquestion extends persistent {
     const TABLE = 'absquestion';
 
     const QTOTALMAXDEFAULT = 10;
@@ -38,8 +37,7 @@ class absquestion extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
             'definitionid' => array(
                 'type' => PARAM_INT,
@@ -90,7 +88,7 @@ class absquestion extends persistent
             $absquestiondata = [
                 'definitionid' => $definition->id,
                 'qtotal' => $data['qtotal'],
-                'groupnum' => isset($data['groups'])? count($data['groups']) : 0,
+                'groupnum' => isset($data['groups']) ? count($data['groups']) : 0,
                 'method' => $data['method'],
                 'totalqbonus' => $data['totalqbonus'],
                 'totalmaxgrade' => $data['totalmaxgrade'],
@@ -101,7 +99,7 @@ class absquestion extends persistent
 
             if ($this->get('id')) {
                 $this->update();
-            } elseif (!static::get_record(['definitionid' => $definition->id])) {
+            } else if (!static::get_record(['definitionid' => $definition->id])) {
                 $this->set('questioncolor', 0);
                 $this->set('qtotalmax', static::QTOTALMAXDEFAULT);
                 $this->set('subqnummax', static::SUBQNUMMAXDEFAULT);
@@ -120,7 +118,10 @@ class absquestion extends persistent
                 absquestion_question::save_data($data, $groupidsbysequence);
             }
 
-            $definition->status = $data['validated'] ? \gradingform_absquestion_controller::DEFINITION_STATUS_READY : \gradingform_absquestion_controller::DEFINITION_STATUS_DRAFT;
+            $definition->status = $data['validated'] ?
+                \gradingform_absquestion_controller::DEFINITION_STATUS_READY
+                : \gradingform_absquestion_controller::DEFINITION_STATUS_DRAFT;
+
             $controller->update_definition($definition);
         }
     }

@@ -3,6 +3,7 @@ define([
 ], function($) {
     return class Toast {
         constructor() {
+            this.cancelHandle();
             if (Toast._instance) {
                 return Toast._instance;
             }
@@ -22,5 +23,8 @@ define([
             $('.toast').on(obj.method, obj.fn);
         }
 
+        cancelHandle(){
+            $('.toast').off('hidden.bs.toast');
+        }
     };
 });

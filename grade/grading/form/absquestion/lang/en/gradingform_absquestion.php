@@ -51,7 +51,7 @@ $string['total'] = 'Total';
 $string['total_bonuses_questions'] = 'Total bonuses questions';
 $string['total_question_to_choose'] = 'Total question to choose';
 $string['total_max_grade'] = 'Total Max Grade';
-$string['err_sub_sum'] = 'Sub-questions points must be equal the question';
+$string['err_sub_sum'] = 'Sum of sub-questions points must be equal to the question\'s max points';
 $string['err_integer'] = 'Must be an integer greater than 0 and less than Maximum grade';
 $string['err_integer_number'] = 'Must be an integer greater than 0 and less than point';
 $string['submit_form'] = 'Submit Form';
@@ -59,7 +59,7 @@ $string['save_form'] = 'Save Form';
 $string['cancel_changes'] = 'Cancel changes?';
 $string['error'] = 'Error';
 $string['err_total_max_grade'] = 'Total Max Grade must not exceed Maximum grade';
-$string['err_grading_method'] = 'Please select grading method';
+$string['err_grading_method'] = 'Please select grading methods';
 $string['err_submit_modal'] = 'Save form with errors?';
 $string['actions'] = 'Actions';
 $string['add'] = 'Add';
@@ -77,7 +77,7 @@ $string['number_of_subq'] = 'Selected {$a} subquestions';
 $string['saved_successfully'] = 'Saved successfully';
 $string['must_be_number'] = 'Must be number more then 0';
 
-// Comments
+// Comments.
 $string['accumulate_grade'] = 'Accumulate grade';
 $string['view_comment_on_each_question'] = 'View the comment on each question';
 $string['add_comment'] = 'Add comment';
@@ -89,12 +89,12 @@ $string['yes'] = 'Yes';
 $string['no'] = 'No';
 $string['global'] = 'GLOBAL';
 
-// help icons
+// Help icons.
 $string['maximum_grade_desc'] = 'Maximum score comes from the task definitions';
 $string['total_questions_desc'] = 'Total test questions';
 $string['total_questions_groups_desc'] = '
 If there is a choice of questions, question sets must be defined, for each group you can define how many questions to answer. Each set of questions should have an equal score.';
-$string['grading_methods_desc'] ='
+$string['grading_methods_desc'] = '
 Scoring: Score starts at 0 and points are added
 Scoring lower: A score starts from the full score on the question and points are deducted
 ';

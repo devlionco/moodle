@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_group extends persistent
-{
+class absquestion_group extends persistent {
     const TABLE = 'absquestion_group';
 
     protected $json;
@@ -35,8 +34,7 @@ class absquestion_group extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
             'absid' => array(
                 'type' => PARAM_INT,
@@ -48,7 +46,7 @@ class absquestion_group extends persistent
             ),
             'name' => array(
                 'type' => PARAM_TEXT,
-                'default' => NULL
+                'default' => null
             ),
             'grouppass' => array(
                 'type' => PARAM_INT,
@@ -96,8 +94,7 @@ class absquestion_group extends persistent
         return $groupidsbysequence;
     }
 
-    public function after_delete($result)
-    {
+    public function after_delete($result) {
         $questions = absquestion_question::get_records(['absgid' => $this->get('id')]);
         foreach ($questions as $question) {
             $question->delete();

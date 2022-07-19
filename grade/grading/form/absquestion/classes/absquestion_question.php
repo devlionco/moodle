@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_question extends persistent
-{
+class absquestion_question extends persistent {
     const TABLE = 'absquestion_question';
 
     protected $json;
@@ -35,8 +34,7 @@ class absquestion_question extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
             'absid' => array(
                 'type' => PARAM_INT,
@@ -71,8 +69,14 @@ class absquestion_question extends persistent
     }
 
     public static function save_data($data, $groupidsbysequence) {
-        //we should use get_records_select since get_records come unkeyed
-        $questions = static::get_records_select('parentid = :parentid AND absid = :absid', ['parentid' => 0, 'absid' => $data['id']]);
+        // We should use get_records_select since get_records come unkeyed.
+        $questions = static::get_records_select(
+            'parentid = :parentid AND absid = :absid',
+            [
+                'parentid' => 0,
+                'absid' => $data['id']
+            ]
+        );
 
         foreach ($data['questions'] as $questionvalue) {
             $questiondata = (object) [
@@ -96,7 +100,13 @@ class absquestion_question extends persistent
             }
 
             if (isset($questionvalue['subq']) && is_array($questionvalue['subq'])) {
-                $subquestions = static::get_records_select('parentid = :parentid AND absid = :absid', ['parentid' => $question->get('id'), 'absid' => $data['id']]);
+                $subquestions = static::get_records_select(
+                    'parentid = :parentid AND absid = :absid',
+                    [
+                        'parentid' => $question->get('id'),
+                        'absid' => $data['id']
+                    ]
+                );
 
                 foreach ($questionvalue['subq'] as $subquestionvalue) {
                     $subquestiondata = (object) [
@@ -131,8 +141,7 @@ class absquestion_question extends persistent
         }
     }
 
-    public function after_delete($result)
-    {
+    public function after_delete($result) {
         $subquestions = static::get_records(['parentid' => $this->get('id')]);
         foreach ($subquestions as $subquestion) {
             $subquestion->delete();

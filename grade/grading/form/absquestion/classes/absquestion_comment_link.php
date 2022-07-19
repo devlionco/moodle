@@ -24,8 +24,7 @@ namespace gradingform_absquestion;
 
 use core\persistent;
 
-class absquestion_comment_link extends persistent
-{
+class absquestion_comment_link extends persistent {
     const TABLE = 'absquestion_comment_link';
 
     protected $json;
@@ -35,8 +34,7 @@ class absquestion_comment_link extends persistent
      *
      * @return array
      */
-    protected static function define_properties()
-    {
+    protected static function define_properties() {
         return array(
             'assignid' => array(
                 'type' => PARAM_INT,
@@ -95,7 +93,11 @@ class absquestion_comment_link extends persistent
 
         try {
             if (isset($data['id']) && !empty($data['id'])) {
-                if(!empty($link = static::get_record(['id' => $data['id']])) && !empty($comment = absquestion_comment::get_record(['id' => $link->get('absqcid')]))) {
+
+                $link = static::get_record(['id' => $data['id']]);
+                $comment = absquestion_comment::get_record(['id' => $link->get('absqcid')]);
+
+                if (!empty($link) && !empty($comment)) {
                     $link->set('assignid', $data['assignid']);
                     $link->set('absqid', $data['qid']);
                     $link->update();

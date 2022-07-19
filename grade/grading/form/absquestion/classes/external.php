@@ -77,7 +77,18 @@ class external extends external_api {
      * @throws invalid_parameter_exception
      * @since  Moodle 3.8
      */
-    public static function save_settings($id, $assignid, $totalmaxgrade, $qtotal, $totalqbonus, $method, $validated, $questions, $groups, $grouppass) {
+    public static function save_settings(
+        $id,
+        $assignid,
+        $totalmaxgrade,
+        $qtotal,
+        $totalqbonus,
+        $method,
+        $validated,
+        $questions,
+        $groups,
+        $grouppass
+    ) {
         global $PAGE;
 
         $PAGE->set_context(context_system::instance());
@@ -184,7 +195,7 @@ class external extends external_api {
                             'sequence' => new external_value(PARAM_INT, 'sequence num'),
                             'qmax' => new external_value(PARAM_INT, 'qmax'),
                         ])
-                        ,'', VALUE_OPTIONAL)
+                        , '', VALUE_OPTIONAL)
                 ])
                 , '', VALUE_OPTIONAL),
             'groups' => new external_multiple_structure(
@@ -228,7 +239,7 @@ class external extends external_api {
                             'qmax' => new external_value(PARAM_INT, 'qmax'),
                             'info' => new external_value(PARAM_RAW, 'info'),
                         ])
-                        ,'', VALUE_OPTIONAL)
+                        , '', VALUE_OPTIONAL)
                 ])
                 , '', VALUE_OPTIONAL),
             'groups' => new external_multiple_structure(
@@ -300,6 +311,7 @@ class external extends external_api {
                 'qorder' => new external_value(PARAM_INT, 'question sequence'),
                 'max' => new external_value(PARAM_INT, 'max points'),
                 'usedpoint' => new external_value(PARAM_INT, 'used points'),
+                'grademethod' => new external_value(PARAM_TEXT, 'grade method string'),
                 'comments' => new external_multiple_structure(
                     new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'comment id'),
@@ -314,6 +326,7 @@ class external extends external_api {
                         'sequence' => new external_value(PARAM_INT, 'subquestion sequence'),
                         'max' => new external_value(PARAM_INT, 'max points'),
                         'usedpoint' => new external_value(PARAM_INT, 'used points'),
+                        'grademethod' => new external_value(PARAM_TEXT, 'grade method string'),
                         'subqComments' => new external_multiple_structure(
                             new external_single_structure([
                                 'id' => new external_value(PARAM_INT, 'comment id'),
@@ -562,7 +575,7 @@ class external extends external_api {
             $groupplugins = array();
             foreach ($plugins as $plugin) {
                 // Do not die on missing plugin.
-                if (!\core_component::get_component_directory('atto_' . $plugin))  {
+                if (!\core_component::get_component_directory('atto_' . $plugin)) {
                     continue;
                 }
                 // Remove manage files if requested.
@@ -577,11 +590,11 @@ class external extends external_api {
 
                 $groupplugins[] = $jsplugin;
             }
-            $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
+            $jsplugins[] = ['group' => $group, 'plugins' => $groupplugins];
         }
 
         $params = array(
-            'content_css' => $PAGE->theme->editor_css_url()->out(false),  // TODO check it
+            'content_css' => $PAGE->theme->editor_css_url()->out(false),
             'contextid' => context_system::instance()->id,
             'plugins' => $jsplugins,
         );

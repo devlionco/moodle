@@ -134,6 +134,7 @@ define([
         }
 
         initDfartMode(state){
+            let self = this;
             let draftLabelEl = document.querySelector("#root_absolute_q .draft-label");
 
             if (state.freese){
@@ -146,8 +147,13 @@ define([
                 draftLabelEl.innerHTML = "";
                 draftLabelEl.style.background = "#ffffff";
             } else {
-                draftLabelEl.innerHTML = state.translate.ready_to_submit;
-                draftLabelEl.style.background = "#cfefcf";
+                if (self.obsItem.callMethodReturn(false, 'allErr')){
+                    draftLabelEl.innerHTML = state.translate.draft_mode;
+                    draftLabelEl.style.background = "#efcfcf";
+                } else {
+                    draftLabelEl.innerHTML = state.translate.ready_to_submit;
+                    draftLabelEl.style.background = "#cfefcf";
+                }
             }
         }
 

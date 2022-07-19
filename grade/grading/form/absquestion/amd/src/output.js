@@ -51,8 +51,9 @@ define([], function() {
             }
             state.totalqgroup = totalqgroup;
 
-            // Totalmax without groups
+            // Totalmax without groups or if group only one
             let totalmaxWithoutGroups = 0;
+            let aditionalPointObj = {};
             questions.forEach(function(el) {
                 const bonusEl = el.querySelector('.bonus-checkbox');
                 const groupSelectEl = el.querySelector('.groups-select');
@@ -67,8 +68,19 @@ define([], function() {
 
                 if (+selectValue === 0) {
                     totalmaxWithoutGroups = +totalmaxWithoutGroups + maxPoint;
+                } else {
+                    if (!aditionalPointObj[+selectValue]) {
+                        aditionalPointObj[+selectValue] = [];
+                    }
+                    aditionalPointObj[+selectValue].push(maxPoint);
                 }
             });
+
+            for (let key in aditionalPointObj) {
+                if (aditionalPointObj[key].length === 1) {
+                    totalmaxWithoutGroups = +totalmaxWithoutGroups + aditionalPointObj[key][0];
+                }
+            }
 
             state.output.totalmax = +totalmaxWithoutGroups + totalMaxWithGroups;
             if (isNaN(state.output.totalmax)) {
