@@ -147,6 +147,7 @@ if ($data = $exportform->get_data()) {
     $params['authtoken']   = sha1($USER->id . (isset($password->password) ? $password->password : '') . $CFG->calendar_exportsalt);
     $params['preset_what'] = $data->events['exportevents'];
     $params['preset_time'] = $data->period['timeperiod'];
+    $params['includelink'] = $data->includelink;
 
     $link = new moodle_url('/calendar/export_execute.php', $params);
     if (!empty($data->generateurl)) {
