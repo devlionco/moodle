@@ -69,6 +69,7 @@ var CSS = {
         SELECTMULTIPLECANCELBUTTON: '#selectmultiplecancelcommand',
         SELECTMULTIPLECHECKBOX: '.select-multiple-checkbox',
         SELECTMULTIPLEDELETEBUTTON: '#selectmultipledeletecommand',
+        SELECTMULTIPLEDUPLICATEBUTTON: '#selectmultipleduplicatecommand',
         SELECTALL: '#questionselectall',
         SHOW: 'a.' + CSS.SHOW,
         SLOTLI: 'li.slot',

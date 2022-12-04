@@ -88,6 +88,9 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         // Assign the delete method to the delete multiple button.
         Y.delegate('click', this.delete_multiple_action, BODY, SELECTOR.SELECTMULTIPLEDELETEBUTTON, this);
+
+        // Assign the duplicate method to the duplicate multiple button.
+        Y.delegate('click', this.duplicate_multiple_action, BODY, SELECTOR.SELECTMULTIPLEDUPLICATEBUTTON, this);
     },
 
     /**
@@ -311,6 +314,79 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
                     // Remove the select multiple options.
                     Y.one('body').removeClass(CSS.SELECTMULTIPLE);
+                }
+            });
+
+        }, this);
+    },
+
+    /**
+     * Takes care of what needs to happen when the user clicks on the delete multiple button.
+     *
+     * @protected
+     * @method duplicate_multiple_action
+     * @param {EventFacade} ev The event that was fired.
+     */
+    duplicate_multiple_action: function(ev) {
+        var problemsection = this.find_sections_that_would_become_empty();
+
+        if (typeof problemsection !== 'undefined') {
+            var alert = new M.core.alert({
+                title: M.util.get_string('cannotremoveslots', 'quiz'),
+                message: M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+            });
+
+            alert.show();
+        } else {
+            this.duplicate_multiple_with_confirmation(ev);
+        }
+    },
+
+    /**
+     * Duplicate the given activities or resources after confirmation.
+     *
+     * @protected
+     * @method duplicate_multiple_with_confirmation
+     * @param {EventFacade} ev The event that was fired.
+     */
+    duplicate_multiple_with_confirmation: function (ev) {
+        ev.preventDefault();
+
+        var ids = '';
+        var slots = [];
+        Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked').each(function (node) {
+            var slot = Y.Moodle.mod_quiz.util.slot.getSlotFromComponent(node);
+            ids += ids === '' ? '' : ',';
+            ids += Y.Moodle.mod_quiz.util.slot.getId(slot);
+            slots.push(slot);
+        });
+        var element = Y.one('div.mod-quiz-edit-content');
+
+        // Do nothing if no slots are selected.
+        if (!slots || !slots.length) {
+            return;
+        }
+
+        // Create the confirmation dialogue.
+        var confirm = new M.core.confirm({
+            question: M.util.get_string('areyousuredupplicateselected', 'quiz'),
+            modal: true
+        });
+
+        // If it is confirmed.
+        confirm.on('complete-yes', function () {
+            var spinner = this.add_spinner(element);
+            var data = {
+                'class': 'resource',
+                field: 'duplicatemultiple',
+                ids: ids
+            };
+
+            // Duplicate items on server.
+            this.send_request(data, spinner, function (response) {
+                // Reload page.
+                if (response.duplicate) {
+                    window.location.reload();
                 }
             });
 

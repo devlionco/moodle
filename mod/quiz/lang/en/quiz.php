@@ -1067,3 +1067,5 @@ $string['completionpass_help'] = 'If enabled, this activity is considered comple
 $string['completiondetail:passgrade'] = 'Receive a pass grade';
 $string['gradetopassnotset'] = 'This quiz does not yet have a grade to pass set. It may be set in the Grade section of the quiz settings.';
 $string['basicideasofquiz'] = 'The basic ideas of quiz-making';
+$string['dupplicateselected'] = 'Duplicate selected';
+$string['areyousuredupplicateselected'] = 'Are you sure you want to duplicate all the selected questions?';

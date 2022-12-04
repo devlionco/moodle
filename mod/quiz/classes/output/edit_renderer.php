@@ -279,9 +279,20 @@ class edit_renderer extends \plugin_renderer_base {
             'role' => 'group'
         );
 
+        $buttondupplicateselectedoptions = array(
+            'type' => 'button',
+            'id' => 'selectmultipleduplicatecommand',
+            'value' => get_string('dupplicateselected', 'mod_quiz'),
+            'class' => 'btn btn-secondary',
+            'data-action' => 'toggle',
+            'data-togglegroup' => $this->togglegroup,
+            'data-toggle' => 'action',
+            'disabled' => true
+        );
+
         $output .= html_writer::tag('div',
-                        html_writer::tag('button', get_string('deleteselected', 'mod_quiz'), $buttondeleteoptions) .
-                        " " .
+                        html_writer::tag('button', get_string('dupplicateselected', 'mod_quiz'), $buttondupplicateselectedoptions) .
+                        " " . html_writer::tag('button', get_string('deleteselected', 'mod_quiz'), $buttondeleteoptions) .
                         html_writer::tag('button', get_string('cancel', 'moodle'),
                 $buttoncanceloptions), $groupoptions);
 
@@ -1172,7 +1183,7 @@ class edit_renderer extends \plugin_renderer_base {
         unset($config->pagehtml);
         unset($config->addpageiconhtml);
 
-        $this->page->requires->strings_for_js(array('areyousureremoveselected'), 'quiz');
+        $this->page->requires->strings_for_js(array('areyousureremoveselected', 'areyousuredupplicateselected'), 'quiz');
         $this->page->requires->yui_module('moodle-mod_quiz-toolboxes',
                 'M.mod_quiz.init_section_toolbox',
                 array(array(

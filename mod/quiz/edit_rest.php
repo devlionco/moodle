@@ -167,6 +167,31 @@ switch($requestmethod) {
                                 'deleted' => true, 'newnumquestions' => $structure->get_question_count());
                         break;
 
+                    case 'duplicatemultiple':
+                        require_capability('mod/quiz:manage', $modcontext);
+
+                        $ids = explode(',', $ids);
+
+                        foreach ($ids as $id) {
+                            $slot = $DB->get_record(
+                                'quiz_slots',
+                                array('quizid' => $quiz->id, 'id' => $id),
+                                '*',
+                                MUST_EXIST
+                            );
+                            if (quiz_has_question_use($quiz, $slot->slot)) {
+                                $question = quiz_get_question($quiz, $slot->slot);
+                                $nqid = question_duplicate_single_question($question->id);
+                                quiz_add_quiz_question($nqid, $quiz);
+                            }
+                        }
+
+                        $result = array(
+                            'newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
+                            'duplicate' => true, 'newnumquestions' => $structure->get_question_count(), 'result' => $ids
+                        );
+                        break;
+
                     case 'updatedependency':
                         require_capability('mod/quiz:manage', $modcontext);
                         $slot = $structure->get_slot_by_id($id);
