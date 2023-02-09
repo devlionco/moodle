@@ -2494,6 +2494,15 @@ $capabilities = array(
         ]
     ],
 
+    // Allow users to recommend questions in the question chooser.
+    'moodle/course:recommendquestion' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ]
+    ],
+
     // Content bank capabilities.
     'moodle/contentbank:access' => array(
         'captype' => 'read',

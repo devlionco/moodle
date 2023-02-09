@@ -2946,6 +2946,23 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+
+    'core_save_qtypes_favorites' => array(
+        'classname' => 'core_external',
+        'methodname' => 'save_qtypes_favorites',
+        'description' => 'save qtypes favorites',
+        'classpath'   => 'lib/external/externallib.php',
+        'type' => 'write',
+        'ajax' => true,
+    ),
+    'core_toggle_qtypes_recommendation' => array(
+        'classname' => 'core_external',
+        'methodname' => 'toggle_qtypes_recommendation',
+        'description' => 'toggle qtypes recommendation',
+        'classpath'   => 'lib/external/externallib.php',
+        'type' => 'write',
+        'ajax' => true,
+    ),
 );
 
 $services = array(

@@ -82,6 +82,7 @@ class chooser implements renderable, templatable {
         if (!$id) {
             $id = $name;
         }
+
         $this->params[] = [
             'name' => $name,
             'value' => $value,
@@ -114,6 +115,7 @@ class chooser implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $PAGE;
         $data = new stdClass();
 
         $data->actionurl = $this->actionurl->out(false);
@@ -124,11 +126,12 @@ class chooser implements renderable, templatable {
         $data->sesskey = sesskey();
         $data->title = (string) $this->title;
 
+        $PAGE->requires->js_call_amd('core/question_chooser', 'init');
+
         $data->sections = array_map(function($section) use ($output) {
             return $section->export_for_template($output);
         }, $this->sections);
 
         return $data;
     }
-
 }

@@ -43,4 +43,15 @@ class renderer extends \plugin_renderer_base {
         $data = $page->export_for_template($this);
         return parent::render_from_template('core_course/activity_list', $data);
     }
+
+    /**
+ * Render a list of activities to recommend.
+ *
+ * @param  \core_course\output\recommendations\question_list $page activity list renderable
+ * @return string html for displaying.
+ */
+    public function render_question_list(\core_course\output\recommendations\question_list $page): string {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('core_course/question_list', $data);
+    }
 }

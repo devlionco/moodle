@@ -29,8 +29,8 @@
     }
 }}
 <div class="option pr-0">
-    <label for="item_{{id}}" class="item_{{id}} d-flex align-items-center">
-        <input type="radio" name="{{paramname}}" id="item_{{id}}" value="{{value}}">
+    <label for="item_favourite_{{id}}" class="item_favorite_{{id}} {{#favourite}}d-flex{{/favourite}}{{^favourite}}d-none{{/favourite}} align-items-center">
+        <input type="radio" name="{{paramname}}" id="item_favourite_{{id}}" value="{{value}}">
         <span class="modicon">
             {{#icon}}
                 {{>core/pix_icon}}
@@ -38,8 +38,7 @@
         </span>
         <span class="typename">{{label}}</span>
         <button type="button" class="btn btn-icon optionaction qfavorites"
-                data-name="{{id}}"
-                data-value="{{value}}"
+                data-name={{id}}
             {{^favourite}}
                 data-checked="false"
             {{/favourite}}

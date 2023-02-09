@@ -24,6 +24,8 @@
 
 $string['activitychoosercategory'] = 'Activity chooser';
 $string['activitychooserrecommendations'] = 'Recommended activities';
+$string['questionchooserrecommendations'] = 'Recommended questions';
+$string['questionchoosersettings'] = 'Question chooser settings';
 $string['activitychoosersettings'] = 'Activity chooser settings';
 $string['activitychooseractivefooter'] = 'Activity chooser footer';
 $string['activitychooseractivefooter_desc'] = 'The activity chooser can support plugins that add items to the footer.';
@@ -94,6 +96,7 @@ $string['favourite'] = 'Starred course';
 $string['gradetopassnotset'] = 'This course does not have a grade to pass set. It may be set in the grade item of the course (Gradebook setup).';
 $string['informationformodule'] = 'Information about the {$a} activity';
 $string['module'] = 'Activity';
+$string['questionmodule'] = 'Question';
 $string['namewithlink'] = 'Category name with link';
 $string['nocourseactivity'] = 'Not enough course activity between the start and the end of the course';
 $string['nocourseendtime'] = 'The course does not have an end time';

@@ -284,6 +284,13 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
+    $ADMIN->add('activitychooser',
+        new admin_externalpage('questionchooserrecommended', new lang_string('questionchooserrecommendations', 'course'),
+            new moodle_url('/course/recommendations.php?type=question'),
+            array('moodle/course:recommendactivity')
+        )
+    );
+
     // Add a category for backups.
     $ADMIN->add('courses', new admin_category('backups', new lang_string('backups','admin')));
 

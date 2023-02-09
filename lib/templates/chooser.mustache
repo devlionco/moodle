@@ -51,27 +51,103 @@
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                 </div>
 
-                <div class="options">
-                    <div class="instruction">
-                        {{instructions}}
+                <div data-region="chooser-container" class="chooser-container">
+                    <div class="nav nav-tabs flex-shrink-0 z-index-1" id="activities-{{uniqid}}" role="tablist">
+                        <a class="nav-item nav-link"
+                           id="favourites-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="favourite-tab-nav"
+                           href="#favourites-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:favouritestab, core_course {{/str}}"
+                           aria-controls="favourites-{{uniqid}}"
+                           aria-selected="{{#favouritesFirst}}true{{/favouritesFirst}}{{^favouritesFirst}}false{{/favouritesFirst}}"
+                           tabindex="{{#favouritesFirst}}0{{/favouritesFirst}}{{^favouritesFirst}}-1{{/favouritesFirst}}"
+                        >
+                            {{#str}} favourites, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link"
+                           id="recommend-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="recommend-tab-nav"
+                           href="#recommend-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
+                           aria-controls="recommend-{{uniqid}}"
+                           aria-selected="false"
+                           tabindex="-1"
+                        >
+                            {{#str}} recommended, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{^showAll}}active{{/showAll}}"
+                           id="all-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="default-tab-nav"
+                           href="#all-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:defaulttab, core_course {{/str}}"
+                           aria-controls="all-{{uniqid}}"
+                           aria-selected="{{#fallback}}true{{/fallback}}{{^fallback}}false{{/fallback}}"
+                           tabindex="{{#fallback}}0{{/fallback}}{{^fallback}}-1{{/fallback}}"
+                        >
+                            {{#str}} all, core {{/str}}
+                        </a>
                     </div>
-                    <div class="alloptions">
-                        {{#sections}}
-                            <fieldset>
-                                <legend class="moduletypetitle">{{label}}</legend>
-                                {{#items}}
-                                    {{>core/chooser_item}}
-                                {{/items}}
-                            </fieldset>
-                        {{/sections}}
+                    <div class="tab-content flex-fill border-left border-right border-bottom bg-light" id="tabbed-activities-{{uniqid}}">
+                        <div class="tab-pane all-tab active" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
+                            <div class="options">
+                                <div class="instruction">
+                                    {{instructions}}
+                                </div>
+                                <div class="alloptions">
+                                    {{#sections}}
+                                        <fieldset>
+                                            {{#items}}
+                                                {{>core/chooser_item}}
+                                            {{/items}}
+                                        </fieldset>
+                                    {{/sections}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane favorite-tab" id="favourites-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="favourites-tab-{{uniqid}}">
+                            <div class="options">
+                                <div class="instruction">
+                                    {{instructions}}
+                                </div>
+                                <div class="alloptions" style="max-height: 504px; min-height: 240px;">
+                                    {{#sections}}
+                                        <fieldset>
+                                            {{#items}}
+                                                {{>core/chooser_item_favorite}}
+                                            {{/items}}
+                                        </fieldset>
+                                    {{/sections}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane recommend-tab" id="recommend-{{uniqid}}" data-region="recommend" role="tabpanel" aria-labelledby="recommend-tab-{{uniqid}}">
+                            <div class="options">
+                                <div class="instruction">
+                                    {{instructions}}
+                                </div>
+                                <div class="alloptions" style="max-height: 504px; min-height: 240px;">
+                                    {{#sections}}
+                                        <fieldset>
+                                            {{#items}}
+                                                {{>core/chooser_item_recommend}}
+                                            {{/items}}
+                                        </fieldset>
+                                    {{/sections}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
                 <div class="submitbuttons">
                     <input type="submit" name="submitbutton" class="submitbutton btn btn-primary" value="{{#cleanstr}}add{{/cleanstr}}">
                     <input type="submit" name="addcancel" class="addcancel btn btn-secondary" value="{{#cleanstr}}cancel{{/cleanstr}}">
                 </div>
-
             </form>
         </div>
     </div>

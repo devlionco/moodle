@@ -56,6 +56,13 @@ class chooser_item implements renderable, templatable {
     public $description;
     /** @var context The relevant context. */
     public $context;
+    /** @var boolean The item favourite. */
+    public $favourite;
+    /** @var boolean The item recommend. */
+    public $recommend;
+    /** string the recommendation prefix itemtype in the favourites table. */
+    public const RECOMMENDATION_PREFIX = 'recommend_';
+
 
     /**
      * Constructor.
@@ -80,6 +87,9 @@ class chooser_item implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
+
+        $itemtype = self::RECOMMENDATION_PREFIX . $this->id;
         $data = new stdClass();
         $data->id = $this->id;
         $data->label = $this->label;
@@ -94,6 +104,23 @@ class chooser_item implements renderable, templatable {
         $options->para = true;
         $options->newlines = false;
         $options->overflowdiv = false;
+
+        $usercontext = \context_user::instance($USER->id);
+        $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
+        $favorite = $ufservice->count_favourites_by_type('core_question', $this->id);
+        $recommended = $ufservice->count_favourites_by_type('core_question', $itemtype);
+        $data->recommended = $recommended;
+
+        if($favorite > 0) {
+            $data->favourite = true;
+        } else {
+            $data->favourite = false;
+        }
+        if($recommended > 0) {
+            $data->recommended = true;
+        } else {
+            $data->recommended = false;
+        }
 
         $data->description = '';
         if (!empty($this->description)) {
