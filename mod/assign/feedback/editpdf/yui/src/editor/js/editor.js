@@ -270,7 +270,7 @@ EDITOR.prototype = {
      * @method refresh_button_state
      */
     refresh_button_state: function() {
-        var button, currenttoolnode, imgurl, drawingregion, stampimgurl, drawingcanvas;
+        var button, currenttoolnode, imgurl, drawingregion, stampimgurl, drawingcanvas, thicknessbtn, thicknessbtnimgurl;
 
         // Initalise the colour buttons.
         button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
@@ -287,6 +287,10 @@ EDITOR.prototype = {
         button = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         imgurl = M.util.image_url('colour_' + this.currentedit.annotationcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
+
+        thicknessbtn = this.get_dialogue_element(SELECTOR.ANNOTATIONPENTHICKNESSBUTTON);
+        thicknessbtnimgurl = M.util.image_url('thicknesspicker', 'assignfeedback_editpdf');
+        thicknessbtn.one('img').setAttribute('src', thicknessbtnimgurl);
 
         currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
@@ -795,6 +799,8 @@ EDITOR.prototype = {
             annotationcolourbutton,
             searchcommentsbutton,
             expcolcommentsbutton,
+            annotationpenthicknessbutton,
+            annotationpenthickness,
             rotateleftbutton,
             rotaterightbutton,
             currentstampbutton,
@@ -868,6 +874,24 @@ EDITOR.prototype = {
                 } else {
                     this.handle_tool_button(e, "pen");
                 }
+            },
+            context: this
+        });
+
+        annotationpenthickness = annotationpenthicknessbutton = this.get_dialogue_element(SELECTOR.ANNOTATIONPENTHICKNESSBUTTON);
+        picker = new M.assignfeedback_editpdf.thicknesspicker({
+            buttonNode: annotationpenthicknessbutton,
+            iconprefix: 'thikness_',
+            thickness: PENTHICKNESS,
+            callback: function(e) {
+                var thickness = e.target.getAttribute('data-value');
+                if (!thickness) {
+                    thickness = e.target.ancestor().getAttribute('data-value');
+                }
+
+                STROKEWEIGHT = +thickness;
+                sessionStorage.setItem('penLineThickness', +thickness);
+                this.redraw();
             },
             context: this
         });

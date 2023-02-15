@@ -72,7 +72,8 @@
 
 .yui3-colourpicker-hidden,
 .yui3-commentsearch-hidden,
-.yui3-commentmenu-hidden {
+.yui3-commentmenu-hidden,
+.yui3-thicknesspicker-hidden {
     display: none;
 }
 

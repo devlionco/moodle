@@ -31,6 +31,7 @@ $string['blue'] = 'Blue';
 $string['cannotopenpdf'] = 'Cannot open the PDF. The file may be corrupt, or in an unsupported format.';
 $string['clear'] = 'Clear';
 $string['colourpicker'] = 'Colour picker';
+$string['thicknesspicker'] = 'Width picker';
 $string['commentcolour'] = 'Comment colour';
 $string['comment'] = 'Comments';
 $string['commentindex'] = 'Index of comments';

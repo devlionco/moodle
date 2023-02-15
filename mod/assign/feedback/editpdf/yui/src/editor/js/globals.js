@@ -40,6 +40,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         COMMENTCOLOURBUTTON: '.commentcolourbutton',
         COMMENTMENU: '.commentdrawable a',
         ANNOTATIONCOLOURBUTTON:  '.annotationcolourbutton',
+        ANNOTATIONPENTHICKNESSBUTTON:  '.annotationpenthicknessbutton',
         DELETEANNOTATIONBUTTON: '.deleteannotationbutton',
         WARNINGMESSAGECONTAINER: '.warningmessages',
         ICONMESSAGECONTAINER: '.infoicon',
@@ -82,4 +83,11 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'drag': '.dragbutton',
         'highlight': '.highlightbutton'
     },
-    STROKEWEIGHT = 4;
+    STROKEWEIGHT = +sessionStorage.getItem('penLineThickness') || 2,
+    PENTHICKNESS = {
+        '2px': 2,
+        '4px': 4,
+        '6px': 6,
+        '8px': 8,
+        '10px': 10
+    };

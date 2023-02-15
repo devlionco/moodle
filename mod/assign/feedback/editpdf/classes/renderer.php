@@ -58,6 +58,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'oval' => 'o',
             'highlight' => 'p',
             'annotationcolour' => 'r',
+            'annotationpenthickness' => 't',
             'stamp' => 'n',
             'currentstamp' => 'm');
 
@@ -188,6 +189,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar3 .= $this->render_toolbar_button('oval', 'oval', $this->get_shortcut('oval'));
             $toolbar3 .= $this->render_toolbar_button('highlight', 'highlight', $this->get_shortcut('highlight'));
             $toolbar3 .= $this->render_toolbar_button('background_colour_clear', 'annotationcolour', $this->get_shortcut('annotationcolour'));
+            $toolbar3 .= $this->render_toolbar_button('background_colour_clear', 'annotationpenthickness', $this->get_shortcut('annotationpenthickness'));
             $toolbar3 = html_writer::div($toolbar3, 'toolbar', array('role' => 'toolbar'));
 
             // Stamps.
@@ -260,6 +262,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'black',
             'clear',
             'colourpicker',
+            'thicknesspicker',
             'loadingeditor',
             'pagexofy',
             'deletecomment',
