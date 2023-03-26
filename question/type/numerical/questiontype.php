@@ -44,6 +44,7 @@ class qtype_numerical extends question_type {
     const UNITINPUT = 0;
     const UNITRADIO = 1;
     const UNITSELECT = 2;
+    const UNITNEWTYPE = 3;
 
     const UNITNONE = 3;
     const UNITGRADED = 1;
@@ -71,7 +72,7 @@ class qtype_numerical extends question_type {
         //       the question table as is usually the case for qtype
         //       specific tables.
         if (!$question->options->answers = $DB->get_records_sql(
-                                "SELECT a.*, n.tolerance " .
+                                "SELECT a.*, n.tolerance, n.unit AS unitvalue " .
                                 "FROM {question_answers} a, " .
                                 "     {question_numerical} n " .
                                 "WHERE a.question = ? " .
@@ -236,6 +237,17 @@ class qtype_numerical extends question_type {
                 }
                 $options->tolerance = (string)$options->tolerance;
             }
+
+            if (isset($question->unitvalue)) {
+                if (trim($question->unitvalue[$key]) == '') {
+                    $options->unit = '';
+                } else {
+                    $options->unit = trim($question->unitvalue[$key]);
+                }
+            } else {
+                $options->unit = '';
+            }
+
             if (isset($options->id)) {
                 $DB->update_record('question_numerical', $options);
             } else {
@@ -275,6 +287,11 @@ class qtype_numerical extends question_type {
         global $DB;
         $result = new stdClass();
 
+        //If new type autocomplete
+        //if(isset($question->multichoicedisplay)&&$question->multichoicedisplay == 3 && $question->unitgradingtypes == 1){
+        //    $question->unitpenalty = 0;
+       // }
+
         $update = true;
         $options = $DB->get_record('question_numerical_options',
                 array('question' => $question->id));
@@ -297,7 +314,7 @@ class qtype_numerical extends question_type {
             $options->showunits = $question->unitrole;
             if ($question->unitrole == self::UNITGRADED) {
                 $options->unitgradingtype = $question->unitgradingtypes;
-                $options->showunits = $question->multichoicedisplay;
+                $options->showunits = (isset($question->multichoicedisplay)) ? $question->multichoicedisplay : qtype_numerical::UNITNEWTYPE;
             }
 
         } else if (isset($question->showunits)) {
@@ -316,6 +333,11 @@ class qtype_numerical extends question_type {
         }
 
         $options->unitsleft = !empty($question->unitsleft);
+
+        //If new type autocomplete
+        //if(isset($question->multichoicedisplay)&&$options->multichoicedisplay == 3 && $options->unitgradingtypes == 1){
+        //    $options->unitpenalty = 0;
+        //}
 
         $DB->update_record('question_numerical_options', $options);
 
@@ -378,9 +400,16 @@ class qtype_numerical extends question_type {
         if (empty($questiondata->options->answers)) {
             return;
         }
+
+        $newtype = 0;
+        if($questiondata->options->showunits == 3 && $questiondata->options->unitgradingtype == 1) $newtype = 1;
+
         foreach ($questiondata->options->answers as $a) {
+            if (!property_exists($a, 'unitvalue')) {
+                $a->unitvalue = null;
+            }
             $question->answers[$a->id] = new qtype_numerical_answer($a->id, $a->answer,
-                    $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance);
+                    $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance,$a->unitvalue, $newtype);
         }
     }
 
@@ -659,6 +688,29 @@ class qtype_numerical_answer_processor {
         // of writing e to e.
         $response = str_replace(' ', '', $response);
         $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
+
+        // Calculate pow. PTL 4194
+        //try {
+        //    preg_match('~([+-]?\d+)(?:\^|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', $response, $powresponse);
+        //    if(!empty($powresponse) && isset($powresponse[0]) && isset($powresponse[1]) && isset($powresponse[2])){
+        //        if(!empty($powresponse[0]) && !empty($powresponse[1]) && !empty($powresponse[2])){
+        //
+        //            $siman = '';
+        //            if (strpos($powresponse[1], '-') !== false) {
+        //                $siman = '-';
+        //            }
+        //
+        //            if (strpos($powresponse[1], '+') !== false) {
+        //                $siman = '+';
+        //            }
+        //
+        //            $res = pow(abs($powresponse[1]), $powresponse[2]);
+        //            $response = str_replace($powresponse[0], $siman.$res, $response);
+        //        }
+        //    }
+        //} catch (Exception $e) {
+        //
+        //}
 
         // If a . is present or there are multiple , (i.e. 2,456,789 ) assume ,
         // is a thouseands separator, and strip it, else assume it is a decimal

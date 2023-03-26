@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_numerical_upgrade($oldversion) {
-    global $CFG;
+    global $DB;
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
@@ -40,6 +40,17 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2022112801) {
+        $table = new xmldb_table('question_numerical');
+        $field = new xmldb_field('unit', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
 
     return true;
 }

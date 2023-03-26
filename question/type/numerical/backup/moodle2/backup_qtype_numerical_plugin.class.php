@@ -60,7 +60,7 @@ class backup_qtype_numerical_plugin extends backup_qtype_plugin {
         // Now create the qtype own structures.
         $numericalrecords = new backup_nested_element('numerical_records');
         $numericalrecord = new backup_nested_element('numerical_record', array('id'), array(
-            'answer', 'tolerance'));
+            'answer', 'tolerance','unit'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($numericalrecords);

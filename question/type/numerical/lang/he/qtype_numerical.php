@@ -15,19 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the numerical question type.
+ * Strings for component 'qtype_numerical', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    qtype
  * @subpackage numerical
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qtype_numerical';
-$plugin->version   = 2022112801;
-
-$plugin->requires  = 2022111800;
-
-$plugin->maturity  = MATURITY_STABLE;
+$string['setting_units'] = 'נא תגדיר יחידות';
+$string['setting_wrong_value_penalty'] = 'קנס לערכים שגויים';
+$string['setting_wrong_unit_penalty'] = 'קנס ליחידות מידה שגויות';
+$string['invalidunit'] = 'נא  להזין יחידה חוקית';
+$string['feedbacksection'] = 'משוב';
+$string['unitnewtype'] = 'הזנה מתוך רשימת בחירה אוטומטית';
+$string['feedbackwrongunit'] = 'בדקו את יחידות המידה';
+$string['feedbackwrongvalue'] = 'בדקו את ערכי המדידה';
+$string['feedbackwronganswer'] = 'בדקו את הערכים והיחידות של המדידה';
