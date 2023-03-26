@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_essay_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        global $CFG;
+        global $CFG, $PAGE;
         $question = $qa->get_question();
 
         /** @var qtype_essay_format_renderer_base $responseoutput */
@@ -87,6 +87,16 @@ class qtype_essay_renderer extends qtype_renderer {
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
                 array('class' => 'qtext'));
 
+        $inputname = $qa->get_qt_field_name('check');
+        $checkid = $inputname . '_id';
+        $check = html_writer::tag('input', '', array('type' => 'submit', 'class' => 'check submit btn btn-secondary', 'id' => $checkid, 'value' => get_string('check', 'question')));
+
+        $generalfeedback = html_writer::nonempty_tag('div', $this->general_feedback($qa), array('class' => 'generalfeedback'));
+        $jsparams = [
+            'checkid' => $checkid,
+            'generalfeedback' => $generalfeedback,
+        ];
+
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
 
@@ -98,7 +108,31 @@ class qtype_essay_renderer extends qtype_renderer {
         $result .= html_writer::tag('div', $files, array('class' => 'attachments'));
         $result .= html_writer::end_tag('div');
 
+        // PTL_7328 Get Allowcheck option from config, w/o addind new field to 'qtype_essay_options'.
+        $allowcheck = get_config('qtype_essay', 'allowcheck_' . $qa->get_question()->id);
+        if ($allowcheck && self::is_interactive($qa)) {
+            $attempt = optional_param('attempt', 0, PARAM_INT);
+            // If not in preview mode.
+            if ($attempt) {
+                $usageid = $this->getProtectedValue($qa, 'usageid');
+                $quizattempt = quiz_attempt::create_from_usage_id($usageid);
+                if ($allowcheck && !$quizattempt->is_finished()) {
+                    $result .= html_writer::tag('div', $check, array('class' => 'im-controls'));
+                    $PAGE->requires->js_call_amd('qtype_essay/main', 'init', $jsparams);
+                }
+            } else {
+                $result .= html_writer::tag('div', $check, array('class' => 'im-controls'));
+                $PAGE->requires->js_call_amd('qtype_essay/main', 'init', $jsparams);
+            }
+        }
+
         return $result;
+    }
+
+    public function getProtectedValue($obj, $name) {
+        $array = (array) $obj;
+        $prefix = chr(0) . '*' . chr(0);
+        return $array[$prefix . $name];
     }
 
     /**
@@ -210,6 +244,31 @@ class qtype_essay_renderer extends qtype_renderer {
                 $question->graderinfo, $question->graderinfoformat, $qa, 'qtype_essay',
                 'graderinfo', $question->id), array('class' => 'graderinfo'));
     }
+
+    public static function is_interactive($qa) {
+        global $DB;
+
+        $response = false;
+
+        $allowedbehaviours = [
+            'interactiveexplain',
+            'interactive',
+        ];
+
+        $sql = "SELECT *
+                FROM {quiz} q
+                LEFT JOIN {quiz_slots} qs ON qs.quizid = q.id
+                LEFT JOIN {question_references} qr ON qr.itemid = qs.id
+                WHERE qr.questionbankentryid = ?";
+
+        $params = [$qa->get_question()->id];
+
+        if ($quiz = $DB->get_record_sql($sql, $params)) {
+            $response = in_array($quiz->preferredbehaviour, $allowedbehaviours) ? true : false;
+        }
+
+        return $response;
+    }
 }
 
 
@@ -300,21 +359,13 @@ class qtype_essay_format_editor_renderer extends qtype_essay_format_renderer_bas
     }
 
     public function response_area_read_only($name, $qa, $step, $lines, $context) {
-        $labelbyid = $qa->get_qt_field_name($name) . '_label';
-
-        $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_essay'));
-        $output = html_writer::tag('h4', $responselabel, ['id' => $labelbyid, 'class' => 'sr-only']);
-        $output .= html_writer::tag('div', $this->prepare_response($name, $qa, $step, $context), [
-            'role' => 'textbox',
-            'aria-readonly' => 'true',
-            'aria-labelledby' => $labelbyid,
-            'class' => $this->class_name() . ' qtype_essay_response readonly',
-            'style' => 'min-height: ' . ($lines * 1.5) . 'em;',
-        ]);
+        return html_writer::tag('div', $this->prepare_response($name, $qa, $step, $context),
+            ['class' => $this->class_name() . ' qtype_essay_response readonly'
+                // Disabled by nadavkav
+                //,'style' => 'min-height: ' . ($lines * 1.5) . 'em;'
+            ]);
         // Height $lines * 1.5 because that is a typical line-height on web pages.
         // That seems to give results that look OK.
-
-        return $output;
     }
 
     public function response_area_input($name, $qa, $step, $lines, $context) {

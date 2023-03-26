@@ -95,9 +95,14 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->setDefault('maxbytes', $this->get_default_value('maxbytes', 0));
         $mform->hideIf('maxbytes', 'attachments', 'eq', 0);
 
+        // PTL_7328 Get Allowcheck option from config, w/o addind new field to 'qtype_essay_options'.
+        $mform->addElement('select', 'allowcheck',
+                get_string('allowcheck', 'qtype_essay'), [0 => get_string('no'), 1 => get_string('yes')]);
+        $mform->setDefault('allowcheck', 0);
+
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
-                array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
+                array('rows' => 10),  $this->editoroptions); //array_merge($this->editoroptions, array('maxfiles' => 0))
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_essay');
 
         $mform->addElement('header', 'graderinfoheader', get_string('graderinfoheader', 'qtype_essay'));
@@ -123,6 +128,7 @@ class qtype_essay_edit_form extends question_edit_form {
         $question->attachments = $question->options->attachments;
         $question->attachmentsrequired = $question->options->attachmentsrequired;
         $question->filetypeslist = $question->options->filetypeslist;
+        $question->allowcheck = get_config('qtype_essay', 'allowcheck_' . $question->id);
         $question->maxbytes = $question->options->maxbytes;
 
         $draftid = file_get_submitted_draft_itemid('graderinfo');

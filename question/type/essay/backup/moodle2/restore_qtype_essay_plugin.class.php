@@ -80,6 +80,13 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
         if ($questioncreated) {
             $data->questionid = $this->get_new_parentid('question');
             $newitemid = $DB->insert_record('qtype_essay_options', $data);
+
+            // PTL_7328 backup & restore custom parameter (will work just on the same instance)
+            $allowcheck = get_config('qtype_essay', 'allowcheck_' . $this->get_old_parentid('question'));
+            if ($allowcheck) {
+                set_config('allowcheck_' . $this->get_new_parentid('question'), $allowcheck, 'qtype_essay');
+            }
+
             $this->set_mapping('qtype_essay', $oldid, $newitemid);
         }
     }
