@@ -10,6 +10,7 @@
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Redundant, because of the answer field. Foreign key references question.id."/>
         <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question_answers.id."/>
         <FIELD NAME="tolerance" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" COMMENT="Allowed error when matching a response to this answer. I don't know why this is stored as a string."/>
+        <FIELD NAME="unit" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false" COMMENT="Allowed error when matching a response to this answer. I don't know why this is stored as a string."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
