@@ -317,4 +317,14 @@ class qtype_essay_question extends question_with_responses {
             return get_string('wordcount', 'qtype_essay', $count);
         }
     }
+
+    // For combinable essay type question.
+    public function grade_response(array $response) {
+        global $DB, $CFG;
+
+        $fraction = '1.0';
+
+        return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
 }

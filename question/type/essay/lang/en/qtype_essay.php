@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['combinedcontrolnameessay'] = 'Essay needed fill';
 $string['acceptedfiletypes'] = 'Accepted file types';
 $string['acceptedfiletypes_help'] = 'Accepted file types can be restricted by entering a list of file extensions. If the field is left empty, then all file types are allowed.';
 $string['allowattachments'] = 'Allow attachments';
@@ -82,3 +83,6 @@ $string['responsetemplate_help'] = 'Any text entered here will be displayed in t
 $string['wordcount'] = 'Word count: {$a}';
 $string['wordcounttoofew'] = 'Word count: {$a->count}, less than the required {$a->limit} words.';
 $string['wordcounttoomuch'] = 'Word count: {$a->count}, more than the limit of {$a->limit} words.';
+$string['allowcheck'] = 'Allow "Check"';
+$string['waitteacherreview'] = 'Your answer is awaiting teacher review';
+$string['pleaseenterananswer'] = 'Please enter an answer.';

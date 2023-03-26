@@ -95,6 +95,10 @@ class qtype_essay extends question_type {
         $options->graderinfoformat = $formdata->graderinfo['format'];
         $options->responsetemplate = $formdata->responsetemplate['text'];
         $options->responsetemplateformat = $formdata->responsetemplate['format'];
+
+        // PTL_7328 Save Allowcheck option co config, w/o addind new field to 'qtype_essay_options'.
+        set_config('allowcheck_' . $formdata->id, $formdata->allowcheck, 'qtype_essay');
+
         $DB->update_record('qtype_essay_options', $options);
     }
 
