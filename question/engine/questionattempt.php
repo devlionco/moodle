@@ -1708,6 +1708,134 @@ class question_attempt {
     public function get_steps_with_submitted_response_iterator() {
         return new question_attempt_steps_with_submitted_response_iterator($this);
     }
+
+    // PTL 2032, 2455, 2449.
+    public function get_attempt_state(){
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+        $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $this->get_usage_id()));
+        if(!empty($attempt)){
+            $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
+
+            if ($attempt->state == quiz_attempt::IN_PROGRESS) {
+                return mod_quiz_display_options::DURING;
+            } else if ($quiz->timeclose && time() >= $quiz->timeclose) {
+                return mod_quiz_display_options::AFTER_CLOSE;
+            } else if (time() < $attempt->timefinish + 120) {
+                return mod_quiz_display_options::IMMEDIATELY_AFTER;
+            } else {
+                return mod_quiz_display_options::LATER_WHILE_OPEN;
+            }
+        }else{
+            return mod_quiz_display_options::LATER_WHILE_OPEN;
+        }
+    }
+
+    // PTL 2032, 2455, 2449.
+    public function get_quiz_options($part = null){
+        global $DB;
+
+        $result = new \StdClass();
+
+        $state = $this->get_attempt_state();
+
+        $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $this->get_usage_id()));
+
+        if(!empty($attempt)){
+            $quizconfig = $DB->get_record('quiz', array('id' => $attempt->quiz));
+        }else{
+            $quizconfig = null;
+        }
+
+        switch ($state) {
+            case mod_quiz_display_options::DURING:
+                $whenname = 'during';
+                $when = mod_quiz_display_options::DURING;
+                break;
+            case mod_quiz_display_options::IMMEDIATELY_AFTER:
+                $whenname = 'immediately';
+                $when = mod_quiz_display_options::IMMEDIATELY_AFTER;
+                break;
+            case mod_quiz_display_options::LATER_WHILE_OPEN:
+                $whenname = 'open';
+                $when = mod_quiz_display_options::LATER_WHILE_OPEN;
+                break;
+            case mod_quiz_display_options::AFTER_CLOSE:
+                $whenname = 'closed';
+                $when = mod_quiz_display_options::AFTER_CLOSE;
+                break;
+            default:
+                $whenname = '';
+                $when = 0;
+        }
+
+        $reviewfields = array(
+                'attempt'          => array('theattempt', 'quiz'),
+                'correctness'      => array('whethercorrect', 'question'),
+                'marks'            => array('marks', 'quiz'),
+                'specificfeedback' => array('specificfeedback', 'question'),
+                'generalfeedback'  => array('generalfeedback', 'question'),
+                'rightanswer'      => array('rightanswer', 'question'),
+                'overallfeedback'  => array('reviewoverallfeedback', 'quiz'),
+        );
+
+        foreach ($reviewfields as $field => $notused) {
+            $cfgfield = 'review' . $field;
+
+            if ($quizconfig !== null && $quizconfig->$cfgfield & $when) {
+                $result->$field = 1;
+            } else {
+                $result->$field = 0;
+            }
+        }
+
+        if($part != null) {
+            if (!$this->if_user_answered_on_part($part) && $when == mod_quiz_display_options::DURING) {
+                $result->rightanswer = 0;
+            }
+        }
+
+        return $result;
+    }
+
+    // PTL 2032, 2455, 2449.
+    public function if_user_answered_on_part($part){
+        global $DB;
+
+        $sql = "
+        SELECT count(*) as count
+        FROM {question_attempt_steps}
+        WHERE questionattemptid = ? AND fraction IS NOT NULL
+    ";
+
+        $qattemptsteps = $DB->get_record_sql($sql, array($part->questionattemptid));
+        if($qattemptsteps->count){
+            return true;
+        }
+        return false;
+    }
+
+    // PTL 2032, 2455, 2449.
+    public function if_user_answer_right_on_part($part){
+        global $DB;
+
+        $sql = "
+        SELECT count(*) as count
+        FROM {question_attempt_steps}
+        WHERE questionattemptid = ? AND state = 'complete'
+    ";
+
+        $qattemptsteps = $DB->get_record_sql($sql, array($part->questionattemptid));
+
+        if ($qattemptsteps->count){
+            return true;
+        }
+        return false;
+
+    }
 }
 
 
