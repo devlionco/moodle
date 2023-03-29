@@ -157,3 +157,4 @@ $string['wildcards'] = 'Wild cards {a}...{z}';
 $string['wildcardvalues'] = 'Wild card(s) values';
 $string['wildcardvaluesgenerated'] = 'Wild card(s) values generated';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
+$string['correctansweris'] = 'The correct answer is: <span dir="ltr">{$a->value} {$a->unit}</span>';

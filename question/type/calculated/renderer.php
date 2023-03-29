@@ -48,7 +48,11 @@ class qtype_calculated_renderer extends qtype_numerical_renderer {
             $response = $question->ap->add_unit($response);
         }
 
-        return get_string('correctansweris', 'qtype_shortanswer', $response);
+        $a = new \StdClass();
+        $a->value = $response;
+        $a->unit = $question->ap->get_default_unit();
+
+        return get_string('correctansweris', 'qtype_calculated', $a);
     }
 
 }
