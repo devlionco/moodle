@@ -3175,7 +3175,8 @@ jQuery.sheet = {
 						r = jS.highlightedLast.rowLast,
 						size = jS.sheetSize(),
 						td;
-					jS.obj.cellActive().mousedown();
+						jS.obj.cellActive().mousedown(),
+						dir = $('html').attr('dir');
 
 					switch (e.keyCode) {
 						case key.UP:
@@ -3185,10 +3186,18 @@ jQuery.sheet = {
 							r++;
 							break;
 						case key.LEFT:
-							c--;
+							if (dir === 'ltr') {
+								c--;
+							} else { // dir=rtl
+								c++;
+							}
 							break;
 						case key.RIGHT:
-							c++;
+							if (dir === 'ltr') {
+								c++;
+							} else { // dir=rtl
+								c--;
+							}
 							break;
 					}
 
@@ -3228,7 +3237,8 @@ jQuery.sheet = {
 				cellSetFocusFromKeyCode:function (e) {
 					var c = jS.cellLast.col, //we don't set the cellLast.col here so that we never go into indexes that don't exist
 						r = jS.cellLast.row,
-						overrideIsEdit = false;
+						overrideIsEdit = false,
+						dir = $('html').attr('dir');
 
 					switch (e.keyCode) {
 						case key.UP:
@@ -3238,10 +3248,18 @@ jQuery.sheet = {
 							r++;
 							break;
 						case key.LEFT:
-							c--;
+							if (dir === 'ltr') {
+								c--;
+							} else { // dir=rtl
+								c++;
+							}
 							break;
 						case key.RIGHT:
-							c++;
+							if (dir === 'ltr') {
+								c++;
+							} else { // dir=rtl
+								c--;
+							}
 							break;
 						case key.ENTER:
 							r++;
@@ -3262,9 +3280,17 @@ jQuery.sheet = {
 						case key.TAB:
 							overrideIsEdit = true;
 							if (e.shiftKey) {
-								c--;
+								if (dir === 'ltr') {
+									c--;
+								} else { // dir=rtl
+									c++;
+								}
 							} else {
-								c++;
+								if (dir === 'ltr') {
+									c++;
+								} else { // dir=rtl
+									c--;
+								}
 							}
 							if (s.autoAddCells) {
 								if (jS.cellLast.col == jS.sheetSize().cols) {
