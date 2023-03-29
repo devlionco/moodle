@@ -129,4 +129,17 @@ class qtype_ddwtos extends qtype_gapselect_base {
 
         return $output;
     }
+
+    public function save_question_options($question) {
+        global $DB;
+
+        parent::save_question_options($question);
+
+        // Set default mathlive field.
+        $obj = $DB->get_record('question_ddwtos', ['questionid' => $question->id]);
+        if(!empty($obj)){
+            $obj->mathliveenable = isset($question->mathliveenable) ? 1 : 0;
+            $DB->update_record('question_ddwtos', $obj);
+        }
+    }
 }

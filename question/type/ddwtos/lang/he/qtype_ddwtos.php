@@ -15,21 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the drag-and-drop words into sentences question type.
+ * Lang file for ddwtos.
  *
- * @package   qtype_ddwtos
- * @copyright 2011 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype_ddwtos
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2022112801;
-$plugin->requires  = 2022111800;
-
-$plugin->component = 'qtype_ddwtos';
-$plugin->maturity  = MATURITY_STABLE;
-
-$plugin->dependencies = array(
-    'qtype_gapselect' => 2022111800,
-);
+$string['mathliveenable'] = 'הצגת מקלדת מתמטית';
