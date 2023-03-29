@@ -14,22 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * 
+ * The language strings for the match question type.
+ *
  * @package    qtype_ddmatch
- * 
- * @author DualCube <admin@dualcube.com>
- * @copyright  2007 DualCube (https://dualcube.com) 
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Adriane Boyd (adrianeboyd@gmail.com)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qtype_ddmatch';
-$plugin->version   = 2023042501;
-$plugin->requires  = 2012120301;
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->dependencies = array(
-    'qtype_match' => 2015111600,
-);
-$plugin->release = '2.5 (Build: 2023042500)';
+$string['mathliveenable'] = 'הצגת מקלדת מתמטית';
+$string['questionentered'] = 'יש להזין שאלה';
+$string['answerentered'] = 'יש להזין תשובה';

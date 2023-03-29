@@ -52,7 +52,7 @@ class backup_qtype_ddmatch_plugin extends backup_qtype_plugin {
         $matchoptions = new backup_nested_element('matchoptions', array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect', 'mathliveenable'));
 
         $matches = new backup_nested_element('matches');
 

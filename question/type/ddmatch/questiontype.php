@@ -56,6 +56,22 @@ class qtype_ddmatch extends question_type {
         $oldsubquestions = $DB->get_records('qtype_ddmatch_subquestions',
                 array('questionid' => $question->id), 'id ASC');
 
+        // Mathlive saving.
+        $tmp = $question->subanswers;
+        $question->subanswers = [];
+
+        foreach ($tmp as $item) {
+            if(is_array($item)){
+                $question->subanswers[] = $item;
+            }else {
+                $question->subanswers[] = [
+                    'text' => $item,
+                    'format' => 1,
+                    'itemid' => 0
+                ];
+            }
+        }
+
         // Insert all the new question & answer pairs.
         foreach ($question->subquestions as $key => $questiontext) {
             if ($questiontext['text'] == '' && trim($question->subanswers[$key]['text']) == '') {
@@ -78,9 +94,27 @@ class qtype_ddmatch extends question_type {
             $subquestion->questiontext = $this->import_or_save_files($questiontext,
                     $context, 'qtype_ddmatch', 'subquestion', $subquestion->id);
             $subquestion->questiontextformat = $questiontext['format'];
-            $subquestion->answertext = $this->import_or_save_files($question->subanswers[$key],
-                    $context, 'qtype_ddmatch', 'subanswer', $subquestion->id);
-            $subquestion->answertextformat = $question->subanswers[$key]['format'];
+
+            // Mathlive saving.
+            if(isset($question->mathliveenable) && $question->mathliveenable == 1){
+
+                $text = $question->subanswers[$key];
+                if(isset($text['text'])){
+                    $text = $text['text'];
+                }
+
+                $subquestion->answertext = strip_tags($text);
+                $subquestion->answertextformat = 1;
+            }else{
+                $subquestion->answertext = $this->import_or_save_files($question->subanswers[$key],
+                        $context, 'qtype_ddmatch', 'subanswer', $subquestion->id);
+
+                if(is_numeric($question->subanswers[$key]['format'])){
+                    $subquestion->answertextformat = $question->subanswers[$key]['format'];
+                }else{
+                    $subquestion->answertextformat = 1;
+                }
+            }
 
             $DB->update_record('qtype_ddmatch_subquestions', $subquestion);
         }
@@ -104,6 +138,7 @@ class qtype_ddmatch extends question_type {
             $options->id = $DB->insert_record('qtype_ddmatch_options', $options);
         }
 
+        $options->mathliveenable = isset($question->mathliveenable) && $question->mathliveenable == 1 ? 1 : 0;
         $options->shuffleanswers = $question->shuffleanswers;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('qtype_ddmatch_options', $options);

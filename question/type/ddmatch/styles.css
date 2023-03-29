@@ -8,6 +8,7 @@
 }
 
 .ddmatch li.draghome {
+    position: relative;
     background-color: white;
     border: 0.06rem solid #908b8b;
     padding: 0.625rem;
@@ -231,4 +232,9 @@ body#page-question-type-ddmatch div[id^=fitem_id_][id*=subanswers_] {
 }
 .ddmatch .divanswer{
     max-height: fit-content;
+}
+
+#page-mod-quiz-attempt .ddmatch li.matchdrag math-field {
+    box-shadow: none !important;
+    border: 0 !important;
 }
