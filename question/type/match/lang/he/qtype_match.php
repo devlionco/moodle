@@ -15,18 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the matching question type.
+ * Strings for component 'qtype_match', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   qtype_match
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qtype_match';
-$plugin->version   = 2022112801;
-
-$plugin->requires  = 2022111800;
-
-$plugin->maturity  = MATURITY_STABLE;
+$string['mathliveenable'] = 'הצגת מקלדת מתמטית';

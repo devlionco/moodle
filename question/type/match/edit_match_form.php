@@ -43,8 +43,15 @@ class qtype_match_edit_form extends question_edit_form {
         $repeated = array();
         $repeated[] = $mform->createElement('editor', 'subquestions',
                 $label, array('rows'=>3), $this->editoroptions);
-        $repeated[] = $mform->createElement('text', 'subanswers',
+
+        // Mathlive enable.
+        if(isset($this->question->options->mathliveenable) && $this->question->options->mathliveenable == 1){
+            $repeated[] = $mform->createElement('mathlive', 'subanswers', get_string('answer', 'question'), []);
+        }else{
+            $repeated[] = $mform->createElement('text', 'subanswers',
                 get_string('answer', 'question'), array('size' => 50, 'maxlength' => 255));
+        }
+
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
         $answersoption = 'subquestions';
@@ -57,10 +64,26 @@ class qtype_match_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
+        global $PAGE;
+
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffle', 'qtype_match'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers', 1));
+
+        // Mathlive default.
+        $PAGE->requires->js_amd_inline('
+            require(["jquery"], function($) {
+                $("input[name='."'mathliveenable'".']").change(function() {            
+                    $("form").find("#id_updatebutton").click();     
+                });                
+            });
+        ');
+
+        // Mathlive enable.
+        $mform->addElement('checkbox', 'mathliveenable', get_string('mathliveenable', 'qtype_match'), ' ');
+        $mform->setType('mathliveenable', PARAM_INT);
+        $mform->setDefault('mathliveenable', $this->question->options->mathliveenable);
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'question', '{no}'), 0);
 
