@@ -56,7 +56,7 @@ class backup_qtype_ddwtos_plugin extends backup_qtype_plugin {
         $ddwtos = new backup_nested_element('ddwtos', array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect', 'mathliveenable'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($ddwtos);

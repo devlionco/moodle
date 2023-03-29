@@ -16,6 +16,8 @@
     text-align: center;
     border: 1px solid #000;
     margin-bottom: 2px;
+    min-width: 6rem;
+    min-height: 3rem;
 }
 
 .que.ddwtos .drop {
@@ -32,6 +34,11 @@
     background: transparent;
     border: 1px solid #000;
     cursor: move;
+    line-height: 1 !important;
+}
+#page-mod-quiz-attempt .que.ddwtos .draghome math-field {
+    box-shadow: none !important;
+    border: 0 !important;
 }
 
 .que.ddwtos.qtype_ddwtos-readonly .draghome {
@@ -63,6 +70,9 @@
 .que.ddwtos .draghome.placed.valid-drag-over-drop {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+}
+.que.ddwtos .draghome.unplaced {
+    
 }
 
 .que.ddwtos span.incorrect {

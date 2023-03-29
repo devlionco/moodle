@@ -38,6 +38,70 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
     public function qtype() {
         return 'ddwtos';
     }
+    protected function definition_inner($mform) {
+        global $PAGE, $DB;
+
+        // Mathlive default.
+        $PAGE->requires->js_amd_inline('
+            require(["jquery"], function($) {
+                $("input[name='."'mathliveenable'".']").change(function() {            
+                    $("form").find("#id_updatebutton").click();     
+                });                
+            });
+        ');
+
+        // Mathlive enable.
+        $mform->addElement('checkbox', 'mathliveenable', get_string('mathliveenable', 'qtype_ddwtos'), ' ');
+        $mform->setType('mathliveenable', PARAM_INT);
+
+        $obj = $DB->get_record('question_ddwtos', ['questionid' => $this->question->id]);
+        if(!empty($obj)){
+            $mform->setDefault('mathliveenable', $obj->mathliveenable);
+        }else{
+            $mform->setDefault('mathliveenable', 0);
+        }
+
+        // Add the answer (choice) fields to the form.
+        $this->definition_answer_choice($mform);
+
+        $this->add_combined_feedback_fields(true);
+        $this->add_interactive_settings(true, true);
+    }
+
+    /**
+     * Creates an array with elements for a choice group.
+     *
+     * @param object $mform The Moodle form we are working with
+     * @param int $maxgroup The number of max group generate element select.
+     * @return array Array for form elements
+     */
+    protected function choice_group_custom($mform) {
+        global $DB;
+
+        $options = array();
+        for ($i = 1; $i <= $this->get_maximum_choice_group_number(); $i += 1) {
+            $options[$i] = question_utils::int_to_letter($i);
+        }
+        $grouparray = array();
+
+        // Mathlive enable.
+        $flag = false;
+        $obj = $DB->get_record('question_ddwtos', ['questionid' => $this->question->id]);
+        if(!empty($obj) && $obj->mathliveenable == 1){
+            $flag = true;
+        }
+
+        if(!$flag) {
+            $grouparray[] = $mform->createElement('text', 'answer',
+                    get_string('answer', 'qtype_gapselect'), array('size' => 30, 'class' => 'tweakcss'));
+        }else{
+            $grouparray[] = $mform->createElement('mathlive', 'answer', get_string('answer', 'qtype_gapselect'), []);
+        }
+
+        $grouparray[] = $mform->createElement('select', 'choicegroup',
+                get_string('group', 'qtype_gapselect'), $options);
+        return $grouparray;
+    }
 
     protected function data_preprocessing_choice($question, $answer, $key) {
         $question = parent::data_preprocessing_choice($question, $answer, $key);
@@ -48,7 +112,7 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
     }
 
     protected function choice_group($mform) {
-        $grouparray = parent::choice_group($mform);
+        $grouparray = $this->choice_group_custom($mform);
         $grouparray[] = $mform->createElement('checkbox', 'infinite', get_string('infinite', 'qtype_ddwtos'), '', null,
                 array('size' => 1, 'class' => 'tweakcss'));
         return $grouparray;

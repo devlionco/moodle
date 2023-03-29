@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
+require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 
 /**
@@ -106,6 +107,8 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
     }
 
     protected function drag_boxes($qa, $group, $choices, question_display_options $options) {
+        global $DB;
+
         $boxes = '';
         foreach ($choices as $key => $choice) {
             // Bug 8632: long text entry causes bug in drag and drop field in IE.
@@ -115,6 +118,15 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $infinite = '';
             if ($choice->infinite) {
                 $infinite = ' infinite';
+            }
+
+            $question = $qa->get_question();
+            $obj = $DB->get_record('question_ddwtos', ['questionid' => $question->id]);
+
+            // Answer mathlive or normal.
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+                $content = $mathlive->static_formula($content);
             }
 
             $boxes .= html_writer::tag('span', $content, [
@@ -182,6 +194,38 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             }
         }
         return $output;
+    }
+
+    public function correct_response(question_attempt $qa) {
+        global $DB;
+
+        $question = $qa->get_question();
+
+        $obj = $DB->get_record('question_ddwtos', ['questionid' => $question->id]);
+
+        $correctanswer = '';
+        foreach ($question->textfragments as $i => $fragment) {
+            if ($i > 0) {
+                $group = $question->places[$i];
+                $choice = $question->choices[$group][$question->rightchoices[$i]];
+
+                // Answer mathlive or normal.
+                if(!empty($obj) && $obj->mathliveenable == 1){
+                    $mathlive = new \form_mathlive();
+                    $correctanswer = $mathlive->static_formula(str_replace('-', '&#x2011;', $choice->text));
+                }else{
+                    $correctanswer .= '[' . str_replace('-', '&#x2011;',
+                                    $choice->text) . ']';
+                }
+            }
+            $correctanswer .= $fragment;
+        }
+
+        if (!empty($correctanswer)) {
+            return get_string('correctansweris', 'qtype_gapselect',
+                    $question->format_text($correctanswer, $question->questiontextformat,
+                            $qa, 'question', 'questiontext', $question->id));
+        }
     }
 
 }
