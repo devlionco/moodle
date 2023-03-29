@@ -26,6 +26,7 @@
 
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 
 /**
@@ -85,6 +86,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     public function correct_response(question_attempt $qa) {
+        global $DB;
+
         if ($qa->get_state()->is_correct()) {
             // The answer was correct so we don't need to do anything further.
             return '';
@@ -94,6 +97,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $stemorder = $question->get_stem_order();
         $choices = $this->format_choices($qa, true);
 
+        $obj = $DB->get_record('qtype_ddmatch_options', ['questionid' => $question->id]);
+
         $table = new html_table();
         $table->attributes['class'] = 'generaltable correctanswertable';
         $table->size = array('50%', '50%');
@@ -102,7 +107,16 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             $row->cells[] = $question->format_text($question->stems[$stemid],
                     $question->stemformat[$stemid], $qa,
                     'qtype_ddmatch', 'subquestion', $stemid);
-            $row->cells[] = $choices[$question->get_right_choice_for($stemid)];
+
+            $choicetext = $choices[$question->get_right_choice_for($stemid)];
+
+            // Answer mathlive or normal.
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+                $choicetext = $mathlive->static_formula($choicetext);
+            }
+
+            $row->cells[] = $choicetext;
 
             $table->data[] = $row;
         }
@@ -128,6 +142,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa
      */
     public function construct_answerblock($qa, $question, $options) {
+        global $PAGE;
+
         $stemorder = $question->get_stem_order();
         $response = $qa->get_last_qt_data();
         $choices = $this->format_choices($qa);
@@ -173,6 +189,24 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $o .= $this->construct_available_dragdrop_choices($qa, $question);
         $o .= html_writer::end_tag('div');
         $o .= html_writer::tag('div', '', array('class' => 'clearer'));
+
+        $PAGE->requires->js_amd_inline('
+            require(["jquery", "core_form/mathlive"], function ($, mathlive) {
+                const MathLive = mathlive;
+                $("table.answer").on("DOMSubtreeModified", function(e){
+                    setTimeout(function(){ 
+                        if($("ul.matchtarget").find("math-field").length > 0) {
+                            let mathField = $(e.target).find("math-field");
+                            let mathFieldValue = mathField.attr("value");
+                            if(mathField.length > 0 && mathField.length > 0) {
+                                mathField[0].setValue(mathFieldValue, {suppressChangeNotifications: true});
+                            }
+                        }
+                    }, 100);
+                });
+            });
+        ');
+
         return $o;
     }
 
@@ -188,6 +222,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     private function construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) {
+        global $DB;
+
         $placeholderclasses = array('placeholder');
         $li = '';
         // Check whether an answer has already been selected.
@@ -199,7 +235,17 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             $attributes = array(
                     'data-id' => $selected,
                     'class' => 'matchdrag copy');
-            $li = html_writer::tag('li', $choices[$selected], $attributes);
+
+            $choicetext = $choices[$selected];
+
+            // Answer mathlive or normal.
+            $obj = $DB->get_record('qtype_ddmatch_options', ['questionid' => $question->id]);
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+                $choicetext = $mathlive->static_formula($choicetext);
+            }
+
+            $li = html_writer::tag('li', $choicetext, $attributes);
 
             // Add the hidden placeholder class so that the placeholder is initially hidden.
             $placeholderclasses[] = 'hidden';
@@ -228,6 +274,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
      * @return String
      */
     public function construct_available_dragdrop_choices($qa, $question) {
+        global $DB;
+
         $choiceorder = $question->get_choice_order();
         $choices = $this->format_choices($qa, true);
 
@@ -237,7 +285,19 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
                     'data-id' => $key,
                     'class' => 'draghome infinite choice' . $key 
             );
-            $li = html_writer::tag('li', $choices[$key], $attributes);
+
+            $choicetext = $choices[$key];
+
+            // Answer mathlive or normal.
+            $obj = $DB->get_record('qtype_ddmatch_options', ['questionid' => $question->id]);
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+                $html = html_writer::tag('span','', array('class' => 'position-absolute w-100 h-100', 'style' => 'top: 0; left: 0;'));
+                $choicetext = $mathlive->static_formula($choicetext) . $html;
+            }
+
+            $li = html_writer::tag('li', $choicetext, $attributes);
+
             $uldata .= $li;
         }
         $attributes = array(

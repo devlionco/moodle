@@ -44,8 +44,15 @@ class qtype_ddmatch_edit_form extends question_edit_form {
         $repeated = array();
         $repeated[] = $mform->createElement('editor', 'subquestions',
                 $label, array('rows' => 3), $this->editoroptions);
-        $repeated[] = $mform->createElement('editor', 'subanswers',
-                get_string('answer'), array('rows' => 3), $this->editoroptions);
+
+        // Mathlive enable.
+        if(isset($this->question->options->mathliveenable) && $this->question->options->mathliveenable == 1){
+            $repeated[] = $mform->createElement('mathlive', 'subanswers', get_string('answer'), []);
+        }else{
+            $repeated[] = $mform->createElement('editor', 'subanswers',
+                    get_string('answer'), array('rows' => 3), $this->editoroptions);
+        }
+
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_RAW;
         $answersoption = 'subquestions';
@@ -58,10 +65,62 @@ class qtype_ddmatch_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
+        global $PAGE;
+
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffle', 'qtype_match'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', 1);
+
+        // Mathlive default.
+        $questionentered = get_string('questionentered', 'qtype_ddmatch');
+        $answerentered = get_string('answerentered', 'qtype_ddmatch');
+        $PAGE->requires->js_amd_inline('
+            require(["jquery"], function($) {
+                $("input[name='."'mathliveenable'".']").change(function() {
+                
+                    $("[id^='."'fitem_id_subquestions_'".']").each(function( index ) {
+                        let num = $(this).attr("id").substr(22, 27);
+                        let qnum = Number(num) + 1;
+                        
+                        let id_ans = "#id_subanswers_" + num + "editable";
+                        let id_ans_m = "#id_subanswers_" + num;
+                        
+                        if($(id_ans).text().length === 0 || $(id_ans).text() === "a"){
+                            $(id_ans).text("'.$answerentered.'" + " " + qnum)    
+                            $(id_ans_m).text("'.$answerentered.'" + " " + qnum)    
+                            $(id_ans_m).val("'.$answerentered.'" + " " + qnum)    
+                        }
+                        
+                        // Mathlive.
+                        let id_ans_math = "math_id_subanswers_" + num;
+                        let mf = document.getElementById(id_ans_math);
+                        if(mf !== null){                                                    
+                            if(mf.getValue().length === 0){
+                                mf.setValue(
+                                  "abc" + qnum
+                                );
+                            }
+                        }                        
+                        
+                        let id_q = "#id_subquestions_" + num + "editable";
+                        let id_q_m = "#id_subquestions_" + num;
+                        if($(id_q).text().length === 0){
+                            $(id_q).text("'.$questionentered.'" + " " + qnum)    
+                            $(id_q_m).text("'.$questionentered.'" + " " + qnum)    
+                            $(id_q_m).val("'.$questionentered.'" + " " + qnum)    
+                        }
+                    });
+                    
+                    $("form").find("#id_updatebutton").click();                    
+                });                
+            });
+        ');
+
+        // Mathlive enable.
+        $mform->addElement('checkbox', 'mathliveenable', get_string('mathliveenable', 'qtype_ddmatch'), ' ');
+        $mform->setType('mathliveenable', PARAM_INT);
+        $mform->setDefault('mathliveenable', $this->question->options->mathliveenable);
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'question', '{no}'), 0);
 
@@ -133,7 +192,13 @@ class qtype_ddmatch_edit_form extends question_edit_form {
         $answercount = 0;
         foreach ($questions as $key => $question) {
             $trimmedquestion = trim($question['text']);
-            $trimmedanswer = trim($answers[$key]['text']);
+
+            if(isset($answers[$key]['text'])){
+                $trimmedanswer = trim($answers[$key]['text']);
+            }else{
+                $trimmedanswer = trim($answers[$key]);
+            }
+
             if ($trimmedquestion != '') {
                 $questioncount++;
             }
