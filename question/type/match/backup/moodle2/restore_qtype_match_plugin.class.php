@@ -101,6 +101,9 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             if (!isset($data->shownumcorrect)) {
                 $data->shownumcorrect = 0;
             }
+            if (!isset($data->mathliveenable)) {
+                $data->mathliveenable = 0;
+            }
 
             // Adjust some columns.
             $data->questionid = $newquestionid;

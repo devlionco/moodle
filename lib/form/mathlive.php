@@ -305,17 +305,25 @@ class form_mathlive implements renderable {
         return $html;
     }
 
-    public function select_render($name, $choices){
+    public function select_render($name, $choices, $default = null){
         global $PAGE;
 
         $identificator = str_replace( ':', '_', $name);
 
+        if($default == null){
+            $formula = get_string('choose');
+            $value = 0;
+        }else{
+            $formula = $this->static_formula($choices[$default]);
+            $value = $default;
+        }
+
         $html = '
             <div class="select-wrapper selectmathlive_'.$identificator.'  d-inline-flex position-relative">            
-                <input id="'.$name.'" type="hidden" value="0" name="'.$name.'"/>
+                <input id="'.$name.'" type="hidden" value="'.$value.'" name="'.$name.'"/>
                 <div class="select position-relative">
                     <div class="custom-select selectmathlive-select select-trigger d-inline-flex align-items-center h-auto py-0" role="listbox" tabindex="0" aria-expanded="false">
-                        <span class="">'.get_string('choose').'</span>
+                        <span class="">'.$formula.'</span>
                     </div>
                     <div class="custom-options selectmathlive-options position-absolute bg-white border border-dark" style="display:none;">
         ';
@@ -344,7 +352,8 @@ class form_mathlive implements renderable {
                     position: relative;
                 }
                 #page-question-preview .custom-option math-field,
-                #page-mod-quiz-attempt .custom-option math-field {
+                #page-mod-quiz-attempt .custom-option math-field, 
+                #page-mod-quiz-attempt .custom-select math-field {
                     font-size: 22px !important;
                     border-radius: 0 !important;
                     border: none !important;

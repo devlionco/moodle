@@ -48,3 +48,4 @@ $string['regradeissuenumchoiceschanged'] = 'The number of choices has changed.';
 $string['regradeissuenumstemschanged'] = 'The number of sub-questions has changed.';
 $string['shuffle'] = 'Shuffle';
 $string['shuffle_help'] = 'If enabled, the order of the questions is randomly shuffled for each attempt, provided that "Shuffle within questions" in the activity settings is also enabled. In a matching question, only the questions are affected by this parameter. The answer choices will always be shuffled.';
+$string['mathliveenable'] = 'Math live enable';
