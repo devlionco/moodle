@@ -131,8 +131,13 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             } else {
                 $feedback[] = '';
             }
+
+            // PTL 2032, 2455, 2449.
+            $realyoptions = $qa->get_quiz_options();
+
             $class = 'r' . ($value % 2);
-            if ($options->correctness && $isselected) {
+            if ($realyoptions->correctness && $isselected) {
+            //if ($options->correctness && $isselected) {
                 // Feedback images will be rendered using Font awesome.
                 // Font awesome icons are actually characters(text) with special glyphs,
                 // so the icons cannot be aligned correctly even if the parent div wrapper is using align-items: flex-start.
@@ -201,7 +206,10 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                 $number = chr(ord('a') + $num);
                 break;
             case 'ABCD':
-                $number = chr(ord('A') + $num);
+                //$number = chr(ord('A') + $num);
+
+                $letters = explode(',', get_string('alphabet', 'langconfig'));
+                $number = $letters[$num];
                 break;
             case '123':
                 $number = $num + 1;
