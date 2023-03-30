@@ -349,8 +349,14 @@ class qtype_matrix extends question_type
     {
         $data = (object) $data;
         $result = array();
-        $row_count = 20;
-        $col_count = 20;
+
+        if(count($data->rowid) > 20){
+            $row_count = count($data->rowid);
+            $col_count = count($data->rowid);
+        }else{
+            $row_count = 20;
+            $col_count = 20;
+        }
 
         //init
         for ($row = 0; $row < $row_count; $row++) {

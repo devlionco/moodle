@@ -45,7 +45,7 @@ class qtype_matrix_renderer extends qtype_with_combined_feedback_renderer
         }
 
         if ($options->correctness) {
-            $table->head[] = '';
+            $table->head[] = get_string('correctness_answer', 'qtype_matrix');
         }
 
         foreach ($order as $rowid) {
@@ -60,14 +60,16 @@ class qtype_matrix_renderer extends qtype_with_combined_feedback_renderer
                 $is_readonly = $options->readonly;
                 $is_checked = $question->response($response, $row, $col);
 
-                if ($question->multiple) {
-                    $cell = self::checkbox($cell_name, $is_checked, $is_readonly);
-                } else {
-                    $cell = self::radio($cell_name, $col->id, $is_checked, $is_readonly);
-                }
+                $feedback = false;
                 if ($options->correctness) {
                     $weight = $question->weight($row, $col);
-                    $cell .= $this->feedback_image($weight);
+                    $feedback = $this->if_feedback_border($weight);
+                }
+
+                if ($question->multiple) {
+                    $cell = self::checkbox($cell_name, $is_checked, $is_readonly, $feedback);
+                } else {
+                    $cell = self::radio($cell_name, $col->id, $is_checked, $is_readonly, $feedback);
                 }
                 $row_data[] = $cell;
             }
@@ -104,22 +106,64 @@ class qtype_matrix_renderer extends qtype_with_combined_feedback_renderer
         return '<span class="title">' . format_text($text) . '</span>' . $description;
     }
 
-    protected static function checkbox($name, $checked, $readonly)
+    protected static function checkbox($name, $checked, $readonly, $feedback)
     {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
+
+        if($feedback){
+        return <<<EOT
+        <div style="display: inline-flex;
+            border: 3px solid green;
+            align-items: center;
+            border-radius: 5px;
+            justify-content: center;
+        ">
+            <input type="checkbox" name="$name" style="margin: 0" $checked $readonly />
+        </div>
+EOT;
+        }
+
         return <<<EOT
         <input type="checkbox" name="$name" $checked $readonly />
 EOT;
     }
 
-    protected static function radio($name, $value, $checked, $readonly)
+    protected static function radio($name, $value, $checked, $readonly, $feedback)
     {
         $readonly = $readonly ? 'readonly="readonly" disabled="disabled"' : '';
         $checked = $checked ? 'checked="checked"' : '';
+
+        if($feedback){
+            return <<<EOT
+        <div style="display: inline-flex;
+            border: 3px solid green;
+            border-radius: 30px;
+            align-items: center;
+            justify-content: center;">
+            <input type="radio" name="$name" style="margin: 0" value="$value" $checked $readonly />
+        </div>
+EOT;
+        }
+
         return <<<EOT
         <input type="radio" name="$name" value="$value" $checked $readonly />
 EOT;
+    }
+
+    /**
+     * Return an appropriate icon (green tick, red cross, etc.) for a grade.
+     * @param float $fraction grade on a scale 0..1.
+     * @param bool $selected whether to show a big or small icon. (Deprecated)
+     * @return string html fragment.
+     */
+    protected function if_feedback_border($fraction) {
+
+        if(question_state::graded_state_for_fraction($fraction)->is_correct()){
+            return true;
+        }
+
+        return false;
     }
 
 }

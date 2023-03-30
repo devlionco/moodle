@@ -88,3 +88,4 @@ $string['allow_dnd_ui_descr'] = 'If allowed, the teachers will have the possibil
 $string['use_dnd_ui'] = 'Use drag &amp; drop ?';
 $string['privacy:metadata'] = 'The Kprime/Matrix Question Type plugin does not store any personal data.';
 
+$string['correctness_answer'] = 'Correctness of the answer';
