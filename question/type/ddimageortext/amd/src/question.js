@@ -61,6 +61,22 @@ define([
         this.waitForAllImagesToBeLoaded();
     }
 
+    function isMobile() {
+        const toMatch = [
+            /Android/i,
+            /webOS/i,
+            /iPhone/i,
+            /iPad/i,
+            /iPod/i,
+            /BlackBerry/i,
+            /Windows Phone/i
+        ];
+
+        return toMatch.some((toMatchItem) => {
+            return navigator.userAgent.match(toMatchItem);
+        });
+    }
+
     /**
      * Waits until all images are loaded before calling setupQuestion().
      *
@@ -406,11 +422,38 @@ define([
             }
         }
 
-        dragDrop.start(e, drag, function(x, y, drag) {
-            thisQ.dragMove(x, y, drag);
-        }, function(x, y, drag) {
-            thisQ.dragEnd(x, y, drag);
-        });
+        if (!isMobile()) {
+            dragDrop.start(e, drag, function (x, y, drag) {
+                thisQ.dragMove(x, y, drag);
+            }, function (x, y, drag) {
+                thisQ.dragEnd(x, y, drag);
+            });
+        }
+
+        if (isMobile()) {
+            if (questionManager.clickedObjects.drag !== undefined && questionManager.clickedObjects.drop !== undefined) {
+
+                let drop = questionManager.clickedObjects.drop;
+                let x = drop.pageX;
+                let y = drop.pageY;
+
+                thisQ.dragMove(x, y, drag);
+                setTimeout(function () {
+                    thisQ.dragEnd(x, y, drag);
+
+                    // Revert to normal view.
+                    let area = drag.parent().parent().parent();
+                    area.find('img.draghome').each(function( index ) {
+                        $(this).removeClass('clicked');
+                        $(this).removeData("clicked");
+                    });
+
+                    questionManager.clickedObjects.drag = undefined;
+                    questionManager.clickedObjects.drop = undefined;
+                }, 100);
+            }
+        }
+
     };
 
     /**
@@ -1026,6 +1069,8 @@ define([
          */
         questions: {}, // An object containing all the information about each question on the page.
 
+        clickedObjects: {},
+
         /**
          * Initialise one question.
          *
@@ -1057,6 +1102,9 @@ define([
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
+
+            questionManager.addEventHandlersToClick();
+
             $('body')
                 .on('keydown',
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
@@ -1093,6 +1141,26 @@ define([
         },
 
         /**
+         * Binding the click event again for newly created element.
+         *
+         * @param {jQuery} element Element to bind the event
+         */
+        addEventHandlersToClick: function() {
+            if (isMobile()) {
+                document.addEventListener("click", function (e) {
+                    if (questionManager.clickedObjects.drag !== undefined) {
+                        if (Object.is(questionManager.clickedObjects.drag.currentTarget, e.target)) {
+                            questionManager.clickedObjects.drop = undefined;
+                        } else {
+                            questionManager.clickedObjects.drop = e;
+                            questionManager.handleDragStart(questionManager.clickedObjects.drag);
+                        }
+                    }
+                });
+            }
+        },
+
+        /**
          * Handle mouse down / touch start events on drags.
          * @param {Event} e the DOM event.
          */
@@ -1100,6 +1168,28 @@ define([
             e.preventDefault();
             var question = questionManager.getQuestionForEvent(e);
             if (question) {
+
+                if (isMobile()) {
+                    // Change to clicked view.
+                    let area = $(e.target).parent().parent().parent();
+
+                    let flag = false;
+                    if($(e.target).data("clicked") === 1){
+                        flag = true;
+                    }
+
+                    area.find('img.draghome').each(function( index ) {
+                        $(this).removeClass('clicked');
+                        $(this).removeData("clicked");
+                    });
+
+                    if(!flag) {
+                        $(e.target).data("clicked", 1);
+                        $(e.target).addClass('clicked');
+                    }
+                }
+
+                questionManager.clickedObjects.drag = e;
                 question.handleDragStart(e);
             }
         },
