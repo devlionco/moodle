@@ -368,5 +368,19 @@ function xmldb_qtype_formulas_upgrade($oldversion=0) {
         // Formulas savepoint reached.
         upgrade_plugin_savepoint(true, 2018080300, 'qtype', 'formulas');
     }
+
+    if ($oldversion < 2020052701) {
+
+        $table = new xmldb_table('qtype_formulas_answers');
+        $field = new xmldb_field('autocomplete', XMLDB_TYPE_INTEGER, '2', null, null, null, 0, 'partincorrectfbformat');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Formulas savepoint reached.
+        upgrade_plugin_savepoint(true, 2020052701, 'qtype', 'formulas');
+    }
+
     return true;
 }

@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/question/type/formulas/variables.php');
 require_once($CFG->dirroot . '/question/type/formulas/answer_unit.php');
 require_once($CFG->dirroot . '/question/type/formulas/conversion_rules.php');
 require_once($CFG->dirroot . '/question/behaviour/adaptivemultipart/behaviour.php');
+require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
 
 /**
  * Base class for formulas questions.
@@ -481,6 +482,12 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
                                                      ? 1
                                                      : (1 - $part->unitpenalty));
                 $this->raw_grades[$part->partindex] = $part->answermark * $this->fractions[$part->partindex];
+
+                //if answer is not correct with ald algorithm use a new algorithm
+                if (!$this->anscorrs[$part->partindex]||!$this->unitcorrs[$part->partindex]) {
+                    $this->raw_grades[$part->partindex] = $this->apply_custom_unit_penalty($part, $response, $this->raw_grades[$part->partindex], $this->anscorrs[$part->partindex]);
+                }
+
                 $totalvalue += $part->answermark;
             }
         } catch (Exception $e) {
@@ -490,6 +497,80 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
 
         $fraction = array_sum($this->raw_grades) / $totalvalue;
         return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    public function apply_custom_unit_penalty($part, $response, $grade,$answercorrect=0) {
+        //autocomplete enable and type מספר
+        if($part->autocomplete  && $part->answertype == 0) {
+
+            $answer = array();
+            $answer['value'] = $response[$part->partindex.'_0'];
+            $answer['unit'] = $response[$part->partindex.'_1'];
+
+            //default error validation
+            $tolerance=0.0001;
+            if ($answercorrect==1 && !is_numeric($part->answer)) {
+                $dano['value'] = $answer['value'];
+            }else if (!is_numeric($part->answer)&&isset($part->modelanswers[0])) {
+                $dano['value']=$part->modelanswers[0];
+            }else{
+                $dano['value'] = $part->answer;
+            }
+            $dano['unit'] = $part->postunit;
+
+
+            if(!qtype_formulas_compare_answer($dano, $answer, $tolerance)){
+
+                $penalty = qtype_formulas_check_for_penalty($dano, $answer, $tolerance);
+                if($penalty->result){
+                    $grade =$part->answermark - $penalty->penalty * $part->answermark;
+                }else{
+                    $grade = 0;
+                }
+            }else{
+                $grade = $part->answermark * 1;
+            }
+        }
+
+        return $grade;
+    }
+
+    public function grade_custom_response_penalty($part, $response, $answercorrect, $unitcorrect) {
+
+        //autocomplete enable and type מספר
+        if($part->autocomplete  && $part->answertype == 0) {
+
+            $answer = array();
+            $answer['value'] = $response[$part->partindex.'_0'];
+            $answer['unit'] = $response[$part->partindex.'_1'];
+
+            //default error validation
+            $tolerance=0.0001;
+            if ($answercorrect==1 && !is_numeric($part->answer)) {
+                $dano['value'] = $answer['value'];
+            }else if (!is_numeric($part->answer)&&isset($part->modelanswers[0])) {
+                $dano['value']=$part->modelanswers[0];
+            }else{
+                $dano['value'] = $part->answer;
+            }
+            $dano['unit'] = $part->postunit;
+
+            if(!qtype_formulas_compare_answer($dano, $answer, $tolerance)){
+
+                $penalty = qtype_formulas_check_for_penalty($dano, $answer, $tolerance);
+                if($penalty->result){
+                    $grade=1-$penalty->penalty;
+                    return array($grade, $grade);
+
+                }else{
+                    return array(0, 0);
+                }
+            }else{
+                return array(1, 1);
+            }
+        }
+
+        return array($answercorrect, $unitcorrect);
     }
 
     // Compute the correct response for the given question part.
@@ -590,6 +671,37 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
         }
         $res->is_number = $gradingtype != 1000;    // 1000 is the algebraic answer type.
 
+        // Calculate pow. PTL 4194
+        //try {
+        //    if($res->is_number) {
+        //        if (isset($r[0]) && !empty($r[0])) {
+        //            $r[0] = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $r[0]);
+        //            preg_match('~([+-]?\d+)(?:\^|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', $r[0], $powresponse);
+        //            if (!empty($powresponse) && isset($powresponse[0]) && isset($powresponse[1]) && isset($powresponse[2])) {
+        //                if (!empty($powresponse[0]) && !empty($powresponse[1]) && !empty($powresponse[2])) {
+        //
+        //                    $siman = '';
+        //                    if (strpos($powresponse[1], '-') !== false) {
+        //                        $siman = '-';
+        //                    }
+        //
+        //                    if (strpos($powresponse[1], '+') !== false) {
+        //                        $siman = '+';
+        //                    }
+        //
+        //                    $pow = pow(abs($powresponse[1]), $powresponse[2]);
+        //                    $strnumber = str_replace($powresponse[0], $siman.$pow, $r[0]);
+        //                    $r[0] = $strnumber;
+        //                }
+        //            }
+        //        }
+        //
+        //        $r[0]= eval('return '.$r[0].';');
+        //    }
+        //} catch (Exception $e) {
+        //
+        //}
+
         // Note that the same format check has been performed on the client side by the javascript "formatcheck.js".
         try {
             if (!$res->is_number) {  // Unit has no meaning for algebraic format, so do nothing for it.
@@ -650,6 +762,7 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
 
         // Step 5: Get the model answer, which is an array of numbers or strings.
         $modelanswers = $this->get_evaluated_answer($part);
+        $part->modelanswers=$modelanswers;
         if (count($coordinates) != count($modelanswers)) {
             throw new Exception('Database record inconsistence: number of answers in part!');
         }
@@ -672,6 +785,12 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
 
         // Step 8: Restrict the correctness value within 0 and 1 (inclusive). Also, all non-finite numbers are incorrect.
         $answercorrect = is_finite($correctness->value) ? min(max((float) $correctness->value, 0.0), 1.0) : 0.0;
+
+        // Step 9: new custom algorithm validation
+        if (!$answercorrect||!$unitcorrect){
+            list($answercorrect, $unitcorrect) = $this->grade_custom_response_penalty($part, $response, $answercorrect, $unitcorrect);
+        }
+
         return array($answercorrect, $unitcorrect);
     }
 

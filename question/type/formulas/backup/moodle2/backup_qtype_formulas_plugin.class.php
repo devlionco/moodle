@@ -59,7 +59,7 @@ class backup_qtype_formulas_plugin extends backup_qtype_plugin {
             'unitpenalty', 'postunit', 'ruleid', 'otherrule', 'subqtext', 'subqtextformat', 'feedback', 'feedbackformat',
             'partcorrectfb', 'partcorrectfbformat',
             'partpartiallycorrectfb', 'partpartiallycorrectfbformat',
-            'partincorrectfb', 'partincorrectfbformat'));
+            'partincorrectfb', 'partincorrectfbformat', 'autocomplete'));
 
         // Don't need to annotate ids nor files.
         // Now the own qtype tree.

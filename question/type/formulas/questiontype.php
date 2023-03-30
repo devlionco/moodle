@@ -58,7 +58,7 @@ class qtype_formulas extends question_type {
      */
     public function part_tags() {
         return array('placeholder', 'answermark', 'answertype', 'numbox', 'vars1', 'answer', 'vars2', 'correctness'
-            , 'unitpenalty', 'postunit', 'ruleid', 'otherrule');
+            , 'unitpenalty', 'postunit', 'ruleid', 'otherrule', 'autocomplete');
     }
 
     /**
@@ -894,11 +894,12 @@ class qtype_formulas extends question_type {
             $ans->partindex = $idx;
             $unitcheck = new answer_unit_conversion;
 
-            try {
-                $unitcheck->parse_targets($ans->postunit);
-            } catch (Exception $e) {
-                $errors["postunit[$idx]"] = get_string('error_unit', 'qtype_formulas') . $e->getMessage();
-            }
+            //TODO Disable validation postunit.
+            //try {
+            //    $unitcheck->parse_targets($ans->postunit);
+            //} catch (Exception $e) {
+            //    $errors["postunit[$idx]"] = get_string('error_unit', 'qtype_formulas') . $e->getMessage();
+            //}
 
             try {
                 $unitcheck->assign_additional_rules($ans->otherrule);
