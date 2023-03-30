@@ -48,14 +48,46 @@ class qtype_matrix_grading_all extends qtype_matrix_grading
      */
     public function grade_row($question, $row, $responses)
     {
-        foreach ($question->cols as $col) {
-            $answer = $question->answer($row, $col);
-            $response = $question->response($responses, $row, $col);
-            if ($answer != $response) {
+        // Multiple.
+        if($question->multiple == 1){
+            $globalgrade = $rightgrade = 0;
+            foreach ($question->cols as $col) {
+                $answer = $question->answer($row, $col);
+                $response = $question->response($responses, $row, $col);
+
+                // Count right answers.
+                if($answer){
+                    $rightgrade += 1;
+                }
+
+                if ($answer == $response) {
+                    if($answer == true){
+                        $globalgrade += 1;
+                    }
+                }
+            }
+
+            if($rightgrade == 0){
                 return 0;
             }
+
+            $res = $globalgrade/$rightgrade;
+
+            if($res > 1){
+                return 0.5;
+            }
+
+            return $res;
+        }else{
+            foreach ($question->cols as $col) {
+                $answer = $question->answer($row, $col);
+                $response = $question->response($responses, $row, $col);
+                if ($answer != $response) {
+                    return 0;
+                }
+            }
+            return 1;
         }
-        return 1;
     }
 
 }
