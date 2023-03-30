@@ -68,6 +68,7 @@ class qtype_regexp_renderer extends qtype_renderer {
             'id' => $inputname,
             'size' => 80,
             'class' => 'form-control d-inline',
+            'dir' => 'auto',
         );
 
         if ($options->readonly) {
