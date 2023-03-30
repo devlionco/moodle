@@ -1343,3 +1343,14 @@ $string['castext_debug_no_vars'] = 'This question has no question variables to d
 
 $string['castext_error_header'] = 'Rendering of text content failed.';
 $string['castext_error_unevaluated'] = 'This text content was never evaluated.';
+
+$string['mathliveenable'] = 'Math live enable';
+$string['settingheadmathlivenoptions'] = 'Settings of mathlive';
+$string['settingheadmathlivenoptions_desc'] = '';
+$string['stackmathlivesettings'] = 'Keyboard';
+$string['descstackmathlivesettings'] = '';
+$string['stackmathliveenable'] = 'Enable mathlive';
+$string['stackmathliveenable_desc'] = '';
+$string['insertjs'] = 'Code JS';
+$string['insertjs_help'] = 'Code JS for content question';
+$string['errorinsertjscount'] = "{insertjs} there can't be more than one";

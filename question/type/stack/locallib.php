@@ -239,6 +239,23 @@ function qtype_stack_setup_question_test_page($question) {
     return array($context, $seed, $urlparams);
 }
 
+function qtype_stack_get_between($string, $start = "", $end = ""){
+    if (mb_strpos(' '.$string, $start)) {
+        $startCharCount = mb_strpos($string, $start) + mb_strlen($start);
+        $firstSubStr = mb_substr($string, $startCharCount, mb_strlen($string));
+        $endCharCount = mb_strpos($firstSubStr, $end);
+        if ($endCharCount == 0) {
+            $endCharCount = mb_strlen($firstSubStr);
+        }
+
+        $tagcontent = mb_substr($firstSubStr, 0, $endCharCount);
+
+        return $tagcontent;
+    } else {
+        return '';
+    }
+}
+
 /* This class is needed to ignore requests for pluginfile rewrites in the bulk tester
  * and possibly elsewhere, e.g. API.
  */
