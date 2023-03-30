@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_shortanswer_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
@@ -40,6 +40,17 @@ function xmldb_qtype_shortanswer_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2022112801) {
+        $table = new xmldb_table('qtype_shortanswer_options');
+        $field = new xmldb_field('mathliveenable', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL,
+            null, 0, 'usecase');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
 
     return true;
 }

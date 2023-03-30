@@ -30,7 +30,9 @@ $string['answerno'] = 'Answer {$a}';
 $string['caseno'] = 'No, case is unimportant';
 $string['casesensitive'] = 'Case sensitivity';
 $string['caseyes'] = 'Yes, case must match';
-$string['correctansweris'] = 'The correct answer is: {$a}';
+$string['correctansweris'] = 'The correct answer is: <span dir="auto">{$a}</span>';
+// TODO: fix LaTeX display
+//$string['correctansweris'] = 'The correct answer is: <span dir="auto">\( {$a} \)</span>';
 $string['correctanswers'] = 'Correct answers';
 $string['filloutoneanswer'] = 'You must provide at least one possible answer. Answers left blank will not be used. \'*\' can be used as a wildcard to match any characters. The first matching answer will be used to determine the score and feedback.';
 $string['notenoughanswers'] = 'This type of question requires at least {$a} answers';
@@ -45,3 +47,4 @@ $string['privacy:metadata'] = 'Short answer question type plugin allows question
 $string['privacy:preference:defaultmark'] = 'The default mark set for a given question.';
 $string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
 $string['privacy:preference:usecase'] = 'Whether the answers should be case sensitive.';
+$string['mathliveenable'] = 'Math live enable';

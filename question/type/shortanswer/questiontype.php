@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
  */
 class qtype_shortanswer extends question_type {
     public function extra_question_fields() {
-        return array('qtype_shortanswer_options', 'usecase');
+        return array('qtype_shortanswer_options', 'usecase', 'mathliveenable');
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
@@ -74,6 +74,13 @@ class qtype_shortanswer extends question_type {
         if ($maxfraction != 1) {
             $result->error = get_string('fractionsnomax', 'question', $maxfraction * 100);
             return $result;
+        }
+
+        // Set default mathlive field.
+        $obj = $DB->get_record('qtype_shortanswer_options', ['questionid' => $question->id]);
+        if(!empty($obj)){
+            $obj->mathliveenable = 0;
+            $DB->update_record('qtype_shortanswer_options', $obj);
         }
 
         parent::save_question_options($question);

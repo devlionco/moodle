@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 /**
  * Generates the output for short answer questions.
@@ -72,7 +73,17 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             $placeholder = $matches[0];
             $inputattributes['size'] = round(strlen($placeholder) * 1.1);
         }
-        $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+
+        // Input mathlive or normal.
+        if($question->mathliveenable == 1){
+            $mathlive = new \form_mathlive();
+            $input = '<div class="d-flex align-items-center">' .
+                        $mathlive->render($inputname, $inputname, $currentanswer).
+                        '<span class="ml-1">'.$feedbackimg.'</span>'
+                     .'</div>';
+        }else{
+            $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+        }
 
         if ($placeholder) {
             $inputinplace = html_writer::tag('label', $options->add_question_identifier_to_label(get_string('answer')),
@@ -122,7 +133,14 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             return '';
         }
 
-        return get_string('correctansweris', 'qtype_shortanswer',
-                s($question->clean_response($answer->answer)));
+        // Answer mathlive or normal.
+        if($question->mathliveenable == 1){
+            $mathlive = new \form_mathlive();
+            $correctanswer = $mathlive->static_formula($question->clean_response($answer->answer));
+        }else{
+            $correctanswer = s($question->clean_response($answer->answer));
+        }
+
+        return get_string('correctansweris', 'qtype_shortanswer', $correctanswer);
     }
 }
