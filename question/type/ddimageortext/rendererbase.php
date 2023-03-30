@@ -52,6 +52,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
+        global $PAGE;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -92,7 +93,8 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                     $classes[] = 'infinite';
                 }
                 if ($dragimageurl === null) {
-                    $dragimagehomesgroup .= html_writer::div($dragimage->text, join(' ', $classes), ['src' => $dragimageurl]);
+                    $dragimagehomesgroup .= html_writer::div($dragimage->text . $this->get_feedback_image($qa, $options, $choiceno),
+                            join(' ', $classes), ['src' => $dragimageurl]);
                 } else {
                     $dragimagehomesgroup .= html_writer::img($dragimageurl, $dragimage->text, ['class' => join(' ', $classes)]);
                 }
@@ -109,6 +111,22 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                     ['placeinput', 'place' . $placeno, 'group' . $place->group]);
             $output .= $html;
             $question->places[$placeno]->fieldname = $fieldname;
+
+            // Correct answer for images.
+            $class = $this->get_feedback_class($qa, $options, $placeno);
+
+            if(!empty($class)) {
+                $PAGE->requires->js_amd_inline("
+                    require(['jquery'], function($) {
+                        let t = setInterval(function () {
+                          if ($('#".$qa->get_outer_question_div_unique_id().".que.ddimageortext div.droparea .dropzones img.inplace".$placeno."').length > 0) {
+                            clearInterval(t);                            
+                            $('#".$qa->get_outer_question_div_unique_id().".que.ddimageortext div.droparea .dropzones img.inplace".$placeno."').addClass('".$class."');
+                          }
+                        }, 50);
+                    });
+                ");
+            }
         }
 
         $output .= html_writer::end_div();
@@ -187,5 +205,61 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
     public function correct_response(question_attempt $qa) {
         return '';
+    }
+
+    private function get_feedback_image(question_attempt $qa, $options, $choiceno) {
+        $result = '';
+
+        list($choicenumbers, $places) = $this->get_rights_ids($qa);
+
+        if ($options->correctness) {
+            if(in_array($choiceno, $choicenumbers)){
+                $result = $this->feedback_image(1);
+            }else{
+                $result = $this->feedback_image(0);
+            }
+        }
+
+        return $result;
+    }
+
+    private function get_feedback_class(question_attempt $qa, $options, $placeno) {
+        $class = '';
+
+        list($choicenumbers, $places) = $this->get_rights_ids($qa);
+
+        if ($options->correctness) {
+            if(in_array($placeno, $places)){
+                $class = 'answer-right';
+            }else{
+                $class = 'answer-wrong';
+            }
+        }
+
+        return $class;
+    }
+
+    private function get_rights_ids(question_attempt $qa) {
+        $response = $qa->get_last_qt_data();
+        $choicenumbers = [];
+        $places = [];
+        foreach ($qa->get_question()->places as $place => $notused) {
+            if (!array_key_exists($qa->get_question()->field($place), $response)) {
+                continue;
+            }
+            if ($response[$qa->get_question()->field($place)] == $qa->get_question()->get_right_choice_for($place)) {
+                $choicenumbers[] = $response[$qa->get_question()->field($place)];
+                $places[] = $place;
+            }
+        }
+
+        return [$choicenumbers, $places];
+    }
+
+    protected function feedback_image($fraction, $selected = true) {
+        $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
+
+        return $this->output->pix_icon('i/grade_' . $feedbackclass, get_string($feedbackclass, 'question'),
+            'moodle', ['class' => 'ml-2 mr-0']);
     }
 }

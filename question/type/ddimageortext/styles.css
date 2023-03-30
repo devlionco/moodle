@@ -23,6 +23,10 @@ form.mform fieldset#id_previewareaheader div.ddarea {
     white-space: nowrap;
 }
 
+.que.ddimageortext .clicked{
+    background-color: yellow !important;
+}
+
 .que.ddimageortext div.droparea .dropzones {
     position: absolute;
     top: 0;
@@ -163,6 +167,16 @@ form.mform fieldset#id_previewareaheader .group7 {
 form.mform fieldset#id_previewareaheader .group8 {
     background-color: #f0e68c;
     border-radius: 10px 10px 10px 10px;
+}
+
+.que.ddimageortext div.droparea .answer-right{
+    border-color: green;
+    border-width: 3px;
+}
+
+.que.ddimageortext div.droparea .answer-wrong{
+    border-color: red;
+    border-width: 3px;
 }
 
 /* Editing form. Style repeated elements*/
