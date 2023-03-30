@@ -25,6 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 require_once(__DIR__ . '/vle_specific.php');
+require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 /**
  * Generates the output for Stack questions.
@@ -89,9 +90,101 @@ class qtype_stack_renderer extends qtype_renderer {
             $fieldname = $qa->get_qt_field_name($name);
             $state = $question->get_input_state($name, $response);
 
-            $questiontext = str_replace("[[input:{$name}]]",
+            // Mathlive enable.
+            if($question->options->get_option('mathliveenable') == 1 && get_config('qtype_stack', 'mathlive_enable') == 1){
+                $mathlive = new \form_mathlive();
+
+                $inputrender = '<div class="d-none">'.$input->render($state, $fieldname, $options->readonly, $tavalue).'</div>';
+                $mathname = str_replace(':', '', $fieldname);
+                $answer = array_key_exists(0, $state->contents) ? $state->contents[0] : '';
+
+                $inputrender .= '<math-field virtual-keyboard-mode=manual
+                    style="
+                            background-color: white;
+                            font-size: 16px;
+                            border-radius: 8px;
+                            border: 1px solid rgba(0, 0, 0, .3);
+                            /* box-shadow: 0 0 8px rgba(0, 0, 0, .2); */
+                            min-width: 15rem;
+                            min-height: 2rem;
+                            direction: ltr;
+                            max-width: max-content;
+                            padding: 3px;
+                        "        
+                    id="'.$mathname.'" value="'.$answer.'">                    
+                </math-field>';
+
+                $direction = right_to_left() ? 'rtl' : 'ltr';
+                $inputrender .= '<style>.ML__keyboard {direction:'.$direction.';}</style>';
+
+                $json = get_config('qtype_stack', 'mathlive_keyboard');
+
+                // Check json.
+                json_decode($json);
+                if(json_last_error() !== JSON_ERROR_NONE || $json == '{}'){
+                    $json = '';
+                }
+
+                $keyboard = 'HIGH_SCHOOL_KEYBOARD_'.strtoupper($mathname);
+                $keyboardlayer = 'HIGH_SCHOOL_KEYBOARD_LAYER_'.strtoupper($mathname);
+                $mf = 'mf_'.$mathname;
+                if(!empty($json)) {
+                    $jscode = '
+                    const '.$keyboardlayer.' = {
+                          "high-school-layer": ' . $json . '
+                        };
+                    const '.$keyboard.' = {
+                          "high-school-keyboard": {
+                            "label": "High School", // Label displayed in the Virtual Keyboard Switcher
+                            "tooltip": "High School Level", // Tooltip when hovering over the label
+                            "layer": "high-school-layer"
+                          }
+                        };                
+                    ';
+                }
+
+                $jscode .= "                
+                    setTimeout(function() {
+                        const ".$mf." = document.getElementById('$mathname');
+                        ";
+
+                if(!empty($json)) {
+                    $jscode .= "
+                            ".$mf.".setOptions({
+                                virtualKeyboardMode: 'manual',
+                                //virtualKeyboards: 'numeric symbols functions'
+                                customVirtualKeyboardLayers: $keyboardlayer,
+                                customVirtualKeyboards: $keyboard,
+                                virtualKeyboards: 'high-school-keyboard'
+                            });                        
+                        ";
+                }
+
+                $jscode .= "
+                        // Set default.
+                        //let val = document.getElementById('$fieldname').value;
+                        //".$mf.".setValue(val);
+                            
+                        // Event in mathlive.     
+                        ".$mf.".addEventListener('input',(ev) => {
+                            document.getElementById('$fieldname').value = ".$mf.".value;
+                            
+                            let element = document.getElementById('$fieldname');
+                            element.dispatchEvent(new Event('input'));
+                        });
+                    }, 800);
+                ";
+
+                $inputrender .= html_writer::script($jscode, '');
+
+                $questiontext = str_replace("[[input:{$name}]]",
+                    $inputrender,
+                    $questiontext);
+            }else {
+                $questiontext = str_replace("[[input:{$name}]]",
                     $input->render($state, $fieldname, $options->readonly, $tavalue),
                     $questiontext);
+            }
 
             $questiontext = $input->replace_validation_tags($state, $fieldname, $questiontext);
 

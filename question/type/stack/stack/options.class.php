@@ -117,6 +117,14 @@ class stack_options {
                 'caskey'     => 'lmxchar',
                 'castype'    => 'exs',
             ),
+            'mathliveenable'   => array(
+                'type'       => 'list',
+                'value'      => '0',
+                'strict'     => true,
+                'values'     => array('0', '1'),
+                'caskey'     => 'lmxchar',
+                'castype'    => 'exs',
+            ),
         );
 
         if (!is_array($settings)) {
