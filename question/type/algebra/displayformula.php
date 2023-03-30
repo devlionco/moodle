@@ -67,7 +67,7 @@ try {
     }
 } catch (Exception $e) {
     $validanswer = false;
-    $texexp = get_string('parseerror', 'qtype_algebra', $e->getMessage());
+    $texexp = get_string('parseerror_new', 'qtype_algebra');
 }
 $formatoptions = new stdClass;
 $formatoptions->para = false;

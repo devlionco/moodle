@@ -52,6 +52,7 @@ class qtype_algebra_renderer extends qtype_renderer {
             'id' => $inputname,
             'class' => 'algebra_answer',
             'size' => 80,
+            'dir' => 'auto',
         );
 
         if ($options->readonly) {
@@ -123,10 +124,11 @@ class qtype_algebra_renderer extends qtype_renderer {
             "  }\n";
             $result .= html_writer::tag('script', $displayfunction, array('type' => 'text/javascript'));
             $result .= html_writer::start_tag('div', array('class' => 'dispresponse'));
+            $result .= '<br>';
             $result .= html_writer::empty_tag('input', array('type' => 'button',
                 'value' => get_string('displayresponse', 'qtype_algebra'), 'onclick' => $dfname.'()'));
             $result .= html_writer::start_tag('iframe',
-                    array('name' => $iframename, 'width' => '60%', 'height' => 60, 'align' => 'middle', 'src' => ''));
+                    array('name' => $iframename, 'width' => '15%', 'height' => 60, 'align' => 'middle', 'src' => ''));
             $result .= html_writer::end_tag('iframe');
             $result .= html_writer::tag('script', $dfname.'();', array('type' => 'text/javascript'));
             $result .= html_writer::end_tag('div');
@@ -177,6 +179,9 @@ class qtype_algebra_renderer extends qtype_renderer {
         $formatoptions->para = false;
         $formatoptions->clean = false;
         $formattedanswer = format_text($question->formated_expression($answer->answer), FORMAT_MOODLE, $formatoptions);
-        return get_string('correctansweris', 'qtype_algebra', s($answer->answer)).  $formattedanswer;
+
+        //return get_string('correctansweris', 'qtype_algebra', s($answer->answer)).  $formattedanswer;
+
+        return get_string('correctansweris', 'qtype_algebra', $formattedanswer);
     }
 }

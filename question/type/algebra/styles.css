@@ -3,7 +3,7 @@
     display: inline;
 }
 .que.algebra .answer input {
-    width: 80%;
+    width: 40%;
 }
 .que.algebra .displayformula {
     display: block;
@@ -57,3 +57,31 @@ body#page-question-type-algebra div[id^=fitem_id_][id*=feedback_] {
     border: 1px solid #bbb;
     border-top: 0;
 }
+
+.MathJax_Display {
+    text-align: left !important;
+}
+
+/*
+div.que .content .ablock {
+    direction: ltr;
+}
+*/
+
+.algebra .prompt {
+    /*rtl:ignore*/
+    /*
+    direction: ltr;
+    */
+}
+
+.dispresponse > input {
+    margin-right: 20px;
+}
+
+/*Disable menu in edit form*/
+/*
+#id_algebraoptions {
+    display: none;
+}
+*/

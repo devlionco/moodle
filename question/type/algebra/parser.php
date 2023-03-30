@@ -86,6 +86,7 @@ class qtype_algebra_parser_term {
         $this->_nargs = $nargs;
         $this->_formats = $formats;
         $this->_commutes = $commutes;
+        $this->_sign='';
     }
 
     /**
@@ -650,7 +651,7 @@ class qtype_algebra_parser_variable extends qtype_algebra_parser_term {
             // Extract the remaining characters for use as the subscript.
             $this->_subscript = substr($text, strlen($m[1]));
             // If the first letter of the subscript is an underscore then remove it.
-            if (strlen($this->_subscript) != 0 && $this->_subscript[0] == '_') {
+            if (strlen($this->_subscript) != 0 && isset($this->_subscript[0]) && $this->_subscript[0] == '_') {
                 $this->_subscript = substr($this->_subscript, 1);
             }
             // Call the base class constructor with the variable text set to the combination of the

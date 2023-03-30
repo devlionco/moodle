@@ -141,9 +141,9 @@ class qtype_algebra_edit_form extends question_edit_form {
 
         $repeatedoptions['variable']['type'] = PARAM_RAW;
         $repeatedoptions['varmin']['type'] = PARAM_RAW;
-        $repeatedoptions['varmin']['default'] = '';
+        $repeatedoptions['varmin']['default'] = '1';
         $repeatedoptions['varmax']['type'] = PARAM_RAW;
-        $repeatedoptions['varmax']['default'] = '';
+        $repeatedoptions['varmax']['default'] = '20';
 
         if (isset($this->question->options->variables)) {
             $repeatsatstart = max(count($this->question->options->variables), self::VARIABLES_MIN_REPEATS);
