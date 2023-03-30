@@ -118,3 +118,6 @@ $string['showgrading'] = 'Grading details';
 $string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
 
 $string['vertical'] = 'Vertical';
+$string['orderlabel'] = 'Order';
+$string['addsingleorder'] = 'Add single order';
+$string['addmultipleorders'] = 'Add multiple orders';
