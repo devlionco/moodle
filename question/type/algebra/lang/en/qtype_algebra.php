@@ -88,7 +88,8 @@ $string['comparesage'] = 'SAGE';
 $string['compareeval'] = 'Evaluation';
 $string['compareequiv'] = 'Equivalence';
 $string['correctanswers'] = 'Correct answers';
-$string['correctansweris'] = 'The correct answer is: {$a} giving ';
+//$string['correctansweris'] = 'The correct answer is: {$a} giving ';
+$string['correctansweris'] = 'The correct answer is: {$a} ';
 $string['disallow'] = 'Disallowed Answer';
 $string['disallow_help'] = 'contains an expression which will be disallowed as an answer.
 Students entering an answers which matches this will be prevented from
@@ -112,6 +113,7 @@ $string['novarmax'] = 'No maximum bound specified for variable.';
 $string['novarmin'] = 'No minimum bound specified for variable.';
 $string['options'] = 'Options';
 $string['parseerror'] = 'Error parsing function: \'{$a}\'';
+$string['parseerror_new'] = 'Error parsing function';
 $string['restoreqdbfailed'] = 'Restoring algebra question failed: database write error';
 $string['restorevardbfailed'] = 'Restoring algebra question variable failed: database write error';
 $string['tolerance'] = 'Tolerance for Evaluation Checks';
