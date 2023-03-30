@@ -36,6 +36,8 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_shortanswer_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
+        global $PAGE;
+
         $menu = [
             get_string('caseno', 'qtype_shortanswer'),
             get_string('caseyes', 'qtype_shortanswer')
@@ -49,10 +51,60 @@ class qtype_shortanswer_edit_form extends question_edit_form {
                 get_string('filloutoneanswer', 'qtype_shortanswer'));
         $mform->closeHeaderBefore('answersinstruct');
 
+        // Mathlive default.
+        $PAGE->requires->js_amd_inline('
+            require(["jquery"], function($) {
+                $("input[name='."'mathliveenable'".']").change(function() {            
+                    $("form").find("#id_updatebutton").click();     
+                });                
+            });
+        ');
+
+        // Mathlive enable.
+        $mform->addElement('checkbox', 'mathliveenable', get_string('mathliveenable', 'qtype_shortanswer'), ' ');
+        $mform->setType('mathliveenable', PARAM_INT);
+        $mform->setDefault('mathliveenable', 0);
+
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_shortanswer', '{no}'),
                 question_bank::fraction_options());
 
         $this->add_interactive_settings();
+    }
+
+    protected function get_per_answer_fields($mform, $label, $gradeoptions,
+                                             &$repeatedoptions, &$answersoption) {
+        $repeated = array();
+        $answeroptions = array();
+
+        // Mathlive default.
+        $default = optional_param('mathliveenable', 'undefined', PARAM_BOOL);
+
+        $flag = false;
+        if($default === 'undefined' && isset($this->question->options->mathliveenable) && $this->question->options->mathliveenable == 1){
+            $flag = true;
+        }else{
+            if($default == 1){
+                $flag = true;
+            }
+        }
+
+        // Input mathlive or normal.
+        if($flag) {
+            $answeroptions[] = $mform->createElement('mathlive', 'answer', $label, []);
+        }else{
+            $answeroptions[] = $mform->createElement('text', 'answer', $label, array('size' => 40));
+        }
+
+        $answeroptions[] = $mform->createElement('select', 'fraction',
+            get_string('grade'), $gradeoptions);
+        $repeated[] = $mform->createElement('group', 'answeroptions',
+            $label, $answeroptions, null, false);
+        $repeated[] = $mform->createElement('editor', 'feedback',
+            get_string('feedback', 'question'), array('rows' => 5), $this->editoroptions);
+        $repeatedoptions['answer']['type'] = PARAM_RAW;
+        $repeatedoptions['fraction']['default'] = 0;
+        $answersoption = 'answers';
+        return $repeated;
     }
 
     protected function get_more_choices_string() {

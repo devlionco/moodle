@@ -15,19 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Short answer question type version information.
+ * Combined question embedded sub question renderer class.
  *
- * @package    qtype
- * @subpackage shortanswer
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @package   qtype_shortanswer
+ * @copyright  2019 Jean-Michel Vedrinr
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qtype_shortanswer';
-$plugin->version   = 2022112801;
 
-$plugin->requires  = 2022111800;
+class qtype_shortanswer_embedded_renderer extends qtype_combined_text_entry_renderer_base {
 
-$plugin->maturity  = MATURITY_STABLE;
+}

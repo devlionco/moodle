@@ -15,19 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Short answer question type version information.
+ * Strings for component 'qtype_shortanswer', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    qtype
  * @subpackage shortanswer
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qtype_shortanswer';
-$plugin->version   = 2022112801;
-
-$plugin->requires  = 2022111800;
-
-$plugin->maturity  = MATURITY_STABLE;
+$string['mathliveenable'] = 'הצגת מקלדת מתמטית';
