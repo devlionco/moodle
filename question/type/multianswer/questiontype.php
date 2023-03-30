@@ -373,7 +373,7 @@ define('NUMERICAL_ABS_ERROR_MARGIN', 6);
 // Remaining ANSWER regexes.
 define('ANSWER_TYPE_DEF_REGEX',
         '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|' .
-        '(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)|' .
+        '(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)|(SHORTANSWER_MATH|SAM|MWM)|' .
         '(MULTICHOICE_S|MCS)|(MULTICHOICE_VS|MCVS)|(MULTICHOICE_HS|MCHS)|'.
         '(MULTIRESPONSE|MR)|(MULTIRESPONSE_H|MRH)|(MULTIRESPONSE_S|MRS)|(MULTIRESPONSE_HS|MRHS)');
 define('ANSWER_START_REGEX',
@@ -394,14 +394,15 @@ define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR', 5);
 define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL', 6);
 define('ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER', 7);
 define('ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_C', 8);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_SHUFFLED', 9);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR_SHUFFLED', 10);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL_SHUFFLED', 11);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE', 12);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_HORIZONTAL', 13);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_SHUFFLED', 14);
-define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_HORIZONTAL_SHUFFLED', 15);
-define('ANSWER_REGEX_ALTERNATIVES', 16);
+define('ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_MATH', 9);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_SHUFFLED', 10);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR_SHUFFLED', 11);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL_SHUFFLED', 12);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE', 13);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_HORIZONTAL', 14);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_SHUFFLED', 15);
+define('ANSWER_REGEX_ANSWER_TYPE_MULTIRESPONSE_HORIZONTAL_SHUFFLED', 16);
+define('ANSWER_REGEX_ALTERNATIVES', 17);
 
 /**
  * Initialise subquestion fields that are constant across all MULTICHOICE
@@ -460,9 +461,15 @@ function qtype_multianswer_extract_question($text) {
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER])) {
             $wrapped->qtype = 'shortanswer';
             $wrapped->usecase = 0;
+            $wrapped->mathliveenable = 0;
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_C])) {
             $wrapped->qtype = 'shortanswer';
             $wrapped->usecase = 1;
+            $wrapped->mathliveenable = 0;
+        }else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_MATH])){
+            $wrapped->qtype = 'shortanswer';
+            $wrapped->usecase = 0;
+            $wrapped->mathliveenable = 1;
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
             qtype_multianswer_initialise_multichoice_subquestion($wrapped);
             $wrapped->shuffleanswers = 0;

@@ -95,8 +95,10 @@ class qtype_multianswer_renderer extends qtype_renderer {
             question_display_options $options, $index, question_automatically_gradable $subq) {
 
         $subtype = $subq->qtype->name();
-        if ($subtype == 'numerical' || $subtype == 'shortanswer') {
+        if ($subtype == 'numerical'){
             $subrenderer = 'textfield';
+        }else if ($subtype == 'shortanswer') {
+            $subrenderer = $subq->mathliveenable ? 'mathlive' : 'textfield';
         } else if ($subtype == 'multichoice') {
             if ($subq instanceof qtype_multichoice_multi_question) {
                 if ($subq->layout == qtype_multichoice_base::LAYOUT_VERTICAL) {
@@ -257,8 +259,128 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
 
         return $this->displayoptions->add_question_identifier_to_label(get_string($langkey, $component, $params));
     }
+
+    /**
+     * Render the feedback pop-up contents.
+     *
+     * @param question_graded_automatically $subq the subquestion.
+     * @param float $fraction the mark the student got. null if this subq was not answered.
+     * @param string $feedbacktext the feedback text, already processed with format_text etc.
+     * @param string $rightanswer the right answer, already processed with format_text etc.
+     * @param question_display_options $options the display options.
+     * @return string the HTML for the feedback popup.
+     */
+    protected function feedback_popup_mathlive(question_graded_automatically $subq,
+            $fraction, $feedbacktext, $rightanswer, question_display_options $options, $mathlivetext) {
+
+        $feedback = array();
+        if ($options->correctness) {
+            if (is_null($fraction)) {
+                $state = question_state::$gaveup;
+            } else {
+                $state = question_state::graded_state_for_fraction($fraction);
+            }
+            $feedback[] = $state->default_string(true);
+        }
+
+        if ($options->rightanswer) {
+            $feedback[] = get_string('correctansweris', 'qtype_shortanswer', ''). $mathlivetext;
+        }
+
+        if ($options->feedback && $feedbacktext) {
+            $feedback[] = $feedbacktext;
+        }
+
+        $subfraction = '';
+        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0
+            && (!is_null($fraction) || $feedback)) {
+            $a = new stdClass();
+            $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
+            $a->max = format_float($subq->maxmark, $options->markdp);
+            $feedback[] = get_string('markoutofmax', 'question', $a);
+        }
+
+        if (!$feedback) {
+            return '';
+        }
+
+        return html_writer::tag('span', implode('<br />', $feedback),
+            array('class' => 'feedbackspan accesshide'));
+    }
 }
 
+/**
+ * Subclass for generating the bits of output specific to shortanswer
+ * subquestions.
+ *
+ * @copyright 2011 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_multianswer_mathlive_renderer extends qtype_multianswer_subq_renderer_base {
+
+    public function subquestion(question_attempt $qa, question_display_options $options,
+                                                 $index, question_graded_automatically $subq) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/lib/form/mathlive.php');
+
+        $fieldprefix = 'sub' . $index . '_';
+        $fieldname = $fieldprefix . 'answer';
+
+        $response = $qa->get_last_qt_var($fieldname);
+        if ($subq->qtype->name() == 'shortanswer') {
+            $matchinganswer = $subq->get_matching_answer(array('answer' => $response));
+        } else if ($subq->qtype->name() == 'numerical') {
+            list($value, $unit, $multiplier) = $subq->ap->apply_units($response, '');
+            $matchinganswer = $subq->get_matching_answer($value, 1);
+        } else {
+            $matchinganswer = $subq->get_matching_answer($response);
+        }
+
+        if (!$matchinganswer) {
+            if (is_null($response) || $response === '') {
+                $matchinganswer = new question_answer(0, '', null, '', FORMAT_HTML);
+            } else {
+                $matchinganswer = new question_answer(0, '', 0.0, '', FORMAT_HTML);
+            }
+        }
+
+        $feedbackimg = '';
+        if ($options->correctness) {
+            $feedbackimg = $this->feedback_image($matchinganswer->fraction);
+        }
+
+        if ($subq->qtype->name() == 'shortanswer') {
+            $correctanswer = $subq->get_matching_answer($subq->get_correct_response());
+        } else {
+            $correctanswer = $subq->get_correct_answer();
+        }
+
+        $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline d-inline-flex'));
+        $output .= html_writer::tag('label', get_string('answer'),
+            array('class' => 'subq accesshide', 'for' => $qa->get_qt_field_name($fieldname)));
+
+        $mathlive = new \form_mathlive();
+
+        if (!$options->readonly) {
+            $output .= $mathlive->render($qa->get_qt_field_name($fieldname), $qa->get_qt_field_name($fieldname), $response);
+        }else{
+            $output .= $mathlive->static_formula($response);
+        }
+
+        $feedbacktext = $subq->format_text($matchinganswer->feedback, $matchinganswer->feedbackformat,
+                $qa, 'question', 'answerfeedback1', $matchinganswer->id);
+
+        $feedbackpopup = $this->feedback_popup_mathlive($subq, $matchinganswer->fraction, $feedbacktext,
+            s($correctanswer->answer), $options, $mathlive->static_formula(s($correctanswer->answer)));
+
+        $output .= $feedbackimg;
+        $output .= $feedbackpopup;
+        $output .= html_writer::end_tag('span');
+
+        return $output;
+    }
+}
 
 /**
  * Subclass for generating the bits of output specific to shortanswer
@@ -310,6 +432,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
             'id' => $qa->get_qt_field_name($fieldname),
             'size' => $size,
             'class' => 'form-control mb-1',
+            'dir' => 'auto',
         );
         if ($options->readonly) {
             $inputattributes['readonly'] = 'readonly';
@@ -332,7 +455,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
                 s($correctanswer->answer), $options);
 
-        $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline d-inline'));
+        $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline d-inline-flex'));
 
         $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
