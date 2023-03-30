@@ -191,7 +191,11 @@ class answer_unit_conversion {
             }
             $parsed_unit = $this->parse_unit($unit);
             if ($parsed_unit === null) {
-                throw new Exception('"'.$unit.'"');
+
+                // TODO: PTL-2936 - ohm*m error, we should fix it
+                continue;
+
+                //throw new Exception('"'.$unit.'"');
             }
             $targets_list[] = $parsed_unit;
         }
@@ -252,7 +256,9 @@ class answer_unit_conversion {
             return null;  // It does not exist in the mapping implies it is not convertible.
         }
         foreach ($base_unit_array as $u => $e) {
-            $tclass = $this->mapping[$u];   // Try to match the dimension class of each base unit.
+            if(isset($this->mapping[$u])) {
+                $tclass = $this->mapping[$u];   // Try to match the dimension class of each base unit.
+            }
             if (isset($tclass) && $oclass[0] == $tclass[0]) {
                 return array($oclass[1] / $tclass[1], $e);
             }

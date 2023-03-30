@@ -268,3 +268,11 @@ $string['defaultanswermark'] = 'Default part\'s mark';
 $string['defaultanswermark_desc'] = 'Default part\'s mark for new question\'s parts';
 $string['defaultunitpenalty'] = 'Default unit penalty';
 $string['defaultunitpenalty_desc'] = 'Default penalty for wrong unit (0-1)';
+
+//Added strings
+$string['setting_units'] = 'Setting units';
+$string['setting_wrong_value_penalty'] = 'Setting wrong vlue penalty';
+$string['setting_wrong_unit_penalty'] = 'Setting wrong unit penalty';
+$string['autocompleteenabled'] = 'Enable autocomplete';
+$string['autocompletdisabled'] = 'Disable autocomplete';
+$string['correctansweriscutsom'] = 'One possible correct answer is: <span class="petel_custom_formula_view">{$a}</span>';

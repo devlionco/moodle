@@ -28,6 +28,7 @@ use qtype_formulas\unit_conversion_rules;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/question/type/edit_question_form.php');
+require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
 
 /**
  * coodinate question type editing form definition.
@@ -41,6 +42,11 @@ class qtype_formulas_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         global $PAGE;
+
+        $selectors = array('input[name^="postunit"]');
+        $key_words = array_values(qtype_formulas_get_units_array());
+        $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-teachers', 'init', array(json_encode($selectors), json_encode($key_words)));
+
         $config = get_config('qtype_formulas');
         $PAGE->requires->js_call_amd('qtype_formulas/editform', 'init', [get_config('qtype_formulas')->defaultcorrectness]);
         $PAGE->requires->js('/question/type/formulas/script/formatcheck.js');
@@ -153,6 +159,14 @@ class qtype_formulas_edit_form extends question_edit_form {
             array('size' => 80));
         $repeatedoptions['answer']['helpbutton'] = array('answer', 'qtype_formulas');
         $repeatedoptions['answer']['type'] = PARAM_RAW;
+
+        // Enable or disable autocomplete for units
+        $repeated[] = $mform->createElement('radio', 'autocomplete', '', get_string('autocompleteenabled','qtype_formulas'), 1);
+        $repeated[] = $mform->createElement('radio', 'autocomplete', '', get_string('autocompletdisabled', 'qtype_formulas'), 0);
+        // $radioarray=array();
+        // $repeated[] = $mform->addGroup($radioarray, 'autocompleteradio', '', array(' '), false);
+        $mform->setDefault('autocomplete', '1');
+
         // Part's unit.
         $repeated[] = $mform->createElement('text', 'postunit', get_string('postunit', 'qtype_formulas'),
             array('size' => 60, 'class' => 'formulas_editing_unit'));

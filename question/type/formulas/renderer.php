@@ -24,6 +24,8 @@
 
 use qtype_formulas\answer_unit_conversion;
 
+require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
+
 /**
  * Base class for generating the bits of output for formulas questions.
  *
@@ -117,14 +119,40 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
             $output .= $sub->feedbackimage;
         }
 
+        // PTL 2032, 2455, 2449.
+        //Get settings of quiz.
+        $part->questionattemptid = $qa->get_database_id();
+        $realyoptions = $qa->get_quiz_options($part);
+
+        //TODO ???  $feedback = $this->part_feedback($qa, $options, $part);
         $feedback = $this->part_combined_feedback($qa, $partoptions, $part, $sub->fraction);
         $feedback .= $this->part_general_feedback($qa, $partoptions, $part);
         // If one of the part's coordinates is a MC or select question, the correct answer
         // stored in the database is not the right answer, but the index of the right answer,
         // so in that case, we need to calculate the right answer.
-        if ($partoptions->rightanswer) {
-            $feedback .= $this->part_correct_response($part->partindex, $qa);
+
+        // PTL 2032.
+        $ifshow = false;
+        //($realyoptions->rightanswer) && !$part->part_has_multichoice_coordinate()
+        if($realyoptions->rightanswer){
+            $ifshow = true;
         }
+
+        if(($realyoptions->correctness) && $qa->if_user_answer_right_on_part($part)){
+            $ifshow = true;
+        }
+
+        // PTL-8617.
+        if($ifshow){
+            if($realyoptions->correctness){
+                $feedback .= $this->specific_feedback($qa);
+            }
+
+            if($realyoptions->rightanswer){
+                $feedback .= $this->part_correct_response($part->partindex, $qa);
+            }
+        }
+
         $output .= html_writer::nonempty_tag('div', $feedback,
                 array('class' => 'formulaspartoutcome'));
         return html_writer::tag('div', $output , array('class' => 'formulaspart'));
@@ -143,8 +171,14 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
         list( $sub->anscorr, $sub->unitcorr) = $question->grade_responses_individually($part, $response, $checkunit);
         $sub->fraction = $sub->anscorr * ($sub->unitcorr ? 1 : (1 - $part->unitpenalty));
 
+        // PTL 2032, 2455, 2449.
+        $part->questionattemptid = $qa->get_database_id();
+        $realyoptions = $qa->get_quiz_options($part);
+
         // Get the class and image for the feedback.
+        //PTL# 4787 view correctness image when summary is not set
         if ($options->correctness) {
+      //  if ($realyoptions->correctness && $qa->get_response_summary() != null) {
             $sub->feedbackimage = $this->feedback_image($sub->fraction);
             $sub->feedbackclass = $this->feedback_class($sub->fraction);
             if ($part->unitpenalty >= 1) { // All boxes must be correct at the same time, so they are of the same color.
@@ -175,7 +209,8 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                 $number = chr(ord('a') + $num);
                 break;
             case 'ABCD':
-                $number = chr(ord('A') + $num);
+                $letters = explode(',', get_string('alphabet', 'langconfig'));
+                $number = (isset($letters[$num])) ? $letters[$num] : '';
                 break;
             case '123':
                 $number = $num + 1;
@@ -197,12 +232,27 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
 
     // Return the part's text with variables replaced by their values.
     public function get_part_formulation(question_attempt $qa, question_display_options $options, $i, $vars, $sub) {
+        global $PAGE;
+
         $question = $qa->get_question();
         $part = &$question->parts[$i];
         $localvars = $question->get_local_variables($part);
 
         $subqreplaced = $question->formulas_format_text($localvars, $part->subqtext,
                 $part->subqtextformat, $qa, 'qtype_formulas', 'answersubqtext', $part->id, false);
+
+        // PTL-4075. Numbering the questions.
+        if(count($question->parts) > 1 && !empty($this->number_in_style($i, $question->answernumbering))) {
+            $subqreplaced = '
+                <table style="width:100%">              
+                  <tr>
+                    <td style="width:20px;"><p>'.$this->number_in_style($i, $question->answernumbering).'</p></td>
+                    <td>'.$subqreplaced.'</td>                
+                  </tr>              
+                </table>            
+            ';
+        }
+
         $types = array(0 => 'number', 10 => 'numeric', 100 => 'numerical_formula', 1000 => 'algebraic_formula');
         $gradingtype = ($part->answertype != 10 && $part->answertype != 100 && $part->answertype != 1000) ? 0 : $part->answertype;
         $gtype = $types[$gradingtype];
@@ -234,9 +284,38 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                 'aria-labelledby' => 'lbl_' . str_replace(':', '__', $inputname)
             );
 
+            //Class for enable autocomplete and type מספר
+            if($part->autocomplete  && $part->answertype == 0) {
+                $inputattributes = array(
+                        'type' => 'text',
+                        'name' => $inputname,
+                        'title' => get_string($gtype . ($part->postunit == '' ? '' : '_unit'), 'qtype_formulas'),
+                        'value' => $currentanswer,
+                        'id' => $inputname,
+                        'class' => 'formulas_' . $gtype . '_unit ' . $sub->feedbackclass . ' autocomplete_formulas',
+                        'maxlength' => 300,
+                );
+                $key_words = array_values(qtype_formulas_get_units_array());
+                $selectors = array('.autocomplete_formulas', '#input');
+                $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($key_words)));
+            }else{
+                $inputattributes = array(
+                        'type' => 'text',
+                        'name' => $inputname,
+                        'title' => get_string($gtype . ($part->postunit == '' ? '' : '_unit'), 'qtype_formulas'),
+                        'value' => $currentanswer,
+                        'id' => $inputname,
+                        'class' => 'formulas_' . $gtype . '_unit ' . $sub->feedbackclass,
+                        'maxlength' => 128,
+                );
+            }
+
             if ($options->readonly) {
                 $inputattributes['readonly'] = 'readonly';
             }
+
+            $inputattributes['class'] .= ' answer-formulas';
+
             // Create a meaningful label for accessibility.
             $a = new stdClass();
             $a->part = $i + 1;
@@ -528,7 +607,7 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
 
         $state = $qa->get_state();
 
-        if (!$state->is_finished()) {
+        if (!$state->is_finished() || $state->is_finished()) {
             $response = $qa->get_last_qt_data();
             if (!$qa->get_question()->is_gradable_response($response)) {
                 return '';

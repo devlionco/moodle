@@ -688,6 +688,22 @@ class variables {
         return implode('', $splitted);
     }
 
+    // PTL-4296 Test if the question was not changed, and still valid for proper calculations
+    // All relevant variables are available.
+    private function is_question_valid(&$vstack, $text) {
+        $splitted = explode('`', preg_replace('/(@[0-9]+)/', '`$1`', $text));
+        $appearedvars = array();     // Reuse the temporary variable if possible.
+        for ($i = 1; $i < mycount($splitted); $i += 2) {    // The length will always be odd, and the numbers are stored in odd index.
+            $data = $this->vstack_get_variable($vstack, $splitted[$i]);
+            if ($data->type == 'v') {
+                if ($this->vstack_get_variable($vstack, $data->value) === null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // If substitute_variables_by_placeholders() was used for $text,
     // then this function forward the value of type 'v' to the actual variable value.
     private function substitute_vname_by_variables(&$vstack, $text) {
