@@ -272,3 +272,47 @@ $settings->add(new admin_setting_configselect('qtype_stack/matrixparens',
         get_string('matrixparens', 'qtype_stack'),
         get_string('matrixparens_help', 'qtype_stack'), '[',
         stack_options::get_matrix_parens_options()));
+
+// Options for mathlive.
+$settings->add(new admin_setting_heading('mathliveoptionsheading',
+        get_string('settingheadmathlivenoptions', 'qtype_stack'),
+        get_string('settingheadmathlivenoptions_desc', 'qtype_stack')));
+
+// Mathlive
+$settings->add(new admin_setting_configcheckbox('qtype_stack/mathlive_enable',
+        get_string('stackmathliveenable', 'qtype_stack'),
+        get_string('stackmathliveenable_desc', 'qtype_stack'), 0));
+
+$default = '';
+$settings->add(new admin_setting_configtextarea('qtype_stack/mathlive_keyboard', new lang_string('stackmathlivesettings', 'qtype_stack'),
+        new lang_string('descstackmathlivesettings', 'qtype_stack'), $default, PARAM_RAW));
+
+global $PAGE;
+$PAGE->requires->js_amd_inline('
+    require(["jquery", "local_jsoneditor/usage"], function($, JSONEditor) {
+    
+        let divEditorId = "jsoneditor_mathlive";
+              
+        $("#admin-mathlive_keyboard .form-textarea").attr("id", divEditorId);
+        $("#" + divEditorId).css({"width": "100%", "height": "400px"});
+                
+        let options = {
+            onChangeText: function (jsonString) {
+                $("#id_s_qtype_stack_mathlive_keyboard").text(jsonString);
+            }
+        };
+        
+        let json = "{}";
+        if($("#id_s_qtype_stack_mathlive_keyboard").val() !== undefined){
+            let val = $("#id_s_qtype_stack_mathlive_keyboard").val().trim();  
+            if (val.length !== 0) {
+                json = val;
+            }
+        }
+        
+        if($("#id_s_qtype_stack_mathlive_keyboard").is(":visible")){        
+            new JSONEditor.init(document.getElementById(divEditorId), JSON.parse(json), options);            
+            $("#id_s_qtype_stack_mathlive_keyboard").hide();  
+        }
+    });
+');

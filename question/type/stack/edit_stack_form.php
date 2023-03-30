@@ -63,6 +63,27 @@ class qtype_stack_edit_form extends question_edit_form {
 
     /** Patch up data from the database before a user edits it in the form. */
     public function set_data($question) {
+
+        // Set insertjs.
+        $jscode = qtype_stack_get_between($question->questiontext, '<!---Start-JS-code--->', '<!---End-JS-code--->');
+        $value = '<!---Start-JS-code--->'.$jscode.'<!---End-JS-code--->';
+        $questiontext = str_replace($value, '{insertjs}', $question->questiontext);
+
+        $jsjson = qtype_stack_get_between($question->questiontext, '<!---Start-JS-coded-JSON--->', '<!---End-JS-coded-JSON--->');
+        $value = '<!---Start-JS-coded-JSON--->'.$jsjson.'<!---End-JS-coded-JSON--->';
+        $questiontext = str_replace($value, '', $questiontext);
+
+        // Check json.
+        json_decode($jsjson);
+        if(json_last_error() !== JSON_ERROR_NONE){
+            $insertjs = '';
+        }else{
+            $insertjs = json_decode($jsjson);
+        }
+
+        $question->questiontext = $questiontext;
+        $question->insertjs = $insertjs;
+
         if (!empty($question->questiontext)) {
             $question->questiontext = $this->convert_legacy_fact_sheets($question->questiontext);
         }
@@ -157,6 +178,13 @@ class qtype_stack_edit_form extends question_edit_form {
     protected function definition_inner(/* MoodleQuickForm */ $mform) {
         global $OUTPUT;
 
+        // Field insertjs.
+        $jsarea = $mform->createElement('textarea', 'insertjs', get_string('insertjs', 'qtype_stack'),
+            array('cols' => 260, 'rows' => 10, 'style' => 'direction: ltr;'));
+        $mform->insertElementBefore($jsarea, 'defaultmark');
+        $mform->setType('insertjs', PARAM_RAW);
+        $mform->addHelpButton('insertjs', 'insertjs', 'qtype_stack');
+
         // Load the configuration.
         $this->stackconfig = stack_utils::get_config();
 
@@ -200,6 +228,16 @@ class qtype_stack_edit_form extends question_edit_form {
 
         $mform->addHelpButton('questiontext', 'questiontext', 'qtype_stack');
         $mform->addRule('questiontext', stack_string('questiontextnonempty'), 'required', '', 'client');
+
+        // Mathlive enable.
+        if(get_config('qtype_stack', 'mathlive_enable') == 1) {
+            $mform->addElement('checkbox', 'mathliveenable', get_string('mathliveenable', 'qtype_stack'), ' ');
+            $mform->setType('mathliveenable', PARAM_INT);
+            $mform->setDefault('mathliveenable', 0);
+        }else{
+            $mform->addElement('hidden', 'mathliveenable', 0);
+            $mform->setType('mathliveenable', PARAM_INT);
+        }
 
         $sv = $mform->createElement('hidden', 'stackversion', get_config('qtype_stack', 'version'));
         $mform->insertElementBefore($sv, 'questiontext');
@@ -671,6 +709,7 @@ class qtype_stack_edit_form extends question_edit_form {
         $question->questionsimplify      = $opt->questionsimplify;
         $question->assumepositive        = $opt->assumepositive;
         $question->assumereal            = $opt->assumereal;
+        $question->mathliveenable        = $opt->mathliveenable;
 
         return $question;
     }
@@ -814,6 +853,16 @@ class qtype_stack_edit_form extends question_edit_form {
 
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
+
+        // Validate {insertjs};
+        if(isset($fromform['questiontext']['text'])){
+
+            $count = mb_substr_count($fromform['questiontext']['text'], '{insertjs}');
+
+            if($count > 1){
+                $errors['questiontext'] = get_string('errorinsertjscount', 'qtype_stack');
+            }
+        }
 
         $qtype = new qtype_stack();
         return $qtype->validate_fromform($fromform, $errors);

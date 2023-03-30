@@ -67,6 +67,16 @@ class qtype_stack extends question_type {
 
     public function save_question($question, $fromform) {
 
+        // Save JS code in to questiontext.
+        if(!empty($fromform->insertjs)){
+            $insertjs = '<!---Start-JS-code--->'.$fromform->insertjs.'<!---End-JS-code--->';
+            $fromform->questiontext['text'] = str_replace('{insertjs}', $insertjs, $fromform->questiontext['text']);
+
+            $fromform->questiontext['text'] .= '<!---Start-JS-coded-JSON--->'.json_encode($fromform->insertjs).'<!---End-JS-coded-JSON--->';
+        }
+
+        unset($fromform->insertjs);
+
         if (!empty($fromform->fixdollars)) {
             $this->fix_dollars_in_form_data($fromform);
         }
@@ -167,6 +177,7 @@ class qtype_stack extends question_type {
         $options->logicsymbol               = $fromform->logicsymbol;
         $options->matrixparens              = $fromform->matrixparens;
         $options->variantsselectionseed     = $fromform->variantsselectionseed;
+        $options->mathliveenable     = isset($fromform->mathliveenable) ? $fromform->mathliveenable : 0;
 
         // We will not have the values for this.
         $options->compiledcache             = '{}';
@@ -481,6 +492,7 @@ class qtype_stack extends question_type {
         $question->options->set_option('simplify',    (bool) $questiondata->options->questionsimplify);
         $question->options->set_option('assumepos',   (bool) $questiondata->options->assumepositive);
         $question->options->set_option('assumereal',  (bool) $questiondata->options->assumereal);
+        $question->options->set_option('mathliveenable',     $questiondata->options->mathliveenable);
 
         $requiredparams = stack_input_factory::get_parameters_used();
         foreach (stack_utils::extract_placeholders($question->questiontext, 'input') as $name) {
