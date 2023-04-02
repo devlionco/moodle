@@ -40,3 +40,4 @@ $string['privacy:metadata'] = 'Drag and drop into text question type plugin allo
 $string['privacy:preference:defaultmark'] = 'The default mark set for a given question.';
 $string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
 $string['privacy:preference:shuffleanswers'] = 'Whether the answers should be automatically shuffled.';
+$string['mathliveenable'] = 'Math live enable';

@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 /**
  * Generates the output for matching questions.
@@ -36,10 +37,13 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
+        global $DB, $PAGE;
 
         $question = $qa->get_question();
         $stemorder = $question->get_stem_order();
         $response = $qa->get_last_qt_data();
+
+        $obj = $DB->get_record('qtype_match_options', ['questionid' => $question->id]);
 
         $choices = $this->format_choices($question);
 
@@ -77,14 +81,33 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                 $feedbackimage = $this->feedback_image($fraction);
             }
 
+            // Answer mathlive or normal.
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+
+                if($options->readonly){
+                    if(isset($choices[$selected])){
+                        $select = '<span class="ml-1">'.$mathlive->static_formula($choices[$selected]).'</span>';
+                    }else{
+                        $select = '<span class="ml-1"></span>';
+                    }
+                }else{
+                    $select = $mathlive->select_render($qa->get_qt_field_name('sub' . $key), $choices, $selected);
+                }
+
+            }else{
+                $select = html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
+                    array('0' => 'choose'), array('disabled' => $options->readonly, 'class' => 'custom-select ml-1'));
+            }
+
+
             $labeltext = $options->add_question_identifier_to_label(get_string('answer', 'qtype_match', $i));
             $result .= html_writer::tag('td',
                     html_writer::label($labeltext,
                             'menu' . $qa->get_qt_field_name('sub' . $key), false,
                             array('class' => 'accesshide')) .
-                    html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
-                            array('0' => 'choose'), array('disabled' => $options->readonly, 'class' => 'custom-select ml-1')) .
-                    ' ' . $feedbackimage, array('class' => $classes));
+                    $select .
+                    ' ' . $feedbackimage, array('class' => $classes . ' d-flex align-items-center'));
 
             $result .= html_writer::end_tag('tr');
             $parity = 1 - $parity;
@@ -131,8 +154,12 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     public function correct_response(question_attempt $qa) {
+        global $DB;
+
         $question = $qa->get_question();
         $stemorder = $question->get_stem_order();
+
+        $obj = $DB->get_record('qtype_match_options', ['questionid' => $question->id]);
 
         $choices = $this->format_choices($question);
         $right = array();
@@ -140,8 +167,16 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             if (!isset($choices[$question->get_right_choice_for($stemid)])) {
                 continue;
             }
-            $right[] = $question->make_html_inline($this->format_stem_text($qa, $stemid)) . ' &#x2192; ' .
+
+            // Answer mathlive or normal.
+            if(!empty($obj) && $obj->mathliveenable == 1){
+                $mathlive = new \form_mathlive();
+                $right[] = $this->format_stem_text($qa, $stemid) .
+                $mathlive->static_formula($choices[$question->get_right_choice_for($stemid)]);
+            }else {
+                $right[] = $question->make_html_inline($this->format_stem_text($qa, $stemid)) . ' &#x2192; ' .
                     $choices[$question->get_right_choice_for($stemid)];
+            }
         }
 
         if (!empty($right)) {

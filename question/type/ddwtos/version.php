@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022112800;
+$plugin->version   = 2022112801;
 $plugin->requires  = 2022111800;
 
 $plugin->component = 'qtype_ddwtos';

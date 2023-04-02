@@ -116,3 +116,13 @@ $string['unitx'] = 'Unit {no} ';
 $string['xmustbenumeric'] = '{$a} must be a number.';
 $string['xmustnotbenumeric'] = '{$a} cannot be a number.';
 $string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
+
+$string['setting_units'] = 'Please wrtite units';
+$string['setting_wrong_value_penalty'] = 'Please wrtite value penalty';
+$string['setting_wrong_unit_penalty'] = 'Please wrtite unit penalty';
+$string['invalidunit'] = 'You must enter a valid unit';
+$string['feedbacksection'] = 'Feedback';
+$string['unitnewtype'] = 'הזנה מתוך רשימת בחירה אוטומטית';
+$string['feedbackwrongunit'] = 'Check the measurement units';
+$string['feedbackwrongvalue'] = 'Check the measurement values';
+$string['feedbackwronganswer'] = 'Check the measurement values and units';

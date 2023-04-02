@@ -13,6 +13,10 @@
     text-align: left;
 }
 
+.answer-numerical{
+    direction: rtl;
+}
+
 /* Editing form. */
 body#page-question-type-numerical div[id^=fgroup_id_][id*=answeroptions_] {
     background: #eee;

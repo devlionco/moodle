@@ -105,6 +105,8 @@ class qtype_match extends question_type {
             $options->id = $DB->insert_record('qtype_match_options', $options);
         }
 
+        // Mathlive saving.
+        $options->mathliveenable = isset($question->mathliveenable) && $question->mathliveenable == 1 ? 1 : 0;
         $options->shuffleanswers = $question->shuffleanswers;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('qtype_match_options', $options);

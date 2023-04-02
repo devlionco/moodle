@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/questionbase.php');
+require_once($CFG->dirroot . '/question/type/numerical/numericallib.php');
 
 /**
  * Represents a numerical question.
@@ -111,17 +112,23 @@ class qtype_numerical_question extends question_graded_automatically {
         }
 
         list($value, $unit) = $this->ap->apply_units($response['answer']);
+        $arr_units = qtype_numerical_get_units_array();
+
         if (is_null($value)) {
             return false;
         }
 
-        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
+        if (!empty($unit) && !in_array($unit, $arr_units)) {
             return false;
         }
 
-        if ($this->has_separate_unit_field() && empty($response['unit'])) {
-            return false;
-        }
+//        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
+//            return false;
+//        }
+//
+//        if ($this->has_separate_unit_field() && empty($response['unit'])) {
+//            return false;
+//        }
 
         if ($this->ap->contains_thousands_seaparator($response['answer'])) {
             return false;
@@ -136,17 +143,23 @@ class qtype_numerical_question extends question_graded_automatically {
         }
 
         list($value, $unit) = $this->ap->apply_units($response['answer']);
+        $arr_units = qtype_numerical_get_units_array();
+
+        if (!empty($unit) && !in_array($unit, $arr_units)) {
+            return get_string('invalidunit', 'qtype_numerical');
+        }
+
         if (is_null($value)) {
             return get_string('invalidnumber', 'qtype_numerical');
         }
 
-        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
-            return get_string('invalidnumbernounit', 'qtype_numerical');
-        }
-
-        if ($this->has_separate_unit_field() && empty($response['unit'])) {
-            return get_string('unitnotselected', 'qtype_numerical');
-        }
+//        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
+//            return get_string('invalidnumbernounit', 'qtype_numerical');
+//        }
+//
+//        if ($this->has_separate_unit_field() && empty($response['unit'])) {
+//            return get_string('unitnotselected', 'qtype_numerical');
+//        }
 
         if ($this->ap->contains_thousands_seaparator($response['answer'])) {
             return get_string('pleaseenteranswerwithoutthousandssep', 'qtype_numerical',
@@ -195,7 +208,7 @@ class qtype_numerical_question extends question_graded_automatically {
      *      unit was given, or an unrecognised unit was given, $multiplier will be null.
      * @return question_answer the matching answer.
      */
-    public function get_matching_answer($value, $multiplier) {
+    public function get_matching_answer($value, $unit, $multiplier=null) {
         if (is_null($value) || $value === '') {
             return null;
         }
@@ -205,14 +218,98 @@ class qtype_numerical_question extends question_graded_automatically {
         } else {
             $scaledvalue = $value;
         }
+
+        $correctanswers = [];
+        $otherfeedback = '';
+
+        // Get right answer.
         foreach ($this->answers as $answer) {
-            if ($answer->within_tolerance($scaledvalue)) {
-                $answer->unitisright = !is_null($multiplier);
-                return $answer;
-            } else if ($answer->within_tolerance($value)) {
-                $answer->unitisright = false;
+            if ($answer->answer == $value && $answer->unit == $unit) {
+                $otherfeedback = $answer->feedback;
+                $correctanswers[] = $answer;
+                break;
+            }
+        }
+
+        // Get partial answer unit.
+        if(empty($correctanswers)){
+            foreach ($this->answers as $answer) {
+                if ($answer->unit == $unit) {
+                    $correctanswers[] = $answer;
+                    break;
+                }
+            }
+        }
+
+        // Get partial answer value.
+        if(empty($correctanswers)){
+            foreach ($this->answers as $answer) {
+                if ($answer->answer == $value) {
+                    $correctanswers[] = $answer;
+                    break;
+                }
+            }
+        }
+
+        // Get wrong answer.
+        if(empty($correctanswers)){
+            $correctanswers[] = $this->get_correct_answer();
+        }
+
+        foreach ($correctanswers as $answer) {
+
+            if($answer->newtype){
+                $dano['value'] = $answer->answer;
+                $dano['unit'] = $answer->unit;
+
+                $answer_t['value'] = $value;
+                $answer_t['unit'] = $unit;
+
+                $tolerance = $answer->tolerance;
+
+                $obj = qtype_numerical_check_for_penalty($dano, $answer_t, $tolerance);
+
+                if(qtype_numerical_compare_answer($dano, $answer_t, $tolerance)){
+                    $answer->unitisright = true;
+                    return $answer;
+                }else if($obj->result){
+                    $answer->unitisright = false;
+                    $this->unitpenalty = $obj->penalty;
+
+                    // Feedback.
+                    if(isset($obj->feedback) && !empty($obj->feedback)){
+                        $answer->feedback = !empty($otherfeedback) ? $otherfeedback : $obj->feedback;
+                    }
+                    $answer->feedback = !empty($otherfeedback) ? $otherfeedback : $answer->feedback;
+
+                    // Answer helki.
+                    if($obj->result && !empty($obj->penalty)){
+                        $answer->feedback = '';
+                    }
+
+                    $answer->penaltytype = $obj->penaltytype;
+                    return $answer;
+                }
+            }else{
+                if ($answer->within_tolerance($scaledvalue)) {
+                    $answer->unitisright = !is_null($multiplier);
+                    return $answer;
+                } else if ($answer->within_tolerance($value)) {
+                    $answer->unitisright = false;
+                    return $answer;
+                }
+
                 return $answer;
             }
+
+//            if ($answer->within_tolerance($scaledvalue)) {
+//                $answer->unitisright = !is_null($multiplier);
+//                return $answer;
+//            } else if ($answer->within_tolerance($value)) {
+//                $answer->unitisright = false;
+//                return $answer;
+//            }
+
         }
 
         return null;
@@ -249,14 +346,14 @@ class qtype_numerical_question extends question_graded_automatically {
 
     public function grade_response(array $response) {
         if ($this->has_separate_unit_field()) {
-            $selectedunit = $response['unit'];
+            $selectedunit = isset($response['unit'])?$response['unit']:null;
         } else {
             $selectedunit = null;
         }
         list($value, $unit, $multiplier) = $this->ap->apply_units(
                 $response['answer'], $selectedunit);
 
-        $answer = $this->get_matching_answer($value, $multiplier);
+        $answer = $this->get_matching_answer($value, $unit, $multiplier);
         if (!$answer) {
             return array(0, question_state::$gradedwrong);
         }
@@ -276,7 +373,7 @@ class qtype_numerical_question extends question_graded_automatically {
             $selectedunit = null;
         }
         list($value, $unit, $multiplier) = $this->ap->apply_units($response['answer'], $selectedunit);
-        $ans = $this->get_matching_answer($value, $multiplier);
+        $ans = $this->get_matching_answer($value, $unit, $multiplier);
 
         $resp = $response['answer'];
         if ($this->has_separate_unit_field()) {
@@ -307,7 +404,7 @@ class qtype_numerical_question extends question_graded_automatically {
             }
             list($value, $unit, $multiplier) = $this->ap->apply_units(
                     $currentanswer, $selectedunit);
-            $answer = $this->get_matching_answer($value, $multiplier);
+            $answer = $this->get_matching_answer($value, $unit, $multiplier);
             $answerid = reset($args); // Itemid is answer id.
             return $options->feedback && $answer && $answerid == $answer->id;
 
@@ -354,10 +451,28 @@ class qtype_numerical_answer extends question_answer {
     public $tolerance;
     /** @var integer|string see {@link get_tolerance_interval()} for the meaning of this value. */
     public $tolerancetype = 2;
+// Kiril, is ok to set the following defaults to the last two params? ... $unit = null, $type_question = false
+    public function __construct($id, $answer, $fraction, $feedback, $feedbackformat, $tolerance, $unit = null, $type_question = false) {
+        global $DB;
 
-    public function __construct($id, $answer, $fraction, $feedback, $feedbackformat, $tolerance) {
         parent::__construct($id, $answer, $fraction, $feedback, $feedbackformat);
         $this->tolerance = abs((float)$tolerance);
+        $this->unit = $unit;
+        $this->newtype = $type_question;
+
+        $sql = "
+            SELECT q.*
+            FROM {question_answers} qa
+            LEFT JOIN {question} q ON (qa.question = q.id)
+            WHERE qa.id = ?
+        ";
+
+        if($obj = $DB->get_record_sql($sql, [$id])){
+            if($obj->qtype != 'numerical'){
+                $this->unit = null;
+                $this->newtype = false;
+            }
+        }
     }
 
     public function get_tolerance_interval() {
