@@ -1913,6 +1913,7 @@ class html_writer {
             $attributes['selected'] = 'selected';
         }
         $attributes['value'] = $value;
+        $attributes['dir'] = 'auto';
         return self::tag('option', $label, $attributes);
     }
 
