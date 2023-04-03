@@ -47,6 +47,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         $attributes = [
             'id' => $this->box_id($qa, 'p' . $place),
             'class' => 'custom-select place' . $place,
+            'dir' => 'auto'
         ];
         $groupclass = 'group' . $group;
 
