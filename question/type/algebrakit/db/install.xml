@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/type/algebrakit/db" VERSION="20171210" COMMENT="XMLDB file for AlgebraKiT questions in Moodle"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="question_algebrakit" COMMENT="Options for AlgebraKiT questions.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Parent question ID"/>
+        <FIELD NAME="exercise_id" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Exercise UUID"/>
+        <FIELD NAME="major_version" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Exercise Major Version"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="exercise_id_index" UNIQUE="false" FIELDS="exercise_id"/>
+        <INDEX NAME="question_id_index" UNIQUE="false" FIELDS="exercise_id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
