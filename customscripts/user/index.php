@@ -344,11 +344,10 @@ $PAGE->requires->js_amd_inline("
             
             // Change total string.
             setTimeout(function() {
-                let count = changeTotalCount();            
+                let count = changeTotalCount();
                 let tag = $('*[data-region=".'"participant-count"'."]');
-                let arr = tag.text().split(' ');            
-                arr[1] = count;                        
-                tag.text(arr.join(' '));
+                let str = tag.text().replace(/[0-9]/g, '');                                                        
+                tag.text(count + ' ' + str);
             }, 100);            
         }
         
