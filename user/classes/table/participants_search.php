@@ -156,7 +156,7 @@ class participants_search {
      * @return array
      */
     protected function get_participants_sql(string $additionalwhere, array $additionalparams): array {
-        global $CFG;
+        global $CFG, $DB;
 
         $isfrontpage = ($this->course->id == SITEID);
         $accesssince = 0;
@@ -223,13 +223,28 @@ class participants_search {
                 $wheres[] = user_get_user_lastaccess_sql($accesssince, 'u', $matchaccesssince);
             }
         } else {
-            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess $userfieldssql";
+            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess, g.name AS groups $userfieldssql";
             // Not everybody has accessed the course yet.
             $outerjoins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
             $params['courseid2'] = $this->course->id;
             if ($accesssince) {
                 $wheres[] = user_get_course_lastaccess_sql($accesssince, 'ul', $matchaccesssince);
             }
+
+            // Group members.
+            $rows = $DB->get_records('groups', array('courseid' => $this->course->id));
+            $instr = 'NULL';
+            if(!empty($rows)){
+
+                $groups = [];
+                foreach($rows as $item){
+                    $groups[] = $item->id;
+                }
+                $instr = implode(',', $groups);
+            }
+
+            $outerjoins[] = 'LEFT JOIN {groups_members} gm ON (gm.userid = targetusers.id AND gm.groupid IN ('.$DB->sql_like_escape($instr).'))';
+            $outerjoins[] = 'LEFT JOIN {groups} g ON (g.id = gm.groupid)';
 
             // Make sure we only ever fetch users in the course (regardless of enrolment filters).
             $innerjoins[] = "JOIN {user_enrolments} ue ON ue.userid = {$inneruseralias}.id";
@@ -1005,13 +1020,13 @@ class participants_search {
             $conditions[] = $email;
 
             // Search by idnumber.
-            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
+            $idnumber = $DB->sql_like('u.idnumber', ':' . $searchkey3, false, false);
 
             if ($notjoin) {
-                $idnumber = "(idnumber IS NOT NULL AND  {$idnumber})";
+                $idnumber = "(u.idnumber IS NOT NULL AND  {$idnumber})";
             }
 
-            if (!in_array('idnumber', $this->userfields)) {
+            if (!in_array('u.idnumber', $this->userfields)) {
                 $userid2 = 'userid' . $index . '2';
                 // Users who aren't allowed to see idnumbers should at most find themselves
                 // when searching for an idnumber.

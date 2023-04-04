@@ -189,9 +189,10 @@ class participants extends \table_sql implements dynamic_table {
 
         $this->no_sorting('select');
         $this->no_sorting('roles');
-        if ($canseegroups) {
-            $this->no_sorting('groups');
-        }
+        //PTL-4223 group sorting customisation
+        // if ($canseegroups) {
+        //     $this->no_sorting('groups');
+        // }
 
         $this->set_default_per_page(20);
 
@@ -404,8 +405,44 @@ class participants extends \table_sql implements dynamic_table {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/local/petel/locallib.php');
+
         list($twhere, $tparams) = $this->get_sql_where();
         $psearch = new participants_search($this->course, $this->context, $this->filterset);
+
+        // Build filter.
+        if(isset($CFG->custom_participiants_page_enable) && $CFG->custom_participiants_page_enable == true) {
+            $filter = get_user_preferences('participant_filter_' . $this->course->id, 0);
+
+            // Filter.
+            switch ($filter) {
+                case PP_ACTIVE_STUDENTS:
+                case PP_ACTIVE_STUDENTS_AND_TEACHERS:
+                    $twhere .= ' udistinct.suspended = 0 AND ue.status = 0 ';
+                    $twhere .= "
+                    AND (
+                        (ue.timestart = '0' AND ue.timeend = '0') OR
+                        (ue.timestart = '0' AND ue.timeend > UNIX_TIMESTAMP()) OR
+                        (ue.timeend = '0' AND ue.timestart < UNIX_TIMESTAMP()) OR
+                        (ue.timeend > UNIX_TIMESTAMP() AND ue.timestart < UNIX_TIMESTAMP())
+                        )
+                ";
+                    break;
+                case PP_SUSPENDED_USERS:
+                    $twhere .= ' udistinct.suspended != 0 || ue.status != 0 ';
+                    $twhere .= "
+                    || (
+                        (ue.timestart != '0' || ue.timeend != '0') AND
+                        (ue.timestart != '0'|| ue.timeend <= UNIX_TIMESTAMP()) AND
+                        (ue.timeend != '0' || ue.timestart >= UNIX_TIMESTAMP()) AND
+                        (ue.timeend <= UNIX_TIMESTAMP() || ue.timestart >= UNIX_TIMESTAMP())
+                        )
+                ";
+                    break;
+            }
+        }
 
         $total = $psearch->get_total_participants_count($twhere, $tparams);
 
@@ -429,6 +466,67 @@ class participants extends \table_sql implements dynamic_table {
                     true, 'c.contextlevel DESC, r.sortorder ASC');
         } else {
             $this->allroleassignments = [];
+        }
+
+        // Filter.
+        if(isset($CFG->custom_participiants_page_enable) && $CFG->custom_participiants_page_enable == true) {
+            $rolenames = [];
+            switch ($filter) {
+                case PP_ACTIVE_STUDENTS:
+                case PP_ALL_STUDENTS:
+                $rolenames[] = 'student';
+                    break;
+                case PP_FELLOW_TEACHERS:
+                    $rolenames[] = 'teachercolleague';
+                    break;
+                case PP_TEACHERS_PAYOFF:
+                    $rolenames[] = 'teachertraining';
+                    break;
+                case PP_TEACHER_DOES_NOT_EDIT:
+                    $rolenames[] = 'teacher';
+                    break;
+                case PP_ACTIVE_STUDENTS_AND_TEACHERS:
+                    $rolenames[] = 'student';
+                    $rolenames[] = 'editingteacher';
+                    break;
+            }
+
+            if (!empty($rolenames)) {
+                $neededroles = [];
+                foreach($rolenames as $rolename){
+                    if($role = $DB->get_record('role', ['shortname' => $rolename])){
+                        $neededroles[] = $role->id;
+
+                    }
+                }
+
+                foreach ($this->allroleassignments as $userid => $item) {
+                    $flag = false;
+                    foreach ($item as $obj) {
+                        if(in_array($obj->roleid, $neededroles)){
+                            $flag = true;
+                        }
+                    }
+
+                    if (!$flag) {
+                        unset($this->rawdata[$userid]);
+                    }
+                }
+            }
+
+            // Participants who do not have a personal category.
+            if($filter == PP_NO_PERSONAL_CATEGORY){
+                foreach ($this->rawdata as $userid => $item) {
+
+                    $user = $DB->get_record('user', ['id' => $userid]);
+                    if($DB->get_record('course_categories', ['idnumber' => $user->idnumber])){
+                        unset($this->rawdata[$userid]);
+                    }
+                }
+            }
+
+            $total = count($this->rawdata);
+            $this->pagesize($pagesize, $total);
         }
 
         // Set initial bars.
