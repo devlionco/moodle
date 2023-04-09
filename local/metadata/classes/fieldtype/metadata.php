@@ -98,7 +98,7 @@ class metadata {
      * @return bool
      */
     public function edit_field($mform) {
-        if (($this->field->visible != PROFILE_VISIBLE_NONE) ||
+        if ( true || //($this->field->visible != PROFILE_VISIBLE_NONE) || // Commit view all fields for admin.
             (($this->field->contextlevel == CONTEXT_USER) && has_capability('moodle/user:update', \context_system::instance()))) {
 
             $this->edit_field_add($mform);
@@ -115,7 +115,7 @@ class metadata {
      * @return bool
      */
     public function edit_after_data($mform) {
-        if (($this->field->visible != PROFILE_VISIBLE_NONE) ||
+        if ( true || //($this->field->visible != PROFILE_VISIBLE_NONE) || // Commit view all fields for admin.
             (($this->field->contextlevel == CONTEXT_USER) && has_capability('moodle/user:update', \context_system::instance()))) {
             $this->edit_field_set_locked($mform);
             return true;
@@ -432,5 +432,22 @@ class metadata {
         } else {
             throw new \coding_exception($name.' is not a publicly accessible property of '.get_class($this));
         }
+    }
+
+    public function if_field_editable() {
+        global $USER;
+
+        $admins = [];
+        foreach(get_admins() as $admin){
+            $admins[] = $admin->id;
+        }
+
+        // System capability.
+        $context = \context_system::instance();
+        if (has_capability('local/metadata:mdmanager', $context)) {
+            $admins[] = $USER->id;
+        }
+
+        return in_array($USER->id, $admins);
     }
 }

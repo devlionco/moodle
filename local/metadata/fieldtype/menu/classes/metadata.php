@@ -83,7 +83,21 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param moodleform $mform Moodle form instance
      */
     public function edit_field_add($mform) {
-        $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options);
+
+        $attr = $this->field->locked == 1 && !$this->if_field_editable() ? ['disabled'] : [];
+
+        $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options, $attr);
+    }
+
+    /**
+     * Sets the required flag for the field in the form object
+     *
+     * @param moodleform $mform instance of the moodleform class
+     */
+    public function edit_field_set_required($mform) {
+        if($this->field->locked != 1 || $this->if_field_editable()){
+            parent::edit_field_set_required($mform);
+        }
     }
 
     /**

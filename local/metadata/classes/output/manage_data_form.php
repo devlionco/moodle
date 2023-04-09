@@ -44,6 +44,8 @@ class manage_data_form extends moodleform {
         $mform->setType('contextlevel', PARAM_INT);
         $mform->addElement('hidden', 'id', $this->_customdata->instance->id);
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'returnurl', isset($this->_customdata->returnurl)?$this->_customdata->returnurl:"");
+        $mform->setType('returnurl', PARAM_URL);
 
         $data = $this->_customdata->data;
         foreach ($data as $catid => $category) {

@@ -68,10 +68,23 @@ class metadata extends \local_metadata\fieldtype\metadata {
         $maxlength = $this->field->param2;
         $metadata = ($this->field->param3 == 1 ? 'password' : 'text');
 
+        $readonly = $this->field->locked == 1 && !$this->if_field_editable() ? 'readonly ' : '';
+
         // Create the form field.
-        $mform->addElement($metadata, $this->inputname, format_string($this->field->name), 'maxlength="'.
-            $maxlength.'" size="'.$size.'" ');
+        $mform->addElement($metadata, $this->inputname, format_string($this->field->name), $readonly.'maxlength="'.
+                $maxlength.'" size="'.$size.'" ');
         $mform->setType($this->inputname, PARAM_TEXT);
+    }
+
+    /**
+     * Sets the required flag for the field in the form object
+     *
+     * @param moodleform $mform instance of the moodleform class
+     */
+    public function edit_field_set_required($mform) {
+        if($this->field->locked != 1 || $this->if_field_editable()){
+            parent::edit_field_set_required($mform);
+        }
     }
 
     /**
