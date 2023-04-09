@@ -39,14 +39,28 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param moodleform $mform
      */
     public function edit_field_add($mform) {
+
+        $attr = $this->field->locked == 1 && !$this->if_field_editable() ? ['disabled'] : [];
+
         // Create the form field.
-        $checkbox = $mform->addElement('advcheckbox', $this->inputname, format_string($this->field->name));
+        $checkbox = $mform->addElement('advcheckbox', $this->inputname, format_string($this->field->name), null, $attr);
         if ($this->data == '1') {
             $checkbox->setChecked(true);
         }
         $mform->setType($this->inputname, PARAM_BOOL);
         if ($this->is_required() && !has_capability('moodle/user:update', \context_system::instance())) {
             $mform->addRule($this->inputname, get_string('required'), 'nonzero', null, 'client');
+        }
+    }
+
+    /**
+     * Sets the required flag for the field in the form object
+     *
+     * @param moodleform $mform instance of the moodleform class
+     */
+    public function edit_field_set_required($mform) {
+        if($this->field->locked != 1 || $this->if_field_editable()){
+            parent::edit_field_set_required($mform);
         }
     }
 

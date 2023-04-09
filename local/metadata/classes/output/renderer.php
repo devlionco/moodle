@@ -39,7 +39,15 @@ class renderer extends \plugin_renderer_base {
         $output = '';
         foreach ($categorytable->categories as $category) {
             $table = new \html_table();
-            $table->head  = [get_string('profilefield', 'admin'), get_string('edit')];
+            $table->head  = [
+                    get_string('profilefield', 'admin'),
+                    get_string('profileshortname', 'admin'),
+                    get_string('profilerequired', 'admin'),
+                    get_string('profilesignup', 'admin'),
+                    get_string('profilelocked', 'admin'),
+                    get_string('profilevisible', 'admin'),
+                    get_string('edit')
+            ];
             $table->align = ['left', 'right'];
             $table->width = '95%';
             $table->attributes['class'] = 'generaltable profilefield';
@@ -47,7 +55,27 @@ class renderer extends \plugin_renderer_base {
 
             if ($fields = $DB->get_records('local_metadata_field', ['categoryid' => $category->id], 'sortorder ASC')) {
                 foreach ($fields as $field) {
-                    $table->data[] = [format_string($field->name), $this->field_icons($field, $category->contextlevel)];
+                    switch ($field->visible) {
+                        case PROFILE_VISIBLE_NONE:
+                            $visiblename = get_string('profilevisiblenone', 'admin');
+                            break;
+                        case PROFILE_VISIBLE_PRIVATE:
+                            $visiblename = get_string('profilevisibleprivate', 'admin');
+                            break;
+                        case PROFILE_VISIBLE_ALL:
+                            $visiblename = get_string('profilevisibleall', 'admin');
+                            break;
+                    }
+
+                    $table->data[] = [
+                            format_string($field->name).' ('.format_string($field->datatype).')',
+                            $field->shortname,
+                            $field->required ? get_string('yes') : get_string('no'),
+                            $field->signup ? get_string('yes') : get_string('no'),
+                            $field->locked ? get_string('yes') : get_string('no'),
+                            $visiblename,
+                            $this->field_icons($field, $category->contextlevel)
+                    ];
                 }
             }
 

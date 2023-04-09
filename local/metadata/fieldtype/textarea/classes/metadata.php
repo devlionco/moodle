@@ -39,9 +39,37 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param moodleform $mform
      */
     public function edit_field_add($mform) {
+        global $CFG;
+
         // Create the form field.
-        $mform->addElement('editor', $this->inputname, format_string($this->field->name), null, null);
+        $textfieldoptions = array(
+                'trusttext' => true,
+                'subdirs' => true,
+                'maxfiles' => 1,
+                'maxbytes' => $CFG->maxbytes,
+                'context' => \context_system::instance()
+        );
+
+        $mform->addElement('editor', $this->inputname, format_string($this->field->name), null, $textfieldoptions);
         $mform->setType($this->inputname, PARAM_RAW); // We MUST clean this before display!
+
+        if($this->field->locked == 1 && !$this->if_field_editable()){
+            $mform->addElement('hidden', $this->inputname.'_hidden', 1);
+            $mform->setType($this->inputname.'_hidden', PARAM_INT);
+
+            $mform->disabledIf($this->inputname, $this->inputname.'_hidden', 'eq', 1);
+        }
+    }
+
+    /**
+     * Sets the required flag for the field in the form object
+     *
+     * @param moodleform $mform instance of the moodleform class
+     */
+    public function edit_field_set_required($mform) {
+        if($this->field->locked != 1 || $this->if_field_editable()){
+            parent::edit_field_set_required($mform);
+        }
     }
 
     /**

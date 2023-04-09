@@ -165,6 +165,8 @@ function local_metadata_save_data($new, $contextlevel) {
             $formfield->edit_save_data($new);
         }
     }
+
+    \local_metadata\event\update_metadata::create_event($new)->trigger();
 }
 
 /**
@@ -440,9 +442,48 @@ function local_metadata_extend_navigation_user_settings($navigation, $user, $use
  * @param MoodleQuickForm $mform The actual form object (required to modify the form).
  */
 function local_metadata_coursemodule_standard_elements($formwrapper, $mform) {
-    foreach (\local_metadata\context\context_handler::all_enabled_subplugins() as $contexthandler) {
-        $contexthandler->coursemodule_standard_elements($formwrapper, $mform);
+    //foreach (\local_metadata\context\context_handler::all_enabled_subplugins() as $contexthandler) {
+    //    $contexthandler->coursemodule_standard_elements($formwrapper, $mform);
+    //}
+
+    // PTL-224 Load saved metadata teacherremarks.
+    global $DB, $CFG;
+
+    $field = $DB->get_record('local_metadata_field', array('shortname' => 'teacherremarks'));
+
+    if (!empty($field)) {
+        $row = $DB->get_record('local_metadata', array('fieldid' => $field->id, 'instanceid' => $formwrapper->get_current()->coursemodule));
+
+        if (!empty($row)) {
+            $formwrapper->get_current()->teacherremarks = array('text' => $row->data, 'format' => $row->dataformat);
+        }
     }
+
+    $arrelements = array_keys($mform->_elementIndex);
+    $showdescriptionkey = array_search('showdescription', $arrelements);
+    $introeditorkey = array_search('introeditor', $arrelements);
+
+    if ($showdescriptionkey) {
+        $afterelement = $arrelements[$showdescriptionkey + 1];
+    } else {
+        $afterelement = $arrelements[$introeditorkey + 1];
+    }
+
+    $textfieldoptions = array(
+            'trusttext' => true,
+            'subdirs' => true,
+            'maxfiles' => 1,
+            'maxbytes' => $CFG->maxbytes,
+            'clean' => true,
+            'context' => \context_system::instance()
+    );
+
+    $mform->insertElementBefore(
+            $mform->createElement('editor', 'teacherremarks',
+                    format_string(get_string('teacherremarks', 'local_metadata')), null, $textfieldoptions),
+            $afterelement);
+
+    $mform->setType('teacherremarks', PARAM_RAW);
 }
 
 /**
@@ -452,8 +493,59 @@ function local_metadata_coursemodule_standard_elements($formwrapper, $mform) {
  * @param stdClass $course The course.
  */
 function local_metadata_coursemodule_edit_post_actions($data, $course) {
-    foreach (\local_metadata\context\context_handler::all_enabled_subplugins() as $contexthandler) {
-        $data = $contexthandler->coursemodule_edit_post_actions($data, $course);
+    //foreach (\local_metadata\context\context_handler::all_enabled_subplugins() as $contexthandler) {
+    //    $data = $contexthandler->coursemodule_edit_post_actions($data, $course);
+    //}
+    //return $data;
+
+    // PTL-224.
+    if (isset($data->teacherremarks)) {
+
+        $value = $data->teacherremarks['text'];
+        $format = $data->teacherremarks['format'];
+
+        if($value == null || empty($value) || $value == false){
+            \local_metadata\mcontext::module()->saveEmpty($data->coursemodule, 'teacherremarks');
+        }else{
+            \local_metadata\mcontext::module()->save($data->coursemodule, 'teacherremarks', $value, $format);
+        }
+
+        $event = new \StdClass();
+        $event->action = 'moduledata';
+        $event->contextlevel = CONTEXT_MODULE;
+        $event->id = $data->coursemodule;
+        \local_metadata\event\update_metadata::create_event($event)->trigger();
     }
+
     return $data;
+}
+
+/**
+ * Hook function to insert metadata form elements in the native module form
+ * @param moodleform $formwrapper The moodle quickforms wrapper object.
+ * @param MoodleQuickForm $mform The actual form object (required to modify the form).
+ */
+function  local_metadata_extend_navigation_category_settings ($navigation, $coursecategorycontext) {
+    if ((get_config('metadatacontext_category', 'metadataenabled') == 1) &&
+            has_capability('moodle/category:manage', $coursecategorycontext)) {
+        $strmetadata = get_string('metadatatitle', 'metadatacontext_category');
+        $url = new \moodle_url('/local/metadata/index.php',
+                ['id' => $coursecategorycontext->instanceid, 'action' => 'categorydata', 'contextlevel' => CONTEXT_COURSECAT]);
+        $metadatanode = \navigation_node::create($strmetadata, $url, \navigation_node::NODETYPE_LEAF,
+                'metadata', 'metadata', new \pix_icon('i/settings', $strmetadata)
+        );
+        $navigation->add_node($metadatanode);
+    }
+}
+
+// View image file.
+function local_metadata_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+
+    require_login();
+    //require_login($course, false, $cm);
+
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'local_metadata', $filearea, $args[0], '/', $args[1]);
+
+    send_file($file, $args[1], 0, $forcedownload, $options);
 }

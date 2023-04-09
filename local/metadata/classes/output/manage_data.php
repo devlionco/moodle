@@ -53,12 +53,13 @@ class manage_data implements \renderable {
      * @param null $action
      * @throws \dml_exception
      */
-    public function __construct($instance = null, $contextlevel = null, $action = null) {
+    public function __construct($instance = null, $contextlevel = null, $action = null, $returnurl = null) {
         global $DB;
 
         $this->instance = $instance;
         $this->contextlevel = $contextlevel;
         $this->action = $action;
+        $this->returnurl = $returnurl;
         $this->data = [];
 
         if ($categories = $DB->get_records('local_metadata_category', ['contextlevel' => $this->contextlevel], 'sortorder ASC')) {

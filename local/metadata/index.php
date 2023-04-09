@@ -30,6 +30,7 @@ require_once($CFG->dirroot.'/local/metadata/definelib.php');
 $action   = optional_param('action', '', PARAM_ALPHA);
 $contextlevel = optional_param('contextlevel', CONTEXT_USER, PARAM_INT);
 $redirect = $CFG->wwwroot.'/local/metadata/index.php?contextlevel='.$contextlevel;
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 $strchangessaved    = get_string('changessaved');
 $strcancelled       = get_string('cancelled');
@@ -146,7 +147,11 @@ switch ($action) {
 
             // Handle form data.
             if ($dataform->is_cancelled()) {
-                redirect($redirect);
+                if (!empty($returnurl)) {
+                    redirect($returnurl);
+                } else {
+                    redirect($redirect);
+                }
             } else if (!($data = $dataform->get_data())) {
                 $output = $PAGE->get_renderer('metadatacontext_'.$contextname);
                 echo $output->render($dataoutput);

@@ -37,3 +37,6 @@ $string['subplugintype_metadatacontext'] = 'Data context plugin';
 $string['subplugintype_metadatacontext_plural'] = 'Data context plugins';
 $string['subplugintype_metadatafieldtype'] = 'Data fieldtype plugin';
 $string['subplugintype_metadatafieldtype_plural'] = 'Data fieldtype plugins';
+
+$string['teacherremarks'] = 'Private teacher notes, hidden from students.';
+$string['metadata:mdmanager'] = 'Manage metadata';
