@@ -58,6 +58,7 @@ class qtype_geogebra extends question_type {
      *                         it is not a standard question object.
      */
     public function save_question_options($question) {
+        global $USER, $DB;
 
         // Insert all the new answers.
         if (isset($question->answer)) {
@@ -74,6 +75,26 @@ class qtype_geogebra extends question_type {
         }
         // Save the question options.
         $parentresult = parent::save_question_options($question);
+
+        $draftitemid = file_get_submitted_draft_itemid('ggbimportfile');
+        if ($draftitemid) {
+            $fs = get_file_storage();
+            $context = context_user::instance($USER->id);
+            $files = $fs->get_area_files($context->id, 'user', 'draft', $draftitemid);
+            if ($files) {
+                foreach ($files as $file) {
+                    if ($file->get_filename() != '.') {
+                        if ($record = $DB->get_record('qtype_geogebra_options', ['questionid' => $question->id])) {
+                            $ggbparameters = json_decode($record->ggbparameters);
+                            $ggbparameters->ggbBase64 = base64_encode($file->get_content());
+                            $record->ggbparameters=json_encode($ggbparameters);
+                            $DB->update_record('qtype_geogebra_options', $record);
+                        }
+                    }
+                }
+            }
+        }
+
         if ($parentresult !== null) {
             return $parentresult;
         }

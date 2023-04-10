@@ -73,3 +73,6 @@ $string['variablenamewrong'] = 'משתנה בשם זה לא נמצא בקובץ 
 $string['variableno'] = 'משתנה {$a}‏';
 $string['variables'] = 'משתנים';
 $string['willbereadfromfile'] = 'יקרא מתוך גאוגברה... (ראי כפתור עזרה)‏';
+$string['willbereadfromfile'] = 'יקרא מתוך גאוגברה... (ראי כפתור עזרה)‏';
+$string['linktodownload'] = 'הורדת הקובץ ggb.';
+$string['importnewfile'] = 'יבוא קובץ חדש';

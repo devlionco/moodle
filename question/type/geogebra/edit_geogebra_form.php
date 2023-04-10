@@ -506,7 +506,7 @@ class qtype_geogebra_edit_form extends question_edit_form {
      * @throws coding_exception
      */
     private function add_applet_elements($mform) {
-        global $PAGE;
+        global $PAGE, $CFG;
         /* Button to (Re)load Applet from GeoGebraTube */
         $loadappletgroup = array();
         $loadappletgroup[] =& $mform->createElement('button', 'loadapplet', get_string('loadapplet', 'qtype_geogebra'));
@@ -515,6 +515,27 @@ class qtype_geogebra_edit_form extends question_edit_form {
         $mform->addGroup($loadappletgroup, 'loadappletgroup', get_string('loadapplet', 'qtype_geogebra'), array(' '), false);
         $mform->addHelpButton('loadappletgroup', 'loadapplet', 'qtype_geogebra');
         $mform->disabledIf('loadappletgroup', 'usefile', 'checked');
+
+        if (!empty($this->question->id)){
+            $linkdownload = new moodle_url('/question/type/geogebra/export.php',['id'=>$this->question->id, 'cmid' =>  optional_param('cmid', 0, PARAM_INT)]);
+            $html = html_writer::start_div('form-group row fitem');
+            $html.= html_writer::start_div('col-md-3');
+            $html.= html_writer::label(get_string('linktodownload', 'qtype_geogebra'),'dd');
+            $html.= html_writer::end_div();
+            $html.= html_writer::start_div('col-md-9 form-inline felement');
+            $html.= html_writer::span(html_writer::link($linkdownload,
+                    '<i class="fal fa-download mr-2"></i>' . '<span>'.get_string('linktodownload', 'qtype_geogebra') .'</span>',
+                    ['class' => 'btn btn-outline-primary',
+                            "data-toggle"=>"tooltip",
+                            "data-placement"=>"top",
+                            'title' => get_string('linktodownload', 'qtype_geogebra')
+                    ]));
+            $html.= html_writer::end_div();
+            $html.= html_writer::end_div();;
+            $mform->addElement('html', $html);
+            $attachmentoptions = array('subdirs' => false, 'maxfiles' => 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => ['.ggb']);
+            $mform->addElement('filemanager', 'ggbimportfile', get_string('importnewfile', 'qtype_geogebra'), null, $attachmentoptions);
+        }
 
         $mform->addElement('html', '<div class="form-group row  fitem" id="applet_container1_fitem"><div class="col-md-3">'
             . get_string('geogebraapplet', 'qtype_geogebra').'</div><div id="applet_container1" class="felement"></div></div>');
