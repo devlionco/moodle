@@ -198,6 +198,19 @@ class core_string_manager_standard implements core_string_manager {
                 }
             }
         }
+	$cstring = [];
+	$deps = $this->get_language_dependencies($lang);
+	array_unshift($deps, "en");
+	foreach ($deps as $dep) {
+		    if ($pluginswithfunction = get_plugins_with_function('custom_language_translation', 'lib.php')) {
+			            foreach ($pluginswithfunction as $plugins) {
+					                foreach ($plugins as $function) {
+								                $function($cstring, $component, $dep);
+										            }
+							        }
+				        }
+	}
+	$string = array_merge($string, $cstring);
 
         // We do not want any extra strings from other languages - everything must be in en lang pack.
         $string = array_intersect_key($string, $enstring);
@@ -570,7 +583,9 @@ class core_string_manager_standard implements core_string_manager {
             }
             $string = $this->load_component_strings('langconfig', $lang);
             if (!empty($string['thislanguage'])) {
-                $languages[$lang] = $string['thislanguage'].' '.$lrm.'('. $lang .')'.$lrm;
+                //PTL-646 view just language title
+                $languages[$lang] = $string['thislanguage'];
+                //$languages[$lang] = $string['thislanguage'].' '.$lrm.'('. $lang .')'.$lrm;
             }
         }
 
