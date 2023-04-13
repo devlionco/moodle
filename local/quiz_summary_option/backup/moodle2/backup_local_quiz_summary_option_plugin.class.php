@@ -27,11 +27,7 @@
  * Define all the backup steps that will be used by the backup_local_quiz_summary_option_plugin
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-
-class backup_local_quiz_summary_option_plugin extends backup_local_plugin
-{
+class backup_local_quiz_summary_option_plugin extends backup_local_plugin {
     protected function define_module_plugin_structure() {
         // Create XML child element.
         $elementname = $this->get_recommended_name();

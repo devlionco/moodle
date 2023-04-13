@@ -22,11 +22,12 @@
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_quiz_summary_option\local\tests;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 /**
  * Form object to be used in test case
@@ -48,14 +49,16 @@ class test_form extends \moodleform_mod {
     protected function definition() {
         // No definition required.
     }
+
     /**
      * Returns form reference.
+     *
      * @return \stdClass
      */
     public function get_current() {
         return (object) [
-          'modulename' => $this->modulename,
-          'coursemodule' => $this->coursemodule,
+                'modulename' => $this->modulename,
+                'coursemodule' => $this->coursemodule,
         ];
     }
 }

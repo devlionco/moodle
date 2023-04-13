@@ -27,8 +27,6 @@
  * Define all the restore steps that will be used by the backup_local_quiz_summary_option_plugin
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 class restore_local_quiz_summary_option_plugin extends restore_local_plugin {
     protected function define_module_plugin_structure() {
         $paths = array();

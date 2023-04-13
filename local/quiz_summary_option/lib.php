@@ -23,8 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Implements callbacks coursemodule_standard_elements to add an option to show/hide quiz summary page.
  *
@@ -49,22 +47,11 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
         $show = $row->show_summary;
     }
 
-    //$default = $show ? SUMMARY_OPTION_SHOW : SUMMARY_OPTION_HIDE;
     $default = $show;
 
     $mform->addElement('header', 'summaryoptionhdr', get_string('summarypageoption', 'local_quiz_summary_option'));
 
     $mform->addElement('checkbox', 'summaryoption', get_string('summaryoption', 'local_quiz_summary_option'), ' ');
-
-    //$mform->addElement(
-    //    'select',
-    //    'summaryoption',
-    //    get_string('summaryoption', 'local_quiz_summary_option'),
-    //    [
-    //        SUMMARY_OPTION_SHOW => get_string('summaryoption_show', 'local_quiz_summary_option'),
-    //        SUMMARY_OPTION_HIDE => get_string('summaryoption_hide', 'local_quiz_summary_option'),
-    //    ]
-    //);
 
     $mform->setDefault('summaryoption', $default);
     $mform->addHelpButton('summaryoption', 'summaryoption', 'local_quiz_summary_option');
@@ -80,14 +67,14 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
         $obj = json_decode($row->show_elements);
 
         if (is_object($obj)) {
-            $objdefault->summary_hideall = isset($obj->summary_hideall) ?  $obj->summary_hideall : 0;
-            $objdefault->summary_numbering = isset($obj->summary_numbering) ?  $obj->summary_numbering : 0;
-            $objdefault->summary_state = isset($obj->summary_state) ?  $obj->summary_state : 0;
-            $objdefault->summary_grade = isset($obj->summary_grade) ?  $obj->summary_grade : 0;
-            $objdefault->summary_mark = isset($obj->summary_mark) ?  $obj->summary_mark : 0;
-            $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ?  $obj->summary_teacherdialog : 0;
-            $objdefault->summary_questionname = isset($obj->summary_questionname) ?  $obj->summary_questionname : 0;
-            $objdefault->summary_teamwork = isset($obj->summary_teamwork) ?  $obj->summary_teamwork : 0;
+            $objdefault->summary_hideall = isset($obj->summary_hideall) ? $obj->summary_hideall : 0;
+            $objdefault->summary_numbering = isset($obj->summary_numbering) ? $obj->summary_numbering : 0;
+            $objdefault->summary_state = isset($obj->summary_state) ? $obj->summary_state : 0;
+            $objdefault->summary_grade = isset($obj->summary_grade) ? $obj->summary_grade : 0;
+            $objdefault->summary_mark = isset($obj->summary_mark) ? $obj->summary_mark : 0;
+            $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ? $obj->summary_teacherdialog : 0;
+            $objdefault->summary_questionname = isset($obj->summary_questionname) ? $obj->summary_questionname : 0;
+            $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 0;
         }
     }
 
@@ -96,32 +83,32 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
     $mform->addHelpButton('summary_teamwork', 'summaryoption_teamwork', 'local_quiz_summary_option');
 
     $mform->addElement('checkbox', 'summary_hideall',
-        get_string('summaryoption_hideall', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_hideall', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_hideall', $objdefault->summary_hideall);
 
     $mform->addElement('checkbox', 'summary_numbering',
-        get_string('summaryoption_numbering', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_numbering', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_numbering', $objdefault->summary_numbering);
 
     $mform->addElement('checkbox', 'summary_state',
-        get_string('summaryoption_state', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_state', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_state', $objdefault->summary_state);
 
     $mform->addElement('checkbox', 'summary_grade',
-        get_string('summaryoption_grade', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_grade', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_grade', $objdefault->summary_grade);
 
     $mform->addElement('checkbox', 'summary_mark',
-        get_string('summaryoption_mark', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_mark', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_mark', $objdefault->summary_mark);
 
     $mform->addElement('checkbox', 'summary_teacherdialog',
-        get_string('summaryoption_teacherdialog', 'local_quiz_summary_option'), ' ',
-        ['class' => 'summaryoption']);
+            get_string('summaryoption_teacherdialog', 'local_quiz_summary_option'), ' ',
+            ['class' => 'summaryoption']);
     $mform->setDefault('summary_teacherdialog', $objdefault->summary_teacherdialog);
 
     $mform->addElement('checkbox', 'summary_questionname',
-        get_string('summaryoption_question_name', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
+            get_string('summaryoption_question_name', 'local_quiz_summary_option'), ' ', ['class' => 'summaryoption']);
     $mform->setDefault('summary_questionname', $objdefault->summary_questionname);
 
     $PAGE->requires->js_amd_inline("
@@ -187,11 +174,6 @@ function local_quiz_summary_option_coursemodule_edit_post_actions($moduleinfo, $
 
     $cmid = $moduleinfo->coursemodule;
 
-    //$show = 1;
-    //if ($moduleinfo->summaryoption == SUMMARY_OPTION_HIDE) {
-    //    $show = 0;
-    //}
-
     if (!isset($moduleinfo->summaryoption)) {
         $show = 0;
     } else {
@@ -202,15 +184,15 @@ function local_quiz_summary_option_coursemodule_edit_post_actions($moduleinfo, $
 
     // Check if record exists, if yes then update otherwise insert the record.
     if ($row) {
-        $quiz_summary_options = new \stdClass();
-        $quiz_summary_options->id = $row->id;
-        $quiz_summary_options->show_summary = $show;
-        $quiz_summary_options->show_elements = '';
-        $DB->update_record('local_quiz_summary_option', $quiz_summary_options);
+        $quizsummaryoptions = new \stdClass();
+        $quizsummaryoptions->id = $row->id;
+        $quizsummaryoptions->show_summary = $show;
+        $quizsummaryoptions->show_elements = '';
+        $DB->update_record('local_quiz_summary_option', $quizsummaryoptions);
         $rowid = $row->id;
     } else {
         $rowid = $DB->insert_record('local_quiz_summary_option', ['cmid' => $cmid, 'show_summary' => $show,
-            'show_elements' => ''], true);
+                'show_elements' => ''], true);
     }
 
     $arr = [
@@ -219,8 +201,10 @@ function local_quiz_summary_option_coursemodule_edit_post_actions($moduleinfo, $
             'summary_state' => isset($moduleinfo->summary_state) && $moduleinfo->summary_state === '1' ? '1' : '0',
             'summary_grade' => isset($moduleinfo->summary_grade) && $moduleinfo->summary_grade === '1' ? '1' : '0',
             'summary_mark' => isset($moduleinfo->summary_mark) && $moduleinfo->summary_mark === '1' ? '1' : '0',
-            'summary_teacherdialog' => isset($moduleinfo->summary_teacherdialog) && $moduleinfo->summary_teacherdialog === '1' ? '1' : '0',
-            'summary_questionname' => isset($moduleinfo->summary_questionname) && $moduleinfo->summary_questionname === '1' ? '1' : '0',
+            'summary_teacherdialog' => isset($moduleinfo->summary_teacherdialog) && $moduleinfo->summary_teacherdialog === '1' ?
+                    '1' : '0',
+            'summary_questionname' => isset($moduleinfo->summary_questionname) && $moduleinfo->summary_questionname === '1' ? '1' :
+                    '0',
             'summary_teamwork' => isset($moduleinfo->summary_teamwork) && $moduleinfo->summary_teamwork === '1' ? '1' : '0'
     ];
 
@@ -230,6 +214,7 @@ function local_quiz_summary_option_coursemodule_edit_post_actions($moduleinfo, $
 
     return $moduleinfo;
 }
+
 /**
  * Checks if show summary is disabled (hidden) then skips summary page.
  */
@@ -270,8 +255,8 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
 
     $objdefault = new \StdClass();
 
-    // Get question title elements presets from config.php
-    if(isset($CFG->quizquestiontitlepresets) && is_array($CFG->quizquestiontitlepresets)) {
+    // Get question title elements presets from config.php.
+    if (isset($CFG->quizquestiontitlepresets) && is_array($CFG->quizquestiontitlepresets)) {
         if (array_key_exists('no-qname', $CFG->quizquestiontitlepresets)) {
             $objdefault->summary_questionname = $CFG->quizquestiontitlepresets['no-qname'];
         }
@@ -307,20 +292,18 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
 
         $row = $DB->get_record('local_quiz_summary_option', ['cmid' => $cmid], 'show_elements');
 
-        // Teacher see all options always
-        //$context = context_module::instance($cmid);
-        //if ($row && !has_capability('mod/quiz:manage', $context)) {
+        // Teacher see all options always.
         if ($row) {
             $obj = json_decode($row->show_elements);
             if (is_object($obj)) {
-                $objdefault->summary_hideall = isset($obj->summary_hideall) ?  $obj->summary_hideall : 0;
-                $objdefault->summary_numbering = isset($obj->summary_numbering) ?  $obj->summary_numbering : 0;
-                $objdefault->summary_state = isset($obj->summary_state) ?  $obj->summary_state : 1;
-                $objdefault->summary_grade = isset($obj->summary_grade) ?  $obj->summary_grade : 0;
-                $objdefault->summary_mark = isset($obj->summary_mark) ?  $obj->summary_mark : 0;
-                $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ?  $obj->summary_teacherdialog : 0;
-                $objdefault->summary_questionname = isset($obj->summary_questionname) ?  $obj->summary_questionname : 1;
-                $objdefault->summary_teamwork = isset($obj->summary_teamwork) ?  $obj->summary_teamwork : 0;
+                $objdefault->summary_hideall = isset($obj->summary_hideall) ? $obj->summary_hideall : 0;
+                $objdefault->summary_numbering = isset($obj->summary_numbering) ? $obj->summary_numbering : 0;
+                $objdefault->summary_state = isset($obj->summary_state) ? $obj->summary_state : 1;
+                $objdefault->summary_grade = isset($obj->summary_grade) ? $obj->summary_grade : 0;
+                $objdefault->summary_mark = isset($obj->summary_mark) ? $obj->summary_mark : 0;
+                $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ? $obj->summary_teacherdialog : 0;
+                $objdefault->summary_questionname = isset($obj->summary_questionname) ? $obj->summary_questionname : 1;
+                $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 0;
             }
         }
 
