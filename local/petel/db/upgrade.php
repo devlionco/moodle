@@ -22,43 +22,36 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
 function xmldb_local_petel_upgrade($oldversion) {
-
     global $DB;
     $dbman = $DB->get_manager();
 
     // Fetch documents from documents directory and put them into the new documents filearea.
     if ($oldversion < 2017061701) {
+        if (!$dbman->table_exists('applets_store')) {
+            $table = new xmldb_table('applets_store');
 
-       //=============================================================================================================================================
-       if (!$dbman->table_exists('applets_store')) {
-           $table = new xmldb_table('applets_store');
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('appletid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+            $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+            $table->add_field('data', XMLDB_TYPE_TEXT, 'long', null, null, null, null);
 
-           $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-           $table->add_field('appletid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-           $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
-           $table->add_field('data', XMLDB_TYPE_TEXT, 'long', null, null, null, null);
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-           $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-           $dbman->create_table($table);
-       }
+            $dbman->create_table($table);
+        }
 
         upgrade_plugin_savepoint(true, 2017061701, 'local', 'petel');
 
     }
 
     // Store statistics of time spent by user on the system.
-    // based on user event diff mdl_logstore_standard_log that are less then 2h.
+    // Based on user event diff mdl_logstore_standard_log that are less then 2h.
     if ($oldversion < 2017061719) {
-
-        //=============================================================================================================================================
         if (!$dbman->table_exists('stats_user_timespent')) {
             $table = new xmldb_table('stats_user_timespent');
 

@@ -26,10 +26,12 @@
 require_once("../../config.php");
 require_once($CFG->libdir . '/enrollib.php');
 
+require_login();
+
 $key = required_param('key', PARAM_ALPHANUMEXT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 
-if (!get_config('local_petel','enabledemo')){
+if (!get_config('local_petel', 'enabledemo')) {
     die();
 }
 
@@ -40,23 +42,21 @@ $form = new \local_petel\forms\demo_captcha(null, ['key' => $key, 'cmid' => $cmi
 
 if ($formdata = $form->get_data()) {
     if (!$instance = $DB->get_record('enrol', ['password' => $key])) {
-        print_error('errordemonokey', 'local_petel');
-        die();
+        throw new \moodle_exception('errordemonokey', 'local_petel');
     }
 
     if (!$enrol = enrol_get_plugin($instance->enrol)) {
-        print_error('errordemonoenrol', 'local_petel');
-        die();
+        throw new \moodle_exception('errordemonoenrol', 'local_petel');
     }
 
     $bulkuserprefix = $CFG->local_petel_prefix_bulk_user ?? \local_petel\task\demo_users_cleanup_task::DEFAULT_BULK_USER_PREFIX;
     $enrolledparams = ['username' => $DB->sql_like_escape($bulkuserprefix) . '%'];
 
     $enrolleduserids = array_keys($DB->get_records_sql(
-        "SELECT u.id, u.username FROM {user} u LEFT JOIN {user_enrolments} ue ON (u.id = ue.userid)
+            "SELECT u.id, u.username FROM {user} u LEFT JOIN {user_enrolments} ue ON (u.id = ue.userid)
                 WHERE " . $DB->sql_like('u.username', ':username', false, false) . " 
                 AND u.deleted = 0 AND ue.id IS NOT NULL"
-    , $enrolledparams));
+            , $enrolledparams));
 
     $sql = '';
     if ($enrolleduserids) {
@@ -66,29 +66,28 @@ if ($formdata = $form->get_data()) {
 
     $params['username'] = $DB->sql_like_escape($bulkuserprefix) . '%';
 
-    if (!$user = $DB->get_record_select('user', 'deleted = 0' . $sql . ' AND ' . $DB->sql_like('username', ':username', false, false), $params,'*', IGNORE_MULTIPLE)) {
-        print_error('errordemocoursefull', 'local_petel');
-        die();
+    if (!$user =
+            $DB->get_record_select('user', 'deleted = 0' . $sql . ' AND ' . $DB->sql_like('username', ':username', false, false),
+                    $params, '*', IGNORE_MULTIPLE)) {
+        throw new \moodle_exception('errordemocoursefull', 'local_petel');
     }
 
-//Log user in
+    // Log user in.
     \core\session\manager::set_user($user);
 
-//Check function exists?
+    // Check function exists.
     $methodname = 'can_' . $instance->enrol . '_enrol';
 
     if (!is_callable([$enrol, $methodname], false, $callablename)) {
-        print_error('errordemonoenrolmethod', 'local_petel');
-        die();
+        throw new \moodle_exception('errordemonoenrolmethod', 'local_petel');
     }
 
-//Now we check if user is able to enrol
+    // Now we check if user is able to enrol.
     if (!$callablename) {
-        print_error('errordemocoursefull', 'local_petel');
-        die();
+        throw new \moodle_exception('errordemocoursefull', 'local_petel');
     }
 
-//Now we try to enrol
+    // Now we try to enrol.
     $timestart = time();
     if ($instance->enrolperiod) {
         $timeend = $timestart + $instance->enrolperiod;
@@ -102,8 +101,7 @@ if ($formdata = $form->get_data()) {
 
     $context = context_course::instance($instance->courseid);
     if (!is_enrolled($context, $user)) {
-        print_error('errordemoenrol', 'local_petel');
-        die();
+        throw new \moodle_exception('errordemoenrol', 'local_petel');
     }
 
     if ($cmid) {
@@ -127,4 +125,3 @@ if ($formdata = $form->get_data()) {
 
     die();
 }
-

@@ -1,18 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * This file contains the form for demo script.
+ * This file contains the profile field category form.
  *
  * @package local_petel
- * @copyright  2022 Weizmann institute of science, Israel.
- * @author     2022 Devlion Ltd <info@devlion.co>
+ * @copyright  2007 onwards Shane Elliot {@link http://pukunui.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 namespace local_petel\forms;
 
-require_once($CFG->dirroot . '/lib/formslib.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 /**
  * Class demo_captcha
@@ -25,7 +40,7 @@ class demo_captcha extends \moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         global $CFG;
 
         $mform = $this->_form;

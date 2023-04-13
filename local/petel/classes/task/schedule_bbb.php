@@ -35,7 +35,6 @@ require_once(__DIR__ . '/../../lib.php');
  * @copyright  2020 Nadav Kavalerchik <nadav.kavalerchik@weizmann.ac.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class schedule_bbb extends \core\task\scheduled_task {
 
     /**
@@ -55,7 +54,7 @@ class schedule_bbb extends \core\task\scheduled_task {
     public function execute() {
         $task = new \local_petel\task\adhoc_bbb();
         $task->set_custom_data(
-            array()
+                array()
         );
         \core\task\manager::queue_adhoc_task($task);
     }

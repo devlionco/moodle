@@ -24,9 +24,9 @@
 
 namespace local_petel\forms;
 
-require_once($CFG->dirroot . '/lib/formslib.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 /**
  * Class copy_metadata_activity_form
@@ -39,47 +39,47 @@ class copy_metadata_activity_form extends \moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'mdfieldserror');
         $mform->setType('mdfieldserror', PARAM_RAW);
 
         $mdfields = $mform->optional_param('mdfields', [], PARAM_RAW);
-        if(!empty($_POST) && !empty($mdfields)){
+        if (!empty($_POST) && !empty($mdfields)) {
             $mform->addElement('html', '
                 <div class="alert alert-success">
-                '.get_string('cmasuccess', 'local_petel').'
+                ' . get_string('cmasuccess', 'local_petel') . '
                 </div>
             ');
         }
 
         $mform->addElement('text', 'source_cmid', get_string('cmasourcecmid', 'local_petel'),
-            array('class' => '', 'maxlength' => 255));
+                array('class' => '', 'maxlength' => 255));
         $mform->setType('source_cmid', PARAM_RAW);
 
         $mform->addElement('textarea', 'target_cmids', get_string('cmatargetcmids', 'local_petel'),
-            ['rows' => 5, 'cols' => 60]);
+                ['rows' => 5, 'cols' => 60]);
 
         $mform->addElement('static', '', get_string('cmaheadermdfields', 'local_petel'),
-            \html_writer::tag('div', '', array('class' => '')));
+                \html_writer::tag('div', '', array('class' => '')));
 
         $mdfields = $mform->optional_param('mdfields', [], PARAM_RAW);
-        if(!empty($_POST) && empty($mdfields)){
+        if (!empty($_POST) && empty($mdfields)) {
             $mform->addElement('html', '
                 <div class="alert alert-danger">
-                '.get_string('cmaerrormdfields', 'local_petel').'
+                ' . get_string('cmaerrormdfields', 'local_petel') . '
                 </div>
             ');
         }
 
         // Checkboxes.
         $fieldsdefault = [];
-        foreach(\local_metadata\mcontext::module()->getFields() as $field){
+        foreach (\local_metadata\mcontext::module()->getFields() as $field) {
 
             $default = in_array($field->shortname, $fieldsdefault) ? 1 : 0;
-            $mform->addElement('checkbox', 'mdfields['.$field->shortname.']', $field->name);
-            $mform->setDefault('mdfields['.$field->shortname.']', $default);
+            $mform->addElement('checkbox', 'mdfields[' . $field->shortname . ']', $field->name);
+            $mform->setDefault('mdfields[' . $field->shortname . ']', $default);
         }
 
         $this->add_action_buttons(true, get_string('cmasubmitlabel', 'local_petel'));
@@ -96,25 +96,25 @@ class copy_metadata_activity_form extends \moodleform {
         global $DB;
         $errors = parent::validation($data, $files);
 
-        $data  = (object)$data;
+        $data = (object) $data;
 
-        if(!isset($data->source_cmid) || empty(trim($data->source_cmid)) || !is_numeric(trim($data->source_cmid))){
+        if (!isset($data->source_cmid) || empty(trim($data->source_cmid)) || !is_numeric(trim($data->source_cmid))) {
             $errors['source_cmid'] = get_string('cmaerrorsourcecmid', 'local_petel');
         }
 
-        if(!isset($data->target_cmids) || empty($data->target_cmids)){
+        if (!isset($data->target_cmids) || empty($data->target_cmids)) {
             $errors['target_cmids'] = get_string('cmaerrortargetcmids', 'local_petel');
         }
 
-        if(isset($data->target_cmids) && !empty($data->target_cmids)){
-            foreach(explode(',', $data->target_cmids) as $cmid){
-                if(!is_numeric(trim($cmid))){
+        if (isset($data->target_cmids) && !empty($data->target_cmids)) {
+            foreach (explode(',', $data->target_cmids) as $cmid) {
+                if (!is_numeric(trim($cmid))) {
                     $errors['target_cmids'] = get_string('cmaerrortargetcmids', 'local_petel');
                 }
             }
         }
 
-        if(!isset($data->mdfields) || empty($data->mdfields)){
+        if (!isset($data->mdfields) || empty($data->mdfields)) {
             $errors['mdfieldserror'] = get_string('cmaerrormdfields', 'local_petel');
         }
 

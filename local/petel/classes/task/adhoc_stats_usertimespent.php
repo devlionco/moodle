@@ -68,17 +68,18 @@ class adhoc_stats_usertimespent extends \core\task\adhoc_task {
 
         raise_memory_limit(MEMORY_UNLIMITED);
 
-        // Support PHP72 missing array_key_first & array_key_last functions
+        // Support PHP72 missing array_key_first & array_key_last functions.
         if (!function_exists(‘array_key_first’)) {
 
             function array_key_first(array $arr) {
-                foreach($arr as $key => $unused) {
+                foreach ($arr as $key => $unused) {
                     return $key;
                 }
-                return NULL;
+                return null;
             }
+
             function array_key_last(array $arr) {
-                foreach($arr as $key => $unused) {
+                foreach ($arr as $key => $unused) {
                     $lastkey = $key;
                 }
                 return $lastkey;
@@ -86,9 +87,8 @@ class adhoc_stats_usertimespent extends \core\task\adhoc_task {
         }
 
         // Get the last time we processed any user.
-        $lasttimeprocessed = $DB->get_record_sql(
-            'SELECT timecreated 
-             FROM {stats_user_timespent} ORDER BY timecreated DESC LIMIT 1 ');
+        $lasttimeprocessed =
+                $DB->get_record_sql('SELECT timecreated FROM {stats_user_timespent} ORDER BY timecreated DESC LIMIT 1 ');
 
         if (!$lasttimeprocessed) {
             $lasttimeprocessed = 0;
@@ -97,34 +97,32 @@ class adhoc_stats_usertimespent extends \core\task\adhoc_task {
         }
 
         // Get all events that follow last time we processed anyone.
-        $sql_users_to_process = 'SELECT * FROM {logstore_standard_log} WHERE timecreated > :lasttimeprocessed ';
-        $userevents_to_process = $DB->get_records_sql($sql_users_to_process,
-            array('lasttimeprocessed' => $lasttimeprocessed), 0, 50000);
+        $sqluserstoprocess = 'SELECT * FROM {logstore_standard_log} WHERE timecreated > :lasttimeprocessed ';
+        $usereventstoprocess = $DB->get_records_sql($sqluserstoprocess,
+                array('lasttimeprocessed' => $lasttimeprocessed), 0, 50000);
 
         // Process each user
-        // get time delta between current event and last event (if smaller than max $CFG->sessiontimeout )
-        foreach ($userevents_to_process as $user_event) {
-            $sql_user_events = 'SELECT * FROM {logstore_standard_log} 
-                                WHERE userid = :userid AND id <= :lastid 
-                                ORDER BY id DESC LIMIT 2 ';
-            $user_events = $DB->get_records_sql($sql_user_events,
-                ['userid' => $user_event->userid, 'lastid' => $user_event->id]);
+        // Get time delta between current event and last event (if smaller than max $CFG->sessiontimeout ).
+        foreach ($usereventstoprocess as $userevent) {
+            $sqluserevents =
+                    'SELECT * FROM {logstore_standard_log} WHERE userid = :userid AND id <= :lastid ORDER BY id DESC LIMIT 2 ';
+            $userevents = $DB->get_records_sql($sqluserevents, ['userid' => $userevent->userid, 'lastid' => $userevent->id]);
 
-            // first key = latest/current user event.
-            $time_spent = $user_events[array_key_first($user_events)]->timecreated -
-                $user_events[array_key_last($user_events)]->timecreated;
+            // First key = latest/current user event.
+            $timespent = $userevents[array_key_first($userevents)]->timecreated -
+                    $userevents[array_key_last($userevents)]->timecreated;
 
-            // Add stats to mdl_stats_user_timespent
-            $userkey = array_key_first($user_events);
-            $user_timespent_record = [
-                'userid' => $user_events[$userkey]->userid
-                ,'courseid' => $user_events[$userkey]->courseid
-                ,'contextid' => $user_events[$userkey]->contextid
-                ,'timecreated' => $user_events[$userkey]->timecreated
-                ,'timespent' => $time_spent
+            // Add stats to mdl_stats_user_timespent.
+            $userkey = array_key_first($userevents);
+            $usertimespentrecord = [
+                    'userid' => $userevents[$userkey]->userid
+                , 'courseid' => $userevents[$userkey]->courseid
+                , 'contextid' => $userevents[$userkey]->contextid
+                , 'timecreated' => $userevents[$userkey]->timecreated
+                , 'timespent' => $timespent
             ];
-            if ($CFG->sessiontimeout > $time_spent && $time_spent !== 0 ) {
-                $ok = $DB->insert_record('stats_user_timespent', $user_timespent_record);
+            if ($CFG->sessiontimeout > $timespent && $timespent !== 0) {
+                $ok = $DB->insert_record('stats_user_timespent', $usertimespentrecord);
             }
         }
     }

@@ -24,6 +24,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define('AJAX_SCRIPT', true);
+
+defined('MOODLE_INTERNAL') || die;
+
 ignore_user_abort(true);
 
 require(__DIR__ . '/../../config.php');
@@ -39,22 +42,14 @@ if (isguestuser()) {
 // Security.
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course->id, false, $cm);
-//require_capability('moodle/role:review', $context);
-//require_sesskey();
-
-//$preftimings = json_decode($preftiming);
-//echo json_encode($preftiming['domContentLoadedEventEnd']);
-//var_dump($preftimings);
-//$USER->lang = 'en';
 
 $eventdata = array();
 $eventdata['context'] = $context;
 $eventdata['other']['timespent'] = $timespent;
 $eventdata['courseid'] = $course->id;
 $eventdata['userid'] = $userid;
-//$eventdata['action'] = 'timespent';
 $eventdata['objectid'] = $context->instanceid;
-//print_object($eventdata);
+
 $event = \local_petel\event\timeonpage_viewed::create($eventdata)->trigger();
-//print_object($event);
-echo 'timespent focusing on page: '.$timespent;
+
+echo 'timespent focusing on page: ' . $timespent;

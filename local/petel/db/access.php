@@ -19,13 +19,13 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
 
     // Ability to add a new questionnaire instance to the course.
-    'local/petel:studentview' => array(
+        'local/petel:studentview' => array(
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-        )
-    ),
+                'captype' => 'read',
+                'contextlevel' => CONTEXT_COURSE,
+                'archetypes' => array(
+                        'student' => CAP_ALLOW,
+                )
+        ),
 
 );

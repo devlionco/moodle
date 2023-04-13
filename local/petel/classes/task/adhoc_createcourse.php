@@ -27,7 +27,7 @@ namespace local_petel\task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib.php');
-require_once($CFG->dirroot. '/local/petel/locallib.php');
+require_once($CFG->dirroot . '/local/petel/locallib.php');
 
 /**
  * The local_petel BBB BigBlueButton WS task class.
@@ -55,7 +55,7 @@ class adhoc_createcourse extends \core\task\adhoc_task {
     public function execute() {
 
         $micro = str_replace('.', '', microtime(true));
-        $lockkey = rand(10, 1000).$micro;
+        $lockkey = rand(10, 1000) . $micro;
         $lockfactory = \core\lock\lock_config::get_lock_factory('local_petel_task');
         $lock = $lockfactory->get_lock($lockkey, 0);
 
@@ -69,47 +69,48 @@ class adhoc_createcourse extends \core\task\adhoc_task {
 
         $data = $this->get_custom_data();
 
-        $result = local_petel_copy_course_to_new_category($data->currentuserid, $data->categoryid, $data->courseid, $data->coursename);
+        $result = local_petel_copy_course_to_new_category($data->currentuserid, $data->categoryid, $data->courseid,
+                $data->coursename);
 
-        if(!empty($result)){
+        if (!empty($result)) {
 
             $smallmessage = $fullmessage = get_string('messagecoursectreate', 'local_petel', $result);
 
             // Send message to user.
             local_petel_send_message_to_teacher(
-                $data->currentuserid, $data->currentuserid, 'local_petel', 'coursecreate',
-                $smallmessage, $fullmessage, array('contexturl' => $result->course_url)
+                    $data->currentuserid, $data->currentuserid, 'local_petel', 'coursecreate',
+                    $smallmessage, $fullmessage, array('contexturl' => $result->course_url)
             );
 
             // Send mail to user.
-            $toUser = \core_user::get_user($data->currentuserid);
+            $touser = \core_user::get_user($data->currentuserid);
             $subject = get_string('subjectmailcoursecreated', 'local_petel');
 
-            if (!empty($toUser) && !empty($toUser->id) && !empty($toUser->email)) {
-                $fromUser = get_admin();
-                email_to_user($toUser, $fromUser, $subject, $fullmessage, $fullmessage);
+            if (!empty($touser) && !empty($touser->id) && !empty($touser->email)) {
+                $fromuser = get_admin();
+                email_to_user($touser, $fromuser, $subject, $fullmessage, $fullmessage);
             }
 
             // Send mail to admin.
-            if(!empty(get_config('local_petel', 'admin_email'))) {
+            if (!empty(get_config('local_petel', 'admin_email'))) {
 
-                $toUser = new \stdClass();
-                $toUser->email = get_config('local_petel', 'admin_email');
-                $toUser->firstname = '';
-                $toUser->lastname = '';
-                $toUser->maildisplay = true;
-                $toUser->mailformat = 1;
-                $toUser->id = -99;
-                $toUser->firstnamephonetic = '';
-                $toUser->lastnamephonetic = '';
-                $toUser->middlename = '';
-                $toUser->alternatename = '';
+                $touser = new \stdClass();
+                $touser->email = get_config('local_petel', 'admin_email');
+                $touser->firstname = '';
+                $touser->lastname = '';
+                $touser->maildisplay = true;
+                $touser->mailformat = 1;
+                $touser->id = -99;
+                $touser->firstnamephonetic = '';
+                $touser->lastnamephonetic = '';
+                $touser->middlename = '';
+                $touser->alternatename = '';
 
                 $subject = get_string('subjectmailcoursescreated', 'local_petel');
                 $messagehtml = get_string('htmlmailcoursescreated', 'local_petel', $result);
 
-                $fromUser = get_admin();
-                email_to_user($toUser, $fromUser, $subject, $messagehtml, $messagehtml);
+                $fromuser = get_admin();
+                email_to_user($touser, $fromuser, $subject, $messagehtml, $messagehtml);
             }
         }
     }

@@ -24,16 +24,16 @@
 defined('MOODLE_INTERNAL') || die;
 
 $observers = [
-    ['eventname' => '\core\event\course_created',
-     'callback' => 'local_petel_observer::course_created'
-    ],
-    ['eventname' => '\mod_quiz\event\question_manually_graded',
-     'callback' => 'local_petel_observer::question_manually_graded'
-    ],
-    ['eventname' => '\core\event\course_module_created',
-     'callback' => 'local_petel_observer::course_module_created'
-    ],
-    ['eventname' => '\core\event\user_loggedin',
-        'callback' => 'local_petel_observer::user_loggedin'
-    ]
+        ['eventname' => '\core\event\course_created',
+                'callback' => 'local_petel_observer::course_created'
+        ],
+        ['eventname' => '\mod_quiz\event\question_manually_graded',
+                'callback' => 'local_petel_observer::question_manually_graded'
+        ],
+        ['eventname' => '\core\event\course_module_created',
+                'callback' => 'local_petel_observer::course_module_created'
+        ],
+        ['eventname' => '\core\event\user_loggedin',
+                'callback' => 'local_petel_observer::user_loggedin'
+        ]
 ];

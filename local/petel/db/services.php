@@ -133,16 +133,6 @@ $functions = array(
             'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
-        'local_petel_toggle_question_recommendation' => array(
-                'classname' => 'local_petel_external',
-                'methodname' => 'toggle_question_recommendation',
-                'classpath' => 'local/petel/externallib.php',
-                'description' => 'toggle question recommendation',
-                'type' => 'write',
-                'ajax' => true,
-                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-        ),
-
         'local_petel_save_qtypes_favorites' => array(
                 'classname' => 'local_petel_external',
                 'methodname' => 'save_qtypes_favorites',

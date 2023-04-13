@@ -52,8 +52,6 @@ class adhoc_bbb extends \core\task\adhoc_task {
      * @return boolean
      */
     public function execute() {
-        //global $CFG;
-
         $lockkey = 'petel_cron';
         $lockfactory = \core\lock\lock_config::get_lock_factory('local_petel_task');
         $lock = $lockfactory->get_lock($lockkey, 0);
@@ -66,20 +64,6 @@ class adhoc_bbb extends \core\task\adhoc_task {
 
     public function run_cron_bbb() {
         global $CFG;
-        // List online BBB rooms
-        //
-        //
-        // https://docs.bigbluebutton.org/dev/api.html
-        // https://github.com/bigbluebutton/bigbluebutton-api-php
-        //
-        // echo sha1('getMeetings'.'gcAIBNoat3WN4oRioGxY9Ik5Xrfzm3KTi3KixyCVf4');
-        //
-        // https://bbb.moodlemagic.info/bigbluebutton/api/getMeetings?checksum=7fd047728b989f36807310bffdc3337a08f334a5
-        //
-        // https://www.webhostingzone.org/ instance:
-        // https://mconf.github.io/api-mate/#server=https://bbb.moodlemagic.info/bigbluebutton/&sharedSecret=3NXGBwltU24VPdTVOJrhqMyxhQIIkqZhb34QENdLx20
-
-        //$bbb_api_getmeetings_xml = file_get_contents('https://bbb.moodlemagic.info/bigbluebutton/api/getMeetings?checksum=eedf7ac55b7b27745b26c83f4255780f366ef692');
 
         if (isset($CFG->bbb_server)) {
             $url = $CFG->bbb_server;
@@ -88,60 +72,48 @@ class adhoc_bbb extends \core\task\adhoc_task {
         }
 
         $curl = new \curl();
-        $options['CURLOPT_PROXY'] = $CFG->proxyhost.':'.$CFG->proxyport;
+        $options['CURLOPT_PROXY'] = $CFG->proxyhost . ':' . $CFG->proxyport;
         $curl->setopt($options);
-        $bbb_api_getmeetings_xml = $curl->get($url);
+        $bbbapigetmeetingsxml = $curl->get($url);
 
-        $xml = simplexml_load_string($bbb_api_getmeetings_xml, "SimpleXMLElement", LIBXML_NOCDATA);
+        $xml = simplexml_load_string($bbbapigetmeetingsxml, "SimpleXMLElement", LIBXML_NOCDATA);
         $json = json_encode($xml);
-        $meeting_array = json_decode($json,TRUE);
+        $meetingarray = json_decode($json, true);
 
-        //var_dump($meeting_array['meetings']);
-        //die;
-
-        $bbb_usersessions = 0;
-        $bbb_usersessions_video = 0;
-        $bbb_usersessions_audio = 0;
+        $bbbusersessions = 0;
+        $bbbusersessionsvideo = 0;
+        $bbbusersessionsaudio = 0;
 
         $meetingid = 0;
-        $display_meeting = [];
-        $meetings = [];
+        $displaymeeting = [];
 
-        if (count($meeting_array['meetings']) > 1) {
-            $meetings = $meeting_array['meetings']['meeting'];
+        if (count($meetingarray['meetings']) > 1) {
+            $meetings = $meetingarray['meetings']['meeting'];
         } else {
-            $meetings = $meeting_array['meetings'];
+            $meetings = $meetingarray['meetings'];
         }
 
-        foreach($meetings as $key => $meeting) {
-            //$currentmeeting = array_shift($meeting);
-            //[$meeting['meetingName'], $meeting['running'], $meeting['participantCount'], $meeting['moderatorCount']];
-            $display_meeting[$meetingid]['meetingName'] = $meeting['meetingName'];
-            $display_meeting[$meetingid]['createDate'] = $meeting['createDate'];
-            $display_meeting[$meetingid]['running'] = $meeting['running'];
-            $display_meeting[$meetingid]['moderatorCount'] = $meeting['moderatorCount'];
-            $display_meeting[$meetingid]['participantCount'] = $meeting['participantCount'];
-            $display_meeting[$meetingid]['videoCount'] = $meeting['videoCount'];
-            $display_meeting[$meetingid]['voiceParticipantCount'] = $meeting['voiceParticipantCount'];
+        foreach ($meetings as $key => $meeting) {
+            $displaymeeting[$meetingid]['meetingName'] = $meeting['meetingName'];
+            $displaymeeting[$meetingid]['createDate'] = $meeting['createDate'];
+            $displaymeeting[$meetingid]['running'] = $meeting['running'];
+            $displaymeeting[$meetingid]['moderatorCount'] = $meeting['moderatorCount'];
+            $displaymeeting[$meetingid]['participantCount'] = $meeting['participantCount'];
+            $displaymeeting[$meetingid]['videoCount'] = $meeting['videoCount'];
+            $displaymeeting[$meetingid]['voiceParticipantCount'] = $meeting['voiceParticipantCount'];
 
             $meetingid++;
 
-            $bbb_usersessions += (int)$meeting['participantCount'];
-            $bbb_usersessions_video += (int)$meeting['videoCount'];
-            $bbb_usersessions_audio += (int)$meeting['voiceParticipantCount'];
+            $bbbusersessions += (int) $meeting['participantCount'];
+            $bbbusersessionsvideo += (int) $meeting['videoCount'];
+            $bbbusersessionsaudio += (int) $meeting['voiceParticipantCount'];
         }
-        //var_dump($display_meeting);
 
-        $bbb_rooms = count($meeting_array['meetings']);
-        //$bbb_usersessions = 60;
-        //$bbb_usersessions_video = 45;
-        //$bbb_usersessions_audio = 60;
+        $bbbrooms = count($meetingarray['meetings']);
 
-        //mtrace("debug: BBB rooms = ".$bbb_rooms );
-        set_config('bbb_rooms', $bbb_rooms, 'local_petel');
-        set_config('bbb_usersessions', $bbb_usersessions, 'local_petel');
-        set_config('bbb_usersessions_video', $bbb_usersessions_video, 'local_petel');
-        set_config('bbb_usersessions_audio', $bbb_usersessions_audio, 'local_petel');
+        set_config('bbb_rooms', $bbbrooms, 'local_petel');
+        set_config('bbb_usersessions', $bbbusersessions, 'local_petel');
+        set_config('bbb_usersessions_video', $bbbusersessionsvideo, 'local_petel');
+        set_config('bbb_usersessions_audio', $bbbusersessionsaudio, 'local_petel');
     }
-
 }
