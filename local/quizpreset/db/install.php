@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot. '/local/quizpreset/classes/preset.php');
+require_once($CFG->dirroot . '/local/quizpreset/classes/preset.php');
 
 /**
  * Custom code to be run on installing the plugin.
@@ -57,19 +57,19 @@ function xmldb_local_quizpreset_install() {
     if ($dbman->field_exists($table, $field)) {
         $sql = "
             SELECT cm.id AS cmid, q.type
-            FROM {quiz} AS q
-            LEFT JOIN {modules} AS m ON (m.name = 'quiz')
-            LEFT JOIN {course_modules} AS cm ON (cm.module = m.id AND cm.instance = q.id)
+            FROM {quiz} q
+            LEFT JOIN {modules} m ON (m.name = 'quiz')
+            LEFT JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = q.id)
             WHERE q.type != 0
         ";
 
         $res = $DB->get_records_sql($sql);
-        foreach ($res as $item){
+        foreach ($res as $item) {
 
-            if(ceil(log10($item->type)) == 2){
+            if (ceil(log10($item->type)) == 2) {
                 $type = $item->type / 10;
                 $viewall = 1;
-            }else{
+            } else {
                 $type = $item->type;
                 $viewall = 0;
             }

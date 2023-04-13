@@ -19,25 +19,26 @@
  * @copyright  2020 info@devlion.co
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
+
 class backup_local_quizpreset_plugin extends backup_local_plugin {
     /**
      * Define (add) particular settings this activity can have
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
- 
+
     protected function define_module_plugin_structure() {
         $plugin = $this->get_plugin_element(null, null, null);
-	
-        $pluginwrapper = new backup_nested_element($this->get_recommended_name(), array('id'), array('cmid', 'userid', 'state', 'type', 'viewall', 'status'));
+
+        $pluginwrapper = new backup_nested_element($this->get_recommended_name(), array('id'),
+                array('cmid', 'userid', 'state', 'type', 'viewall', 'status'));
 
         // Connect the visible container ASAP.
         $plugin->add_child($pluginwrapper);
         // Set source to populate the data.
 
-        $pluginwrapper->set_source_sql('SELECT * FROM {local_quizpreset} WHERE cmid = ?',array(backup::VAR_MODID));
+        $pluginwrapper->set_source_sql('SELECT * FROM {local_quizpreset} WHERE cmid = ?', array(backup::VAR_MODID));
         return $plugin;
     }
 }

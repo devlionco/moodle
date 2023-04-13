@@ -17,13 +17,10 @@
 /**
  * Admin settings class for the quiz browser security option.
  *
- * @package   mod_quiz
- * @copyright 2008 Tim Hunt
+ * @package   local_quizpreset
+ * @copyright 2023 Devlion
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
 
 define('QUIZ_TYPE_1', 1);
 define('QUIZ_TYPE_2', 2);
@@ -53,7 +50,7 @@ class custom_types {
     private $cmid;
     private $pagestate;
     private $viewall;
-    private $viewall_button_enable;
+    private $viewallbuttonenable;
     private $ifchangestate;
     private $urlparams;
     private $mypresets;
@@ -73,11 +70,11 @@ class custom_types {
         // My presets.
         $mypresets = [];
 
-        if($config->mypresetenable == 1) {
+        if ($config->mypresetenable == 1) {
             if ($res = $DB->get_records('local_quizpreset_mystates', [])) {
                 foreach ($res as $obj) {
                     $counter = QUIZ_TYPE_MYPRESET_START + $obj->id;
-                    if($obj->userid == $USER->id){
+                    if ($obj->userid == $USER->id) {
                         $mypresets[$counter] = $obj;
                     }
                 }
@@ -86,61 +83,49 @@ class custom_types {
 
         $this->mypresets = $mypresets;
 
-        foreach($this->mypresets as $key => $val){
+        foreach ($this->mypresets as $key => $val) {
             $this->settypes[] = $key;
             $this->typesmypresets[] = $key;
         }
 
-        // If POST
-        if(empty($this->urlparams)){
+        // If POST.
+        if (empty($this->urlparams)) {
 
-            if($this->pagestate == 'update') {
-                $sql = "
-                    SELECT * 
-                    FROM {local_quizpreset}
-                    WHERE cmid = ? AND status = 0 
-                    ORDER BY id DESC 
-                    LIMIT 1
-                ";
+            if ($this->pagestate == 'update') {
+                $sql = "SELECT * FROM {local_quizpreset} WHERE cmid = ? AND status = 0 ORDER BY id DESC LIMIT 1";
                 $qp = $DB->get_record_sql($sql, array($cmid));
                 $qp->viewall = 1;
             }
 
-            if($this->pagestate == 'new') {
-                $sql = "
-                    SELECT * 
-                    FROM {local_quizpreset}
-                    WHERE userid = ? AND state = 'new' 
-                    ORDER BY id DESC 
-                    LIMIT 1
-                ";
+            if ($this->pagestate == 'new') {
+                $sql = "SELECT * FROM {local_quizpreset} WHERE userid = ? AND state = 'new' ORDER BY id DESC LIMIT 1";
                 $qp = $DB->get_record_sql($sql, array($USER->id));
                 $qp->viewall = 1;
             }
 
-        }else{
+        } else {
             $qp = $DB->get_record('local_quizpreset', array('cmid' => $cmid, 'status' => 1));
         }
 
         if (!empty($qp)) {
             $savedvaluetype = $qp->type;
             $savedvalueview = $qp->viewall;
-        }else{
+        } else {
             $savedvaluetype = null;
             $savedvalueview = null;
         }
 
         // Set relevant type in class.
-        if(in_array($defaulttype, $this->settypes)){
+        if (in_array($defaulttype, $this->settypes)) {
             $this->type = $defaulttype;
             $this->ifchangestate = ($savedvaluetype == $defaulttype) ? false : true;
-        }else{
+        } else {
             $this->type = (!empty($savedvaluetype)) ? $savedvaluetype : $config->defaulttype;
             $this->ifchangestate = false;
         }
 
         // Type created not by user.
-        if(!in_array($this->type, $this->settypes)){
+        if (!in_array($this->type, $this->settypes)) {
             if ($res = $DB->get_record('local_quizpreset_mystates', ['id' => ($this->type - QUIZ_TYPE_MYPRESET_START)])) {
                 $this->mypresets[$this->type] = $res;
             }
@@ -151,38 +136,38 @@ class custom_types {
         }
 
         // Set relevant viewall in class.
-        if($viewall == 100){
-            $this->viewall = (!empty($savedvalueview)) ?  $savedvalueview : 0;
-        }else{
+        if ($viewall == 100) {
+            $this->viewall = (!empty($savedvalueview)) ? $savedvalueview : 0;
+        } else {
             $this->viewall = $viewall;
         }
 
         // Define values, expanded, global name.
-        $this->setState();
+        $this->set_state();
     }
 
-    public function setState(){
+    public function set_state() {
 
         // My presets.
-        if(in_array($this->type, $this->typesmypresets)){
+        if (in_array($this->type, $this->typesmypresets)) {
             $obj = $this->mypresets[$this->type];
 
             $this->expanded = [
-                'id_general' => true,
-                'id_timing' => true,
-                'id_modstandardgrade' => false,
-                'id_layouthdr' => false,
-                'id_interactionhdr' => false,
-                'id_reviewoptionshdr' => false,
-                'id_display' => false,
-                'id_security' => false,
-                'id_overallfeedbackhdr' => false,
-                'id_modstandardelshdr' => false,
-                'id_availabilityconditionsheader' => true,
-                'id_activitycompletionheader' => true,
-                'id_tagshdr' => false,
-                'id_competenciessection' => true,
-                'id_seb'=> false,
+                    'id_general' => true,
+                    'id_timing' => true,
+                    'id_modstandardgrade' => false,
+                    'id_layouthdr' => false,
+                    'id_interactionhdr' => false,
+                    'id_reviewoptionshdr' => false,
+                    'id_display' => false,
+                    'id_security' => false,
+                    'id_overallfeedbackhdr' => false,
+                    'id_modstandardelshdr' => false,
+                    'id_availabilityconditionsheader' => true,
+                    'id_activitycompletionheader' => true,
+                    'id_tagshdr' => false,
+                    'id_competenciessection' => true,
+                    'id_seb' => false,
             ];
 
             $settigs = json_decode($obj->settings);
@@ -191,49 +176,47 @@ class custom_types {
             $typename = !empty($obj->typename) ? $obj->typename : get_string('defaulttypename', 'local_quizpreset');
 
             $this->globalname = [
-                'name' => $typename.' '.date('d-m-Y'),
-                'intro' => '',
-                'introformat' => 1,
-                'introeditor' => [
-                    'text' => '',
-                    'format' => 1,
-                    //'itemid' => 482482910
-                ],
+                    'name' => $typename . ' ' . date('d-m-Y'),
+                    'intro' => '',
+                    'introformat' => 1,
+                    'introeditor' => [
+                            'text' => '',
+                            'format' => 1,
+                    ],
             ];
-        }else {
+        } else {
             $config = get_config('local_quizpreset');
 
             $variable = 'quizpreset_' . $this->type;
             $preset = json_decode($config->$variable);
 
-            $this->expanded = (array)$preset->sections;
-            $this->values = (array)$preset->fields;
+            $this->expanded = (array) $preset->sections;
+            $this->values = (array) $preset->fields;
 
             $variablename = 'quiztypename_' . $this->type;
             $this->globalname = array(
-                'name' => $config->$variablename . ' ' . date('d-m-Y'),
-                'intro' => '',
-                'introformat' => 1,
-                'introeditor' => array
-                (
-                    'text' => '',
-                    'format' => 1,
-                    //'itemid' => 482482910
-                ),
+                    'name' => $config->$variablename . ' ' . date('d-m-Y'),
+                    'intro' => '',
+                    'introformat' => 1,
+                    'introeditor' => array
+                    (
+                            'text' => '',
+                            'format' => 1,
+                    ),
             );
         }
 
     }
 
-    public function getDetails($isstudent = 0){
+    public function get_details($isstudent = 0) {
         global $DB;
 
         $config = get_config('local_quizpreset');
-        $variable = 'quizpreset_'.$this->type;
+        $variable = 'quizpreset_' . $this->type;
         $preset = json_decode($config->$variable);
 
         // If empty default state.
-        if(empty($preset)){
+        if (empty($preset)) {
             $arr = [
                     'functionality' => ['view_description' => true]
             ];
@@ -242,11 +225,11 @@ class custom_types {
         }
 
         // If adjustments disabled.
-        if(!$config->enableadjustments) {
+        if (!$config->enableadjustments) {
             $this->viewall = 1;
-            $this->viewall_button_enable = 0;
-        }else{
-            $this->viewall_button_enable = 1;
+            $this->viewallbuttonenable = 0;
+        } else {
+            $this->viewallbuttonenable = 1;
         }
 
         // Prepare url.
@@ -273,7 +256,7 @@ class custom_types {
         }
 
         // If POST.
-        if(empty($this->urlparams)){
+        if (empty($this->urlparams)) {
             $url = false;
         }
 
@@ -282,37 +265,38 @@ class custom_types {
         $userexposure = false;
         $viewdescription = false;
 
-        if($this->pagestate == 'update' && $preset->functionality->exposure_grades) {
+        if ($this->pagestate == 'update' && $preset->functionality->exposure_grades) {
 
             $enablegardes = true;
             $cm = $DB->get_record('course_modules', array('id' => $this->cmid));
 
             if (!empty($cm)) {
-                $quiz = $DB->get_record('quiz', array('id'=> $cm->instance));
+                $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
 
-                if($quiz->userexposure == 1){
+                if ($quiz->userexposure == 1) {
                     $userexposure = true;
                 }
             }
         }
 
-        if($this->pagestate != 'view' && $preset->functionality->view_description) {
+        if ($this->pagestate != 'view' && $preset->functionality->view_description) {
             $viewdescription = true;
         }
 
         // Button MORE/LESS must be just in setting mode.
-        if($this->pagestate == 'view') {
+        if ($this->pagestate == 'view') {
             $cm = $DB->get_record('course_modules', array('id' => $this->cmid));
             if (!empty($cm)) {
-                $quiz = $DB->get_record('quiz', array('id'=> $cm->instance));
-                if($quiz->timelimit > 0){
+                $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
+                if ($quiz->timelimit > 0) {
                     $url = false;
                 }
             }
         }
 
         $config = get_config('local_quizpreset');
-        $mypresetenable = $isstudent != 1 && in_array($this->pagestate, ['update', 'new']) && $config->mypresetenable == 1 ? true : false;
+        $mypresetenable =
+                $isstudent != 1 && in_array($this->pagestate, ['update', 'new']) && $config->mypresetenable == 1 ? true : false;
 
         return array(
                 'cmid' => $this->cmid,
@@ -321,7 +305,7 @@ class custom_types {
                 'instancename' => '',
                 'ifchangestate' => $this->ifchangestate,
                 'viewall' => $this->viewall,
-                'viewall_button_enable' => $this->viewall_button_enable,
+                'viewall_button_enable' => $this->viewallbuttonenable,
                 'url_viewall' => $url,
                 'enablegardes' => $enablegardes,
                 'userexposure' => $userexposure,
@@ -330,15 +314,15 @@ class custom_types {
         );
     }
 
-    public function getSelector($isstudent = 0){
-        global $PAGE, $DB, $CFG, $USER;
+    public function get_selector($isstudent = 0) {
+        global $DB, $USER;
 
         $items = array();
         $activedescribe = '';
 
         $config = get_config('local_quizpreset');
 
-        foreach($this->settypes as $num){
+        foreach ($this->settypes as $num) {
             $tmp = array();
             $tmp['typeId'] = $num;
 
@@ -371,28 +355,25 @@ class custom_types {
             $tmp['typeUrl'] = $url->out(false);
 
             // If POST return error or activity in research mode.
-            if(class_exists('\community_oer\main_oer')){
-                if(empty($this->urlparams) || \community_oer\main_oer::if_activity_in_research_mode($this->cmid)){
+            if (class_exists('\community_oer\main_oer')) {
+                if (empty($this->urlparams) || \community_oer\main_oer::if_activity_in_research_mode($this->cmid)) {
                     $tmp['typeUrl'] = 'javascript:void(0)';
                 }
             }
 
-            if(!in_array($num, $this->typesmypresets)) {
+            if (!in_array($num, $this->typesmypresets)) {
                 $variablename = 'quiztypename_' . $num;
                 $tmp['typeName'] = $config->$variablename;
 
                 $variabledescription = $isstudent == 1 ? 'quiztypedescriptionstudent_' . $num : 'quiztypedescription_' . $num;
-                // PTL-8065 (not sure about this, so, disabling)
-                //$cmcontext = context_module::instance($this->cmid);
-                //$PAGE->set_context($cmcontext);
 
-                //PTL_7673 add format_text for multilang filter
-                $tmp['typeDescribe'] = format_text($config->$variabledescription,FORMAT_HTML);
+                // PTL_7673 add format_text for multilang filter.
+                $tmp['typeDescribe'] = format_text($config->$variabledescription, FORMAT_HTML);
                 $tmp['typeDBId'] = 0;
             }
 
             // My presets.
-            if(in_array($num, $this->typesmypresets)) {
+            if (in_array($num, $this->typesmypresets)) {
 
                 $tmp['typeDBId'] = $this->mypresets[$num]->id;
 
@@ -401,15 +382,15 @@ class custom_types {
                     $tmp['typeDBId'] = $res->id;
                 }
 
-                if(in_array($num, $this->notmypresets)){
+                if (in_array($num, $this->notmypresets)) {
                     $tmp['typeName'] = get_string('other');
 
                     $settigs = json_decode($this->mypresets[$num]->settings);
 
                     $tmp['typeDescribe'] = $isstudent == 1 ? $settigs->student_description : $settigs->teacher_description;
-                }else {
+                } else {
                     $tmp['typeName'] = !empty($this->mypresets[$num]->typename) ? $this->mypresets[$num]->typename :
-                        get_string('defaulttypename', 'local_quizpreset');
+                            get_string('defaulttypename', 'local_quizpreset');
 
                     $settigs = json_decode($this->mypresets[$num]->settings);
 
@@ -418,36 +399,36 @@ class custom_types {
             }
 
             // Prepare active tab.
-            if($this->type == $num){
+            if ($this->type == $num) {
                 $tmp['active'] = true;
                 $activedescribe = $tmp['typeDescribe'];
                 $activedbid = $tmp['typeDBId'];
-            }else{
+            } else {
                 $tmp['active'] = false;
             }
 
-            if(in_array($num, $this->notmypresets)){
+            if (in_array($num, $this->notmypresets)) {
                 $tmp['notclickable'] = true;
             }
 
             $items[] = $tmp;
         }
 
-        if($isstudent == 1){
+        if ($isstudent == 1) {
             $items = array();
         }
 
-        if(!empty($this->cmid) && is_number($this->cmid)) {
+        if (!empty($this->cmid) && is_number($this->cmid)) {
             $cmcontext = context_module::instance($this->cmid);
-        }else{
+        } else {
             $cmcontext = context_system::instance();
         }
 
         $result = [
-            'items' => $items,
-            'activeDescribe' => $activedescribe,
-            'activeDbId' => $activedbid,
-            'cmcontextid' => $cmcontext->id
+                'items' => $items,
+                'activeDescribe' => $activedescribe,
+                'activeDbId' => $activedbid,
+                'cmcontextid' => $cmcontext->id
         ];
 
         $result['activeDescribeEnable'] = !empty($activedescribe) ? true : false;
@@ -455,15 +436,15 @@ class custom_types {
         return $result;
     }
 
-    public function getExpanded(){
+    public function get_expanded() {
         return ($this->viewall != 1) ? $this->expanded : array();
     }
 
-    public function getValues(){
+    public function get_values() {
         return $this->values;
     }
 
-    public function getGlobalName(){
+    public function get_global_name() {
         return $this->globalname;
     }
 

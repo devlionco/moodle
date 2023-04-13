@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  *
  */
-defined('MOODLE_INTERNAL') || die();
+
 /**
  * Restore plugin class that provides the necessary information
  * needed to restore enemyquestions
@@ -41,17 +41,19 @@ class restore_local_quizpreset_plugin extends restore_local_plugin {
     }
 
     public function process_plugin_local_quizpreset_module($data) {
-        global $DB, $CFG;
-        $data = (object)$data;
+        global $DB;
+        $data = (object) $data;
 
         if ($hasoldinstance = $DB->get_record('course_modules', array('id' => $data->cmid))) {
-            $oldcontext = \context_module::instance($data->cmid); // save old context
-            $data->cmid = $this->task->get_moduleid();            // add new cm (instance) id to local_quizpreset DB
+
+            // Save old context.
+            $oldcontext = \context_module::instance($data->cmid);
+
+            // Add new cm (instance) id to local_quizpreset DB.
+            $data->cmid = $this->task->get_moduleid();
 
             $DB->insert_record('local_quizpreset', $data);
         }
 
-
     }
 }
-

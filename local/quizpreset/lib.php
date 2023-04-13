@@ -21,8 +21,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
-
 function local_quizpreset_render_navbar_output() {
     global $PAGE, $COURSE, $USER;
 
@@ -30,10 +28,10 @@ function local_quizpreset_render_navbar_output() {
     $updateid = optional_param('update', 0, PARAM_INT);
 
     $cmid = 0;
-    if($id > 0){
+    if ($id > 0) {
         $cmid = $id;
-    }else{
-        if($updateid > 0){
+    } else {
+        if ($updateid > 0) {
             $cmid = $updateid;
         }
     }
@@ -55,7 +53,7 @@ function local_quizpreset_output_fragment_popup_preset($args) {
     $teacherdescription = '';
     $studentdescription = '';
 
-    if($row = $DB->get_record('local_quizpreset_mystates', ['userid' => $USER->id])){
+    if ($row = $DB->get_record('local_quizpreset_mystates', ['userid' => $USER->id])) {
         $presetname = $row->typename;
 
         $settings = json_decode($row->settings);

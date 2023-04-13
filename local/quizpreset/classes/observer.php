@@ -25,9 +25,6 @@
 
 namespace local_quizpreset;
 
-defined('MOODLE_INTERNAL') || die();
-
-
 class observer {
 
     /**
@@ -41,16 +38,10 @@ class observer {
     public static function course_module_updated(\core\event\course_module_updated $event): bool {
         global $DB;
 
-        $sql = '
-            SELECT * 
-            FROM {local_quizpreset}
-            WHERE cmid = ?
-            ORDER BY id DESC 
-            LIMIT 1
-        ';
+        $sql = 'SELECT * FROM {local_quizpreset} WHERE cmid = ? ORDER BY id DESC LIMIT 1';
         $qp = $DB->get_record_sql($sql, array($event->contextinstanceid));
 
-        if(!empty($qp)){
+        if (!empty($qp)) {
             unset($qp->id);
             $qp->userid = $event->userid;
             $qp->status = 1;
@@ -75,18 +66,10 @@ class observer {
     public static function course_module_created(\core\event\course_module_created $event): bool {
         global $DB;
 
-        //echo '<pre>';print_r($event->contextinstanceid);exit;
-
-        $sql = "
-            SELECT * 
-            FROM {local_quizpreset}
-            WHERE userid = ? AND state = 'new' 
-            ORDER BY id DESC 
-            LIMIT 1
-        ";
+        $sql = "SELECT * FROM {local_quizpreset} WHERE userid = ? AND state = 'new' ORDER BY id DESC LIMIT 1";
         $qp = $DB->get_record_sql($sql, array($event->userid));
 
-        if(!empty($qp)){
+        if (!empty($qp)) {
             unset($qp->id);
             $qp->cmid = $event->contextinstanceid;
             $qp->userid = $event->userid;
