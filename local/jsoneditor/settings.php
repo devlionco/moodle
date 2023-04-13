@@ -20,27 +20,3 @@
  * @author Devlion
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-if ($hassiteconfig) {
-
-    // New settings page.
-    //$settings = new admin_settingpage('local_jsoneditor', get_string('pluginname', 'local_jsoneditor'));
-    //
-    //$langsettings = [
-    //    1 => get_string('sitelang', 'local_jsoneditor'),
-    //    2 => get_string('enlang', 'local_jsoneditor'),
-    //    3 => get_string('helang', 'local_jsoneditor'),
-    //];
-    //
-    //$settings->add(new admin_setting_configselect('local_jsoneditor/lang',
-    //        get_string('settingslang', 'local_jsoneditor'),
-    //        get_string('settingslangdesc', 'local_jsoneditor'),
-    //        1, $langsettings)
-    //);
-    //
-    //
-    //$ADMIN->add('localplugins', $settings);
-}

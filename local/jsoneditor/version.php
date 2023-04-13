@@ -21,8 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version   = 2021122611;
-$plugin->release   = '1.0';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->requires  = 2020082200;
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version = 2021122612;
+$plugin->release = '1.0';
+$plugin->maturity = MATURITY_ALPHA;
+$plugin->requires = 2020082200;
 $plugin->component = 'local_jsoneditor';
