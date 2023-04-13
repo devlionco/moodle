@@ -125,8 +125,23 @@ class qtype_ordering extends question_type {
             $answerids = array();
         }
 
+        // PTL-7937 New order.
+        $neworder = array_flip($question->order);
+        ksort($neworder, SORT_NUMERIC);
+        $neworder = array_values($neworder);
+        $newanswerorder = [];
+        foreach ($neworder as $key => $value) {
+            $newanswerorder[] = $question->answer[$value];
+        }
+
+        if(!$newanswerorder) {
+            $answers = $question->answer;
+        } else {
+            $answers = $newanswerorder;
+        }
+
         // Insert all the new answers.
-        foreach ($question->answer as $i => $answer) {
+        foreach ($answers as $i => $answer) {
             $answertext = '';
             $answerformat = 0;
             $answeritemid = null;
@@ -135,6 +150,9 @@ class qtype_ordering extends question_type {
             if (is_string($answer)) {
                 // Import from file.
                 $answertext = $answer;
+                if (isset($question->answerformat[$i])) {
+                    $answerformat = $question->answerformat[$i];
+                }
             } else if (is_array($answer)) {
                 // Input from browser.
                 if (isset($answer['text'])) {
@@ -621,10 +639,10 @@ class qtype_ordering extends question_type {
 
         foreach ($answers as $i => $answer) {
             $question->answer[$i] = $answer;
-            $question->answerformat[$i] = FORMAT_MOODLE;
+            $question->answerformat[$i] = FORMAT_HTML;
             $question->fraction[$i] = 1; // Will be reset later in save_question_options().
             $question->feedback[$i] = '';
-            $question->feedbackformat[$i] = FORMAT_MOODLE;
+            $question->feedbackformat[$i] = FORMAT_HTML;
         }
 
         // Check that the required feedback fields exist.
@@ -887,6 +905,17 @@ class qtype_ordering extends question_type {
             $newquestion->fraction[$i] = 1; // Will be reset later in save_question_options().
             $newquestion->feedback[$i] = $ans->feedback;
             $i++;
+        }
+
+        $answers = $data['#']['answer'];
+        $anscount = 0;
+        foreach ($answers as $answer) {
+            $ans = $format->import_answer( $answer, true, $format->get_format($newquestion->questiontextformat));
+            $newquestion->answer[$anscount] = $ans->answer['text'];
+            $newquestion->answerformat[$anscount] = $ans->answer['format'];
+            $newquestion->fraction[$anscount] = 1;
+            $newquestion->feedback[$anscount] = $ans->feedback;
+            $anscount++;
         }
 
         $format->import_combined_feedback($newquestion, $data, false);
