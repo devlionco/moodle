@@ -17,29 +17,9 @@
 /**
  * Admin settings class for the quiz browser security option.
  *
- * @package   mod_quiz
- * @copyright 2008 Tim Hunt
+ * @package   local_quizpreset
+ * @copyright 2023 Devlion
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-//define('QUIZ_TYPE_1', 1);
-//define('QUIZ_TYPE_2', 2);
-//define('QUIZ_TYPE_3', 3);
-//define('QUIZ_TYPE_4', 4);
-//define('QUIZ_TYPE_5', 5);
-//define('QUIZ_TYPE_6', 6);
-
-
-/**
- * Admin settings class for the quiz browser security option.
- *
- * Just so we can lazy-load the choices.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_types_default {
 
@@ -69,130 +49,115 @@ class custom_types_default {
 
         switch ($instancename) {
             case 'physics':
-                $this->settypes = array(2,3,4,1);
+                $this->settypes = array(2, 3, 4, 1);
                 $this->instancename = $instancename;
                 break;
             case 'chemistry':
-                $this->settypes = array(3,4,1,6,2);
+                $this->settypes = array(3, 4, 1, 6, 2);
                 $this->instancename = $instancename;
                 break;
             case 'biology':
-                $this->settypes = array(2,3,4,1);
+                $this->settypes = array(2, 3, 4, 1);
                 $this->instancename = $instancename;
                 break;
             default:
-                $this->settypes = array(2,3,4,1);
+                $this->settypes = array(2, 3, 4, 1);
                 $this->instancename = 'physics';
         }
     }
 
     public function predefine_setting($defaulttype) {
-        global $CFG, $DB, $USER;
 
         $savedvaluetype = null;
-        $savedvalueview = null;
 
         // Set relevant type in class.
-        if (in_array($defaulttype, $this->settypes)){
+        if (in_array($defaulttype, $this->settypes)) {
             $this->type = $defaulttype;
             $this->ifchangestate = ($savedvaluetype == $defaulttype) ? false : true;
         } else {
             return false;
         }
 
-        $this->setState();
+        $this->set_state();
         return true;
     }
 
     public function predefine($cmid, $defaulttype, $viewall, $pagestate, $urlparams) {
-        global $CFG, $DB, $USER;
+        global $DB, $USER;
 
         $this->cmid = $cmid;
         $this->pagestate = $pagestate;
         $this->urlparams = json_decode($urlparams, true);
 
-        // If POST
-        if(empty($this->urlparams)){
+        // If POST.
+        if (empty($this->urlparams)) {
 
-            if($this->pagestate == 'update') {
-                $sql = "
-                    SELECT * 
-                    FROM {local_quizpreset}
-                    WHERE cmid = ? AND status = 0 
-                    ORDER BY id DESC 
-                    LIMIT 1
-                ";
+            if ($this->pagestate == 'update') {
+                $sql = "SELECT * FROM {local_quizpreset} WHERE cmid = ? AND status = 0 ORDER BY id DESC LIMIT 1";
                 $qp = $DB->get_record_sql($sql, array($cmid));
                 $qp->viewall = 1;
             }
 
-            if($this->pagestate == 'new') {
-                $sql = "
-                    SELECT * 
-                    FROM {local_quizpreset}
-                    WHERE userid = ? AND state = 'new' 
-                    ORDER BY id DESC 
-                    LIMIT 1
-                ";
+            if ($this->pagestate == 'new') {
+                $sql = "SELECT * FROM {local_quizpreset} WHERE userid = ? AND state = 'new' ORDER BY id DESC LIMIT 1";
                 $qp = $DB->get_record_sql($sql, array($USER->id));
                 $qp->viewall = 1;
             }
 
-        }else{
+        } else {
             $qp = $DB->get_record('local_quizpreset', array('cmid' => $cmid, 'status' => 1));
         }
 
         if (!empty($qp)) {
             $savedvaluetype = $qp->type;
             $savedvalueview = $qp->viewall;
-        }else{
+        } else {
             $savedvaluetype = null;
             $savedvalueview = null;
         }
 
         // Set relevant type in class.
-        if(in_array($defaulttype, $this->settypes)){
+        if (in_array($defaulttype, $this->settypes)) {
             $this->type = $defaulttype;
             $this->ifchangestate = ($savedvaluetype == $defaulttype) ? false : true;
-        }else{
+        } else {
             $this->type = (!empty($savedvaluetype)) ? $savedvaluetype : $this->settypes[0];
             $this->ifchangestate = false;
         }
 
         // Set relevant viewall in class.
-        if($viewall == 100){
-            $this->viewall = (!empty($savedvalueview)) ?  $savedvalueview : 0;
-        }else{
+        if ($viewall == 100) {
+            $this->viewall = (!empty($savedvalueview)) ? $savedvalueview : 0;
+        } else {
             $this->viewall = $viewall;
         }
 
         // Define values, expanded, global name.
-        $this->setState();
+        $this->set_state();
     }
 
-    public function setState(){
-        global $DB;
+    public function set_state() {
 
         switch ($this->type) {
             case QUIZ_TYPE_1:
-                $this->expanded = $this->expandedType1();
-                $this->values = $this->mergeWithDefault($this->valuesType1());
-                $this->globalname = $this->globalNameType1();
+                $this->expanded = $this->expanded_type1();
+                $this->values = $this->merge_with_default($this->values_type1());
+                $this->globalname = $this->global_name_type1();
                 break;
             case QUIZ_TYPE_2:
-                $this->expanded = $this->expandedType2();
-                $this->values = $this->mergeWithDefault($this->valuesType2());
-                $this->globalname = $this->globalNameType2();
+                $this->expanded = $this->expanded_type2();
+                $this->values = $this->merge_with_default($this->values_type2());
+                $this->globalname = $this->global_name_type2();
                 break;
             case QUIZ_TYPE_3:
-                $this->expanded = $this->expandedType3();
-                $this->values = $this->mergeWithDefault($this->valuesType3());
-                $this->globalname = $this->globalNameType3();
+                $this->expanded = $this->expanded_type3();
+                $this->values = $this->merge_with_default($this->values_type3());
+                $this->globalname = $this->global_name_type3();
                 break;
             case QUIZ_TYPE_4:
-                $this->expanded = $this->expandedType4();
-                $this->values = $this->mergeWithDefault($this->valuesType4());
-                $this->globalname = $this->globalNameType4();
+                $this->expanded = $this->expanded_type4();
+                $this->values = $this->merge_with_default($this->values_type4());
+                $this->globalname = $this->global_name_type4();
                 break;
             case QUIZ_TYPE_5:
                 $this->expanded = array();
@@ -200,9 +165,9 @@ class custom_types_default {
                 $this->globalname = array();
                 break;
             case QUIZ_TYPE_6:
-                $this->expanded = $this->expandedType2();
-                $this->values = $this->mergeWithDefault($this->valuesType6());
-                $this->globalname = $this->globalNameType6();
+                $this->expanded = $this->expanded_type2();
+                $this->values = $this->merge_with_default($this->values_type6());
+                $this->globalname = $this->global_name_type6();
                 break;
             default:
                 $this->expanded = array();
@@ -211,7 +176,7 @@ class custom_types_default {
         }
     }
 
-    public function expandedType1(){
+    public function expanded_type1() {
         return array(
                 'id_general' => true,
                 'id_timing' => true,
@@ -227,11 +192,11 @@ class custom_types_default {
                 'id_activitycompletionheader' => true,
                 'id_tagshdr' => false,
                 'id_competenciessection' => true,
-                'id_seb'=> false,
+                'id_seb' => false,
         );
     }
 
-    public function expandedType2(){
+    public function expanded_type2() {
         return array(
                 'id_general' => true,
                 'id_timing' => true,
@@ -247,12 +212,12 @@ class custom_types_default {
                 'id_activitycompletionheader' => true,
                 'id_tagshdr' => false,
                 'id_competenciessection' => true,
-                'id_seb'=> false,
+                'id_seb' => false,
         );
 
     }
 
-    public function expandedType3(){
+    public function expanded_type3() {
         return array(
                 'id_general' => true,
                 'id_timing' => true,
@@ -268,11 +233,11 @@ class custom_types_default {
                 'id_activitycompletionheader' => true,
                 'id_tagshdr' => false,
                 'id_competenciessection' => true,
-                'id_seb'=> false,
+                'id_seb' => false,
         );
     }
 
-    public function expandedType4(){
+    public function expanded_type4() {
         return array(
                 'id_general' => true,
                 'id_timing' => true,
@@ -288,103 +253,102 @@ class custom_types_default {
                 'id_activitycompletionheader' => true,
                 'id_tagshdr' => false,
                 'id_competenciessection' => true,
-                'id_seb'=> false,
+                'id_seb' => false,
         );
     }
 
-    public function globalNameType1(){
+    public function global_name_type1() {
         switch ($this->instancename) {
             case 'physics':
-                $name = get_string('name_physics_1', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_physics_1', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_physics_1', 'local_quizpreset');
                 break;
             case 'chemistry':
-                $name = get_string('name_chemistry_1', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_chemistry_1', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_chemistry_1', 'local_quizpreset');
                 break;
             case 'biology':
-                $name = get_string('name_biology_1', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_biology_1', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_biology_1', 'local_quizpreset');
                 break;
         }
 
         return array(
-            'name' => $name,
-            'intro' => $introtext,
-            'introformat' => 1,
-            'introeditor' => array
-            (
-                'text' => $introtext,
-                'format' => 1,
-                //'itemid' => 482482910
-            ),
+                'name' => $name,
+                'intro' => $introtext,
+                'introformat' => 1,
+                'introeditor' => array
+                (
+                        'text' => $introtext,
+                        'format' => 1,
+                ),
         );
     }
 
-    public function valuesType1(){
-        $data =  array(
-            //timing
-            'timelimit' => 0,
-            'overduehandling' => 'autosubmit',
-            'graceperiod' => 0,
+    public function values_type1() {
+        $data = array(
+            // Timing.
+                'timelimit' => 0,
+                'overduehandling' => 'autosubmit',
+                'graceperiod' => 0,
 
-            //modstandardgrade
-            'gradecat' => 0,
-            'gradepass' => 55.00,
-            'attempts' => 1,
-            'grademethod' => 4,
+            // Modstandardgrade.
+                'gradecat' => 0,
+                'gradepass' => 55.00,
+                'attempts' => 1,
+                'grademethod' => 4,
 
-            //layouthdr
-            'questionsperpage' => 0,
-            'repaginatenow' => 0,
-            'navmethod' => 'free',
+            // Layouthdr.
+                'questionsperpage' => 0,
+                'repaginatenow' => 0,
+                'navmethod' => 'free',
 
-            //interactionhdr
-            'shuffleanswers' => 1,
-            'preferredbehaviour' => 'deferredfeedback',
-            'canredoquestions' => 0,
-            'attemptonlast' => 0,
+            // Interactionhdr.
+                'shuffleanswers' => 1,
+                'preferredbehaviour' => 'deferredfeedback',
+                'canredoquestions' => 0,
+                'attemptonlast' => 0,
 
-            //reviewoptionshdr
-            'area_checkboxes' => array(
-                'attemptduring' => true,
-                'correctnessduring' => false,
-                'marksduring' => false,
-                'specificfeedbackduring' => false,
-                'generalfeedbackduring' => false,
-                'rightanswerduring' => false,
-                'overallfeedbackduring' => false,
+            // Reviewoptionshdr.
+                'area_checkboxes' => array(
+                        'attemptduring' => true,
+                        'correctnessduring' => false,
+                        'marksduring' => false,
+                        'specificfeedbackduring' => false,
+                        'generalfeedbackduring' => false,
+                        'rightanswerduring' => false,
+                        'overallfeedbackduring' => false,
 
-                'attemptimmediately' => false,
-                'correctnessimmediately' => false,
-                'marksimmediately' => false,
-                'specificfeedbackimmediately' => false,
-                'generalfeedbackimmediately' => false,
-                'rightanswerimmediately' => false,
-                'overallfeedbackimmediately' => false,
+                        'attemptimmediately' => false,
+                        'correctnessimmediately' => false,
+                        'marksimmediately' => false,
+                        'specificfeedbackimmediately' => false,
+                        'generalfeedbackimmediately' => false,
+                        'rightanswerimmediately' => false,
+                        'overallfeedbackimmediately' => false,
 
-                'attemptopen' => false,
-                'correctnessopen' => false,
-                'marksopen' => false,
-                'specificfeedbackopen' => false,
-                'generalfeedbackopen' => false,
-                'rightansweropen' => false,
-                'overallfeedbackopen' => false,
+                        'attemptopen' => false,
+                        'correctnessopen' => false,
+                        'marksopen' => false,
+                        'specificfeedbackopen' => false,
+                        'generalfeedbackopen' => false,
+                        'rightansweropen' => false,
+                        'overallfeedbackopen' => false,
 
-                'attemptclosed' => true,
-                'correctnessclosed' => true,
-                'marksclosed' => true,
-                'specificfeedbackclosed' => true,
-                'generalfeedbackclosed' => true,
-                'rightanswerclosed' => true,
-                'overallfeedbackclosed' => true,
-            ),
+                        'attemptclosed' => true,
+                        'correctnessclosed' => true,
+                        'marksclosed' => true,
+                        'specificfeedbackclosed' => true,
+                        'generalfeedbackclosed' => true,
+                        'rightanswerclosed' => true,
+                        'overallfeedbackclosed' => true,
+                ),
 
-            //display
-            'showuserpicture' => 0,
-            'decimalpoints' => 0,
-            'questiondecimalpoints' => 1,
-            'showblocks' => 1,
+            // Display.
+                'showuserpicture' => 0,
+                'decimalpoints' => 0,
+                'questiondecimalpoints' => 1,
+                'showblocks' => 1,
         );
 
         switch ($this->instancename) {
@@ -396,10 +360,6 @@ class custom_types_default {
                 $data['preferredbehaviour'] = 'adaptive';
                 $data['preferredbehaviour'] = 'interactive';
                 $data['canredoquestions'] = 0;
-
-//                if($this->coursecat) {
-//                    $data['gradecat'] = $this->coursecat;
-//                }
 
                 $data['area_checkboxes'] = array(
                         'attemptduring' => true,
@@ -442,83 +402,82 @@ class custom_types_default {
         return $data;
     }
 
-    public function globalNameType2(){
+    public function global_name_type2() {
         switch ($this->instancename) {
             case 'physics':
-                $name = get_string('name_physics_2', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_physics_2', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_physics_2', 'local_quizpreset');
                 break;
             case 'chemistry':
-                $name = get_string('name_chemistry_2', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_chemistry_2', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_chemistry_2', 'local_quizpreset');
                 break;
             case 'biology':
-                $name = get_string('name_biology_2', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_biology_2', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_biology_2', 'local_quizpreset');
                 break;
         }
 
         return array(
-            'name' => $name,
-            'intro' => $introtext,
-            'introformat' => 1,
-            'introeditor' => array
-            (
-                'text' => $introtext,
-                'format' => 1,
-                //'itemid' => 482482910
-            ),
+                'name' => $name,
+                'intro' => $introtext,
+                'introformat' => 1,
+                'introeditor' => array
+                (
+                        'text' => $introtext,
+                        'format' => 1,
+                ),
         );
     }
 
-    public function valuesType2(){
+    public function values_type2() {
         $data = array(
-            //modstandardgrade
-            'gradecat' => 0,
-            'gradepass' => 0,
-            'attempts' => 0,
-            'grademethod' => 1,
+                // Modstandardgrade.
+                'gradecat' => 0,
+                'gradepass' => 0,
+                'attempts' => 0,
+                'grademethod' => 1,
 
-            //interactionhdr
-            'shuffleanswers' => 1,
-            'preferredbehaviour' => 'interactive',
-            'canredoquestions' => 1,
-            'attemptonlast' => 1,
+                // Interactionhdr.
+                'shuffleanswers' => 1,
+                'preferredbehaviour' => 'interactive',
+                'canredoquestions' => 1,
+                'attemptonlast' => 1,
 
-            //reviewoptionshdr
-            'area_checkboxes' => array(
-                'attemptduring' => true,
-                'correctnessduring' => true,
-                'marksduring' => false,
-                'specificfeedbackduring' => true,
-                'generalfeedbackduring' => true,
-                'rightanswerduring' => true,
-                'overallfeedbackduring' => false,
+                // Reviewoptionshdr.
+                'area_checkboxes' => array(
+                        'attemptduring' => true,
+                        'correctnessduring' => true,
+                        'marksduring' => false,
+                        'specificfeedbackduring' => true,
+                        'generalfeedbackduring' => true,
+                        'rightanswerduring' => true,
+                        'overallfeedbackduring' => false,
 
-                'attemptimmediately' => true,
-                'correctnessimmediately' => true,
-                'marksimmediately' => false,
-                'specificfeedbackimmediately' => true,
-                'generalfeedbackimmediately' => true,
-                'rightanswerimmediately' => true,
-                'overallfeedbackimmediately' => true,
+                        'attemptimmediately' => true,
+                        'correctnessimmediately' => true,
+                        'marksimmediately' => false,
+                        'specificfeedbackimmediately' => true,
+                        'generalfeedbackimmediately' => true,
+                        'rightanswerimmediately' => true,
+                        'overallfeedbackimmediately' => true,
 
-                'attemptopen' => true,
-                'correctnessopen' => true,
-                'marksopen' => false,
-                'specificfeedbackopen' => true,
-                'generalfeedbackopen' => true,
-                'rightansweropen' => true,
-                'overallfeedbackopen' => true,
+                        'attemptopen' => true,
+                        'correctnessopen' => true,
+                        'marksopen' => false,
+                        'specificfeedbackopen' => true,
+                        'generalfeedbackopen' => true,
+                        'rightansweropen' => true,
+                        'overallfeedbackopen' => true,
 
-                'attemptclosed' => true,
-                'correctnessclosed' => true,
-                'marksclosed' => false,
-                'specificfeedbackclosed' => true,
-                'generalfeedbackclosed' => true,
-                'rightanswerclosed' => true,
-                'overallfeedbackclosed' => true,
-            ),
+                        'attemptclosed' => true,
+                        'correctnessclosed' => true,
+                        'marksclosed' => false,
+                        'specificfeedbackclosed' => true,
+                        'generalfeedbackclosed' => true,
+                        'rightanswerclosed' => true,
+                        'overallfeedbackclosed' => true,
+                ),
         );
 
         switch ($this->instancename) {
@@ -532,19 +491,7 @@ class custom_types_default {
                 $data['questionsperpage'] = 10;
                 $data['shuffleanswers'] = 1;
 
-//                if($this->coursecat) {
-//                    $data['gradecat'] = $this->coursecat;
-//                }
-
                 $data['area_checkboxes'] = array(
-                    //'attemptduring' => true,
-                    //'correctnessduring' => true,
-                    //'marksduring' => true,
-                    //'specificfeedbackduring' => true,
-                    //'generalfeedbackduring' => true,
-                    //'rightanswerduring' => true,
-                    //'overallfeedbackduring' => true,
-
                         'attemptimmediately' => true,
                         'correctnessimmediately' => true,
                         'marksimmediately' => true,
@@ -577,88 +524,87 @@ class custom_types_default {
         return $data;
     }
 
-    public function globalNameType3(){
+    public function global_name_type3() {
         switch ($this->instancename) {
             case 'physics':
-                $name = get_string('name_physics_3', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_physics_3', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_physics_3', 'local_quizpreset');
                 break;
             case 'chemistry':
-                $name = get_string('name_chemistry_3', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_chemistry_3', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_chemistry_3', 'local_quizpreset');
                 break;
             case 'biology':
-                $name = get_string('name_biology_3', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_biology_3', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_biology_3', 'local_quizpreset');
                 break;
         }
 
         return array(
-            'name' => $name,
-            'intro' => $introtext,
-            'introformat' => 1,
-            'introeditor' => array
-            (
-                'text' => $introtext,
-                'format' => 1,
-                //'itemid' => 482482910
-            ),
+                'name' => $name,
+                'intro' => $introtext,
+                'introformat' => 1,
+                'introeditor' => array
+                (
+                        'text' => $introtext,
+                        'format' => 1,
+                ),
         );
     }
 
-    public function valuesType3(){
+    public function values_type3() {
         $data = array(
-            //timing
-            'timelimit' => 0,
-            'overduehandling' => 'autosubmit',
-            'graceperiod' => 0,
+                // Timing.
+                'timelimit' => 0,
+                'overduehandling' => 'autosubmit',
+                'graceperiod' => 0,
 
-            //modstandardgrade
-            'gradecat' => 0,
-            'gradepass' => 55.00,
-            'attempts' => 0,
-            'grademethod' => 1,
+                // Modstandardgrade.
+                'gradecat' => 0,
+                'gradepass' => 55.00,
+                'attempts' => 0,
+                'grademethod' => 1,
 
-            //interactionhdr
-            'shuffleanswers' => 1,
-            'preferredbehaviour' => 'adaptivenopenalty',
-            'canredoquestions' => 1,
-            'attemptonlast' => 0,
+                // Interactionhdr.
+                'shuffleanswers' => 1,
+                'preferredbehaviour' => 'adaptivenopenalty',
+                'canredoquestions' => 1,
+                'attemptonlast' => 0,
 
-            //reviewoptionshdr
-            'area_checkboxes' => array(
-                'attemptduring' => true,
-                'correctnessduring' => true,
-                'marksduring' => false,
-                'specificfeedbackduring' => true,
-                'generalfeedbackduring' => false,
-                'rightanswerduring' => false,
-                'overallfeedbackduring' => false,
+                // Reviewoptionshdr.
+                'area_checkboxes' => array(
+                        'attemptduring' => true,
+                        'correctnessduring' => true,
+                        'marksduring' => false,
+                        'specificfeedbackduring' => true,
+                        'generalfeedbackduring' => false,
+                        'rightanswerduring' => false,
+                        'overallfeedbackduring' => false,
 
-                'attemptimmediately' => true,
-                'correctnessimmediately' => true,
-                'marksimmediately' => false,
-                'specificfeedbackimmediately' => true,
-                'generalfeedbackimmediately' => true,
-                'rightanswerimmediately' => true,
-                'overallfeedbackimmediately' => true,
+                        'attemptimmediately' => true,
+                        'correctnessimmediately' => true,
+                        'marksimmediately' => false,
+                        'specificfeedbackimmediately' => true,
+                        'generalfeedbackimmediately' => true,
+                        'rightanswerimmediately' => true,
+                        'overallfeedbackimmediately' => true,
 
-                'attemptopen' => true,
-                'correctnessopen' => true,
-                'marksopen' => false,
-                'specificfeedbackopen' => true,
-                'generalfeedbackopen' => true,
-                'rightansweropen' => true,
-                'overallfeedbackopen' => true,
+                        'attemptopen' => true,
+                        'correctnessopen' => true,
+                        'marksopen' => false,
+                        'specificfeedbackopen' => true,
+                        'generalfeedbackopen' => true,
+                        'rightansweropen' => true,
+                        'overallfeedbackopen' => true,
 
-                'attemptclosed' => true,
-                'correctnessclosed' => true,
-                'marksclosed' => false,
-                'specificfeedbackclosed' => true,
-                'generalfeedbackclosed' => true,
-                'rightanswerclosed' => true,
-                'overallfeedbackclosed' => true,
-            ),
+                        'attemptclosed' => true,
+                        'correctnessclosed' => true,
+                        'marksclosed' => false,
+                        'specificfeedbackclosed' => true,
+                        'generalfeedbackclosed' => true,
+                        'rightanswerclosed' => true,
+                        'overallfeedbackclosed' => true,
+                ),
         );
 
         switch ($this->instancename) {
@@ -669,42 +615,38 @@ class custom_types_default {
 
                 $data['attempts'] = 0;
 
-//                if($this->coursecat) {
-//                    $data['gradecat'] = $this->coursecat;
-//                }
-
                 $data['area_checkboxes'] = array(
-                    'attemptduring' => true,
-                    'correctnessduring' => true,
-                    'marksduring' => true,
-                    'specificfeedbackduring' => true,
-                    'generalfeedbackduring' => true,
-                    'rightanswerduring' => true,
-                    'overallfeedbackduring' => true,
+                        'attemptduring' => true,
+                        'correctnessduring' => true,
+                        'marksduring' => true,
+                        'specificfeedbackduring' => true,
+                        'generalfeedbackduring' => true,
+                        'rightanswerduring' => true,
+                        'overallfeedbackduring' => true,
 
-                    'attemptimmediately' => true,
-                    'correctnessimmediately' => true,
-                    'marksimmediately' => true,
-                    'specificfeedbackimmediately' => true,
-                    'generalfeedbackimmediately' => true,
-                    'rightanswerimmediately' => true,
-                    'overallfeedbackimmediately' => true,
+                        'attemptimmediately' => true,
+                        'correctnessimmediately' => true,
+                        'marksimmediately' => true,
+                        'specificfeedbackimmediately' => true,
+                        'generalfeedbackimmediately' => true,
+                        'rightanswerimmediately' => true,
+                        'overallfeedbackimmediately' => true,
 
-                    'attemptopen' => true,
-                    'correctnessopen' => true,
-                    'marksopen' => true,
-                    'specificfeedbackopen' => true,
-                    'generalfeedbackopen' => true,
-                    'rightansweropen' => true,
-                    'overallfeedbackopen' => true,
+                        'attemptopen' => true,
+                        'correctnessopen' => true,
+                        'marksopen' => true,
+                        'specificfeedbackopen' => true,
+                        'generalfeedbackopen' => true,
+                        'rightansweropen' => true,
+                        'overallfeedbackopen' => true,
 
-                    'attemptclosed' => true,
-                    'correctnessclosed' => true,
-                    'marksclosed' => true,
-                    'specificfeedbackclosed' => true,
-                    'generalfeedbackclosed' => true,
-                    'rightanswerclosed' => true,
-                    'overallfeedbackclosed' => true,
+                        'attemptclosed' => true,
+                        'correctnessclosed' => true,
+                        'marksclosed' => true,
+                        'specificfeedbackclosed' => true,
+                        'generalfeedbackclosed' => true,
+                        'rightanswerclosed' => true,
+                        'overallfeedbackclosed' => true,
                 );
                 $data['preferredbehaviour'] = 'deferredfeedback';
                 $data['questionsperpage'] = 10;
@@ -719,88 +661,87 @@ class custom_types_default {
         return $data;
     }
 
-    public function globalNameType4(){
+    public function global_name_type4() {
         switch ($this->instancename) {
             case 'physics':
-                $name = get_string('name_physics_4', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_physics_4', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_physics_4', 'local_quizpreset');
                 break;
             case 'chemistry':
-                $name = get_string('name_chemistry_4', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_chemistry_4', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_chemistry_4', 'local_quizpreset');
                 break;
             case 'biology':
-                $name = get_string('name_biology_4', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_biology_4', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_biology_4', 'local_quizpreset');
                 break;
         }
 
         return array(
-            'name' => $name,
-            'intro' => $introtext,
-            'introformat' => 1,
-            'introeditor' => array
-            (
-                'text' => $introtext,
-                'format' => 1,
-                //'itemid' => 482482910
-            ),
+                'name' => $name,
+                'intro' => $introtext,
+                'introformat' => 1,
+                'introeditor' => array
+                (
+                        'text' => $introtext,
+                        'format' => 1,
+                ),
         );
     }
 
-    public function valuesType4(){
+    public function values_type4() {
         $data = array(
-            //timing
-            'timelimit' => 0,
-            'overduehandling' => 'autosubmit',
-            'graceperiod' => 0,
+                // Timing.
+                'timelimit' => 0,
+                'overduehandling' => 'autosubmit',
+                'graceperiod' => 0,
 
-            //modstandardgrade
-            'gradecat' => 0,
-            'gradepass' => 55.00,
-            'attempts' => 0,
-            'grademethod' => 3,
+                // Modstandardgrade.
+                'gradecat' => 0,
+                'gradepass' => 55.00,
+                'attempts' => 0,
+                'grademethod' => 3,
 
-            //interactionhdr
-            'shuffleanswers' => 1,
-            'preferredbehaviour' => 'adaptive',
-            'canredoquestions' => 1,
-            'attemptonlast' => 1,
+                // Interactionhdr.
+                'shuffleanswers' => 1,
+                'preferredbehaviour' => 'adaptive',
+                'canredoquestions' => 1,
+                'attemptonlast' => 1,
 
-            //reviewoptionshdr
-            'area_checkboxes' => array(
-                'attemptduring' => true,
-                'correctnessduring' => true,
-                'marksduring' => false,
-                'specificfeedbackduring' => true,
-                'generalfeedbackduring' => false,
-                'rightanswerduring' => false,
-                'overallfeedbackduring' => false,
+                // Reviewoptionshdr.
+                'area_checkboxes' => array(
+                        'attemptduring' => true,
+                        'correctnessduring' => true,
+                        'marksduring' => false,
+                        'specificfeedbackduring' => true,
+                        'generalfeedbackduring' => false,
+                        'rightanswerduring' => false,
+                        'overallfeedbackduring' => false,
 
-                'attemptimmediately' => true,
-                'correctnessimmediately' => true,
-                'marksimmediately' => true,
-                'specificfeedbackimmediately' => true,
-                'generalfeedbackimmediately' => true,
-                'rightanswerimmediately' => true,
-                'overallfeedbackimmediately' => true,
+                        'attemptimmediately' => true,
+                        'correctnessimmediately' => true,
+                        'marksimmediately' => true,
+                        'specificfeedbackimmediately' => true,
+                        'generalfeedbackimmediately' => true,
+                        'rightanswerimmediately' => true,
+                        'overallfeedbackimmediately' => true,
 
-                'attemptopen' => true,
-                'correctnessopen' => true,
-                'marksopen' => true,
-                'specificfeedbackopen' => true,
-                'generalfeedbackopen' => true,
-                'rightansweropen' => true,
-                'overallfeedbackopen' => true,
+                        'attemptopen' => true,
+                        'correctnessopen' => true,
+                        'marksopen' => true,
+                        'specificfeedbackopen' => true,
+                        'generalfeedbackopen' => true,
+                        'rightansweropen' => true,
+                        'overallfeedbackopen' => true,
 
-                'attemptclosed' => true,
-                'correctnessclosed' => true,
-                'marksclosed' => true,
-                'specificfeedbackclosed' => true,
-                'generalfeedbackclosed' => true,
-                'rightanswerclosed' => true,
-                'overallfeedbackclosed' => true,
-            ),
+                        'attemptclosed' => true,
+                        'correctnessclosed' => true,
+                        'marksclosed' => true,
+                        'specificfeedbackclosed' => true,
+                        'generalfeedbackclosed' => true,
+                        'rightanswerclosed' => true,
+                        'overallfeedbackclosed' => true,
+                ),
         );
 
         switch ($this->instancename) {
@@ -815,19 +756,7 @@ class custom_types_default {
                 $data['questionsperpage'] = 10;
                 $data['shuffleanswers'] = 1;
 
-//                if($this->coursecat) {
-//                    $data['gradecat'] = $this->coursecat;
-//                }
-
                 $data['area_checkboxes'] = array(
-                        //'attemptduring' => true,
-                        //'correctnessduring' => true,
-                        //'marksduring' => true,
-                        //'specificfeedbackduring' => true,
-                        //'generalfeedbackduring' => true,
-                        //'rightanswerduring' => true,
-                        //'overallfeedbackduring' => true,
-
                         'attemptimmediately' => true,
                         'correctnessimmediately' => true,
                         'marksimmediately' => true,
@@ -861,18 +790,18 @@ class custom_types_default {
         return $data;
     }
 
-    public function globalNameType6(){
+    public function global_name_type6() {
         switch ($this->instancename) {
             case 'physics':
-                $name = get_string('name_physics_1', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_physics_1', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_physics_1', 'local_quizpreset');
                 break;
             case 'chemistry':
-                $name = get_string('name_chemistry_6', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_chemistry_6', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_chemistry_6', 'local_quizpreset');
                 break;
             case 'biology':
-                $name = get_string('name_biology_1', 'local_quizpreset').' '.date('d-m-Y');
+                $name = get_string('name_biology_1', 'local_quizpreset') . ' ' . date('d-m-Y');
                 $introtext = get_string('intro_biology_1', 'local_quizpreset');
                 break;
         }
@@ -885,26 +814,25 @@ class custom_types_default {
                 (
                         'text' => $introtext,
                         'format' => 1,
-                    //'itemid' => 482482910
                 ),
         );
     }
 
-    public function valuesType6(){
+    public function values_type6() {
         $data = array(
-            //modstandardgrade
+                // Modstandardgrade.
                 'gradecat' => 17,
-                'gradepass' =>0,
+                'gradepass' => 0,
                 'attempts' => 0,
                 'grademethod' => 1,
 
-            //interactionhdr
+                // Interactionhdr.
                 'shuffleanswers' => 1,
                 'preferredbehaviour' => 'interactive',
                 'canredoquestions' => 1,
                 'attemptonlast' => 1,
 
-            //reviewoptionshdr
+                // Reviewoptionshdr.
                 'area_checkboxes' => array(
                         'attemptduring' => true,
                         'correctnessduring' => true,
@@ -951,10 +879,6 @@ class custom_types_default {
                 $data['questionsperpage'] = 10;
                 $data['shuffleanswers'] = 1;
 
-//                if($this->coursecat) {
-//                    $data['gradecat'] = $this->coursecat;
-//                }
-
                 $data['area_checkboxes'] = array(
                         'attemptduring' => true,
                         'correctnessduring' => true,
@@ -996,26 +920,26 @@ class custom_types_default {
         return $data;
     }
 
-    public function chemistry_activity_with_score(){
+    public function chemistry_activity_with_score() {
         $data = array(
-            //timing
+                // Timing.
                 'timelimit' => 0,
                 'overduehandling' => 'autosubmit',
                 'graceperiod' => 0,
 
-            //modstandardgrade
+                // Modstandardgrade.
                 'gradecat' => 0,
                 'gradepass' => 55.00,
                 'attempts' => 0,
                 'grademethod' => 1,
 
-            //interactionhdr
+                // Interactionhdr.
                 'shuffleanswers' => 1,
                 'preferredbehaviour' => 'adaptive',
                 'canredoquestions' => 1,
                 'attemptonlast' => 1,
 
-            //reviewoptionshdr
+                // Reviewoptionshdr.
                 'area_checkboxes' => array(
                         'attemptduring' => true,
                         'correctnessduring' => true,
@@ -1054,32 +978,32 @@ class custom_types_default {
         return $data;
     }
 
-    public function chemistry_activity_without_score(){
+    public function chemistry_activity_without_score() {
         global $DB, $COURSE;
 
-        // TODO: convert hardcoded 'fullname = 'פעילויות ללא ציון' to admin settings or get_string. (nadavkav)
-        // we have only one "activity with no grades" category in the course. PTL-1560
-        $nogradescat = $DB->get_record('grade_categories', ['courseid' => $COURSE->id, 'fullname' => get_string('activitieswithoutgrade', 'local_petel')]);
+        // We have only one "activity with no grades" category in the course. PTL-1560.
+        $nogradescat = $DB->get_record('grade_categories',
+                ['courseid' => $COURSE->id, 'fullname' => get_string('activitieswithoutgrade', 'local_petel')]);
 
         $data = array(
-            //timing
+                // Timing.
                 'timelimit' => 0,
                 'overduehandling' => 'autosubmit',
                 'graceperiod' => 0,
 
-            //modstandardgrade
+                // Modstandardgrade.
                 'gradecat' => isset($nogradescat->id) ? $nogradescat->id : 0,
                 'gradepass' => 55.00,
                 'attempts' => 0,
                 'grademethod' => 1,
 
-            //interactionhdr
+                // Interactionhdr.
                 'shuffleanswers' => 1,
                 'preferredbehaviour' => 'adaptivenopenalty',
                 'canredoquestions' => 1,
                 'attemptonlast' => 0,
 
-            //reviewoptionshdr
+                // Reviewoptionshdr.
                 'area_checkboxes' => array(
                         'attemptduring' => true,
                         'correctnessduring' => true,
@@ -1118,123 +1042,54 @@ class custom_types_default {
         return $data;
     }
 
-    public function defaultValues()
-    {
+    public function default_values() {
         return array(
-            //'name' => 'default',
-            //'introeditor' => array
-            //(
-            //    'text' => 'default',
-            //    'format' => 1,
-            //    'itemid' => 664245605,
-            //),
-
-            //'showdescription' => 0,
-            'timeopen' => 0,
-           // 'timeclose' => 0,
-            'timelimit' => 0,
-            'overduehandling' => 'autosubmit',
-            'graceperiod' => 0,
-            'gradecat' => 17,
-            'gradepass' => 0,
-            //'grade' => 10,
-            'attempts' => 0,
-            'grademethod' => 1,
-            'questionsperpage' => 0,
-            'navmethod' => 'free',
-            'shuffleanswers' => 1,
-            'preferredbehaviour' => 'deferredfeedback',
-            'canredoquestions' => 0,
-            'attemptonlast' => 0,
-
-//            'attemptduring' => 1,
-//            'correctnessduring' => 1,
-//            'marksduring' => 1,
-//            'specificfeedbackduring' => 1,
-//            'generalfeedbackduring' => 1,
-//            'rightanswerduring' => 1,
-//            'attemptimmediately' => 1,
-//            'correctnessimmediately' => 1,
-//            'marksimmediately' => 1,
-//            'specificfeedbackimmediately' => 1,
-//            'generalfeedbackimmediately' => 1,
-//            'rightanswerimmediately' => 1,
-//            'overallfeedbackimmediately' => 1,
-//            'attemptopen' => 1,
-//            'correctnessopen' => 1,
-//            'marksopen' => 1,
-//            'specificfeedbackopen' => 1,
-//            'generalfeedbackopen' => 1,
-//            'rightansweropen' => 1,
-//            'overallfeedbackopen' => 1,
-//            'attemptclosed' => 1,
-//            'correctnessclosed' => 1,
-//            'marksclosed' => 1,
-//            'specificfeedbackclosed' => 1,
-//            'generalfeedbackclosed' => 1,
-//            'rightanswerclosed' => 1,
-//            'overallfeedbackclosed' => 1,
-
-            'showuserpicture' => 0,
-            'decimalpoints' => 2,
-            'questiondecimalpoints' => -1,
-            'showblocks' => 0,
-            'quizpassword' => '',
-            'subnet' => '',
-            'delay1' => 0,
-            'delay2' => 0,
-            'browsersecurity' => '-',
-            'allowofflineattempts' => 0,
-            'boundary_repeats' => 0,
-//            'feedbacktext' => array
-//            (
-//                '0' => array
-//                (
-//                    'text' => '',
-//                    'format' => 1,
-//                    'itemid' => 435760498,
-//                )
-//            ),
-
-            //'visible' => 1,
-            'visibleoncoursepage' => 1,
-            'cmidnumber' => '',
-            'groupmode' => 0,
-            'groupingid' => 0,
-            'availabilityconditionsjson' => '',
-//            'completionunlocked' => 0,
-//            'completion' => 1,
-//            'completionview' => 1,
-            'completionusegrade' => '',
-            'completionexpected' => 0,
-//            'tags' => array
-//            (
-//            ),
-//            'course' => 19,
-//            'coursemodule' => 1596,
-//            'section' => 1,
-//            'module' => 16,
-//            'modulename' => 'quiz',
-//            'instance' => 567,
-//            'add' => '',
-//            'update' => 1596,
-//            'return' => 1,
-//            'sr' => 0,
-//            'submitbutton2' => 'שמירת שינויים וחזרה לקורס',
+                'timeopen' => 0,
+                'timelimit' => 0,
+                'overduehandling' => 'autosubmit',
+                'graceperiod' => 0,
+                'gradecat' => 17,
+                'gradepass' => 0,
+                'attempts' => 0,
+                'grademethod' => 1,
+                'questionsperpage' => 0,
+                'navmethod' => 'free',
+                'shuffleanswers' => 1,
+                'preferredbehaviour' => 'deferredfeedback',
+                'canredoquestions' => 0,
+                'attemptonlast' => 0,
+                'showuserpicture' => 0,
+                'decimalpoints' => 2,
+                'questiondecimalpoints' => -1,
+                'showblocks' => 0,
+                'quizpassword' => '',
+                'subnet' => '',
+                'delay1' => 0,
+                'delay2' => 0,
+                'browsersecurity' => '-',
+                'allowofflineattempts' => 0,
+                'boundary_repeats' => 0,
+                'visibleoncoursepage' => 1,
+                'cmidnumber' => '',
+                'groupmode' => 0,
+                'groupingid' => 0,
+                'availabilityconditionsjson' => '',
+                'completionusegrade' => '',
+                'completionexpected' => 0,
         );
     }
 
-    public function mergeWithDefault($datatype){
-        $default = $this->defaultValues();
+    public function merge_with_default($datatype) {
+        $default = $this->default_values();
 
-        foreach($datatype as $name=>$item){
+        foreach ($datatype as $name => $item) {
             $default[$name] = $item;
         }
 
         return $default;
     }
 
-    public function getDetails(){
+    public function get_details() {
         global $DB;
 
         // Prepare url.
@@ -1260,34 +1115,34 @@ class custom_types_default {
                 break;
         }
 
-        // If POST
-        if(empty($this->urlparams)){
+        // If POST.
+        if (empty($this->urlparams)) {
             $url = false;
         }
 
         // Enable/Disable grades.
         $enablegardes = false;
         $userexposure = false;
-        if($this->pagestate == 'update' && $this->type == QUIZ_TYPE_1) {
+        if ($this->pagestate == 'update' && $this->type == QUIZ_TYPE_1) {
 
             $enablegardes = true;
             $cm = $DB->get_record('course_modules', array('id' => $this->cmid));
 
             if (!empty($cm)) {
-                $quiz = $DB->get_record('quiz', array('id'=> $cm->instance));
+                $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
 
-                if($quiz->userexposure == 1){
+                if ($quiz->userexposure == 1) {
                     $userexposure = true;
                 }
             }
         }
 
         // Button MORE/LESS must be just in setting mode.
-        if($this->pagestate == 'view') {
+        if ($this->pagestate == 'view') {
             $cm = $DB->get_record('course_modules', array('id' => $this->cmid));
             if (!empty($cm)) {
-                $quiz = $DB->get_record('quiz', array('id'=> $cm->instance));
-                if($quiz->timelimit > 0){
+                $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
+                if ($quiz->timelimit > 0) {
                     $url = false;
                 }
             }
@@ -1306,13 +1161,13 @@ class custom_types_default {
         );
     }
 
-    public function getSelector($isstudent = 0){
+    public function get_selector($isstudent = 0) {
         global $PAGE, $DB, $CFG;
 
         $items = array();
         $activedescribe = '';
 
-        foreach($this->settypes as $num){
+        foreach ($this->settypes as $num) {
             $tmp = array();
             $tmp['typeId'] = $num;
 
@@ -1345,52 +1200,52 @@ class custom_types_default {
             $tmp['typeUrl'] = $url->out(false);
 
             // If POST return error.
-            if(empty($this->urlparams)){
+            if (empty($this->urlparams)) {
                 $tmp['typeUrl'] = 'javascript:void(0)';
             }
 
             switch ($this->instancename) {
                 case 'physics':
-                    $tmp['typeDescribe'] = get_string('describe_physics_'.$num, 'local_quizpreset');
-                    $tmp['typeName'] = get_string('name_physics_'.$num, 'local_quizpreset');
+                    $tmp['typeDescribe'] = get_string('describe_physics_' . $num, 'local_quizpreset');
+                    $tmp['typeName'] = get_string('name_physics_' . $num, 'local_quizpreset');
                     break;
                 case 'chemistry':
-                    $tmp['typeDescribe'] = get_string('describe_chemistry_'.$num, 'local_quizpreset');
-                    $tmp['typeName'] = get_string('name_chemistry_'.$num, 'local_quizpreset');
+                    $tmp['typeDescribe'] = get_string('describe_chemistry_' . $num, 'local_quizpreset');
+                    $tmp['typeName'] = get_string('name_chemistry_' . $num, 'local_quizpreset');
                     break;
                 case 'biology':
-                    $tmp['typeDescribe'] = get_string('describe_biology_'.$num, 'local_quizpreset');
-                    $tmp['typeName'] = get_string('name_biology_'.$num, 'local_quizpreset');
+                    $tmp['typeDescribe'] = get_string('describe_biology_' . $num, 'local_quizpreset');
+                    $tmp['typeName'] = get_string('name_biology_' . $num, 'local_quizpreset');
                     break;
             }
 
             // Prepare active tab.
-            if($this->type == $num){
+            if ($this->type == $num) {
                 $tmp['active'] = true;
                 $activedescribe = $tmp['typeDescribe'];
-            }else{
+            } else {
                 $tmp['active'] = false;
             }
 
             $items[] = $tmp;
         }
 
-        if($isstudent == 1){
+        if ($isstudent == 1) {
             $items = array();
         }
 
         return array('items' => $items, 'activeDescribe' => $activedescribe);
     }
 
-    public function getExpanded(){
+    public function get_expanded() {
         return ($this->viewall != 1) ? $this->expanded : array();
     }
 
-    public function getValues(){
+    public function get_values() {
         return $this->values;
     }
 
-    public function getGlobalName(){
+    public function get_global_name() {
         return $this->globalname;
     }
 
