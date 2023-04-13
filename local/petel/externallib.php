@@ -37,8 +37,8 @@ class local_petel_external extends external_api {
      */
     public static function store_applet_data_parameters() {
         return new external_function_parameters(
-            array(  'appletid'  => new external_value(PARAM_ALPHANUM, 'appletid'),
-                    'data'      => new external_value(PARAM_RAW, 'data')
+                array('appletid' => new external_value(PARAM_ALPHANUM, 'appletid'),
+                        'data' => new external_value(PARAM_RAW, 'data')
                 )
         );
     }
@@ -52,9 +52,9 @@ class local_petel_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::store_applet_data_parameters(),
-                            array('appletid' => $appletid, 'data' => $data));
+                array('appletid' => $appletid, 'data' => $data));
 
-        // Save data
+        // Save data.
         $userdata = new \stdClass();
         $userdata->appletid = $appletid;
         $userdata->data = $data;
@@ -71,10 +71,10 @@ class local_petel_external extends external_api {
      */
     public static function store_applet_data_returns() {
         return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'ID error message'),
-                'msg' => new external_value(PARAM_TEXT, 'Text error message'),
-            )
+                array(
+                        'id' => new external_value(PARAM_INT, 'ID error message'),
+                        'msg' => new external_value(PARAM_TEXT, 'Text error message'),
+                )
         );
     }
 
@@ -85,14 +85,14 @@ class local_petel_external extends external_api {
      */
     public static function create_courses_for_teachers_parameters() {
         return new external_function_parameters(
-                array( 'categoryid'  => new external_value(PARAM_INT, 'categoryid'),
-                       'courseid'  => new external_value(PARAM_INT, 'courseid'),
-                       'roleid'  => new external_value(PARAM_INT, 'roleid'),
-                       'groups'  => new external_value(PARAM_RAW, 'groups'),
-                       'nullcheck'  => new external_value(PARAM_BOOL, 'nullcheck'),
-                       'currentuserid'  => new external_value(PARAM_INT, 'currentuserid'),
-                       'users'  => new external_value(PARAM_RAW, 'users'),
-                        )
+                array('categoryid' => new external_value(PARAM_INT, 'categoryid'),
+                        'courseid' => new external_value(PARAM_INT, 'courseid'),
+                        'roleid' => new external_value(PARAM_INT, 'roleid'),
+                        'groups' => new external_value(PARAM_RAW, 'groups'),
+                        'nullcheck' => new external_value(PARAM_BOOL, 'nullcheck'),
+                        'currentuserid' => new external_value(PARAM_INT, 'currentuserid'),
+                        'users' => new external_value(PARAM_RAW, 'users'),
+                )
         );
     }
 
@@ -101,7 +101,8 @@ class local_petel_external extends external_api {
      *
      * @return array of settings
      */
-    public static function create_courses_for_teachers($categoryid, $courseid, $roleid, $groups, $nullcheck, $currentuserid, $users) {
+    public static function create_courses_for_teachers($categoryid, $courseid, $roleid, $groups, $nullcheck, $currentuserid,
+            $users) {
         global $DB;
 
         $params = self::validate_parameters(self::create_courses_for_teachers_parameters(),
@@ -118,15 +119,15 @@ class local_petel_external extends external_api {
         // Run ADHOC.
         $task = new \local_petel\task\adhoc_participiant();
         $task->set_custom_data(
-            array(
-                'userids' => $users,
-                'categoryid' => $categoryid,
-                'courseid' => $courseid,
-                'roleid' => $roleid,
-                'groups' => $groups,
-                'nullcheck' => $nullcheck,
-                'currentuserid' => $currentuserid
-            )
+                array(
+                        'userids' => $users,
+                        'categoryid' => $categoryid,
+                        'courseid' => $courseid,
+                        'roleid' => $roleid,
+                        'groups' => $groups,
+                        'nullcheck' => $nullcheck,
+                        'currentuserid' => $currentuserid
+                )
         );
         \core\task\manager::queue_adhoc_task($task);
 
@@ -153,11 +154,11 @@ class local_petel_external extends external_api {
      */
     public static function create_system_groups_for_teachers_parameters() {
         return new external_function_parameters(
-            array(
-                'groupids'  => new external_value(PARAM_RAW, 'groupids'),
-                'currentuserid'  => new external_value(PARAM_INT, 'currentuserid'),
-                'users'  => new external_value(PARAM_RAW, 'users'),
-            )
+                array(
+                        'groupids' => new external_value(PARAM_RAW, 'groupids'),
+                        'currentuserid' => new external_value(PARAM_INT, 'currentuserid'),
+                        'users' => new external_value(PARAM_RAW, 'users'),
+                )
         );
     }
 
@@ -170,19 +171,19 @@ class local_petel_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::create_system_groups_for_teachers_parameters(),
-            array(
-                'groupids' => $groupids,
-                'currentuserid' => $currentuserid,
-                'users' => $users,
-            ));
+                array(
+                        'groupids' => $groupids,
+                        'currentuserid' => $currentuserid,
+                        'users' => $users,
+                ));
 
-        foreach(json_decode($params['users']) as $userid){
-            foreach(json_decode($params['groupids']) as $cohortid){
-                if(!$DB->get_record('cohort_members', ['cohortid' => $cohortid, 'userid' => $userid])){
+        foreach (json_decode($params['users']) as $userid) {
+            foreach (json_decode($params['groupids']) as $cohortid) {
+                if (!$DB->get_record('cohort_members', ['cohortid' => $cohortid, 'userid' => $userid])) {
                     $DB->insert_record('cohort_members', [
-                        'cohortid' => $cohortid,
-                        'userid' => $userid,
-                        'timeadded' => time()
+                            'cohortid' => $cohortid,
+                            'userid' => $userid,
+                            'timeadded' => time()
                     ]);
                 }
             }
@@ -198,9 +199,9 @@ class local_petel_external extends external_api {
      */
     public static function create_system_groups_for_teachers_returns() {
         return new external_single_structure(
-            array(
-                'result' => new external_value(PARAM_BOOL, 'boolean'),
-            )
+                array(
+                        'result' => new external_value(PARAM_BOOL, 'boolean'),
+                )
         );
     }
 
@@ -212,7 +213,7 @@ class local_petel_external extends external_api {
      */
     public static function get_categories_ac_parameters() {
         return new external_function_parameters(
-            array( 'query'  => new external_value(PARAM_TEXT, 'query') )
+                array('query' => new external_value(PARAM_TEXT, 'query'))
         );
     }
 
@@ -228,24 +229,17 @@ class local_petel_external extends external_api {
         global $DB;
 
         $categories = [];
-        $query = (string)trim($query);
+        $query = (string) trim($query);
 
-        if(empty($query)) {
-            $sql = "SELECT cc.id, cc.name
-                    FROM {course_categories} AS cc
-                    LIMIT 10
-                    ";
+        if (empty($query)) {
+            $sql = "SELECT cc.id, cc.name FROM {course_categories} cc LIMIT 10";
             $categoriesselect = $DB->get_records_sql($sql);
         }
 
-        if(!empty($query)) {
+        if (!empty($query)) {
             $query = $DB->sql_like_escape($query);
 
-            $sql = "SELECT cc.id, cc.name
-                    FROM {course_categories} AS cc
-                    WHERE cc.name LIKE '%" . $query . "%'
-                    LIMIT 10
-                    ";
+            $sql = "SELECT cc.id, cc.name FROM {course_categories} cc WHERE cc.name LIKE '%" . $query . "%' LIMIT 10";
             $categoriesselect = $DB->get_records_sql($sql);
         }
 
@@ -266,7 +260,6 @@ class local_petel_external extends external_api {
         return new external_value(PARAM_RAW, 'JSON categories');
     }
 
-
     /**
      * Returns description of method parameters
      *
@@ -275,7 +268,7 @@ class local_petel_external extends external_api {
      */
     public static function get_courses_ac_parameters() {
         return new external_function_parameters(
-            array( 'query'  => new external_value(PARAM_TEXT, 'query') )
+                array('query' => new external_value(PARAM_TEXT, 'query'))
         );
     }
 
@@ -291,22 +284,18 @@ class local_petel_external extends external_api {
         global $CFG, $DB;
 
         $courses = [];
-        $query = (string)trim($query);
+        $query = (string) trim($query);
 
-        if(empty($query)) {
-            $sql = "SELECT c.id, c.shortname
-                    FROM {course} AS c
-                    WHERE c.id > 1 AND c.visible = 1
-                    LIMIT 10
-                    ";
+        if (empty($query)) {
+            $sql = "SELECT c.id, c.shortname FROM {course} c WHERE c.id > 1 AND c.visible = 1 LIMIT 10";
             $coursesselect = $DB->get_records_sql($sql);
         }
 
-        if(!empty($query)) {
+        if (!empty($query)) {
             $query = $DB->sql_like_escape($query);
 
             $sql = "SELECT c.id, c.shortname
-                    FROM {course} AS c
+                    FROM {course} c
                     WHERE c.id > 1 AND c.visible = 1 AND c.shortname LIKE '%" . $query . "%'
                     LIMIT 10
                     ";
@@ -314,7 +303,7 @@ class local_petel_external extends external_api {
         }
 
         foreach ($coursesselect as $key => $c) {
-            $courses[$c->id] = $c->shortname.' ('.$c->id.')';
+            $courses[$c->id] = $c->shortname . ' (' . $c->id . ')';
         }
 
         return json_encode($courses);
@@ -338,7 +327,7 @@ class local_petel_external extends external_api {
      */
     public static function get_roles_ac_parameters() {
         return new external_function_parameters(
-                array( 'query'  => new external_value(PARAM_TEXT, 'query') )
+                array('query' => new external_value(PARAM_TEXT, 'query'))
         );
     }
 
@@ -354,35 +343,55 @@ class local_petel_external extends external_api {
         global $DB;
 
         $roles = [];
-        $query = (string)trim($query);
+        $query = (string) trim($query);
 
         // Get roles.
         $excluderoles = ['guest', 'user', 'frontpage'];
-        foreach($DB->get_records('role') as $role){
+        foreach ($DB->get_records('role') as $role) {
 
-            if(in_array($role->shortname, $excluderoles)) continue;
+            if (in_array($role->shortname, $excluderoles)) {
+                continue;
+            }
 
-            if(!empty($role->name)){
+            if (!empty($role->name)) {
                 $rolename = $role->name;
-            }else{
+            } else {
                 switch ($role->shortname) {
-                    case 'manager':         $rolename = get_string('manager', 'role'); break;
-                    case 'coursecreator':   $rolename = get_string('coursecreators'); break;
-                    case 'editingteacher':  $rolename = get_string('defaultcourseteacher'); break;
-                    case 'teacher':         $rolename = get_string('noneditingteacher'); break;
-                    case 'student':         $rolename = get_string('defaultcoursestudent'); break;
-                    case 'guest':           $rolename = get_string('guest'); break;
-                    case 'user':            $rolename = get_string('authenticateduser'); break;
-                    case 'frontpage':       $rolename = get_string('frontpageuser', 'role'); break;
-                    default:                $rolename = $role->shortname; break;
+                    case 'manager':
+                        $rolename = get_string('manager', 'role');
+                        break;
+                    case 'coursecreator':
+                        $rolename = get_string('coursecreators');
+                        break;
+                    case 'editingteacher':
+                        $rolename = get_string('defaultcourseteacher');
+                        break;
+                    case 'teacher':
+                        $rolename = get_string('noneditingteacher');
+                        break;
+                    case 'student':
+                        $rolename = get_string('defaultcoursestudent');
+                        break;
+                    case 'guest':
+                        $rolename = get_string('guest');
+                        break;
+                    case 'user':
+                        $rolename = get_string('authenticateduser');
+                        break;
+                    case 'frontpage':
+                        $rolename = get_string('frontpageuser', 'role');
+                        break;
+                    default:
+                        $rolename = $role->shortname;
+                        break;
                 }
             }
 
             $roles[$role->id] = $rolename;
         }
 
-        if(!empty($query)) {
-            foreach($roles as $key => $rolename){
+        if (!empty($query)) {
+            foreach ($roles as $key => $rolename) {
                 if (mb_strpos($rolename, $query) === false) {
                     unset($roles[$key]);
                 }
@@ -410,7 +419,7 @@ class local_petel_external extends external_api {
      */
     public static function get_system_groups_ac_parameters() {
         return new external_function_parameters(
-            array()
+                array()
         );
     }
 
@@ -427,7 +436,7 @@ class local_petel_external extends external_api {
 
         $groups = [];
 
-        foreach($DB->get_records('cohort', ['visible' => 1]) as $cohort){
+        foreach ($DB->get_records('cohort', ['visible' => 1]) as $cohort) {
             $groups[$cohort->id] = $cohort->name;
         }
 
@@ -452,7 +461,7 @@ class local_petel_external extends external_api {
      */
     public static function check_user_idnumber_parameters() {
         return new external_function_parameters(
-                array( 'currentuserid'  => new external_value(PARAM_INT, 'userid') )
+                array('currentuserid' => new external_value(PARAM_INT, 'userid'))
         );
     }
 
@@ -470,10 +479,10 @@ class local_petel_external extends external_api {
         $result = false;
         $user = $DB->get_record('user', array('id' => $currentuserid));
 
-        if(isset($user->idnumber) && !empty($user->idnumber)){
+        if (isset($user->idnumber) && !empty($user->idnumber)) {
             $cat = $DB->get_record('course_categories', array('idnumber' => $user->idnumber));
 
-            if(!empty($cat)){
+            if (!empty($cat)) {
                 $result = true;
             }
         }
@@ -505,8 +514,8 @@ class local_petel_external extends external_api {
     public static function create_course_for_teacher_parameters() {
         return new external_function_parameters(
                 array(
-                    'currentuserid'  => new external_value(PARAM_INT, 'userid'),
-                    'coursename'  => new external_value(PARAM_RAW, 'coursename'),
+                        'currentuserid' => new external_value(PARAM_INT, 'userid'),
+                        'coursename' => new external_value(PARAM_RAW, 'coursename'),
                 )
         );
     }
@@ -522,7 +531,7 @@ class local_petel_external extends external_api {
     public static function create_course_for_teacher($currentuserid, $coursename) {
         global $DB;
 
-        if(empty(get_config('local_petel', 'default_course'))
+        if (empty(get_config('local_petel', 'default_course'))
                 || empty(get_config('local_petel', 'admin_email')) || empty($currentuserid) || empty($coursename)
         ) {
             return ['result' => false];
@@ -530,15 +539,15 @@ class local_petel_external extends external_api {
 
         $categoryid = 0;
         $user = $DB->get_record('user', array('id' => $currentuserid));
-        if(isset($user->idnumber) && !empty($user->idnumber)){
+        if (isset($user->idnumber) && !empty($user->idnumber)) {
             $cat = $DB->get_record('course_categories', array('idnumber' => $user->idnumber));
 
-            if(!empty($cat)){
+            if (!empty($cat)) {
                 $categoryid = $cat->id;
-            }else{
+            } else {
                 return ['result' => false];
             }
-        }else{
+        } else {
             return ['result' => false];
         }
 
@@ -572,27 +581,27 @@ class local_petel_external extends external_api {
 
     }
 
-// Web services for Feinberg SIS
-// If a user does not exists, create user.
-// If a user exists, update it.
-// Enrol user to course with given role.
+    // Web services for Feinberg SIS
+    // If a user does not exists, create user.
+    // If a user exists, update it.
+    // Enrol user to course with given role.
 
     public static function enrol_users_feinberg_parameters() {
         return new external_function_parameters(
-            array(
-                'courseid'  => new external_value(PARAM_INT, 'courseid'),
-                'enrollments' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'username' => new external_value(PARAM_RAW, 'username',VALUE_DEFAULT),
-                            'firstname' => new external_value(PARAM_TEXT, 'firstname', VALUE_DEFAULT),
-                            'lastname' => new external_value(PARAM_TEXT, 'lastname', VALUE_DEFAULT),
-                            'email' => new external_value(PARAM_EMAIL, 'email', VALUE_DEFAULT),
-                            'rolename' => new external_value(PARAM_ALPHA, 'rolename',VALUE_DEFAULT)
+                array(
+                        'courseid' => new external_value(PARAM_INT, 'courseid'),
+                        'enrollments' => new external_multiple_structure(
+                                new external_single_structure(
+                                        array(
+                                                'username' => new external_value(PARAM_RAW, 'username', VALUE_DEFAULT),
+                                                'firstname' => new external_value(PARAM_TEXT, 'firstname', VALUE_DEFAULT),
+                                                'lastname' => new external_value(PARAM_TEXT, 'lastname', VALUE_DEFAULT),
+                                                'email' => new external_value(PARAM_EMAIL, 'email', VALUE_DEFAULT),
+                                                'rolename' => new external_value(PARAM_ALPHA, 'rolename', VALUE_DEFAULT)
+                                        )
+                                )
                         )
-                    )
                 )
-            )
         );
     }
 
@@ -600,6 +609,7 @@ class local_petel_external extends external_api {
      * Enrolment of users.
      *
      * Function throw an exception at the first error encountered.
+     *
      * @param integer $courseid An array of user enrolment
      * @param array $enrolments An array of user enrolment
      *              $enrolments is array of arrays containing user details
@@ -613,16 +623,16 @@ class local_petel_external extends external_api {
         require_once($CFG->dirroot . '/user/lib.php');
         require_once($CFG->dirroot . '/lib/moodlelib.php');
 
-
         $course = get_course($courseid);
         if (empty($course)) {
             throw new moodle_exception('cant find course', 'enrol_manual');
         }
 
         $params = self::validate_parameters(self::enrol_users_feinberg_parameters(),
-            array('courseid' => $courseid, 'enrollments' => $enrollments));
+                array('courseid' => $courseid, 'enrollments' => $enrollments));
 
-        $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
+        // Rollback all enrolment if an error occurs.
+        $transaction = $DB->start_delegated_transaction();
 
         // Retrieve the manual enrolment plugin.
         $enroll = enrol_get_plugin('manual');
@@ -632,7 +642,7 @@ class local_petel_external extends external_api {
 
         foreach ($params['enrollments'] as $enrollment) {
 
-            // Update existing user
+            // Update existing user.
             $existinguser = $DB->get_record('user', ['username' => $enrollment['username']]);
             if ($existinguser) { // Check if user exists.
                 $user = new \stdClass();
@@ -641,11 +651,11 @@ class local_petel_external extends external_api {
                 $user->firstname = $enrollment['firstname'];
                 $user->lastname = $enrollment['lastname'];
                 $user->email = $enrollment['email'];
-                user_update_user($user,false,false); // update user record, based on userid.
+                user_update_user($user, false, false);
                 $enrollment['userid'] = $user->id;
 
-            }
-            else {  // Create user, if it does not exists
+            } else {
+                // Create user, if it does not exists.
                 $newuser = new \stdClass();
                 $newuser->username = strtolower($enrollment['username']);
                 $newuser->firstname = $enrollment['firstname'];
@@ -656,20 +666,17 @@ class local_petel_external extends external_api {
                 $newuser->policyagreed = 1;
                 $newuser->mnethostid = $CFG->mnet_localhost_id;
                 $newuser->password = generate_password();
-                $new_user = user_create_user($newuser, false,false);
-                $enrollment['userid'] = $new_user;
+                $newusertmp = user_create_user($newuser, false, false);
+                $enrollment['userid'] = $newusertmp;
 
             }
 
-            $roleid = $DB->get_record('role', ['shortname' => $enrollment['rolename']],'id,shortname');
-            $enrollment['roleid'] = $roleid -> id;
-            $enrollment['rolename'] = $roleid -> shortname;
+            $roleid = $DB->get_record('role', ['shortname' => $enrollment['rolename']], 'id,shortname');
+            $enrollment['roleid'] = $roleid->id;
+            $enrollment['rolename'] = $roleid->shortname;
             // Ensure the current user is allowed to run this function in the enrolment context.
             $context = context_course::instance($courseid, IGNORE_MISSING);
 
-            // TODO: not sure if we can do this in a web service (nadavkav)
-            //validate_context($context);
-            // Check that the user has the permission to manual enrol.
             require_capability('enrol/manual:enrol', $context);
 
             // Throw an exception if user is not able to assign the role.
@@ -710,17 +717,16 @@ class local_petel_external extends external_api {
             $enrollment['timestart'] = isset($enrollment['timestart']) ? $enrollment['timestart'] : time();
             $enrollment['timeend'] = isset($enrollment['timeend']) ? $enrollment['timeend'] : 0;
             $enrollment['status'] = (isset($enrollment['suspend']) && !empty($enrollment['suspend'])) ?
-                ENROL_USER_SUSPENDED : ENROL_USER_ACTIVE;
+                    ENROL_USER_SUSPENDED : ENROL_USER_ACTIVE;
 
             $enroll->enrol_user($instance, $enrollment['userid'], $enrollment['roleid'],
-                $enrollment['timestart'], $enrollment['timeend'], $enrollment['status']);
+                    $enrollment['timestart'], $enrollment['timeend'], $enrollment['status']);
 
-            // if role is editingteacher or assistantteacher enroll to cohort teachers
-            $support_roles = ($CFG->feinberg_support_roles) ? $CFG->feinberg_support_roles : 'editingteacher,assistantteacher';
-            $supportrole = explode(',',$support_roles);
-            if (in_array($enrollment['rolename'], $supportrole))
-            {
-                $cohortid = $DB->get_record('cohort', ['idnumber' => $CFG->defaultcohortscourserequest],'id');
+            // If role is editingteacher or assistantteacher enroll to cohort teachers.
+            $supportroles = ($CFG->feinberg_support_roles) ? $CFG->feinberg_support_roles : 'editingteacher,assistantteacher';
+            $supportrole = explode(',', $supportroles);
+            if (in_array($enrollment['rolename'], $supportrole)) {
+                $cohortid = $DB->get_record('cohort', ['idnumber' => $CFG->defaultcohortscourserequest], 'id');
                 cohort_add_member($cohortid->id, $enrollment['userid']);
             }
 
@@ -733,26 +739,27 @@ class local_petel_external extends external_api {
      * Returns description of method result value.
      *
      * @returncourseid
-     * @since Moodle 2.2courseid */
+     * @since Moodle 2.2courseid
+     */
     public static function enrol_users_feinberg_returns() {
         return new external_single_structure(
-            array(
-                'result' => new external_value(PARAM_TEXT, 'text'),
-            )
+                array(
+                        'result' => new external_value(PARAM_TEXT, 'text'),
+                )
         );
     }
 
     public static function unenrol_users_feinberg_parameters() {
         return new external_function_parameters(array(
-            'enrollments' => new external_multiple_structure(
-                new external_single_structure(
-                    array(
-                        'username' => new external_value(PARAM_RAW, 'The user that is going to be unenrolled'),
-                        'courseid' => new external_value(PARAM_RAW, 'The course to unenrol the user from'),
-                        'rolename' => new external_value(PARAM_RAW, 'The user role name', VALUE_OPTIONAL)
-                    )
+                'enrollments' => new external_multiple_structure(
+                        new external_single_structure(
+                                array(
+                                        'username' => new external_value(PARAM_RAW, 'The user that is going to be unenrolled'),
+                                        'courseid' => new external_value(PARAM_RAW, 'The course to unenrol the user from'),
+                                        'rolename' => new external_value(PARAM_RAW, 'The user role name', VALUE_OPTIONAL)
+                                )
+                        )
                 )
-            )
         ));
     }
 
@@ -783,31 +790,34 @@ class local_petel_external extends external_api {
 
             $user = $DB->get_record('user', array('username' => strtolower($enrollment['username'])));
             if (!$user) {
-                throw new moodle_exception('Username not exist: '.$enrollment['username']);
+                throw new moodle_exception('Username not exist: ' . $enrollment['username']);
             }
 
             if ($enrollment['rolename']) {
                 $roleid = $DB->get_record('role', ['shortname' => $enrollment['rolename']], 'id');
 
-                $isenrole = $DB->get_record('role_assignments',array('contextid' => $context->id, 'userid' => $user->id, 'roleid' =>$roleid->id));
+                $isenrole = $DB->get_record('role_assignments',
+                        array('contextid' => $context->id, 'userid' => $user->id, 'roleid' => $roleid->id));
                 if (!$isenrole) {
-                    throw new moodle_exception("The user:".$user->username." is not registered as ".$enrollment['rolename']." in courseid = ".$enrollment['courseid'] );
+                    throw new moodle_exception("The user:" . $user->username . " is not registered as " . $enrollment['rolename'] .
+                            " in courseid = " . $enrollment['courseid']);
                 }
-                $assignments = $DB->get_records('role_assignments',array('contextid' => $context->id, 'userid' => $user->id));
+                $assignments = $DB->get_records('role_assignments', array('contextid' => $context->id, 'userid' => $user->id));
 
-                //Checking if enrolled the course in several rolles
-                if (sizeof($assignments) > 1) {
-                    // Deleting a specific role
-                    role_unassign_all(array('userid'=>$user->id, 'contextid'=>$context->id,'roleid' =>$roleid->id), false, false);
+                // Checking if enrolled the course in several rolles.
+                if (count($assignments) > 1) {
+                    // Deleting a specific role.
+                    role_unassign_all(array('userid' => $user->id, 'contextid' => $context->id, 'roleid' => $roleid->id), false,
+                            false);
                     $transaction->allow_commit();
-                    return ['result' => 'OK' ];
+                    return ['result' => 'OK'];
                 }
             }
 
             $instance = $DB->get_record('enrol', array('courseid' => $enrollment['courseid'], 'enrol' => 'manual'));
             if (!$instance) {
-                //throw new moodle_exception('wsnoinstance', 'local_petel','', $enrollment);
-                throw new moodle_exception("Manual enrolment doesn't exist or is disabled for role ".$enrollment['rolename']." in courseid = ".$enrollment['courseid'] );
+                throw new moodle_exception("Manual enrolment doesn't exist or is disabled for role " . $enrollment['rolename'] .
+                        " in courseid = " . $enrollment['courseid']);
             }
 
             if (!$enrol->allow_unenrol($instance)) {
@@ -816,33 +826,33 @@ class local_petel_external extends external_api {
             $enrol->unenrol_user($instance, $user->id);
             $usersunenrolled[] = ['username' => $enrollment['username']];
 
-            //unenroll from teachers cohort  17.2.20 ntberko
-
-            $support_roles = ($CFG->feinberg_support_roles) ? $CFG->feinberg_support_roles : 'editingteacher,assistantteacher';
-            $supportrole = explode(',',$support_roles);
+            $supportroles = ($CFG->feinberg_support_roles) ? $CFG->feinberg_support_roles : 'editingteacher,assistantteacher';
+            $supportrole = explode(',', $supportroles);
             if (in_array($enrollment['rolename'], $supportrole)) {
                 $sql = "SELECT r.shortname
                         FROM {role_assignments} rs
                         JOIN {role} r ON r.id = rs.roleid
                         WHERE rs.userid = $user->id
                         GROUP BY r.shortname";
-                //get user other roles in courses
-                $user_roles = $DB->get_records_sql($sql);
-                $unenroll_from_cohort = true;
-                //if the user does not teach any course, his cohort registration deleted
-                foreach ($user_roles as $role) {
+
+                // Get user other roles in courses.
+                $userroles = $DB->get_records_sql($sql);
+                $unenrollfromcohort = true;
+
+                // If the user does not teach any course, his cohort registration deleted.
+                foreach ($userroles as $role) {
                     if (in_array($role->shortname, $supportrole)) {
-                        $unenroll_from_cohort = false;
+                        $unenrollfromcohort = false;
                     }
                 }
-                if ($unenroll_from_cohort) {
+                if ($unenrollfromcohort) {
                     $cohortid = $DB->get_record('cohort', ['idnumber' => $CFG->defaultcohortscourserequest], 'id');
                     cohort_remove_member($cohortid->id, $user->id);
                 }
             }
         }
         $transaction->allow_commit();
-        return ['result' => 'OK' ];
+        return ['result' => 'OK'];
     }
 
     /**
@@ -851,142 +861,13 @@ class local_petel_external extends external_api {
      * @return null
      */
     public static function unenrol_users_feinberg_returns() {
-        /*
-        return new external_function_parameters(array(
-            'unenrolled' => new external_multiple_structure(
-                new external_single_structure(
-                    array(
-                        'username' => new external_value(PARAM_RAW, 'The user that was unenrolled'),
-                    )
-                )
-            )
-        ));
-        */
 
-        return new external_single_structure(
-            array(
-                'result' => new external_value(PARAM_TEXT, 'text'),
-            )
-        );
-
-    }
-
-
-    /**
-     * Returns description of method parameters.
-     *
-     * @return external_function_parameters
-     */
-    public static function toggle_question_recommendation_parameters() {
-        return new external_function_parameters([
-                'id' => new external_value(PARAM_TEXT, 'id of the question or whatever', VALUE_REQUIRED),
-        ]);
-    }
-
-    /**
-     * Update the recommendation for an activity item.
-     *
-     * @param  string $area identifier for this activity.
-     * @param  int $id Associated id. This is needed in conjunction with the area to find the recommendation.
-     * @return array some warnings or something.
-     */
-
-    public static function toggle_question_recommendation($id) {
-        global $DB, $CFG;
-
-        $params = self::validate_parameters(self::toggle_question_recommendation_parameters(),
-                array('id' => $id));
-
-        $context = context_system::instance();
-        self::validate_context($context);
-
-        $config = get_config('local_petel', 'question_recommendation');
-        $data = [];
-
-        if(!empty($config)){
-            $data = json_decode($config, true);
-        }
-
-        $flag = true;
-        foreach($data as $key => $name){
-            if($name == $params['id']){
-                unset($data[$key]);
-                $flag = false;
-            }
-        }
-
-        if($flag){
-            $data[] = $params['id'];
-        }
-
-        set_config('question_recommendation', json_encode($data), 'local_petel');
-
-        return ['id' => $params['id'], 'status' => true];
-    }
-
-    /**
-     * Returns warnings.
-     *
-     * @return external_description
-     */
-    public static function toggle_question_recommendation_returns() {
-        return new external_single_structure(
-                [
-                        'id' => new external_value(PARAM_TEXT, 'id of the question or whatever'),
-                        'status' => new external_value(PARAM_BOOL, 'If created or deleted'),
-                ]
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     */
-    public static function save_qtypes_favorites_parameters() {
-        return new external_function_parameters(
-                array(
-                        'qtypes'      => new external_value(PARAM_RAW, 'qtypes')
-                )
-        );
-    }
-
-    /**
-     * Store student's applet activity data.
-     *
-     * @return array of settings
-     */
-    public static function save_qtypes_favorites($qtypes) {
-        global $DB, $USER;
-
-        $params = self::validate_parameters(self::save_qtypes_favorites_parameters(),
-                array('qtypes' => $qtypes));
-
-        $row = $DB->get_record('qtypes_favorites', ['userid' => $USER->id]);
-        if(!empty($row)){
-            $row->qtypes = $params['qtypes'];
-            $DB->update_record('qtypes_favorites', $row);
-        }else{
-            $row = new \StdClass();
-            $row->userid = $USER->id;
-            $row->qtypes = $params['qtypes'];
-            $DB->insert_record('qtypes_favorites', $row);
-        }
-
-        return ['status' => 1];
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     */
-    public static function save_qtypes_favorites_returns() {
         return new external_single_structure(
                 array(
-                        'status' => new external_value(PARAM_INT, 'Status'),
+                        'result' => new external_value(PARAM_TEXT, 'text'),
                 )
         );
+
     }
 
     /**
@@ -996,9 +877,9 @@ class local_petel_external extends external_api {
      */
     public static function send_event_parameters() {
         return new external_function_parameters(
-            array(
-                'type'      => new external_value(PARAM_RAW, 'event type')
-            )
+                array(
+                        'type' => new external_value(PARAM_RAW, 'event type')
+                )
         );
     }
 
@@ -1014,9 +895,9 @@ class local_petel_external extends external_api {
         self::validate_context($context);
 
         $params = self::validate_parameters(self::send_event_parameters(),
-            array(
-                'type' => $type,
-            )
+                array(
+                        'type' => $type,
+                )
         );
 
         switch ($params['type']) {
@@ -1045,7 +926,7 @@ class local_petel_external extends external_api {
                 break;
         }
 
-        return  '';
+        return '';
     }
 
     /**

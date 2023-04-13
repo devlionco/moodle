@@ -23,7 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/local/petel/locallib.php');
@@ -37,11 +36,8 @@ if ($hassiteconfig) {
 
         // Add select course.
         $options = [];
-        $sql = "SELECT c.id, c.fullname
-                    FROM {course} AS c
-                WHERE c.id > 1 AND c.visible = 1     
-               ";
-        foreach($DB->get_records_sql($sql) as $item){
+        $sql = "SELECT c.id, c.fullname FROM {course} c WHERE c.id > 1 AND c.visible = 1";
+        foreach ($DB->get_records_sql($sql) as $item) {
             $options[$item->id] = $item->fullname;
         }
 
@@ -53,7 +49,9 @@ if ($hassiteconfig) {
         $page->add($setting);
 
         // Add smartselect js and css call.
-        $PAGE->requires->js_amd_inline('require(["jquery", "core_form/select2"], function($) {$(".custom-select").select2({dropdownAutoWidth: true})});');
+        $PAGE->requires->js_amd_inline('
+            require(["jquery", "core_form/select2"], function($) {$(".custom-select").select2({dropdownAutoWidth: true})});
+        ');
         //$PAGE->requires->css('/lib/form/css/select2.min.css');
 
         // Add admin email.
@@ -63,8 +61,8 @@ if ($hassiteconfig) {
         $page->add($setting);
 
         $setting = new admin_setting_configtext('local_petel/sms_securtity_number',
-            get_string('setting_smssecurtitynumber', 'local_petel'),
-            get_string('setting_smssecurtitynumber_desc', 'local_petel'), 5, PARAM_INT);
+                get_string('setting_smssecurtitynumber', 'local_petel'),
+                get_string('setting_smssecurtitynumber_desc', 'local_petel'), 5, PARAM_INT);
         $page->add($setting);
 
         $setting = new admin_setting_configtext('local_petel/sms_securtity_time_reset',
@@ -73,12 +71,12 @@ if ($hassiteconfig) {
         $page->add($setting);
 
         $page->add(
-            new admin_setting_configcheckbox(
-                'local_petel/enabledemo',
-                get_string('enabledemo', 'local_petel'),
-                '',
-                0
-            )
+                new admin_setting_configcheckbox(
+                        'local_petel/enabledemo',
+                        get_string('enabledemo', 'local_petel'),
+                        '',
+                        0
+                )
         );
 
         $coursecontext = context_course::instance(SITEID);
@@ -88,36 +86,34 @@ if ($hassiteconfig) {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
         $page->add(
-            new admin_setting_configselect(
-                'local_petel/demorole',
-                get_string('demorole', 'local_petel'),
-                get_string('demorole_desc', 'local_petel'),
-                $studentrole->id ?? 0,
-                $courserolearray
-            )
+                new admin_setting_configselect(
+                        'local_petel/demorole',
+                        get_string('demorole', 'local_petel'),
+                        get_string('demorole_desc', 'local_petel'),
+                        $studentrole->id ?? 0,
+                        $courserolearray
+                )
         );
 
     }
     // Add settings page to the appearance settings category.
-    //$ADMIN->add('appearance', $page);
     $ADMIN->add('localplugins', $page);
 
     $ADMIN->add('root', new admin_category('petel', new lang_string('pluginname', 'local_petel')));
 
     $ADMIN->add('petel', new admin_externalpage('petel_localpetel',
-        new lang_string('pluginname', 'local_petel'),
-        $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=local_petel'));
+            new lang_string('pluginname', 'local_petel'),
+            $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=local_petel'));
     $ADMIN->add('petel', new admin_externalpage('petel_theme',
-        new lang_string('configtitle', 'theme_petel'),
-        $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=themesettingpetel'));
+            new lang_string('configtitle', 'theme_petel'),
+            $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=themesettingpetel'));
     $ADMIN->add('petel', new admin_externalpage('petel_question_recommendations',
             new lang_string('questionchooserrecommendations', 'local_petel'),
-            $CFG->wwwroot . '/local/petel/recommendations.php'));
+            $CFG->wwwroot . '/local/question_chooser/recommendations.php'));
     $ADMIN->add('petel', new admin_externalpage('petel_copy_metadata_activity',
-        new lang_string('copymetadataactivity', 'local_petel'),
-        $CFG->wwwroot . '/local/petel/copy_metadata_activity.php'));
+            new lang_string('copymetadataactivity', 'local_petel'),
+            $CFG->wwwroot . '/local/petel/copy_metadata_activity.php'));
 
-    // TODO
     $ADMIN->add('root', new admin_category('oercatalog', new lang_string('pluginname', 'community_oer')));
 
     $ADMIN->add('oercatalog', new admin_externalpage('petel_community_sharewith',

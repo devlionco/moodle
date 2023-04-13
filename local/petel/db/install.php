@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Custom code to be run on installing the plugin.
  */
@@ -40,7 +38,6 @@ function xmldb_local_petel_install() {
     $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     $dbman->create_table($table);
-
 
     $table = new xmldb_table('applets_store');
     $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);

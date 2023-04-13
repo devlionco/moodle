@@ -1,15 +1,28 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package    local
- * @subpackage petel
- * @copyright  2022 Weizmann institute of science, Israel.
- * @author  2022 Devlion Ltd. <info@devlion.co>
+ * Local plugin "petel" - Task definition
+ *
+ * @package    local_petel
+ * @copyright  2020 Nadav Kavalerchik <nadav.kavalerchik@weizmann.ac.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_petel\task;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The local_petel cache task class.
@@ -20,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class demo_users_cleanup_task extends \core\task\scheduled_task {
 
-
     const DEFAULT_BULK_USER_PREFIX = 'bulkuser';
+
     /**
      * Return localised task name.
      *
@@ -37,24 +50,27 @@ class demo_users_cleanup_task extends \core\task\scheduled_task {
      * @return boolean
      */
     public function execute() {
-
         global $CFG, $DB;
         require_once(__DIR__ . '/../../locallib.php');
 
         $bulkuserprefix = $CFG->local_petel_prefix_bulk_user ?? static::DEFAULT_BULK_USER_PREFIX;
         $params = ['username' => $DB->sql_like_escape($bulkuserprefix) . '%'];
         $pluginman = \core_plugin_manager::instance();
-        $users = $DB->get_records_select('user', 'deleted = 0 AND ' . $DB->sql_like('username', ':username', false, false), $params);
+
+        $users = $DB->get_records_select('user', 'deleted = 0 AND ' .
+                $DB->sql_like('username', ':username', false, false), $params);
+
         foreach ($users as $user) {
             $isexpired = local_petel_logout_by_session_timeout_per_user($user->id, false, false);
-            $user_enrolments = $DB->get_records('user_enrolments', ['userid' => $user->id]);
-            foreach ($user_enrolments as $user_enrolment) {
-                $instance = $DB->get_record('enrol', ['id' => $user_enrolment->enrolid]);
+            $userenrolments = $DB->get_records('user_enrolments', ['userid' => $user->id]);
+            foreach ($userenrolments as $userenrolment) {
+                $instance = $DB->get_record('enrol', ['id' => $userenrolment->enrolid]);
                 $plugin = enrol_get_plugin($instance->enrol);
-                //if session exist or if seession have been killed
-                if ($isexpired || (!empty($CFG->sessiontimeout) && $user_enrolment->timemodified + $CFG->sessiontimeout < time())) {
-                    $plugin->unenrol_user($instance, $user_enrolment->userid);
-                    mtrace("Unenrol user id: " . $user_enrolment->userid);
+
+                // If session exist or if seession have been killed.
+                if ($isexpired || (!empty($CFG->sessiontimeout) && $userenrolment->timemodified + $CFG->sessiontimeout < time())) {
+                    $plugin->unenrol_user($instance, $userenrolment->userid);
+                    mtrace("Unenrol user id: " . $userenrolment->userid);
                 }
             }
         }

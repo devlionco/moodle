@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_petel';
 $plugin->release = 'INITIAL';
-$plugin->version = 2022072605;
+$plugin->version = 2022072606;
 $plugin->requires = 2016052300;

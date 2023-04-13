@@ -49,8 +49,8 @@ if ($sessiontimeout->is_cancelled()) {
 } else {
     $timeout = get_user_preferences('session_timeout', 1, $userid);
     $sessiontimeout->set_data([
-        'timeout' => $timeout,
-        'userid' => $userid
+            'timeout' => $timeout,
+            'userid' => $userid
     ]);
 
     if ($data = $sessiontimeout->get_data()) {

@@ -48,27 +48,27 @@ if ($form->is_cancelled()) {
     if ($data = $form->get_data()) {
 
         $soursecmid = trim($data->source_cmid);
-        if(!$DB->get_record('course_modules', ['id' => $soursecmid])){
+        if (!$DB->get_record('course_modules', ['id' => $soursecmid])) {
             $soursecmid = false;
         }
 
         $targetcmids = [];
-        foreach(explode(',', $data->target_cmids) as $cmid){
-            if($DB->get_record('course_modules', ['id' => trim($cmid)])) {
+        foreach (explode(',', $data->target_cmids) as $cmid) {
+            if ($DB->get_record('course_modules', ['id' => trim($cmid)])) {
                 $targetcmids[] = trim($cmid);
             }
         }
 
         $mdfields = array_keys($data->mdfields);
 
-        if($soursecmid && !empty($targetcmids) && !empty($mdfields)){
-            foreach($mdfields as $shortname){
-                foreach($targetcmids as $targetcmid){
+        if ($soursecmid && !empty($targetcmids) && !empty($mdfields)) {
+            foreach ($mdfields as $shortname) {
+                foreach ($targetcmids as $targetcmid) {
                     $value = \local_metadata\mcontext::module()->get($soursecmid, $shortname);
 
-                    if($value == null || empty($value) || $value == false){
+                    if ($value == null || empty($value) || $value == false) {
                         \local_metadata\mcontext::module()->saveEmpty($targetcmid, $shortname);
-                    }else{
+                    } else {
                         \local_metadata\mcontext::module()->save($targetcmid, $shortname, $value);
                     }
                 }
@@ -91,5 +91,4 @@ if ($form->is_cancelled()) {
     echo $OUTPUT->heading(get_string('copymetadataactivity', 'local_petel'));
     $form->display();
     echo $OUTPUT->footer();
-
 }

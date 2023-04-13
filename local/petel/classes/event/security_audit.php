@@ -24,7 +24,6 @@
  */
 
 namespace local_petel\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Security audit event class.
@@ -66,7 +65,8 @@ class security_audit extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Security audit '\"{$this->other['subject']}\"' with severity level '\"{$this->other['level']}\"' by user with id '$this->userid'.";
+        return "Security audit '\"{$this->other['subject']}\"' with severity level '\"{$this->other['level']}\"'
+        by user with id '$this->userid'.";
     }
 
     /**

@@ -33,10 +33,11 @@ define('PP_ACTIVE_STUDENTS_AND_TEACHERS', 7);
 define('PP_NO_PERSONAL_CATEGORY', 8);
 define('PP_ALL', 9);
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/user/profile/lib.php');
 
-
-function local_petel_execute_counter(){
+function local_petel_execute_counter() {
     global $DB;
 
     $ip = getremoteaddr();
@@ -45,10 +46,10 @@ function local_petel_execute_counter(){
 
     $row = $DB->get_record('security_sms', array('ip' => $ip));
 
-    if(!empty($row)){
+    if (!empty($row)) {
         $relevanttime = $row->timemodified + $smssecurtitytimereset;
 
-        if($row->count >= $smssecurtitynumber && $relevanttime >= time()){
+        if ($row->count >= $smssecurtitynumber && $relevanttime >= time()) {
             $row->count = $row->count + 1;
             $row->timemodified = time();
             $DB->update_record('security_sms', $row);
@@ -56,24 +57,24 @@ function local_petel_execute_counter(){
             return true;
         }
 
-        if($row->count >= $smssecurtitynumber && $relevanttime < time()){
+        if ($row->count >= $smssecurtitynumber && $relevanttime < time()) {
             $DB->delete_records('security_sms', array('ip' => $ip));
         }
 
-        if($row->count < $smssecurtitynumber){
+        if ($row->count < $smssecurtitynumber) {
             $row->count = $row->count + 1;
             $row->timemodified = time();
             $DB->update_record('security_sms', $row);
         }
 
-    }else{
+    } else {
         $DB->insert_record('security_sms', array('ip' => $ip, 'count' => 0, 'timemodified' => time()));
     }
 
     return false;
 }
 
-function local_petel_enable_captcha(){
+function local_petel_enable_captcha() {
     global $DB;
 
     $ip = getremoteaddr();
@@ -81,10 +82,10 @@ function local_petel_enable_captcha(){
     $smssecurtitytimereset = get_config('local_petel', 'sms_securtity_time_reset');
 
     $row = $DB->get_record('security_sms', array('ip' => $ip));
-    if(!empty($row)){
+    if (!empty($row)) {
 
         $relevanttime = $row->timemodified + $smssecurtitytimereset;
-        if($row->count >= $smssecurtitynumber && $relevanttime >= time()){
+        if ($row->count >= $smssecurtitynumber && $relevanttime >= time()) {
             return true;
         }
     }
@@ -94,28 +95,19 @@ function local_petel_enable_captcha(){
 
 function create_course_special_grade_categories($courseid) {
     global $CFG;
-    include_once $CFG->libdir.'/grade/constants.php';
 
-    // Do not create '100 grade' category, and use current/default course category.
-    /*
-    $cat_fullgrade = [
-            'courseid' => $courseid,
-            'fullname' => get_string('activitieswithgrade', 'local_petel'),
-            'aggregation' => GRADE_AGGREGATE_MEAN
-    ];
-    $returncat = create_grade_category($cat_fullgrade);
-    */
+    require_once($CFG->libdir . '/grade/constants.php');
 
     // Add a new "Zero grade" category, for activities without grading.
-    $cat_nograde = [
+    $catnograde = [
             'courseid' => $courseid,
             'fullname' => get_string('activitieswithoutgrade', 'local_petel'),
             'aggregation' => GRADE_AGGREGATE_MEAN
     ];
-    $returncat = create_grade_category($cat_nograde);
+    $returncat = create_grade_category($catnograde);
+
     // Set the grade type of the grade item associated to the grade category.
     $catitemnototalinnototal = $returncat->load_grade_item();
-    //$catitemnototalinnototal->gradetype = GRADE_TYPE_NONE;
     $catitemnototalinnototal->grademax = 0;
     $catitemnototalinnototal->aggregationcoef = 1;
     $catitemnototalinnototal->update();
@@ -123,69 +115,80 @@ function create_course_special_grade_categories($courseid) {
 
 function create_grade_category($record = null) {
     global $CFG;
-    //$gradecategorycounter++;
-    $record = (array)$record;
+
+    $record = (array) $record;
     if (empty($record['courseid'])) {
         throw new coding_exception('courseid must be present in testing::create_grade_category() $record');
     }
     if (!isset($record['fullname'])) {
-        $record['fullname'] = 'Grade category ';// . $gradecategorycounter;
+        $record['fullname'] = 'Grade category ';
     }
+
     // For gradelib classes.
     require_once($CFG->libdir . '/gradelib.php');
+
     // Create new grading category in this course.
     $gradecategory = new grade_category(array('courseid' => $record['courseid']), false);
     $gradecategory->apply_default_settings();
     grade_category::set_properties($gradecategory, $record);
     $gradecategory->apply_forced_settings();
     $gradecategory->insert();
-    // This creates a default grade item for the category
+
+    // This creates a default grade item for the category.
     $gradeitem = $gradecategory->load_grade_item();
     $gradecategory->update_from_db();
-    //return $gradecategory->get_record_data();
+
     return $gradecategory;
 }
 
-function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $targetcourseid, $coursename = null, $roleid = null){
+function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $targetcourseid, $coursename = null, $roleid = null) {
     global $DB;
 
     $user = \core_user::get_user($userid);
     $maincategory = \core_course_category::get($targetcategoryid);
     $maincourse = get_course($targetcourseid);
 
-    if(empty($user)) return false;
-    if(empty($maincategory)) return false;
-    if(empty($maincourse)) return false;
+    if (empty($user)) {
+        return false;
+    }
+    if (empty($maincategory)) {
+        return false;
+    }
+    if (empty($maincourse)) {
+        return false;
+    }
 
     profile_load_data($user);
     $idnumber = $user->idnumber;
 
-    if(empty($idnumber)) return false;
+    if (empty($idnumber)) {
+        return false;
+    }
 
     // Check category with idnumber.
     $categoryid = 0;
     $maincategory = \core_course_category::get($targetcategoryid);
-    foreach($maincategory->get_all_children_ids() as $childrenid){
+    foreach ($maincategory->get_all_children_ids() as $childrenid) {
         $children = \core_course_category::get($childrenid);
-        if($children->idnumber == $idnumber){
+        if ($children->idnumber == $idnumber) {
             $categoryid = $children->id;
             break;
         }
     }
 
     // Check if idnumber present in another categoryid.
-    if($categoryid == 0){
+    if ($categoryid == 0) {
         $row = $DB->get_record('course_categories', array('idnumber' => $idnumber));
-        if(!empty($row)){
+        if (!empty($row)) {
             $categoryid = $row->id;
         }
     }
 
     // Create category.
     $flagcreatecategory = false;
-    if($categoryid == 0){
+    if ($categoryid == 0) {
         $obj = new \StdClass();
-        $obj->name = $user->firstname.' '.$user->lastname;
+        $obj->name = $user->firstname . ' ' . $user->lastname;
         $obj->idnumber = $idnumber;
         $obj->parent = $maincategory->id;
         $obj->visible = 1;
@@ -199,15 +202,15 @@ function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $ta
     $newcourse = local_petel_duplicate_course($targetcourseid, $categoryid, $coursename);
 
     // Remove enrol self method if not set in original course.
-    if(!$DB->get_record('enrol', ['enrol' => 'self', 'courseid' => $targetcourseid])){
+    if (!$DB->get_record('enrol', ['enrol' => 'self', 'courseid' => $targetcourseid])) {
         $DB->delete_records('enrol', ['enrol' => 'self', 'courseid' => $newcourse->id]);
     }
 
     // Set enrole to user.
-    if($roleid == null){
+    if ($roleid == null) {
         $namerole = 'editingteacher';
         $role = $DB->get_record('role', array('shortname' => $namerole));
-    }else{
+    } else {
         $role = $DB->get_record('role', array('id' => $roleid));
     }
 
@@ -227,17 +230,18 @@ function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $ta
     $result->course_url = $url->out();
 
     $result->user_id = $user->id;
-    $result->user_fullname = $user->firstname.' '.$user->lastname;
+    $result->user_fullname = $user->firstname . ' ' . $user->lastname;
 
     return $result;
 }
 
 function local_petel_duplicate_course($courseid, $categoryid, $coursename = null, $visible = 1, $options = array()) {
     global $CFG, $DB;
+
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
-    if (! ($course = $DB->get_record('course', array('id'=>$courseid)))) {
+    if (!($course = $DB->get_record('course', array('id' => $courseid)))) {
         throw new moodle_exception('invalidcourseid', 'error');
     }
 
@@ -251,12 +255,12 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $timing = time();
 
     do {
-        $shortname = $course->shortname.' '.($timing + $counter);
+        $shortname = $course->shortname . ' ' . ($timing + $counter);
 
         $obj = $DB->get_record('course', array('shortname' => $shortname));
-        if(empty($obj)){
+        if (empty($obj)) {
             $flag = true;
-        }else{
+        } else {
             $counter++;
         }
 
@@ -283,7 +287,7 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
             // Strict check for a correct value (allways 1 or 0, true or false).
             $value = clean_param($option['value'], PARAM_INT);
 
-            if ($value !== 0 and $value !== 1) {
+            if ($value !== 0 && $value !== 1) {
                 throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
             }
 
@@ -315,7 +319,7 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
         }
     }
 
-    $backupid       = $bc->get_backupid();
+    $backupid = $bc->get_backupid();
     $backupbasepath = $bc->get_plan()->get_basepath();
 
     $bc->execute_plan();
@@ -375,8 +379,8 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $course->shortname = $shortname;
     $course->visible = $visible;
 
-    $startdate = date('Y-m-d', strtotime(date(). ' - 1 days'));
-    $enddate = date('Y-m-d', strtotime(date(). ' -1 days + 1 years'));
+    $startdate = date('Y-m-d', strtotime(date() . ' - 1 days'));
+    $enddate = date('Y-m-d', strtotime(date() . ' -1 days + 1 years'));
 
     $course->startdate = strtotime($startdate);
     $course->enddate = strtotime($enddate);
@@ -392,8 +396,8 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $file->delete();
 
     // Change password for auth:self.
-    if($enrol = $DB->get_record('enrol', ['enrol' => 'self', 'courseid' => $course->id])){
-        if(!empty($enrol->password)){
+    if ($enrol = $DB->get_record('enrol', ['enrol' => 'self', 'courseid' => $course->id])) {
+        if (!empty($enrol->password)) {
             $enrol->password = local_petel_hash_password($course->id);
             $DB->update_record('enrol', $enrol);
         }
@@ -405,7 +409,7 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $context = context_course::instance($courseid);
     $newcontext = context_course::instance($newcourseid);
     $badges = $DB->get_records('badge', array('courseid' => $courseid));
-    foreach($badges as $badge){
+    foreach ($badges as $badge) {
         $newbadge = clone $badge;
 
         // Insert new badge.
@@ -419,7 +423,7 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
 
         // Create files.
         foreach ($files as $f) {
-            if($f->get_filesize() != 0 || $f->get_filename() != '.') {
+            if ($f->get_filesize() != 0 || $f->get_filename() != '.') {
                 $fileinfo = array(
                         'contextid' => $newcontext->id,
                         'component' => $f->get_component(),
@@ -435,7 +439,7 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
         }
 
         $criterias = $DB->get_records('badge_criteria', array('badgeid' => $badge->id));
-        foreach($criterias as $criteria){
+        foreach ($criterias as $criteria) {
             $newcriteria = clone $criteria;
 
             // Insert new criteria.
@@ -444,15 +448,15 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
             $newcriteriaid = $DB->insert_record('badge_criteria', $newcriteria);
 
             $criteriaparams = $DB->get_records('badge_criteria_param', array('critid' => $criteria->id));
-            foreach($criteriaparams as $criteriaparam){
+            foreach ($criteriaparams as $criteriaparam) {
                 $newcriteriaparam = clone $criteriaparam;
 
                 // Insert new criteria param.
                 unset($newcriteriaparam->id);
                 $newcriteriaparam->critid = $newcriteriaid;
 
-                if($newcriteriaparam->name == 'course_'.$courseid){
-                    $newcriteriaparam->name = 'course_'.$newcourseid;
+                if ($newcriteriaparam->name == 'course_' . $courseid) {
+                    $newcriteriaparam->name = 'course_' . $newcourseid;
                     $newcriteriaparam->value = $newcourseid;
                 }
 
@@ -464,14 +468,14 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     return $course;
 }
 
-function local_petel_hash_password($courseid){
+function local_petel_hash_password($courseid) {
     $len = 3;
-    return substr(str_shuffle(str_repeat("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", $len)), 0, $len) . (string)$courseid .
+    return substr(str_shuffle(str_repeat("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", $len)), 0, $len) . (string) $courseid .
             substr(str_shuffle(str_repeat("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", $len)), 0, $len);
 }
 
 function local_petel_send_message_to_teacher($useridfrom, $useridto, $component, $eventtype, $smallmessage,
-                                             $fullmessage, $customdata = array()) {
+        $fullmessage, $customdata = array()) {
     global $DB;
 
     $time = time();
@@ -494,7 +498,6 @@ function local_petel_send_message_to_teacher($useridfrom, $useridto, $component,
 
     $notificationid = $DB->insert_record('notifications', $objinsert);
 
-    /////////////////////////////////////
     $objinsert = new stdClass();
     $objinsert->notificationid = $notificationid;
     $DB->insert_record('message_petel_notifications', $objinsert);
@@ -518,7 +521,8 @@ function local_petel_user_admin_or_teacher() {
     } else if (!empty($CFG->defaultcohortscourserequest)) {
         $permitedcohorts = explode(',', $CFG->defaultcohortscourserequest);
         if ($permitedcohorts) {
-            require_once $CFG->dirroot . '/cohort/lib.php';
+            require_once($CFG->dirroot . '/cohort/lib.php');
+
             $cohorts = cohort_get_user_cohorts($USER->id);
             foreach ($cohorts as $cohort) {
                 if (in_array($cohort->idnumber, $permitedcohorts)) {
@@ -539,7 +543,7 @@ function local_petel_logout_by_session_timeout_per_user($userid, $withsessid = t
 
     $isexpired = false;
 
-    if(isset($userid) && $userid > 0) {
+    if (isset($userid) && $userid > 0) {
         $params = ['userid' => $userid];
         if ($withsessid) {
             $params['sid'] = session_id();
@@ -559,8 +563,13 @@ function local_petel_logout_by_session_timeout_per_user($userid, $withsessid = t
     return $isexpired;
 }
 
-function local_petel_calculate_social_relationships(){
+function local_petel_calculate_social_relationships() {
     global $DB, $CFG;
+
+    // Check if present social.
+    if (!in_array('community', get_list_of_plugins('local'))) {
+        return false;
+    }
 
     require_once($CFG->dirroot . '/local/community/plugins/social/locallib.php');
 
@@ -568,49 +577,49 @@ function local_petel_calculate_social_relationships(){
 
     // Get social users.
     $users = [];
-    foreach($DB->get_records('community_social_usr_dtls') as $item){
+    foreach ($DB->get_records('community_social_usr_dtls') as $item) {
         $users[] = $item->userid;
     }
 
     // Delete users form table social_relationships.
-    if(empty($users)){
+    if (empty($users)) {
         $DB->execute("TRUNCATE TABLE {social_relationships}");
-    }else{
+    } else {
         $sql = "
-            DELETE FROM {social_relationships} 
-            WHERE userid_watching NOT IN (".implode(',', $users).") OR userid_feedback NOT IN (".implode(',', $users).")
+            DELETE FROM {social_relationships} WHERE userid_watching NOT IN (" . implode(',', $users) . ") 
+            OR userid_feedback NOT IN (" . implode(',', $users) . ")
         ";
 
         $DB->execute($sql);
     }
 
     // Fill table social_relationships.
-    foreach($users as $watchingid){
+    foreach ($users as $watchingid) {
 
-        if($CFG->debug){
-            mtrace('Currently proccessing userid: '.$watchingid);
+        if ($CFG->debug) {
+            mtrace('Currently proccessing userid: ' . $watchingid);
         }
 
-        foreach($users as $feedbackid){
-            if($watchingid == $feedbackid){
+        foreach ($users as $feedbackid) {
+            if ($watchingid == $feedbackid) {
                 continue;
             }
 
             // Calculate relationships.
             $points = 0;
-            if(social_if_user_followers($watchingid, $feedbackid)){
+            if (social_if_user_followers($watchingid, $feedbackid)) {
                 $points += 1;
             }
 
-            if(social_if_user_colleagues($watchingid, $feedbackid)){
+            if (social_if_user_colleagues($watchingid, $feedbackid)) {
                 $points += 1;
             }
 
             $row = $DB->get_record('social_relationships', ['userid_watching' => $watchingid, 'userid_feedback' => $feedbackid]);
-            if(!empty($row)){
+            if (!empty($row)) {
                 $row->points = $points;
                 $DB->update_record('social_relationships', $row);
-            }else{
+            } else {
                 $ins = new \StdClass();
                 $ins->userid_watching = $watchingid;
                 $ins->userid_feedback = $feedbackid;
@@ -620,6 +629,8 @@ function local_petel_calculate_social_relationships(){
             }
         }
     }
+
+    return true;
 }
 
 function local_petel_get_session_timeout($userid = null) {

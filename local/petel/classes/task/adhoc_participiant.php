@@ -27,7 +27,7 @@ namespace local_petel\task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib.php');
-require_once($CFG->dirroot. '/local/petel/locallib.php');
+require_once($CFG->dirroot . '/local/petel/locallib.php');
 
 /**
  * The local_petel BBB BigBlueButton WS task class.
@@ -55,7 +55,7 @@ class adhoc_participiant extends \core\task\adhoc_task {
     public function execute() {
 
         $micro = str_replace('.', '', microtime(true));
-        $lockkey = rand(10, 1000).$micro;
+        $lockkey = rand(10, 1000) . $micro;
         $lockfactory = \core\lock\lock_config::get_lock_factory('local_petel_task');
         $lock = $lockfactory->get_lock($lockkey, 0);
 
@@ -71,12 +71,12 @@ class adhoc_participiant extends \core\task\adhoc_task {
         $data = $this->get_custom_data();
 
         $result = [];
-        foreach(json_decode($data->userids) as $userid){
+        foreach (json_decode($data->userids) as $userid) {
             $res = local_petel_copy_course_to_new_category($userid, $data->categoryid, $data->courseid, null, $data->roleid);
             $result[] = $res;
 
             // Remove enrol self method if not set in original course.
-            if($data->nullcheck) {
+            if ($data->nullcheck) {
                 if (!$DB->get_record('enrol', ['enrol' => 'self', 'courseid' => $data->courseid])) {
                     $DB->delete_records('enrol', ['enrol' => 'self', 'courseid' => $res->course_id]);
                 }
@@ -84,54 +84,54 @@ class adhoc_participiant extends \core\task\adhoc_task {
         }
 
         // Set system groups for user.
-        foreach(json_decode($data->groups) as $cohortid){
-            foreach(json_decode($data->userids) as $userid){
-                if(!$DB->get_record('cohort_members', ['cohortid' => $cohortid, 'userid' => $userid])){
+        foreach (json_decode($data->groups) as $cohortid) {
+            foreach (json_decode($data->userids) as $userid) {
+                if (!$DB->get_record('cohort_members', ['cohortid' => $cohortid, 'userid' => $userid])) {
                     $DB->insert_record('cohort_members', [
-                        'cohortid' => $cohortid,
-                        'userid' => $userid,
-                        'timeadded' => time()
+                            'cohortid' => $cohortid,
+                            'userid' => $userid,
+                            'timeadded' => time()
                     ]);
                 }
             }
         }
 
-        if(!empty($result)){
+        if (!empty($result)) {
 
             // Render html.
             $messagehtml = '';
             $catcreated = $catnotcreated = [];
-            foreach($result as $item){
-                if($item->flag_create_category){
+            foreach ($result as $item) {
+                if ($item->flag_create_category) {
                     $catcreated[] = $item;
-                }else{
+                } else {
                     $catnotcreated[] = $item;
                 }
             }
 
-            if(!empty($catcreated)){
+            if (!empty($catcreated)) {
                 $messagehtml .= get_string('htmlcategorycreated', 'local_petel');
 
-                foreach($catcreated as $item){
+                foreach ($catcreated as $item) {
                     $messagehtml .= get_string('htmlmailcoursescreated', 'local_petel', $item);
                 }
             }
 
-            if(!empty($catnotcreated)){
-                $messagehtml .= '<br>'.get_string('htmlcategorynotcreated', 'local_petel');
+            if (!empty($catnotcreated)) {
+                $messagehtml .= '<br>' . get_string('htmlcategorynotcreated', 'local_petel');
 
-                foreach($catnotcreated as $item){
+                foreach ($catnotcreated as $item) {
                     $messagehtml .= get_string('htmlmailcoursescreated', 'local_petel', $item);
                 }
             }
 
             // Send mail to current teacher.
-            $toUser = \core_user::get_user($data->currentuserid);
+            $touser = \core_user::get_user($data->currentuserid);
             $subject = get_string('subjectmailcoursescreated', 'local_petel');
 
-            if (!empty($toUser) && !empty($toUser->id) && !empty($toUser->email)) {
-                $fromUser = get_admin();
-                email_to_user($toUser, $fromUser, $subject, $messagehtml, $messagehtml);
+            if (!empty($touser) && !empty($touser->id) && !empty($touser->email)) {
+                $fromuser = get_admin();
+                email_to_user($touser, $fromuser, $subject, $messagehtml, $messagehtml);
             }
         }
     }

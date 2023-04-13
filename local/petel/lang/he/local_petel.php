@@ -43,10 +43,10 @@ $string['petel:studentview'] = 'הצג רק לסטודנטים';
 $string['activitieswithgrade'] = 'פעילויות עם ציון';
 $string['activitieswithoutgrade'] = 'פעילויות ללא ציון';
 
-// auth/email
+// Auth/email.
 $string['signupthankyou'] = '<p>תודה על ההרשמה למערכת פטל להוראת המדעים </p><p><a href="{$a}">כניסה למערכת</a></p>';
 
-// Register form
+// Register form.
 $string['mustgiveemailorphone'] = 'יש להזין דואל או מספר טלפון סלולרי';
 $string['onlyhebrewletters'] = 'ניתן להזין רק שמות בעברית הכוללים סימן "-"';
 $string['successfulyregisterd'] = 'נרשמתם בהצלחה למערכת! אתם מועברים לעמוד הקורסים שלכם...';
@@ -58,7 +58,7 @@ $string['idnumbernotvalid'] = 'מספר תעודת זהות לא תקין';
 $string['phone1exists'] = 'מספר טלפון קיים במערכת';
 $string['missingidnumber'] = 'יש להזין מספר תעודות זהות';
 
-//Login
+// Login.
 $string['searchbyphone'] = 'חיפוש לפי טלפון';
 $string['usernameoremailorphone'] = 'הכנס אחד משניים שם משתמש או כתובת דוא"ל או טלפון';
 $string['phonenotexists'] = 'הטלפון אינו קיים';
@@ -69,9 +69,10 @@ $string['varificationcode'] = 'אימות קוד';
 $string['sendcode'] = 'שלח';
 $string['emptycodesms'] = 'קוד ריק';
 $string['wrongcodesms'] = 'קוד שגוי';
-$string['passwordforgotteninstructions2']='אם מספר הטלפון מצוי במערכת, נשלח אליך קוד SMS. את הקוד יש להזין אותו פה. אם לא התקבל קוד תוך דקה, אנא נסו שוב.';
+$string['passwordforgotteninstructions2'] =
+        'אם מספר הטלפון מצוי במערכת, נשלח אליך קוד SMS. את הקוד יש להזין אותו פה. אם לא התקבל קוד תוך דקה, אנא נסו שוב.';
 
-// user profile page
+// User profile page.
 $string['welcome_to_profile_page'] = 'ברוך הבא לעמוד הפרופיל שלך';
 $string['firstname_and_lastname'] = 'שם פרטי + משפחה';
 $string['personal_information'] = 'פרטים אישיים';
@@ -106,7 +107,6 @@ $string['enrolselfconfirm'] = 'אנא אשרו את הרישום כתלמיד ל
 $string['getcoursekeytitle'] = 'מפתח רישום לקורס';
 $string['getkey'] = 'תודה';
 $string['close'] = 'סגירה';
-//$string['msgtoteacher'] = 'הנחיות לשימוש במפתח הקורס';
 $string['enrolkey_error'] = 'לא נמצא קורס התואם למפתח אשר הוזן, אנא נסו להזין מפתח תקין';
 
 $string['messageprovider:attemptgraded'] = 'הסתימה בדיקה של שאלות פתוחות בבוחן';
@@ -131,15 +131,17 @@ $string['coursescreated'] = 'בקשת הפתיחה של הקורס נקלטה ב
 $string['subjectmailcoursescreated'] = 'רשימת קטגוריות וקורסים שנוצרו';
 $string['htmlcategorycreated'] = '<p>קטגוריות שנוצרו</p>';
 $string['htmlcategorynotcreated'] = '<p>קטגוריות שלא נוצרו</p>';
-$string['htmlmailcoursescreated'] = '<p>בקטגוריה "{$a->category_name}" נוצר קורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
+$string['htmlmailcoursescreated'] =
+        '<p>בקטגוריה "{$a->category_name}" נוצר קורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
 
-//Create course popup.
+// Create course popup.
 $string['createcourseerror'] = 'לא ניתן לפתוח קורס, אנא העזרו ב"אוזניות" לבקשת קורס';
 $string['createcourseteacher'] = 'יצירת קורס חדש למורה';
 $string['createcoursesubmit'] = 'אישור';
 $string['coursename'] = 'שם של קורס חדש';
 $string['waitcoursecreate'] = 'בקשת הפתיחה של הקורס נקלטה בהצלחה. הודעה על זמינות הקורס החדש תשלח אליכם וגם תוצג ב״פעמון״';
-$string['messagecoursectreate'] = '<p>הקורס "{$a->course_name}" נוצר בהצלחה! להלן קישור לקורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
+$string['messagecoursectreate'] =
+        '<p>הקורס "{$a->course_name}" נוצר בהצלחה! להלן קישור לקורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
 $string['subjectmailcoursecreated'] = 'קורס שנוצר';
 
 $string['questionhintdefault1'] = 'שימו לב לשגיאה ונסו שוב';
@@ -147,11 +149,11 @@ $string['questionhintdefault2'] = 'שימו לב לשגיאה ונסו שוב';
 
 // Edit course.
 $string['editcoursetitle'] = 'אזהרה';
-$string['editcoursebody'] = 'זהירות! שינוי של תצוגת יחידות ההוראה בקורס, לא ישמור את ההגדרות והעיצוב הנוכחי, במידה ותרצו לחזור אליהם בעתיד';
+$string['editcoursebody'] =
+        'זהירות! שינוי של תצוגת יחידות ההוראה בקורס, לא ישמור את ההגדרות והעיצוב הנוכחי, במידה ותרצו לחזור אליהם בעתיד';
 $string['editcourseapprove'] = 'אישור';
 
 // Recommendations.
-$string['questiontypes'] = 'שאלות';
 $string['questionchooserrecommendations'] = 'שאלות מומלצות';
 $string['cacheoercatalog'] = 'מטמונים של מאגר משותף';
 
@@ -196,7 +198,6 @@ $string['twohours'] = 'שעתיים';
 $string['const'] = 'קבוע';
 $string['sessiontimeoutwarning'] = 'משך זמני חיבור קצרים, בטוחים יותר להגנה על החשבון שלכם, בעת חיבור ממחשב ציבורי';
 
-
 $string['democaptchaheader'] = 'התנסות בפטל DEMO';
 $string['democaptchadesc'] = 'לתשומת לבך, עליך לאשר התחברות למערכת התנסות של פטל.
 ההתנסות תהיה זמינה למשך {$a} שעות. אנא אישורך ל"אני לא רובוט".';
@@ -212,15 +213,16 @@ $string['demorole_desc'] = 'Sitewide role the user using demo link will be enrol
 
 $string['errordemonokey'] = 'קישור לא תקין';
 $string['errordemonoenrol'] = 'Error occured during your enrolment: course enrol is not valid. Please contact your administrator';
-$string['errordemonoenrolmethod'] = 'Error occured during your enrolment: enrolment method is not callable. Please contact your administrator';
+$string['errordemonoenrolmethod'] =
+        'Error occured during your enrolment: enrolment method is not callable. Please contact your administrator';
 $string['errordemocoursefull'] = 'Error occured during your enrolment: course is full. Please contact your administrator';
-$string['errordemoenrol'] = 'Error occured during your enrolment: system was not able to enrol you. Please contact your administrator';
+$string['errordemoenrol'] =
+        'Error occured during your enrolment: system was not able to enrol you. Please contact your administrator';
 
 $string['aftercontent'] = 'לאחר "{$a}"';
 $string['beforecontent'] = 'לפני "{$a}"';
 
-// Comments A11Y
+// Comments A11Y.
 $string['blankcannotbesaved'] = 'לא ניתן לשמור הערה ריקה, אנא הזן טקסט כאן';
 $string['currentview'] = 'תצוגה נוכחית :';
 $string['currentfolder'] = 'תיקיה נוכחית: ';
-

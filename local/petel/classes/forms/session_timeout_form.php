@@ -24,9 +24,9 @@
 
 namespace local_petel\forms;
 
-require_once($CFG->dirroot . '/lib/formslib.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 /**
  * Class session_timeout_form
@@ -39,21 +39,21 @@ class session_timeout_form extends \moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
 
         $choices = [
-            1 => get_string('twohours', 'local_petel'),
-            2 => get_string('day'),
-            3 => get_string('week'),
-            4 => get_string('month')
+                1 => get_string('twohours', 'local_petel'),
+                2 => get_string('day'),
+                3 => get_string('week'),
+                4 => get_string('month')
         ];
 
         $mform->addElement('static', 'timeout_warning', '',
-            \html_writer::div(get_string('sessiontimeoutwarning', 'local_petel'), 'alert alert-danger'));
+                \html_writer::div(get_string('sessiontimeoutwarning', 'local_petel'), 'alert alert-danger'));
         $mform->addElement('select', 'timeout', get_string('selectsessiontimeout', 'local_petel'), $choices);
         $mform->setType('timeout', PARAM_INT);
 
@@ -71,7 +71,7 @@ class session_timeout_form extends \moodleform {
         global $DB;
         $errors = parent::validation($data, $files);
 
-        $data  = (object)$data;
+        $data = (object) $data;
 
         return $errors;
     }

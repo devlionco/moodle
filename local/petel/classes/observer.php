@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-include_once($CFG->dirroot . '/local/petel/locallib.php');
+require_once($CFG->dirroot . '/local/petel/locallib.php');
 
 /**
  * Event observers supported by this module
@@ -41,9 +41,6 @@ class local_petel_observer {
      */
     public static function course_created(\core\event\course_created $event) {
         global $CFG;
-
-        //$course = $event->get_record_snapshot('course', $event->objectid);
-        //$format = course_get_format($course);
 
         if ($CFG->instancename == 'chemistry') {
             create_course_special_grade_categories($event->objectid);
@@ -112,9 +109,9 @@ class local_petel_observer {
         global $CFG;
         require_once($CFG->libdir . '/gradelib.php');
 
-        $grading_info = grade_get_grades($quiz->course, 'mod', 'quiz', $quiz->id, $userid);
-        if (!empty($grading_info->items)) {
-            $item = $grading_info->items[0];
+        $gradinginfo = grade_get_grades($quiz->course, 'mod', 'quiz', $quiz->id, $userid);
+        if (!empty($gradinginfo->items)) {
+            $item = $gradinginfo->items[0];
             if (isset($item->grades[$userid])) {
                 return $item->grades[$userid]->str_long_grade;
             }
@@ -127,7 +124,7 @@ class local_petel_observer {
         $userobj = \core_user::get_user($userid);
 
         $eventdata = new \core\message\message();
-        $eventdata->courseid  = SITEID;
+        $eventdata->courseid = SITEID;
         $eventdata->component = 'local_petel';
         $eventdata->name = 'attemptgraded';
         $eventdata->notification = 1;
@@ -157,10 +154,10 @@ class local_petel_observer {
         $usersjoin = '';
         $currentgroup = groups_get_activity_group($cm, true);
         $enrolleduserscount = count_enrolled_users($context,
-            array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
         if ($currentgroup) {
             $userssql = get_enrolled_sql($context,
-                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
             if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {

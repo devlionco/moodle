@@ -23,21 +23,20 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__.'/locallib.php');
+
+require_once(__DIR__ . '/locallib.php');
 
 function local_petel_before_footer() {
     global $PAGE, $USER, $CFG;
 
-    if ($PAGE->pagetype !== 'mod-hvp-view')
-        // TODO: disable timeonpage, to speed up navigation between pages.
-        return; // disable
+    if ($PAGE->pagetype !== 'mod-hvp-view') {
+        return;
+    }
 
     $sesskey = sesskey();
-    $logurl = $CFG->wwwroot. '/local/petel/timeonpage.php';
+    $logurl = $CFG->wwwroot . '/local/petel/timeonpage.php';
 
-    // Count the time a user was looking at the page (page was in focus)
-    // TODO: https://stackoverflow.com/questions/33859522/how-much-of-an-element-is-visible-in-viewport
-    //
+    // Count the time a user was looking at the page (page was in focus).
     $PAGE->requires->js_amd_inline("
         require(['jquery'], function($) {
 
@@ -150,18 +149,18 @@ function local_petel_render_navbar_output() {
             $defaultrole->name = !empty($defaultrole->name) ? $defaultrole->name : get_string('defaultcourseteacher');
 
             $defaults = [
-                'categories_ac' => ['name' => '', 'value' => ''],
-                'courses_ac' => ['name' => '', 'value' => ''],
-                'roles_ac' => [
-                        'name' => $defaultrole->name,
-                        'value' => $defaultrole->id
-                ],
+                    'categories_ac' => ['name' => '', 'value' => ''],
+                    'courses_ac' => ['name' => '', 'value' => ''],
+                    'roles_ac' => [
+                            'name' => $defaultrole->name,
+                            'value' => $defaultrole->id
+                    ],
             ];
 
             $data = array(
-                $PAGE->course->id,
-                $USER->id,
-                $defaults
+                    $PAGE->course->id,
+                    $USER->id,
+                    $defaults
             );
             $PAGE->requires->js_call_amd('local_petel/action_participants', 'init', $data);
         }
@@ -171,41 +170,41 @@ function local_petel_render_navbar_output() {
         $PAGE->requires->js_call_amd('local_petel/demo', 'init');
     }
 
-    if(!empty(get_config('local_petel', 'default_course')) && !empty(get_config('local_petel', 'admin_email'))) {
+    if (!empty(get_config('local_petel', 'default_course')) && !empty(get_config('local_petel', 'admin_email'))) {
         $data = array(
                 $USER->id
         );
         $PAGE->requires->js_call_amd('local_petel/createcourse', 'init', $data);
     }
 
-    if($PAGE->pagetype == 'course-edit'){
+    if ($PAGE->pagetype == 'course-edit') {
         $PAGE->requires->js_call_amd('local_petel/editcourse', 'init', []);
     }
 
     // PTL-6739.
-    if($PAGE->pagetype == 'mod-assign-grading') {
+    if ($PAGE->pagetype == 'mod-assign-grading') {
         $PAGE->requires->js_amd_inline("require(['jquery', 'local_petel/assign_participants'], function($, Participants) {
             M.assign_participants = Participants;        
         })");
     }
 
     // PTL-2405.
-    if(in_array($PAGE->pagetype, ['mod-checklist-report', 'mod-checklist-edit', 'mod-checklist-view'])){
+    if (in_array($PAGE->pagetype, ['mod-checklist-report', 'mod-checklist-edit', 'mod-checklist-view'])) {
         $PAGE->requires->js_call_amd('local_petel/moodle_plugins', 'mod_checklist_add_tab_settings', [$PAGE->cm->id]);
     }
 
     // PTL-4614.
-    if(in_array($PAGE->pagetype, ['mod-questionnaire-preview', 'mod-questionnaire-questions',
-                                  'mod-questionnaire-show_nonrespondents', 'mod-questionnaire-qsettings'])){
+    if (in_array($PAGE->pagetype, ['mod-questionnaire-preview', 'mod-questionnaire-questions',
+            'mod-questionnaire-show_nonrespondents', 'mod-questionnaire-qsettings'])) {
         $PAGE->requires->js_call_amd('local_petel/moodle_plugins', 'mod_questionnaire_add_tab_settings', [$PAGE->cm->id]);
     }
 
     // PTL-4614.
-    if(in_array($PAGE->pagetype, ['mod-questionnaire-view'])){
+    if (in_array($PAGE->pagetype, ['mod-questionnaire-view'])) {
         $PAGE->requires->js_call_amd('local_petel/moodle_plugins', 'mod_checklist_view_add_tab_settings', [$PAGE->cm->id]);
     }
 
-    // PTL-4690
+    // PTL-4690.
     $PAGE->requires->js_call_amd('local_petel/events', 'init', []);
 }
 
@@ -220,17 +219,17 @@ function local_petel_render_navbar_output() {
  * @return bool
  */
 function local_petel_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-        global $PAGE;
+    global $PAGE;
 
-        $url = new moodle_url('/local/petel/sessiontimeout.php', ['userid' => $user->id]);
+    $url = new moodle_url('/local/petel/sessiontimeout.php', ['userid' => $user->id]);
 
-        $contactcategory = new core_user\output\myprofile\category('catcustomsettings',
+    $contactcategory = new core_user\output\myprofile\category('catcustomsettings',
             get_string('catcustomsettings', 'local_petel'));
-        $tree->add_category($contactcategory);
+    $tree->add_category($contactcategory);
 
-        $node = new core_user\output\myprofile\node('catcustomsettings', 'sessiontimeout',
+    $node = new core_user\output\myprofile\node('catcustomsettings', 'sessiontimeout',
             get_string('sessiontimeout', 'local_petel'), null, $url);
-        $tree->add_node($node);
+    $tree->add_node($node);
 }
 
 /**
@@ -262,8 +261,6 @@ function local_petel_extend_navigation_menuuser($returnobject, $user, $context, 
 }
 */
 
-
-
 function local_petel_extend_navigation_course($parentnode, $course, $context) {
     global $OUTPUT, $PAGE, $COURSE, $USER, $DB;
 
@@ -272,7 +269,7 @@ function local_petel_extend_navigation_course($parentnode, $course, $context) {
         $enrol = $DB->get_record_select('enrol', 'courseid = ? AND enrol = ? AND password <> ""', [$COURSE->id, 'self']);
 
         if (!$enrol) {
-            return ;
+            return;
         }
 
         $flagcourse = false;
@@ -286,7 +283,7 @@ function local_petel_extend_navigation_course($parentnode, $course, $context) {
         // Check if admin.
         $isadmin = is_siteadmin();
 
-        if($flagcourse || $isadmin) {
+        if ($flagcourse || $isadmin) {
             $title = get_string('linktodemo', 'local_petel');
 
             $url = 'Javascript:void(0)';
@@ -304,14 +301,14 @@ function local_petel_extend_navigation_course($parentnode, $course, $context) {
             $parentnode->add_node($coursedemonode);
         }
 
-        $linkItem = '<a href="#" class="dropdown-item demo_popup menu-action cm-edit-action" data-cmid="123XYZ321" data-key="' . $enrol->password . '" data-lang="'.current_language().'" data-action="demo_popup" role="menuitem"
+        $linkitem = '<a href="#" class="dropdown-item demo_popup menu-action cm-edit-action" data-cmid="123XYZ321" data-key="' .
+                $enrol->password . '" data-lang="' . current_language() . '" data-action="demo_popup" role="menuitem"
                  title="' . htmlspecialchars(get_string("linktodemoactivity", "local_petel")) . '">'
-            . $OUTPUT->pix_icon('fp/link', get_string("linktodemoactivity", "local_petel"), 'theme')
-            . '<span class="menu-action-text">' . htmlspecialchars(get_string("linktodemoactivity", "local_petel")) . '</span>'
-            . '</a>';
+                . $OUTPUT->pix_icon('fp/link', get_string("linktodemoactivity", "local_petel"), 'theme')
+                . '<span class="menu-action-text">' . htmlspecialchars(get_string("linktodemoactivity", "local_petel")) . '</span>'
+                . '</a>';
 
-        //style Boost
-        $enc = json_encode($linkItem);
+        $enc = json_encode($linkitem);
         $PAGE->requires->js_init_code(<<<EOJS
     var activities = document.querySelectorAll('.section-cm-edit-actions div[role="menu"]');
     if (activities) {
@@ -325,10 +322,9 @@ function local_petel_extend_navigation_course($parentnode, $course, $context) {
         }
     }
 EOJS
-            , true);
+                , true);
 
-        //code style Clean
-        $enc = json_encode('<li role="presentation">' . $linkItem . '</li>');
+        $enc = json_encode('<li role="presentation">' . $linkitem . '</li>');
         $PAGE->requires->js_init_code(<<<EOJS
     var activities = document.querySelectorAll('.section-cm-edit-actions ul[role="menu"]');
     if (activities) {
@@ -342,7 +338,7 @@ EOJS
         }
     }
 EOJS
-            , true);
+                , true);
     }
 }
 

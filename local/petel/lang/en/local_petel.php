@@ -43,10 +43,10 @@ $string['petel:studentview'] = 'View a only for students';
 $string['activitieswithgrade'] = 'Activities with grade';
 $string['activitieswithoutgrade'] = 'Activities without grade';
 
-// auth/email
+// Auth/email.
 $string['signupthankyou'] = '<p>Thank you for registering to the PeTeL website.</p><p><a href="{$a}">Click here to login</a></p>';
 
-// Register form
+// Register form.
 $string['mustgiveemailorphone'] = 'Must give email or phone';
 $string['onlyhebrewletters'] = 'Only Hebrew letters and "minus" char';
 $string['successfulyregisterd'] = 'You have successfully registered to the PETEL system, and now redirected to your course page...';
@@ -58,7 +58,7 @@ $string['idnumbernotvalid'] = 'Invalid ';
 $string['phone1exists'] = 'Phone number exists';
 $string['missingidnumber'] = 'ID number missing';
 
-//Login
+// Login.
 $string['searchbyphone'] = 'Search by phone';
 $string['usernameoremailorphone'] = 'Enter either username or email address or phone';
 $string['phonenotexists'] = 'Phone not exists';
@@ -69,9 +69,10 @@ $string['varificationcode'] = 'Code varification';
 $string['sendcode'] = 'Send';
 $string['emptycodesms'] = 'Code empty';
 $string['wrongcodesms'] = 'Wrong code';
-$string['passwordforgotteninstructions2']='If the phone number is in the system, we will send you an SMS code. The code should be entered here. If no code has been received in a minute, please try again.';
+$string['passwordforgotteninstructions2'] =
+        'If the phone number is in the system, we will send you an SMS code. The code should be entered here. If no code has been received in a minute, please try again.';
 
-// user profile page
+// User profile page.
 $string['welcome_to_profile_page'] = 'Welcome to your profile page';
 $string['firstname_and_lastname'] = 'First name and last name';
 $string['personal_information'] = 'Personal Information';
@@ -106,7 +107,6 @@ $string['enrolselfconfirm'] = 'Do you really want to enrol yourself to course "{
 $string['getcoursekeytitle'] = 'Get enrol key';
 $string['getkey'] = 'Get key';
 $string['close'] = 'Close';
-//$string['msgtoteacher'] = 'How to use the enrolment key';
 $string['enrolkey_error'] = 'Enrolment key no found, please try to input a correct key';
 
 $string['messageprovider:attemptgraded'] = 'Quiz attempt open questions were graded';
@@ -133,21 +133,24 @@ $string['coursescreated'] = 'Courses created';
 $string['subjectmailcoursescreated'] = 'List of categories and courses which created';
 $string['htmlcategorycreated'] = '<p>Category created</p>';
 $string['htmlcategorynotcreated'] = '<p>Category not created</p>';
-$string['htmlmailcoursescreated'] = '<p>In category "{$a->category_name}" created course <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
+$string['htmlmailcoursescreated'] =
+        '<p>In category "{$a->category_name}" created course <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
 
-//Create course popup.
+// Create course popup.
 $string['createcourseerror'] = 'It is not possible to open a course, please use "headphones" to request a course';
 $string['createcourseteacher'] = 'Create course for teacher';
 $string['createcoursesubmit'] = 'OK';
 $string['coursename'] = 'Course name';
-$string['waitcoursecreate'] = 'The opening application of the course was successfully received. Notice of the availability of the new course will be sent to you and will also be displayed on the "Bell"';
-$string['messagecoursectreate'] = '<p>הקורס "{$a->course_name}" נוצר בהצלחה! להלן קישור לקורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
+$string['waitcoursecreate'] =
+        'The opening application of the course was successfully received. Notice of the availability of the new course will be sent to you and will also be displayed on the "Bell"';
+$string['messagecoursectreate'] =
+        '<p>הקורס "{$a->course_name}" נוצר בהצלחה! להלן קישור לקורס <a href="{$a->course_url}">"{$a->course_name}"</a></p>';
 $string['subjectmailcoursecreated'] = 'קורס שנוצר';
 
 $string['questionhintdefault1'] = 'Please note the error and try again';
 $string['questionhintdefault2'] = 'Please note the error and try again';
 
-// Feinberg web services
+// Feinberg web services.
 $string['wsnoinstance'] = 'Manual enrolment doesn\'t exist or is disabled for role {$a->rolename} in courseid = {$a->courseid}';
 
 // Edit course.
@@ -156,7 +159,6 @@ $string['editcoursebody'] = 'Attention! changing the course format will not allo
 $string['editcourseapprove'] = 'Approve';
 
 // Recommendations.
-$string['questiontypes'] = 'Questions';
 $string['questionchooserrecommendations'] = 'Questions recomendation';
 $string['cacheoercatalog'] = 'Cache oercatalog';
 
@@ -202,9 +204,10 @@ $string['sessiontimeouttitle'] = 'Setting of session timeout';
 $string['selectsessiontimeout'] = 'Select session timeout';
 $string['twohours'] = 'Two hours';
 $string['const'] = 'Without session timeout';
-$string['sessiontimeoutwarning'] = 'Short session timeout are better are better for securing your account on public computers logins';
+$string['sessiontimeoutwarning'] =
+        'Short session timeout are better are better for securing your account on public computers logins';
 
-// Demo
+// Demo.
 $string['democaptchaheader'] = 'Please let us be sure you are not a robot first';
 $string['democaptchadesc'] = 'Please note that you must confirm connection to the Patel experience system.
 The experience will be available for {$a} hours. Please confirm "I\'m not a robot".';
@@ -222,14 +225,16 @@ $string['calculatesocialrelationships'] = 'Calculate social relationships';
 
 $string['errordemonokey'] = 'This link is invalid. Please contact your administrator';
 $string['errordemonoenrol'] = 'Error occured during your enrolment: course enrol is not valid. Please contact your administrator';
-$string['errordemonoenrolmethod'] = 'Error occured during your enrolment: enrolment method is not callable. Please contact your administrator';
+$string['errordemonoenrolmethod'] =
+        'Error occured during your enrolment: enrolment method is not callable. Please contact your administrator';
 $string['errordemocoursefull'] = 'Error occured during your enrolment: course is full. Please contact your administrator';
-$string['errordemoenrol'] = 'Error occured during your enrolment: system was not able to enrol you. Please contact your administrator';
+$string['errordemoenrol'] =
+        'Error occured during your enrolment: system was not able to enrol you. Please contact your administrator';
 
 $string['aftercontent'] = 'After item "{$a}"';
 $string['beforecontent'] = 'Before item "{$a}"';
 
-// Comments A11Y
+// Comments A11Y.
 $string['blankcannotbesaved'] = 'A blank comment cannot be saved, please enter text here';
 $string['currentview'] = 'Current view:';
 $string['currentfolder'] = 'Current folder: ';

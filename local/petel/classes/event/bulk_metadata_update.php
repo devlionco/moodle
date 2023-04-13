@@ -23,7 +23,6 @@
  */
 
 namespace local_petel\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Abstract Course module viewed event class.
@@ -57,8 +56,9 @@ class bulk_metadata_update extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' copied metadata from activity with id ".$this->other['soursecmid']." to activities ids
-                ".implode(',', $this->other['targetcmids'])." fields: ".implode(',', $this->other['mdfields']);
+        return "The user with id '$this->userid' copied metadata from activity with id " . $this->other['soursecmid'] .
+                " to activities ids " . implode(',', $this->other['targetcmids']) . " fields: "
+                . implode(',', $this->other['mdfields']);
     }
 
     /**
@@ -86,26 +86,5 @@ class bulk_metadata_update extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array(SITEID, 'core', 'security', qualified_me(), 'ERROR: ' . $this->other['subject']);
-    }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-
-        /*
-        // Make sure this class is never used without proper object details.
-        if (empty($this->objectid) || empty($this->objecttable)) {
-            throw new \coding_exception('The time_on_page event must define objectid and objecttable.');
-        }
-        // Make sure the context level is set to module.
-        if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
-        }
-        */
     }
 }

@@ -23,7 +23,6 @@
  */
 
 namespace local_petel\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Abstract Course module viewed event class.
@@ -58,7 +57,7 @@ class timeonpage_viewed extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed the '{$this->objecttable}' activity with " .
-            "course module id '$this->contextinstanceid' for ".$this->other['timespent']." sec.";
+                "course module id '$this->contextinstanceid' for " . $this->other['timespent'] . " sec.";
     }
 
     /**
@@ -86,44 +85,35 @@ class timeonpage_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, $this->objecttable, 'view', 'view.php?id=' . $this->contextinstanceid, $this->objectid,
-                     $this->contextinstanceid);
+                $this->contextinstanceid);
     }
 
     /**
      * Custom validation.
      *
-     * @throws \coding_exception
      * @return void
+     * @throws \coding_exception
      */
     protected function validate_data() {
         parent::validate_data();
 
         if ($this->data['contextlevel'] === CONTEXT_COURSE) {
             $this->data['objecttable'] = 'course';
-        } elseif ($this->data['contextlevel'] === CONTEXT_MODULE) {
+        } else if ($this->data['contextlevel'] === CONTEXT_MODULE) {
             $cm = $this->get_module_from_cmid($this->data['objectid']);
             $this->data['objecttable'] = $cm->modname;
         }
-        /*
-        // Make sure this class is never used without proper object details.
-        if (empty($this->objectid) || empty($this->objecttable)) {
-            throw new \coding_exception('The time_on_page event must define objectid and objecttable.');
-        }
-        // Make sure the context level is set to module.
-        if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
-        }
-        */
     }
 
-    private function get_module_from_cmid($cmid) { // objectid (id on course_module)
+    private function get_module_from_cmid($cmid) {
         global $DB;
         if (!$cmrec = $DB->get_record_sql(
-            "SELECT cm.*, md.name as modname
+                "SELECT cm.*, md.name as modname
                 FROM {course_modules} cm
                 JOIN {modules} md ON md.id = cm.module
                 WHERE cm.id = ? ", array($cmid))) {
-            print_error('invalidcoursemodule');
+
+            throw new \moodle_exception('invalidcoursemodule');
         }
 
         return $cmrec;
