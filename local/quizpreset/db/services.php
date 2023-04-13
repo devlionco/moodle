@@ -1,5 +1,6 @@
 <?php
-
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,63 +22,65 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 // We defined the web service functions to install.
 $functions = array(
-    'local_quizpreset_get_buttonsbar' => array(
-            'classname'   => 'local_quizpreset_external',
-            'methodname'  => 'get_buttonsbar',
-            'classpath'   => 'local/quizpreset/externallib.php',
-            'description' => 'Get quiz top buttons bar',
-            'type'          => 'read',
-            'ajax'          => true,
-            'capabilities'  => '',
-            'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'local_quizpreset_get_buttonsbar' => array(
+                'classname' => 'local_quizpreset_external',
+                'methodname' => 'get_buttonsbar',
+                'classpath' => 'local/quizpreset/externallib.php',
+                'description' => 'Get quiz top buttons bar',
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities' => '',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ),
 
         'local_quizpreset_get_pagedata' => array(
-                'classname'   => 'local_quizpreset_external',
-                'methodname'  => 'get_pagedata',
-                'classpath'   => 'local/quizpreset/externallib.php',
+                'classname' => 'local_quizpreset_external',
+                'methodname' => 'get_pagedata',
+                'classpath' => 'local/quizpreset/externallib.php',
                 'description' => 'Get quiz page data',
-                'type'          => 'read',
-                'ajax'          => true,
-                'capabilities'  => '',
-                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities' => '',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'local_quizpreset_savedata' => array(
-                'classname'   => 'local_quizpreset_external',
-                'methodname'  => 'savedata',
-                'classpath'   => 'local/quizpreset/externallib.php',
+                'classname' => 'local_quizpreset_external',
+                'methodname' => 'savedata',
+                'classpath' => 'local/quizpreset/externallib.php',
                 'description' => 'Save data',
-                'type'          => 'read',
-                'ajax'          => true,
-                'capabilities'  => '',
-                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities' => '',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 
         'local_quizpreset_savepreset' => array(
-            'classname'   => 'local_quizpreset_external',
-            'methodname'  => 'savepreset',
-            'classpath'   => 'local/quizpreset/externallib.php',
-            'description' => 'Save preset',
-            'type'          => 'write',
-            'ajax'          => true,
-            'capabilities'  => '',
-            'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+                'classname' => 'local_quizpreset_external',
+                'methodname' => 'savepreset',
+                'classpath' => 'local/quizpreset/externallib.php',
+                'description' => 'Save preset',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities' => '',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
 $services = array(
-    'Quizpreset services' => array(
-            'functions' => array (
-                'local_quizpreset_get_buttonsbar',
-                'local_quizpreset_get_pagedata',
-                'local_quizpreset_savedata',
-                'local_quizpreset_savepreset',
-            ),
-            'enabled'=>1,
-            'shortname'=>'quizpreset'
-    )
+        'Quizpreset services' => array(
+                'functions' => array(
+                        'local_quizpreset_get_buttonsbar',
+                        'local_quizpreset_get_pagedata',
+                        'local_quizpreset_savedata',
+                        'local_quizpreset_savepreset',
+                ),
+                'enabled' => 1,
+                'shortname' => 'quizpreset'
+        )
 );

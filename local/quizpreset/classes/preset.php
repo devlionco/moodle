@@ -21,8 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot.'/local/quizpreset/classes/custom_types.php');
-require_once($CFG->dirroot.'/local/quizpreset/classes/custom_types_default.php');
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/local/quizpreset/classes/custom_types.php');
+require_once($CFG->dirroot . '/local/quizpreset/classes/custom_types_default.php');
 
 class preset {
 
@@ -35,13 +37,13 @@ class preset {
         global $CFG;
 
         // Set type of domain.
-        if(isset($CFG->instancename) && !empty($CFG->instancename)){
-            if(in_array($CFG->instancename, array('physics', 'chemistry', 'biology'))) {
+        if (isset($CFG->instancename) && !empty($CFG->instancename)) {
+            if (in_array($CFG->instancename, array('physics', 'chemistry', 'biology'))) {
                 self::$instancename = $CFG->instancename;
-            }else{
+            } else {
                 self::$instancename = 'physics';
             }
-        }else{
+        } else {
             self::$instancename = 'physics';
         }
     }
@@ -59,12 +61,12 @@ class preset {
                 break;
             }
         }
-        if ($isadmin) return true;
+        if ($isadmin) {
+            return true;
+        }
 
         // Check if teacher.
-        // TODO: consider switch to capabilities (stop using hardcoded roles)
-        $roles = $DB->get_records_sql("SELECT id FROM {role}
-                                        WHERE shortname IN ('editingteacher', 'teacher', 'juniorteacher') ");
+        $roles = $DB->get_records_sql("SELECT id FROM {role} WHERE shortname IN ('editingteacher', 'teacher', 'juniorteacher') ");
 
         $rolesids = array();
         foreach ($roles as $item) {
@@ -74,7 +76,9 @@ class preset {
         if (isset($USER->access['ra']) && !empty($USER->access['ra'])) {
             foreach ($USER->access['ra'] as $item) {
                 foreach ($item as $role) {
-                    if (in_array($role, $rolesids)) return true;
+                    if (in_array($role, $rolesids)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -93,88 +97,87 @@ class preset {
         $context = context_module::instance($cmid);
 
         // Number of attempts.
-        $instance = $DB->get_record('course_modules', array('id'=> $cmid));
+        $instance = $DB->get_record('course_modules', array('id' => $cmid));
 
         $query = "
 						SELECT qa.*
-						FROM {quiz_attempts} AS qa
-						LEFT JOIN {user} AS u ON(u.id = qa.userid)
+						FROM {quiz_attempts} qa
+						LEFT JOIN {user} u ON(u.id = qa.userid)
 						JOIN {user_enrolments} ue_d ON ue_d.userid = u.id
 						JOIN {enrol} e_d ON (e_d.id = ue_d.enrolid AND e_d.courseid = ?)
 						INNER JOIN (
 							SELECT userid, MAX(attempt) AS max_attempt
 							  FROM {quiz_attempts}
-							  WHERE quiz = ?  
+							  WHERE quiz = ?
 							  GROUP BY userid
 						) a ON(a.userid = qa.userid AND a.max_attempt = qa.attempt)
 
 						WHERE u.suspended = 0 AND qa.preview = 0 AND ue_d.status = 0 AND qa.quiz = ?
-                        AND ( 
-                            (ue_d.timestart = '0' AND ue_d.timeend = '0') OR 
-                            (ue_d.timestart = '0' AND ue_d.timeend > UNIX_TIMESTAMP()) OR 
+                        AND (
+                            (ue_d.timestart = '0' AND ue_d.timeend = '0') OR
+                            (ue_d.timestart = '0' AND ue_d.timeend > UNIX_TIMESTAMP()) OR
                             (ue_d.timeend = '0' AND ue_d.timestart < UNIX_TIMESTAMP()) OR
                             (ue_d.timeend > UNIX_TIMESTAMP() AND ue_d.timestart < UNIX_TIMESTAMP())
-                            )						
-                        AND qa.state IN('finished', 'inprogress') 
+                            )
+                        AND qa.state IN('finished', 'inprogress')
 					";
 
         $params = [$instance->course, $instance->instance, $instance->instance];
         $numattempts = count($DB->get_records_sql($query, $params));
 
         $links = array();
-        if(self::if_user_admin_or_teacher() && has_capability('mod/quiz:manage', $context)){
+        if (self::if_user_admin_or_teacher() && has_capability('mod/quiz:manage', $context)) {
 
-            $url1 = new moodle_url('/mod/quiz/startattempt.php', array( 'cmid'=>$cmid, 'sesskey'=>sesskey()));
+            $url1 = new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cmid, 'sesskey' => sesskey()));
             $links[] = array(
-                'url' => $url1->out(false),
-                'title' => get_string('preview', 'local_quizpreset'),
+                    'url' => $url1->out(false),
+                    'title' => get_string('preview', 'local_quizpreset'),
             );
 
-            $url2 = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$cmid));
+            $url2 = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
 
             $tmp = array(
-                'url' =>  $url2->out(false),
-                'title' => get_string('edit', 'local_quizpreset'),
+                    'url' => $url2->out(false),
+                    'title' => get_string('edit', 'local_quizpreset'),
             );
 
-            if(class_exists('\community_oer\main_oer')){
+            if (class_exists('\community_oer\main_oer')) {
                 $tmp['disable'] = \community_oer\main_oer::if_activity_in_research_mode($cmid);
             }
 
             $links[] = $tmp;
 
             // Number of attempts.
-            if($numattempts) {
-                $url3 = new moodle_url('/mod/quiz/report.php', array('id'=>$cmid, 'mode'=>'teacheroverview'));
+            if ($numattempts) {
+                $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'teacheroverview'));
                 $links[] = array(
-                    'url' => $url3->out(false),
-                    'title' => get_string('numattempt', 'local_quizpreset', $numattempts),
+                        'url' => $url3->out(false),
+                        'title' => get_string('numattempt', 'local_quizpreset', $numattempts),
                 );
             }
 
-            $url4 = new moodle_url('/mod/quiz/report.php', array('id'=>$cmid, 'mode'=>'grading'));
+            $url4 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'grading'));
             $links[] = array(
-                'url' => $url4->out(false),
-                'title' => get_string('manuallymarking', 'local_quizpreset'),
+                    'url' => $url4->out(false),
+                    'title' => get_string('manuallymarking', 'local_quizpreset'),
             );
 
-
-            $arr5 = array('update'=>$cmid, 'return'=>1);
+            $arr5 = array('update' => $cmid, 'return' => 1);
             if (self::$instancename == 'chemistry') {
                 $arr5['viewall'] = 1;
             }
 
             $url5 = new moodle_url('/course/modedit.php', $arr5);
             $links[] = array(
-                'url' => $url5->out(false),
-                'title' => get_string('settings', 'local_quizpreset'),
-                'disable' => false
+                    'url' => $url5->out(false),
+                    'title' => get_string('settings', 'local_quizpreset'),
+                    'disable' => false
             );
 
-        }else{
+        } else {
 
             // Check if teachercolleague.
-            if($teachercolleague = $DB->get_record_sql("SELECT id FROM {role} WHERE shortname='teachercolleague'")) {
+            if ($teachercolleague = $DB->get_record_sql("SELECT id FROM {role} WHERE shortname='teachercolleague'")) {
 
                 $flag = false;
                 if (isset($USER->access['ra']) && !empty($USER->access['ra'])) {
@@ -187,16 +190,16 @@ class preset {
                     }
                 }
 
-                if($flag){
-                    $url1 = new moodle_url('/mod/quiz/startattempt.php', array( 'cmid'=>$cmid, 'sesskey'=>sesskey()));
+                if ($flag) {
+                    $url1 = new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cmid, 'sesskey' => sesskey()));
                     $links[] = array(
                             'url' => $url1->out(false),
                             'title' => get_string('preview', 'local_quizpreset'),
                     );
 
                     // Number of attempts.
-                    if($numattempts) {
-                        $url3 = new moodle_url('/mod/quiz/report.php', array('id'=>$cmid, 'mode'=>'teacheroverview'));
+                    if ($numattempts) {
+                        $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'teacheroverview'));
                         $links[] = array(
                                 'url' => $url3->out(false),
                                 'title' => get_string('numattempt', 'local_quizpreset', $numattempts),
@@ -214,29 +217,28 @@ class preset {
      *
      */
     public static function get_pagedata($cmid, $defaulttype, $viewall, $pagestate, $urlparams) {
-        global $DB;
 
         self::init();
         $object = new \custom_types($cmid, $defaulttype, $viewall, $pagestate, $urlparams);
 
         $result = array();
 
-        if($pagestate != 'new' || $cmid != 0) {
+        if ($pagestate != 'new' || $cmid != 0) {
             $context = context_module::instance($cmid);
             if (self::if_user_admin_or_teacher() && has_capability('mod/quiz:manage', $context)) {
                 $isstudent = 0;
             } else {
                 $isstudent = 1;
             }
-        }else{
+        } else {
             $isstudent = 0;
         }
 
-        $result['details'] = $object->getDetails($isstudent);
-        $result['expanded'] = $object->getExpanded();
-        $result['global'] = $object->getGlobalName();
-        $result['values'] = $object->getValues();
-        $result['selector'] = $object->getSelector($isstudent);
+        $result['details'] = $object->get_details($isstudent);
+        $result['expanded'] = $object->get_expanded();
+        $result['global'] = $object->get_global_name();
+        $result['values'] = $object->get_values();
+        $result['selector'] = $object->get_selector($isstudent);
 
         return json_encode($result);
     }
@@ -268,9 +270,11 @@ class preset {
 
     public static function fill_settings() {
         self::init();
+
         $config = get_config('local_quizpreset');
-        //if (!isset($config->numberoftypes) or $config->numberoftypes == 0) { // No default settings.
-        if (1) { // No default settings.
+
+        // Was - if (!isset($config->numberoftypes) or $config->numberoftypes == 0).
+        if (1) {
 
             $customtypes = new \custom_types_default(self::$instancename);
             $alltypes = $customtypes->get_types();
@@ -283,22 +287,22 @@ class preset {
                 $count++;
 
                 $result = array();
-                $result['expanded'] = $customtypes->getExpanded();
-                $result['global'] = $customtypes->getGlobalName();
-                $result['values'] = $customtypes->getValues();
+                $result['expanded'] = $customtypes->get_expanded();
+                $result['global'] = $customtypes->get_global_name();
+                $result['values'] = $customtypes->get_values();
 
                 switch (self::$instancename) {
                     case 'physics':
-                        $result['typeDescribe'] = get_string('describe_physics_'.$type, 'local_quizpreset');
-                        $result['typeName'] = get_string('name_physics_'.$type, 'local_quizpreset');
+                        $result['typeDescribe'] = get_string('describe_physics_' . $type, 'local_quizpreset');
+                        $result['typeName'] = get_string('name_physics_' . $type, 'local_quizpreset');
                         break;
                     case 'chemistry':
-                        $result['typeDescribe'] = get_string('describe_chemistry_'.$type, 'local_quizpreset');
-                        $result['typeName'] = get_string('name_chemistry_'.$type, 'local_quizpreset');
+                        $result['typeDescribe'] = get_string('describe_chemistry_' . $type, 'local_quizpreset');
+                        $result['typeName'] = get_string('name_chemistry_' . $type, 'local_quizpreset');
                         break;
                     case 'biology':
-                        $result['typeDescribe'] = get_string('describe_biology_'.$type, 'local_quizpreset');
-                        $result['typeName'] = get_string('name_biology_'.$type, 'local_quizpreset');
+                        $result['typeDescribe'] = get_string('describe_biology_' . $type, 'local_quizpreset');
+                        $result['typeName'] = get_string('name_biology_' . $type, 'local_quizpreset');
                         break;
                 }
 
@@ -313,7 +317,6 @@ class preset {
 
                 $preset->sections = $result['expanded'];
                 $preset->fields = $result['values'];
-
 
                 // Fill settings.
                 set_config('quiztypename_' . $count, $result['typeName'], 'local_quizpreset');

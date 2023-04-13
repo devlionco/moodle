@@ -141,6 +141,11 @@ class qtype_ordering_edit_form extends question_edit_form {
                 array('onclick' => 'skipClientValidation = true;'));
         $options[$name] = array('type' => PARAM_RAW);
 
+        $name = 'order';
+        $orderlabel = get_string('orderlabel', $plugin);
+        $elements[] = $mform->createElement('text', $name, $orderlabel, array('size' => 10));
+        $mform->setType('order', PARAM_INT);
+
         $this->add_repeat_elements($mform, $name, $elements, $options);
 
         // Adjust HTML editor and removal buttons.
@@ -205,7 +210,9 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function reset_editor_format($editor, $format=FORMAT_MOODLE) {
         $value = $editor->getValue();
-        $value['format'] = $format;
+        if (is_array($value)) {
+            $value['format'] = $format;
+        }
         $value = $editor->setValue($value);
         return $format;
     }
@@ -245,7 +252,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         for ($i = 0; $i < $repeats; $i++) {
             $editor = $mform->getElement($name."[$i]");
-
+            $mform->getElement("order[$i]")->setValue(($i + 1) * 10);
             if (isset($ids[$i])) {
                 $id = $ids[$i];
             } else {

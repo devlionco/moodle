@@ -31,41 +31,45 @@ class local_quizpreset_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function get_buttonsbar_parameters() {
         return new external_function_parameters(
-            array(
-                'cmid' => new external_value(PARAM_INT, 'Module ID'),
-            )
+                array(
+                        'cmid' => new external_value(PARAM_INT, 'Module ID'),
+                )
         );
     }
+
     /**
      * @return string result of submittion
      */
     public static function get_buttonsbar($cmid) {
-        
+
         $context = \context_system::instance();
         self::validate_context($context);
 
         $params = self::validate_parameters(self::get_buttonsbar_parameters(),
-            array(
-                'cmid' => (int)$cmid,
-            )
+                array(
+                        'cmid' => (int) $cmid,
+                )
         );
         return preset::get_buttonsbar($params['cmid']);
     }
+
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function get_buttonsbar_returns() {
         return new external_value(PARAM_RAW, 'Get quiz button topbar');
     }
 
-
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function get_pagedata_parameters() {
@@ -79,6 +83,7 @@ class local_quizpreset_external extends external_api {
                 )
         );
     }
+
     /**
      * @return string result of submittion
      */
@@ -89,17 +94,20 @@ class local_quizpreset_external extends external_api {
 
         $params = self::validate_parameters(self::get_pagedata_parameters(),
                 array(
-                        'cmid' => (int)$cmid,
-                        'defaulttype' => (int)$defaulttype,
-                        'viewall' => (int)$viewall,
+                        'cmid' => (int) $cmid,
+                        'defaulttype' => (int) $defaulttype,
+                        'viewall' => (int) $viewall,
                         'pagestate' => $pagestate,
                         'urlparams' => $urlparams,
                 )
         );
-        return preset::get_pagedata($params['cmid'], $params['defaulttype'], $params['viewall'], $params['pagestate'], $params['urlparams']);
+        return preset::get_pagedata($params['cmid'], $params['defaulttype'], $params['viewall'], $params['pagestate'],
+                $params['urlparams']);
     }
+
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function get_pagedata_returns() {
@@ -108,6 +116,7 @@ class local_quizpreset_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function savedata_parameters() {
@@ -120,6 +129,7 @@ class local_quizpreset_external extends external_api {
                 )
         );
     }
+
     /**
      * @return string result of submittion
      */
@@ -130,16 +140,18 @@ class local_quizpreset_external extends external_api {
 
         $params = self::validate_parameters(self::savedata_parameters(),
                 array(
-                        'cmid' => (int)$cmid,
+                        'cmid' => (int) $cmid,
                         'pagestate' => $pagestate,
-                        'type' => (int)$type,
-                        'viewall' => (int)$viewall,
+                        'type' => (int) $type,
+                        'viewall' => (int) $viewall,
                 )
         );
         return preset::savedata($params['cmid'], $params['pagestate'], $params['type'], $params['viewall']);
     }
+
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function savedata_returns() {
@@ -148,19 +160,21 @@ class local_quizpreset_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function savepreset_parameters() {
         return new external_function_parameters(
-            array(
-                'presetid' => new external_value(PARAM_INT, 'Preset ID'),
-                'presetname' => new external_value(PARAM_RAW, 'Preset name'),
-                'teacherdescription' => new external_value(PARAM_RAW, 'Teacher description'),
-                'studentdescription' => new external_value(PARAM_RAW, 'Student description'),
-                'data' => new external_value(PARAM_RAW, 'Data'),
-            )
+                array(
+                        'presetid' => new external_value(PARAM_INT, 'Preset ID'),
+                        'presetname' => new external_value(PARAM_RAW, 'Preset name'),
+                        'teacherdescription' => new external_value(PARAM_RAW, 'Teacher description'),
+                        'studentdescription' => new external_value(PARAM_RAW, 'Student description'),
+                        'data' => new external_value(PARAM_RAW, 'Data'),
+                )
         );
     }
+
     /**
      * @return string result of submittion
      */
@@ -171,16 +185,16 @@ class local_quizpreset_external extends external_api {
         self::validate_context($context);
 
         $params = self::validate_parameters(self::savepreset_parameters(),
-            array(
-                'presetid' => (int)$presetid,
-                'presetname' => $presetname,
-                'teacherdescription' => $teacherdescription,
-                'studentdescription' => $studentdescription,
-                'data' => $data,
-            )
+                array(
+                        'presetid' => (int) $presetid,
+                        'presetname' => $presetname,
+                        'teacherdescription' => $teacherdescription,
+                        'studentdescription' => $studentdescription,
+                        'data' => $data,
+                )
         );
 
-        if($obj = $DB->get_record('local_quizpreset_mystates', ['userid' => $USER->id])){
+        if ($obj = $DB->get_record('local_quizpreset_mystates', ['userid' => $USER->id])) {
             $obj->typename = $params['presetname'];
 
             $settings = new \StdClass();
@@ -193,7 +207,7 @@ class local_quizpreset_external extends external_api {
             $obj->timemodified = time();
 
             $DB->update_record('local_quizpreset_mystates', $obj);
-        }else{
+        } else {
             $obj = new \StdClass();
             $obj->userid = $USER->id;
             $obj->typename = $params['presetname'];
@@ -212,8 +226,10 @@ class local_quizpreset_external extends external_api {
 
         return '';
     }
+
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function savepreset_returns() {

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     $ADMIN->add('modsettingsquizcat', new admin_externalpage('quizpresetsettings', get_string('pluginname', 'local_quizpreset'),
-                    $CFG->wwwroot . '/admin/settings.php?section=local_quizpreset', 'mod/quiz:manage'));
+            $CFG->wwwroot . '/admin/settings.php?section=local_quizpreset', 'mod/quiz:manage'));
 
     $settings = new admin_settingpage('local_quizpreset', get_string('pluginname', 'local_quizpreset'));
     $ADMIN->add('localplugins', $settings);
@@ -38,7 +37,9 @@ if ($hassiteconfig) {
     $title = get_string('defaulttype', 'local_quizpreset');
     $description = get_string('defaulttypedesc', 'local_quizpreset');
     $default = 1;
-    $choices = array_combine(range(1, $numtypes), array_map(function($n) { return new lang_string('quiztype_title', 'local_quizpreset', $n); }, range(1, $numtypes)));
+    $choices = array_combine(range(1, $numtypes), array_map(function($n) {
+        return new lang_string('quiztype_title', 'local_quizpreset', $n);
+    }, range(1, $numtypes)));
     $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
 
     $name = 'local_quizpreset/enableadjustments';
@@ -53,17 +54,17 @@ if ($hassiteconfig) {
     $description = get_string('numberoftypesdesc', 'local_quizpreset');
     $default = 4;
     $choices = array(
-        1 => '1',
-        2 => '2',
-        3 => '3',
-        4 => '4',
-        5 => '5',
-        6 => '6',
+            1 => '1',
+            2 => '2',
+            3 => '3',
+            4 => '4',
+            5 => '5',
+            6 => '6',
     );
     $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
 
     $settings->add(new admin_setting_configcheckbox('local_quizpreset/mypresetenable',
-        new lang_string('mypresetenable', 'local_quizpreset'), '', ''));
+            new lang_string('mypresetenable', 'local_quizpreset'), '', ''));
 
     for ($i = 1; $i <= $numtypes; $i++) {
 
@@ -104,7 +105,7 @@ if ($hassiteconfig) {
 
     // Remove unnecessary types.
     $quizpreset = get_config('local_quizpreset');
-    if (isset($quizpreset->numberoftypes) and $quizpreset->numberoftypes < 6) {
+    if (isset($quizpreset->numberoftypes) && $quizpreset->numberoftypes < 6) {
         $quiztypes = array();
         for ($i = $quizpreset->numberoftypes + 1; $i <= 6; $i++) {
             set_config('quiztypename_' . $i, '', 'local_quizpreset');
@@ -112,5 +113,4 @@ if ($hassiteconfig) {
             set_config('quizpreset_' . $i, '', 'local_quizpreset');
         }
     }
-
 }
