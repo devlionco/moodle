@@ -23,22 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 function local_jsoneditor_render_navbar_output() {
     global $PAGE;
-
-    //switch (get_config('local_jsoneditor', 'lang')) {
-    //    case 2:
-    //        $lang = 'en';
-    //        break;
-    //    case 3:
-    //        $lang = 'he';
-    //        break;
-    //    default:
-    //        $language = current_language();
-    //        $lang = get_parent_language($language) ?: $language;
-    //}
 
     $language = current_language();
     $lang = get_parent_language($language) ?: $language;
@@ -53,6 +39,4 @@ function local_jsoneditor_render_navbar_output() {
             };
         });
     ');
-
-    return;
 }
