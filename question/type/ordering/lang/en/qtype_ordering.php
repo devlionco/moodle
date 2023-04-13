@@ -123,6 +123,7 @@ $string['showgrading'] = 'Grading details';
 $string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
 
 $string['vertical'] = 'Vertical';
+$string['orderlabel'] = 'Order';
 $string['yougotnright'] = 'You have {$a->numright} {$a->numrightplural} correct.';
 $string['yougotnpartial'] = 'You have {$a->numpartial} {$a->numpartialplural} partially correct.';
 $string['yougotnincorrect'] = 'You have {$a->numincorrect} {$a->numincorrectplural} incorrect.';
