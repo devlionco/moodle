@@ -25,6 +25,7 @@
  * */
 namespace tool_inplacetranslate;
 
+use advanced_testcase;
 use translation;
 
 class tool_inplacetranslate_translation_testcase extends advanced_testcase {
