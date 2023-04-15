@@ -49,7 +49,7 @@ class qtype_calcsheet_test extends advanced_testcase {
         $this->qtype = new qtype_calcsheet();
     }
 
-    protected function tearDown() {
+    protected function tearDown() : void {
         $this->qtype = null;
     }
 
