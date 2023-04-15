@@ -1,0 +1,8 @@
+{
+    "moodle-atto_a11yaxe-button": {
+        "requires": [
+            "color-base",
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}
