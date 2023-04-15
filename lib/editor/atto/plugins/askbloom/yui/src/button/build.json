@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_askbloom-button",
+    "builds": {
+        "moodle-atto_askbloom-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}
