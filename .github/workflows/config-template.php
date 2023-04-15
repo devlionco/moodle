@@ -68,4 +68,16 @@ define('TEST_CACHESTORE_REDIS_TESTSERVERS', 'localhost');
 
 // Too much for now: define('PHPUNIT_LONGTEST', true); // Only leaves a few tests out and they are run later by CI.
 
+// Prevent MAXIMA setup
+// https://github.com/maths/moodle-qtype_stack/issues/729#issuecomment-1310481981
+define('QTYPE_STACK_TEST_CONFIG_PLATFORM', 'none');
+
+//// PETEL specific CFG
+
+// Fake instancename
+$CFG->instancename = 'physics';
+
+// Fake OER Catalog category
+$CFG->forced_plugin_settings['local_community']['catalogcategoryid'] = 1;
+
 require_once(__DIR__ . '/lib/setup.php');
