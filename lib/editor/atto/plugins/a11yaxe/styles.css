@@ -1,0 +1,9 @@
+.accessibilitywarnings img {
+    max-width: 32px;
+    max-height: 32px;
+}
+.toShow {
+    border: 3px solid #007bff;
+    border-radius: 8px;
+    box-sizing: inherit;
+}

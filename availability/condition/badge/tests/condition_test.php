@@ -33,11 +33,11 @@ use availability_badge\condition;
  * @copyright 2016 Blackboard
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class availability_badge_condition_testcase extends advanced_testcase {
+class availability_badge_condition_testcase extends \advanced_testcase {
     /**
      * Load required classes.
      */
-    public function setUp() {
+    protected function setUp() : void {
         // Load the mock info class so that it can be used.
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
