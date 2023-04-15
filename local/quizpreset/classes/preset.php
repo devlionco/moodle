@@ -37,14 +37,11 @@ class preset {
         global $CFG;
 
         // Set type of domain.
-        if (isset($CFG->instancename) && !empty($CFG->instancename)) {
-            if (in_array($CFG->instancename, array('physics', 'chemistry', 'biology'))) {
+        if (!empty($CFG->instancename)
+            && in_array($CFG->instancename, array('physics', 'chemistry', 'biology'))) {
                 self::$instancename = $CFG->instancename;
-            } else {
-                self::$instancename = 'physics';
-            }
         } else {
-            self::$instancename = 'physics';
+                self::$instancename = 'physics';
         }
     }
 
