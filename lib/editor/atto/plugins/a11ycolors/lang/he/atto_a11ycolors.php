@@ -1,0 +1,42 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Atto text editor integration version file.
+ *
+ * @package    atto_accessibilitycolors
+ * @copyright  2022 Weizmann institute of science, Israel.
+ * @author     Oleg Ochkurenko [Devlion] <oleg@devlion.co>
+ * @author     Nadav Kavalerchik [Weizmann, Science teaching department] <nadav.kavalerchik@weizmann.ac.il>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+$string['pluginname'] = 'שילוב צבעים נגיש';
+
+$string['availablecolors'] = 'צבעי גופן זמינים';
+$string['availablecolorsbackground'] = 'צבעי רקע זמינים';
+$string['availablecolorsbackground_desc'] = 'You may define available colors by listing them here, as you want them displayed in the font background color drop-down menu. If you want to display a 4x4 matrix of colors, enter 4 lines of 4 hex color codes, separared by spaces.<br><br>Note that changing these values only affects the appearance of the Font background Color menu but does not affect existing colored texts.';
+
+$string['sample_text_based_on'] = 'תוכן לדוגמה, מבוסס על צבע גופן ורקע.';
+$string['font_color'] = 'צבע גופן';
+$string['background_color'] = 'צבע רקע';
+$string['ok'] = 'אישור';
+$string['restore'] = 'איפוס';
+$string ['selectdefaulttext'] = 'יש לבחור תוכן כלשהו';
+$string['previewofyourselection'] = 'תצוגה מקדימה של בחירתך:';
+$string['chooseafontcolor'] = 'יש לבחור צבע גופן ואז צבע רקע';
+$string['chooseabackgroundcolor'] = 'יש לבחור צבע רקע ואז צבע גופן';
+$string['selectionorder'] = ' :סדר הבחירה';
+$string['modaltitle'] = 'בחירת צבע רקע וגופן לטקסט נבחר';
