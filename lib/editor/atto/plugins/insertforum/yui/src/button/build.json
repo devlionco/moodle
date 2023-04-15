@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_insertforum-button",
+  "builds": {
+    "moodle-atto_insertforum-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}
