@@ -1,9 +1,9 @@
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
   # a pull request.
-#  push:
-#    branches:
-#      - m41_petel
+  push:
+    branches:
+      - m41_petel
   pull_request:
     types: [opened, synchronize, reopened]
 name: Main Workflow
