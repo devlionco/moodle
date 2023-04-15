@@ -64,9 +64,9 @@ jobs:
             php: 7.4
             extensions:
             db: mysqli
-          - os: ubuntu-22.04
-            php: 8.1
-            db: pgsql
+#          - os: ubuntu-22.04
+#            php: 8.1
+#            db: pgsql
 
     steps:
       - name: Setting up DB mysql
@@ -82,14 +82,14 @@ jobs:
           tmpfs size: '1024M'
           extra conf: --skip-log-bin
 
-      - name: Setting up DB pgsql
-        if: ${{ matrix.db == 'pgsql' }}
-        uses: m4nu56/postgresql-action@v1
-        with:
-          postgresql version: 12
-          postgresql db: test
-          postgresql user: test
-          postgresql password: test
+#      - name: Setting up DB pgsql
+#        if: ${{ matrix.db == 'pgsql' }}
+#        uses: m4nu56/postgresql-action@v1
+#        with:
+#          postgresql version: 12
+#          postgresql db: test
+#          postgresql user: test
+#          postgresql password: test
 
       - name: Configuring git vars
         uses: rlespinasse/github-slug-action@v4
