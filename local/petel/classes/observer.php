@@ -42,7 +42,7 @@ class local_petel_observer {
     public static function course_created(\core\event\course_created $event) {
         global $CFG;
 
-        if ($CFG->instancename == 'chemistry') {
+        if (!empty($CFG->instancename) && $CFG->instancename === 'chemistry') {
             create_course_special_grade_categories($event->objectid);
         }
     }
