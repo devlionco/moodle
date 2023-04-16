@@ -73,7 +73,7 @@ function local_metadata_load_data($instance, $contextlevel) {
  * @param int $instanceid id of user whose profile is being edited.
  * @param int $contextlevel
  */
-function local_metadata_definition($mform, $instanceid = 0, $contextlevel) {
+function local_metadata_definition($mform, $instanceid = 0, $contextlevel = 0) {
     global $DB;
 
     // If user is "admin" fields are displayed regardless.
