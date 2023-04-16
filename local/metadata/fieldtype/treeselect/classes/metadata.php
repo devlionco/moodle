@@ -56,7 +56,9 @@ class metadata extends \local_metadata\fieldtype\metadata {
         // First call parent constructor.
         parent::__construct($fieldid, $instanceid);
 
-        list($options, $ids) = \class_treeselect::get_options($this->field->param1);
+        $val = isset($this->field->param1) ? $this->field->param1 : '';
+
+        list($options, $ids) = \class_treeselect::get_options($val);
         $this->options = $options;
 
         // Set the name for display; will need to be a language string.

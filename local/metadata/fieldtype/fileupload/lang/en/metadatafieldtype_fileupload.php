@@ -30,3 +30,4 @@ $string['pluginname'] = 'Fileupload metadata fieldtype';
 $string['displayname'] = 'File';
 $string['profilefileuploadoptions'] = 'Profile Default Data Options';
 $string['profiledefaultdata'] = 'Profile Default Data';
+$string['describedefault_help'] = 'Profile Default Data';
