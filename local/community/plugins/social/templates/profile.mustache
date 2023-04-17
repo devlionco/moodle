@@ -1,0 +1,27 @@
+<div class="social__wrapper">
+
+    {{>community_social/profile-aside-user}}
+
+    <div class="main">
+        <div class="main_header mb-3 pl-3">
+            <a href="{{config.wwwroot}}/local/community/plugins/social/teachers.php"><h1 class="main_head">
+                {{#str}} areateachers, community_social{{/str}}</h1>
+            </a>
+
+            <button data-handler="social_disable" class="main_disable"><i class="fa fa-power-off"></i>
+                {{#str}} disablingsocialarea, community_social{{/str}}
+            </button>
+        </div>
+
+        <div class="course__wrapper">
+            {{>community_social/profile-courses-oer}}
+        </div>
+
+        <div class="course__wrapper pl-3">
+            {{>community_social/profile-course}}
+        </div>
+
+        {{>community_social/profile-subjects}}
+
+    </div>
+</div>

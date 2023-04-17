@@ -1,0 +1,31 @@
+<div class="modal-body d-flex justify-content-center pr-5 pl-5">
+
+    {{#courseupload}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler= "uploadCourseToCatalog">
+        <i aria-hidden="true" title="{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}" class="fa-pro fa-upload fa-5x"></i>
+        <div class = "">{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}</div>
+    </button>
+    {{/courseupload}}
+
+    {{#sharecoursecommunity}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="shareCourseCommunity">
+        <i aria-hidden="true" title="{{#str}}eventcommunityshare, community_sharewith{{/str}}"  class="fa-pro fa-group fa-5x"></i>
+        <div class = "">{{#str}}sharecoursecommunity, community_sharecourse{{/str}}</div>
+    </button>
+    {{/sharecoursecommunity}}
+
+    {{#copycoursetoteacher}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="copyCourseToTeacher">
+        <i aria-hidden="true" title="{{#str}}copycoursetoteacher, community_sharecourse{{/str}}"  class="fa-pro fa-user fa-5x"></i>
+        <div class = "">{{#str}}copycoursetoteacher, community_sharecourse{{/str}}</div>
+    </button>
+    {{/copycoursetoteacher}}
+
+    {{#copycoursetocategory}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="copyCourseToMyCategory">
+        <i aria-hidden="true" title="{{#str}}copycoursetocategory, community_sharecourse{{/str}}"  class="fa-pro fa-copy fa-5x"></i>
+        <div class = "">{{#str}}copycoursetocategory, community_sharecourse{{/str}}</div>
+    </button>
+    {{/copycoursetocategory}}
+
+</div>

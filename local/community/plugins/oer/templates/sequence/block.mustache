@@ -1,0 +1,206 @@
+{{#blocks}}
+
+<div class=" w-100 border border-light position-relative sequence-item mx-3">
+
+    <div class="sequence-item-header d-flex align-items-center bg-white">
+        <h2 class="mb-0">{{seqname}}</h2>
+        <div class="sequence-item-info d-flex align-items-center justify-content-between ml-auto mr-3 h-100">
+            <div class="text-primary mr-3">
+                <i class="fal fa-download"></i>
+                <span class="text-body m-0">{{count_used_sequence}}</span>
+            </div>
+
+            {{#metadata_soriginality}}
+                <div class="text-primary sequence-info-tooltip position-relative mr-3">
+                    <i class="fal fa-message-quote"></i>
+                    <div class="oer-tooltip p-2 position-absolute" data-position="bottom-right"
+                        data-carret-position="top-right">
+
+                        {{{metadata_soriginality}}}
+
+                    </div>
+                </div>
+            {{/metadata_soriginality}}
+
+        </div>
+        <div id="oer_btn_container">
+            <a class="comments reviews" href="javascript:void(0)" data-objid="{{cmid}}" data-type="sequence" data-handler="showReview">
+                <div class="activity-info-tooltip position-relative">
+                    <button type="button" class="btn btn-primary rounded mb-3">
+                        <i class="fal fa-comment" aria-hidden="true"></i>
+                    </button>
+                    <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left" data-carret-position="top-left" >
+                        <span>{{countreview}} {{#str}}comments_box, community_oer{{/str}}</span>
+                    </div>
+                </div>
+            </a>
+            <div class="dropdown copy-sequence-dropdown-wrapper">
+                <button class="copy-sequence-btn btn mb-0
+                            {{#sequence_shared}}btn--white{{/sequence_shared}} {{^sequence_shared}}btn-primary{{/sequence_shared}}
+                            rounded
+                             dropdown-toggle" type="button" data-toggle="dropdown" data-seqid="{{seqid}}">
+
+                    <i class="fal fa-clone mr-2"></i>
+                    <span>
+                        {{#sequence_shared}}{{#str}}sequencecopied, community_oer{{/str}}{{/sequence_shared}}
+                        {{^sequence_shared}}{{#str}}sequencecopy, community_oer{{/str}}{{/sequence_shared}}
+                    </span>
+                </button>
+                <div class="dropdown-menu copy-sequence-dropdown pt-0">
+                    <div class="preloading-wrapper align-items-center justify-content-center" style="display: flex;"
+                        role="status">
+                        {{> community_oer/loading }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sequence-item-content bg-secondary pt-1 px-3 pb-4">
+        <div id="tabs_{{seqid}}" class="nav nav-tabs px-2 w-100">
+            
+                <a href="#" class="nav-link nav-control prev bg-secondary align-items-center disabled pl-1" data-direction="prev"
+                style="display: none;">
+                   <i class="fal fa-chevron-square-left"></i>
+                </a>
+            
+            <div class="nav-tabs-wrapper overflow-hidden">
+               <div class="d-flex nav-tabs-inner ">
+                    {{#tabs}}
+                    
+                        <a href="#" data-target="#{{tabid}}" data-toggle="tab"
+                            class="nav-link border border-primary {{#tabactive}}active{{/tabactive}}">
+                            {{name}}
+                        </a>
+                    
+                    {{/tabs}}
+               </div>
+            </div>
+
+            <a href="#" class="nav-link nav-control next bg-secondary align-items-center pr-1" data-direction="next" style="display: none;">
+               <i class="fal fa-chevron-square-right"></i>
+            </a>
+            
+        </div>
+
+
+        {{#tab_data_sequence}}
+        <div id="{{tabid}}" class="tab-pane fade {{#seqactive}}active show{{/seqactive}}">
+
+            <div class="activity-img-wrapper overflow-hidden position-relative">
+                <div class="activity-img d-block border border-primary position-relative"
+                    title="{{seqname}}" style="background-image: url('{{{sequence_image}}}');">
+
+                    <div
+                        class="certificate_stamp-wrapper d-flex align-items-center justify-content-center position-absolute">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-main">
+                <div class="teacher-block d-flex align-items-center flex-wrap mb-1">
+
+                    {{#users}}
+                        <a href="{{{urltosocialprofile}}}">
+                            <div class="teacher-img rounded-circle ml-1" style="background-image: url('{{{user_image}}}');" role="presentation"></div>
+                        </a>
+
+                        <a href="{{{urltosocialprofile}}}">
+                            <span class="teacher-info text-body border-right border-primary">{{user_fname}} {{user_lname}}</span>
+                        </a>
+                    {{/users}}
+
+                    <span class="teacher-info text-body ">{{sequence_created_at_format}}</span>
+                </div>
+                <a href="javascript:void(0)" class="activity-title bold text-body d-flex justify-content-start">
+                    <h2 class="font-weight-bold mb-0 mr-2">{{{seqname}}}</h2>
+                </a>
+                <p class="activity-text text-body mb-0">{{{sequence_description}}}</p>
+            </div>
+            <div class="activity-info ml-auto">
+                <div class="activity-info-blocks d-flex align-items-start justify-content-between">
+
+                </div>
+            </div>
+        </div>
+        {{/tab_data_sequence}}
+
+        {{#tabs_data_activities}}
+        <div id="{{tabid}}" class="tab-pane fade {{#cmactive}}active show{{/cmactive}}">
+            {{>community_oer/sequence/cm-item}}
+        </div>
+        {{/tabs_data_activities}}
+    </div>
+
+</div>
+{{/blocks}}
+
+{{#enable_pagination}}
+<nav class="d-flex justify-content-center align-items-center">
+    <ul class="pagination">
+
+        <li class="page-item {{#prev_pagination_disable}}disabled{{/prev_pagination_disable}}">
+            <a class="page-link" data-plugin="sequence" data-area="paging" data-value="previus"
+                data-page="{{default_page}}" href="javascript:void(0)">
+                {{#str}}previous{{/str}}
+            </a>
+        </li>
+
+        {{#pagination}}
+        {{#show}}
+        <li class="page-item {{#active}}active{{/active}}">
+            <a class="page-link" data-plugin="sequence" data-area="paging" data-value="{{value}}"
+                {{#active}}data-selected="1" {{/active}} href="javascript:void(0)">
+                {{value}}
+            </a>
+        </li>
+        {{/show}}
+        {{/pagination}}
+
+        <li class="page-item {{#next_pagination_disable}}disabled{{/next_pagination_disable}}">
+            <a class="page-link" data-plugin="sequence" data-area="paging" data-value="next"
+                data-page="{{default_page}}" href="javascript:void(0)">
+                {{#str}}next{{/str}}
+            </a>
+        </li>
+
+    </ul>
+</nav>
+{{/enable_pagination}}
+
+{{#js}}
+require(['jquery', 'community_oer/sequence'], function ($, Sequence) {
+    Sequence.openDropdownMenuForBlock();
+
+    $('.nav-tabs-inner .nav-link').on('click', (e)=>{
+        e.preventDefault();
+        Sequence.setActiveActivity(e.target);
+    });
+    $(document).ready(()=>{
+     
+        let sequenceNavTabs = $('.sequence-item-content .nav-tabs-wrapper');
+        sequenceNavTabs.each(function(){
+            let parentWidth = $(this).outerWidth();
+            let innerWidth = $(this).find('.nav-tabs-inner').outerWidth();
+            let cntrls =   $(this).parent().find('.nav-link.nav-control');
+          
+            if(parentWidth < innerWidth) {
+                cntrls.show();
+               
+            }
+        })
+ 
+
+
+    })
+    $('.sequence-item-content .nav-control').on('click', (e)=>{
+        e.preventDefault();
+        if($(e.currentTarget).hasClass('disabled')) {
+            return
+        } else {
+        Sequence.changeActivity($(e.currentTarget));
+        }
+    });
+});
+{{/js}}

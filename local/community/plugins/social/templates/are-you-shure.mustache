@@ -1,0 +1,15 @@
+
+<form class="pc-form">
+    <div class="pc-form_wrap">
+        <h3 class="mt-5 mb-5">{{#str}}areyoushure, community_social{{/str}}</h3>
+    </div>
+
+    <input type="hidden" id="are_you_shure_data" value="{{data}}">
+
+    <div class="btns-popup mb-2">
+        <button class="btn btn-secondary btn-cancel close_popup">
+            {{#str}}no{{/str}}</button>
+        <a class="btn btn-primary agree_popup" data-handler="are_you_sure_agree" href="javascript:void(0)">
+            {{#str}}yes{{/str}}</a>
+    </div>
+</form>

@@ -1,0 +1,127 @@
+<div class = "teacher-cards-head">
+    <span>{{teachers_current_tab.tab_name}}
+        {{#teachers_current_tab.tab_count_active}}
+        ({{teachers_current_tab.tab_count}})
+        {{/teachers_current_tab.tab_count_active}}
+    </span>
+    <div class="teacher_search" title="">
+        <div class="teacher_search-label">
+            <input class="teacher_search-input" type="text" id="search_words" name="search_words" value="{{teachers_current_tab.tab_search}}" placeholder="" alt="" autofocus>
+            <div data-tab_id="{{teachers_current_tab.tab_id}}" data-handler="search_teacher" class="teacher_search-icon" title=""></div>
+        </div>
+    </div>
+</div>
+<div class = "teacher-cards">
+
+  {{#teachers_current_tab.tab_collegue}}
+    {{#teachers_current_tab.tab_data}}
+      <div class = "tc teacher_colleague">
+        <a href="{{{user_url}}}">
+            <div class = "tc-image"><img src = "{{{image_url}}}" alt = ""></div>
+        </a>
+        <div class = "tc-inner">
+          <div class = "tc-header">
+            <a href="{{{user_url}}}">
+                <span class = "tc-name">{{firstname}} {{lastname}}</span>
+            </a>
+          </div>
+            <div class = "tc-main">
+                <div class = "tc-count">
+                    <span>{{#str}}colleagues, community_social{{/str}}</span>
+                    <span class = "tc-text-bold">{{count_colleagues}}</span>
+                </div>
+                <div class = "tc-count">
+                    <span>{{#str}}follows, community_social{{/str}}</span>
+                    <span class = "tc-text-bold">{{count_followers}}</span>
+                </div>
+                <div class = "tc-count">
+                    <span>{{#str}}subjects, community_social{{/str}}</span>
+                    <span class = "tc-text-bold">{{count_oercatalog}}</span>
+                </div>
+            </div>
+            <div class = "tc-footer">
+                {{#if_followers}}
+                    <span class = "tc-label tc-label--wave">{{#str}}followme, community_social{{/str}}</span>
+                    <!-- <button class = "tc-btn">{{#str}}follow, community_social{{/str}}</button> -->
+                {{/if_followers}}
+                {{#if_colleagues}}
+                    <span class = "tc-label">{{#str}}colleague, community_social{{/str}}</span>
+                    <!-- <button class = "tc-btn">{{#str}}colleagueteacher, community_social{{/str}}</button> -->
+                {{/if_colleagues}}
+            </div>
+
+          <div class = "tc-coursewrap">
+            <button
+              data-handler = "slideTeacherCard"
+              class = "tc-circlebtn"
+              ></button>
+            {{#peeredcourses}}
+                <a
+                  class = "tc-course"
+                  href="{{config.wwwroot}}/course/view.php?id={{{id}}}"
+                  title = "{{fullname}}"
+                  >
+                  <span
+                    class = "tc-courseimage"
+                    style="background-image: url({{ courseimage }})"
+                    >
+                  </span>
+                  <span>{{{fullname}}}</span>
+                </a>
+            {{/peeredcourses}}
+          </div>
+        </div>
+      </div>
+    {{/teachers_current_tab.tab_data}}
+  {{/teachers_current_tab.tab_collegue}}
+
+  {{^teachers_current_tab.tab_collegue}}
+    {{#teachers_current_tab.tab_data}}
+      <div class = "tc">
+        <a href="{{{user_url}}}">
+            <div class = "tc-image"><img src = "{{{image_url}}}" alt = ""></div>
+        </a>
+        <div class = "tc-inner">
+          <div class = "tc-header">
+            <a href="{{{user_url}}}">
+                <span class = "tc-name">{{firstname}} {{lastname}}</span>
+            </a>
+            <!--<span class = "tc-tag">{{#str}}wordnew, community_social{{/str}}</span>-->
+          </div>
+          <div class = "tc-main">
+            <div class = "tc-count">
+              <span>{{#str}}colleagues, community_social{{/str}}</span>
+              <span class = "tc-text-bold">{{count_colleagues}}</span>
+            </div>
+            <div class = "tc-count">
+              <span>{{#str}}follows, community_social{{/str}}</span>
+              <span class = "tc-text-bold">{{count_followers}}</span>
+            </div>
+            <div class = "tc-count">
+              <span>{{#str}}subjects, community_social{{/str}}</span>
+              <span class = "tc-text-bold">{{count_oercatalog}}</span>
+            </div>
+          </div>
+          <div class = "tc-footer">
+            {{#if_followers}}
+              <span class = "tc-label tc-label--wave">{{#str}}followme, community_social{{/str}}</span>
+              <!-- <button class = "tc-btn">{{#str}}follow, community_social{{/str}}</button> -->
+            {{/if_followers}}
+            {{#if_colleagues}}
+            <span class = "tc-label">{{#str}}colleague, community_social{{/str}}</span>
+            <!-- <button class = "tc-btn">{{#str}}colleagueteacher, community_social{{/str}}</button> -->
+            {{/if_colleagues}}
+          </div>
+        </div>
+      </div>
+
+    {{/teachers_current_tab.tab_data}}
+  {{/teachers_current_tab.tab_collegue}}
+
+  {{^teachers_current_tab.tab_data}}
+
+      <div class = "">{{#str}} noteachers, community_social{{/str}}</div>
+
+  {{/teachers_current_tab.tab_data}}
+
+</div>

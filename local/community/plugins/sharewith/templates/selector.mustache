@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{#str}}select_desired_action, community_sharewith{{/str}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body d-flex justify-content-center pr-5 pl-5 sharewith-action-buttons">
+    {{#amit}}
+        <a
+          class="btn btn-outline-primary {{^teacherid}}disabled{{/teacherid}}"
+          href='{{{wwwroot}}}/message/index.php?id={{teacherid}}&mess=2&modname={{modname}}&coursename={{coursename}}'
+          target="_blank"
+          role="button"
+          >
+            <i aria-hidden="true" title="{{#str}}info, community_sharewith{{/str}}"  class="icon fa fa-info-circle fa-fw"></i>
+            {{#str}}info, community_sharewith{{/str}}
+        </a>
+    {{/amit}}
+    {{^amit}}
+        <button type="button" class="btn btn-outline-primary align-self-center" data-handler="selectUploadActivity">
+            <i aria-hidden="true" title="{{#str}}eventactivityupload, community_sharewith{{/str}}"  class="fa fa-upload fa-5x"></i>
+            <div class = "">{{#str}}eventactivityupload, community_sharewith{{/str}}</div>
+        </button>
+        <button type="button" class="btn btn-outline-primary align-self-center" data-handler="shareCommunity">
+            <i aria-hidden="true" title="{{#str}}eventcommunityshare, community_sharewith{{/str}}"  class="fa fa-group fa-5x"></i>
+            <div class = "">{{#str}}eventcommunityshare, community_sharewith{{/str}}</div>
+        </button>
+        <button type="button" class="btn btn-outline-primary align-self-center" data-handler="shareActivity">
+            <i aria-hidden="true" title="{{#str}}eventactivityshare, community_sharewith{{/str}}"  class="fa fa-share-alt fa-5x"></i>
+            <div class = "">{{#str}}eventactivityshare, community_sharewith{{/str}}</div>
+        </button>
+    {{/amit}}
+    <button type="button" class="btn btn-outline-primary align-self-center" data-handler="selectCourse" >
+        <i aria-hidden="true" title="{{#str}}eventactivitycopy, community_sharewith{{/str}}" class="fa fa-copy fa-5x"></i>
+        <div class = "">{{#str}}eventactivitycopy, community_sharewith{{/str}}</div>
+    </button>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary" type="button"  data-dismiss="modal">{{#str}}cancel, community_sharewith{{/str}}</button>
+</div>

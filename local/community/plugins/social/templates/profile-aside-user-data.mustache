@@ -1,0 +1,97 @@
+    {{^editable}}
+        <a href="{{{user.url_to_message}}}" class = "user__mail btn">{{#str}}message, community_social{{/str}}</a>
+    {{/editable}}
+
+    <a class = "user__link" href="{{{user.url_user_profile}}}">
+      <div class = "user__image"><img src = "{{user.image_url}}" alt = ""></div>
+      <span class = "user__name">{{user.firstname}} {{user.lastname}}</span>
+    </a>
+
+    <!-- Badges -->
+    {{#badges}}
+    <div class="user__badges">
+        <div class = "badge__image">
+            <a href="{{badge.url}}"><img src = "{{badge.image}}" alt = "{{badge.name}}"></a>
+        </div>
+    </div>
+    {{/badges}}
+
+    <div class = "user__preview ">
+      {{#user.school}}
+      <span>{{user.school}}</span>
+      {{/user.school}}
+
+      {{#editable}}
+        {{^user.school}}
+          <span><i class="fa fa-book" aria-hidden="true"></i> {{#str}}entertheschoolname, community_social{{/str}}</span>
+        {{/user.school}}
+      {{/editable}}
+
+      {{#editable}}
+        <a data-handler = "school-settings" href = "javascript:void(0)" class = "btn-settings"><i class="fa fa-cog" aria-hidden="true"></i> {{#str}}settings, community_social{{/str}}</a>
+      {{/editable}}
+    </div>
+
+    {{^editable}}
+        <span class = "user__follow-link">
+          <a
+            href = "javascript:void(0)"
+            data-handler = "follow"
+            data-follow_enable = "1"
+
+            {{#if_followers}}
+            class = "btn btn--wave"
+            >
+            {{#str}}followme, community_social{{/str}}
+            {{/if_followers}}
+
+            {{^if_followers}}
+            class = "btn btn--gray"
+            >
+            {{#str}}blockuserbefollowed, community_social{{/str}}
+            {{/if_followers}}
+          </a>
+          <span
+            class = "user_help"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title = "{{#str}}followersreceivealerts, community_social{{/str}}"
+            >?
+          </span>
+
+        </span>
+      {{#if_colleagues}}
+          <a href = "javascript:void(0)" class = "btn btn--text">{{#str}}colleagueteacher, community_social{{/str}}</a>
+      {{/if_colleagues}}
+    {{/editable}}
+
+    {{#editable}}
+    <div class = "user__count-p"><span>{{users_used_my_oercatalog_count}}</span> {{#str}}timeshavebeenusedyou, community_social{{/str}} </div>
+    {{/editable}}
+
+    {{^editable}}
+    <div class = "user__count-p"><span>{{users_used_my_oercatalog_count}}</span> {{#str}}timeshavebeenusedfor, community_social{{/str}} {{user.firstname}} </div>
+    {{/editable}}
+
+    <div class = "user__follows">
+      <div class = "user__follow-item" data-handler="user-collegues-list">
+        <span class = "user__follow-head">{{#str}} blockusercolleagues, community_social{{/str}}</span>
+        <span class = "user__follow-dig">{{colleagues_count}}</span>
+      </div>
+      <div class = "user__follow-item" data-handler="user-follower-list">
+        <span class = "user__follow-head">{{#str}}blockuserfollows, community_social{{/str}}</span>
+        <span class = "user__follow-dig">{{folowers_count}}</span>
+      </div>
+
+      <!--
+      <div class = "user__follow-item">
+        <span class = "user__follow-head">{{#str}}blockuserfollows, community_social{{/str}}</span>
+        <span class = "user__follow-dig">{{followed_count}}</span>
+      </div>
+      -->
+
+      <a href="{{{user.url_user_profile}}}" class = "user__follow-item">
+          <span class = "user__follow-head">{{#str}}blockusersubjects, community_social{{/str}}</span>
+          <span class = "user__follow-dig">{{count_oercatalog_activities}}</span>
+      </a>
+    </div>

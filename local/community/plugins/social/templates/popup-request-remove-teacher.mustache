@@ -1,0 +1,7 @@
+<div class = "warning_wrap">
+  {{#str}} removeaccesstext1, community_social{{/str}}{{data.user_firstname}} {{data.user_lastname}} {{#str}} removeaccesstext2, community_social{{/str}} {{data.course_name}} ?
+</div>
+<div class = "btns-popup">
+  <button class = "btn btn-secondary btn-cancel close_popup">{{#str}} cancel, community_social{{/str}}</button>
+  <button class = "btn btn-primary" data-courseid = "{{data.courseid}}"  data-userid = "{{data.userid}}" data-handler="remove-teacher" >{{#str}} removeaccess, community_social{{/str}}</button>
+</div>
