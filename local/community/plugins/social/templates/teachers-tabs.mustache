@@ -1,0 +1,19 @@
+<div class = "teachlist-wrap">
+
+  <span class = "teachlist-text">{{#str}} choosecircles, community_social{{/str}}</span>
+
+  {{#teachers_tabs}}
+      <div
+        data-handler = "teacher_tab"
+        data-tab_id = "{{tab_id}}"
+        class = "teachlist-item {{tab_active}}"
+      >
+        <span>{{tab_name}}
+            {{#tab_count_active}}
+            ({{tab_count}})
+            {{/tab_count_active}}
+        </span>
+      </div>
+  {{/teachers_tabs}}
+
+</div>

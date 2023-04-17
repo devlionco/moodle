@@ -1,0 +1,31 @@
+<div class="modal-body d-flex justify-content-center pr-5 pl-5">
+
+    {{#questionupload}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-center" data-handler= "uploadQuestionsToMaagar">
+        <i aria-hidden="true" title="{{#str}}eventquestionupload, community_sharequestion{{/str}}" class="fa-pro fa-upload fa-5x"></i>
+        <div class = "">{{#str}}eventquestionupload, community_sharequestion{{/str}}</div>
+    </button>
+    {{/questionupload}}
+
+    {{#copyquestionstoteacher}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-center mx-3" data-handler="copyQuestionsToTeacher">
+        <i aria-hidden="true" title="{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}"  class="fa-pro fa-user fa-5x"></i>
+        <div class = "">{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}</div>
+    </button>
+    {{/copyquestionstoteacher}}
+
+    {{#copyquestionstocategory}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-center mx-3" data-handler="copyQuestionsToCategory">
+        <i aria-hidden="true" title="{{#str}}copyquestionstocategory, community_sharequestion{{/str}}"  class="fa-pro fa-folder-tree fa-5x"></i>
+        <div class = "">{{#str}}copyquestionstocategory, community_sharequestion{{/str}}</div>
+    </button>
+    {{/copyquestionstocategory}}
+
+    {{#copyquestionstoquiz}}
+    <button type="button" class="btn btn-outline-primary rounded align-self-center" data-handler="copyQuestionsToQuiz">
+        <i aria-hidden="true" title="{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}"  class="fa-pro fa-file-import fa-5x"></i>
+        <div class = "">{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}</div>
+    </button>
+    {{/copyquestionstoquiz}}
+
+</div>

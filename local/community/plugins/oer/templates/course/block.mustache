@@ -1,0 +1,172 @@
+{{#blocks}}
+
+    <div class="bg-white w-100 border border-light d-flex position-relative activity-item mx-3">
+        <div class="activity-img-wrapper overflow-hidden position-relative">
+            <a class="activity-img copy-course-img d-block border border-primary position-relative" href="{{{urlcourse}}}" title="{{metadata_cfullname}}" style="background-image: url('{{{imagecourse}}}');">
+
+                <div class="certificate_stamp-wrapper d-flex align-items-center justify-content-center position-absolute">
+
+                </div>
+            </a>
+        </div>
+
+        <div class="activity-main">
+            <div class="teacher-block d-flex align-items-center flex-wrap mb-3">
+
+                {{#users}}
+                    <a href="{{{urltosocialprofile}}}">
+                        <div class="teacher-img rounded-circle ml-1" style="background-image: url('{{{user_image}}}');" role="presentation"></div>
+                    </a>
+
+                    <a href="{{{urltosocialprofile}}}">
+                        <span class="teacher-info text-body border-right border-primary">{{user_fname}} {{user_lname}}</span>
+                    </a>
+                {{/users}}
+
+                <span class="teacher-info text-body border-right border-primary">{{c_shared_at_format}}</span>
+
+                <div class="text-primary course-info-tooltip position-relative mr-3" >
+                    <span class="teacher-info text-body "> <i class="fas fa-list"></i> {{count_sections}} {{#str}} section_on_course, community_oer {{/str}}</span>
+                    <div class="oer-tooltip p-2 position-absolute" data-position="bottom-center" data-carret-position="top-center" data-simplebar>
+                        <ul class="p-0">
+                            {{#sections}}
+                                <li>{{.}}</li>
+                            {{/sections}}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <a href="{{{urlcourse}}}" class="activity-title bold text-body d-flex justify-content-start">
+                <h2 class="font-weight-bold mb-0 mr-2">{{{metadata_cfullname}}}</h2>
+<!--                <span class="font-weight-normal activity-title-info">{{info_metadata}}</span>-->
+            </a>
+            <p class="activity-text text-body mb-0">{{{metadata_cdescription}}}</p>
+
+            {{#social_collegues_enable}}
+                <div class="text-primary course-info-tooltip position-relative d-inline-flex" >
+                            <span class="teacher-info text-body p-0 ">
+                                <i class="fas fa-users" aria-hidden="true"></i>
+                                {{#str}} listofusers, community_social {{/str}}
+                            </span>
+                    <div class="oer-tooltip position-absolute p-1 {{^collegues}}d-none{{/collegues}}" data-position="bottom-center"
+                         data-carret-position="top-center" data-simplebar>
+                        {{#collegues}}
+                            {{firstname}} {{lastname}},
+                        {{/collegues}}
+                    </div>
+                </div>
+            {{/social_collegues_enable}}
+
+        </div>
+        <div class="activity-info ml-auto mr-3">
+            <div id="oer_btn_container">
+                {{^showteachercomments}}
+                    <a class="comments reviews" href="javascript:void(0)" data-objid="{{cmid}}" data-type="course" data-handler="showReview">
+                        <div class="activity-info-tooltip position-relative">
+                            <button type="button" class="btn btn-primary rounded mb-3">
+                                <i class="fal fa-comment" aria-hidden="true"></i>
+                            </button>
+                            <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left" data-carret-position="top-left" >
+                                <span>{{countreview}} {{#str}}comments_box, community_oer{{/str}}</span>
+                            </div>
+                        </div>
+                    </a>
+                {{/showteachercomments}}
+
+                {{#course_shared_disabled}}
+                    <div class="copy-activity-dropdown-wrapper">
+                        <div class="text-primary copy-course-info-tooltip position-relative mr-3" >
+
+                            <button class="copy-course-btn btn btn--white rounded mb-3 w-100" disabled
+                                    type="button" id="copy_corse_btn_{{cid}}" data-cid="{{cid}}" data-error-category="{{error_category}}">
+
+                                <i class="fal fa-clone mr-2"></i> <span> {{#str}}activitycopy, community_oer{{/str}} </span>
+                            </button>
+
+                            <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left" data-carret-position="top-left" >
+                                <span>{{#str}}course_shared_disabled, community_oer{{/str}}</span>
+                            </div>
+
+                        </div>
+                    </div>
+                {{/course_shared_disabled}}
+
+                {{^course_shared_disabled}}
+                    <div class="copy-activity-dropdown-wrapper">
+                        <button class="copy-course-btn btn
+                            {{#course_shared}}btn--white{{/course_shared}} {{^course_shared}}btn-primary{{/course_shared}}
+                            rounded mb-3 w-100"
+                                type="button" id="copy_corse_btn_{{cid}}" data-cid="{{cid}}" data-error-category="{{error_category}}">
+
+                            <i class="fal fa-clone mr-2"></i>
+                            <span>
+                                {{#course_shared}}{{#str}}activitycopied, community_oer{{/str}}{{/course_shared}}
+                                {{^course_shared}}{{#str}}activitycopy, community_oer{{/str}}{{/course_shared}}
+                            </span>
+
+                        </button>
+                    </div>
+                {{/course_shared_disabled}}
+            </div>
+
+            <div class="activity-info-blocks d-flex align-items-start justify-content-between ml-4">
+                <div class="activity-info-block">
+                    <div class="text-primary">
+                        <i class="fal fa-download"></i>
+                    </div>
+                    <p class="text-body m-0">{{count_used_course}}</p>
+                </div>
+
+                <div class="activity-info-block">
+                    {{#metadata_csource}}
+                        <div class="text-primary course-info-tooltip position-relative mr-3" >
+                            <i class="fal fa-quote-right"></i>
+                                <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left" data-carret-position="top-left" >
+                                <span>{{{metadata_csource}}}</span>
+                            </div>
+                        </div>
+                    {{/metadata_csource}}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{{/blocks}}
+
+{{#enable_pagination}}
+    <nav class="d-flex justify-content-center align-items-center">
+        <ul class="pagination">
+
+            <li class="page-item {{#prev_pagination_disable}}disabled{{/prev_pagination_disable}}">
+                <a class="page-link" data-plugin="course" data-area="paging" data-value="previus" data-page="{{default_page}}" href="javascript:void(0)">
+                    {{#str}}previous{{/str}}
+                </a>
+            </li>
+
+            {{#pagination}}
+                {{#show}}
+                    <li class="page-item {{#active}}active{{/active}}">
+                        <a class="page-link" data-plugin="course" data-area="paging" data-value="{{value}}" {{#active}}data-selected="1"{{/active}} href="javascript:void(0)">
+                            {{value}}
+                        </a>
+                    </li>
+                {{/show}}
+            {{/pagination}}
+
+            <li class="page-item {{#next_pagination_disable}}disabled{{/next_pagination_disable}}">
+                <a class="page-link" data-plugin="course" data-area="paging" data-value="next" data-page="{{default_page}}" href="javascript:void(0)">
+                    {{#str}}next{{/str}}
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+{{/enable_pagination}}
+
+{{#js}}
+require(['jquery', 'community_oer/course'], function ($, Course) {
+    Course.downloadCourse();
+});
+{{/js}}

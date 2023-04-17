@@ -1,0 +1,45 @@
+{{#migrate_enable}}
+    <form class="pc-form" id="popup_migrate_courses_pombim">
+        <div class="pc-form_wrap">
+            <div class="pc-form_text">{{#str}} migratecoursesdesc, community_social{{/str}}</div>
+
+            <div class="pc-form_head">{{#str}} publiccourses, community_social{{/str}}</div>
+
+            <div class="pc-form_courses">
+                <select class="select custom-select ml-2" name="oldcourseid">
+                    {{#pombim}}
+                        <option selected="selected" value="{{id}}">{{name}}</option>
+                    {{/pombim}}
+                </select>
+            </div>
+
+            <div class="pc-form_head">{{#str}} mycourses, community_social{{/str}}</div>
+
+            <div class="pc-form_courses">
+                <select class="select custom-select ml-2" name="newcourseid">
+                    {{#migrate}}
+                        <option selected="selected" value="{{id}}">{{name}}</option>
+                    {{/migrate}}
+                </select>
+            </div>
+
+
+        </div>
+
+        <div class="btns-popup mb-2">
+            <button class="btn btn-secondary btn-cancel close_popup" data-handler="send_public_course">
+                {{#str}}cancel, community_social{{/str}}</button>
+            <a class="btn btn-primary" data-handler="save-migrate-public-course" href="javascript:void(0)">
+                {{#str}}approval, community_social{{/str}}</a>
+        </div>
+
+    </form>
+{{/migrate_enable}}
+
+{{^migrate_enable}}
+    <form class="pc-form" id="popup_courses_pombip">
+        <div class="pc-form_wrap">
+            <h3 class="mt-5 mb-5">{{#str}}error_migrate_courses_pombim, community_social{{/str}}</h3>
+        </div>
+    </form>
+{{/migrate_enable}}

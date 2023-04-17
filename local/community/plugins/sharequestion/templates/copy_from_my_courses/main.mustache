@@ -1,0 +1,62 @@
+<div id="copy_from_my_courses_{{uniqueid}}" class="copy-from-my-courses">
+
+    <div class="modal-inner pt-2">
+        <div class="form-row mb-1 mx-0">
+            <div class="form-group d-flex align-items-center justify-content-between w-100 position-relative mb-0">
+                <label class="form-control-label question-search-label mb-0" for="search_{{uniqueid}}">
+                    {{#str}}describe_copy_question, community_sharequestion{{/str}}
+                </label>
+                <input id="search_{{uniqueid}}" type="text" class="form-control question-search-input"
+                    placeholder="{{#str}}qsearch, community_sharequestion{{/str}}">
+                <i class="fal fa-search question-search-icon position-absolute" role="button" tabindex="0"></i>
+                <i class="fas fa-times question-search-close-icon position-absolute py-1 px-2" role="button" tabindex="0" style="display: none;"></i>
+            </div>
+
+        </div>
+
+        <p class="checked-question-counter bold mb-0">
+            {{#str}}questionchecked, community_sharequestion{{/str}} <span
+                id="checked-question-counter-num-{{uniqueid}}">0</span>
+        </p>
+
+        <div class="inner-heading d-flex align-items-center bg-primary text-white p-2 mb-4">
+
+            <div class="custom-control custom-checkbox question-custom-checkbox checkbox-cell px-2 d-flex
+                        align-items-center justify-content-center border-right border-secondary">
+
+                <input type="checkbox" class="custom-control-input select-all-checkboxes"
+                    id="all_checkboxes_{{uniqueid}}">
+                <label class="custom-control-label " for="all_checkboxes_{{uniqueid}}"></label>
+            </div>
+
+            <div class="heading-title type-cell text-center px-3 flex-grow-0 border-right border-secondary"
+                role="heading">
+                {{#str}}qtype, community_sharequestion{{/str}}
+            </div>
+
+            <div class="heading-title px-2 name-cell flex-grow-1 border-right border-secondary" role="heading">
+                {{#str}}qcontent, community_sharequestion{{/str}}
+            </div>
+
+            <div class="heading-title px-2 text-center create-cell flex-grow-0 border-right border-secondary"
+                role="heading">
+                {{#str}}qcreatedby, community_sharequestion{{/str}}
+            </div>
+
+            <div class="heading-title px-2 text-center create-date-cell flex-grow-0 border-right border-secondary"
+                role="heading">
+                {{#str}}qcreateddate, community_sharequestion{{/str}}
+            </div>
+
+            <div class="heading-title px-2 text-center update-date-cell flex-grow-0 border-right border-secondary"
+                role="heading">
+                {{#str}}qupdateddate, community_sharequestion{{/str}}
+            </div>
+
+            <div class="heading-title px-2 text-center last-cell flex-grow-0" role="heading"></div>
+        </div>
+
+        <div id="popup_block_content_courses_{{uniqueid}}" class="popup_block_content"></div>
+
+    </div>
+</div>

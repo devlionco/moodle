@@ -1,0 +1,21 @@
+<div class="aside">
+
+    <div class="user">
+        {{>community_social/profile-aside-user-data}}
+    </div>
+
+    <!--  <div class = "learn-stat">
+    {{>community_social/profile-aside-learn-stat}}
+  </div> -->
+
+    <div class="public-course">
+        {{>community_social/profile-aside-public-course}}
+    </div>
+
+    {{#profile_user_link}}
+        <div class="profile-user">
+            <a class="profile-user__item" href="{{profile_user_link}}">{{#str}} profile{{/str}}</a>
+        </div>
+    {{/profile_user_link}}
+
+</div>

@@ -1,0 +1,11 @@
+<p class="inform-text">
+    {{{string}}}
+    <audio id="information-popup-success-audio" autoplay>
+        <source src="{{{rootLink}}}/theme/petel/audio/victory.mp3" type="audio/mpeg">
+    </audio>
+</p>
+<script>
+    var audio = document.getElementById("information-popup-success-audio");
+    audio.volume = 0.1;
+    audio.play();
+</script>

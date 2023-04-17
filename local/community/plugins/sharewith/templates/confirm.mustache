@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button id="confirmClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <span>{{text}}</span>
+</div>
+
+<div class="modal-footer">
+
+        {{^hidebtnback}}
+            <button class="btn btn-secondary" type="button" data-handler="goBack">{{#str}}back, community_sharewith{{/str}}</button>
+        {{/hidebtnback}}
+        <button class="btn btn-success" type="button" data-dismiss="modal">{{#str}}finish, community_sharewith{{/str}}</button>
+    </div>
+
+    {{#js}}
+        setTimeout(function(){
+        $('#confirmClose').trigger('click');
+        }, 10000);
+    {{/js}}

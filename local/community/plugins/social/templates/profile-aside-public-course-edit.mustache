@@ -1,0 +1,34 @@
+      <div class = "public-course__header">
+        <div class = "public-course__head">
+          {{#str}}publiccourses, community_social{{/str}}
+          <span
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title = "{{#str}}publiccourseshelp, community_social{{/str}}"
+            >?
+          </span>
+        </div>
+
+        {{#count_courses_pombim}}
+            <a data-handler = "migrate_public_course" href = "javascript:void(0)" class = "btn-settings">
+                <i class="fa fa-exchange" aria-hidden="true"></i> {{#str}}migratebutton, community_social{{/str}}
+            </a>
+
+            <a data-handler = "public_course" href = "javascript:void(0)" class = "btn-settings">
+              <i class="fa fa-cog" aria-hidden="true"></i> {{#str}}settings, community_social{{/str}}
+            </a>
+        {{/count_courses_pombim}}
+
+      </div>
+      {{#courses_pombim}}
+        <div class = "public-course__item">{{fullname}}</div>
+      {{/courses_pombim}}
+
+      {{^courses_pombim}}
+        <div class = "public-course__message">{{#str}} noselectcoursespombim, community_social{{/str}}</div>
+        <a data-handler = "public_course" href = "javascript:void(0)" class = "btn btn--left">{{#str}}selectcoursespombim, community_social{{/str}}</a>
+      {{/courses_pombim}}
+
+      {{#button_courses_pombim_enable}}
+        <!-- <a data-handler = "request-followed-courses" href = "javascript:void(0)" class = "btn btn--left">{{#str}}requestaccess, community_social{{/str}}</a> -->
+      {{/button_courses_pombim_enable}}
