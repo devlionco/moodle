@@ -2,6 +2,9 @@
 
 namespace Redmine\Api;
 
+use Redmine\Exception\MissingParameterException;
+use Redmine\Serializer\PathSerializer;
+
 /**
  * Listing users, creating, editing.
  *
@@ -24,7 +27,7 @@ class User extends AbstractApi
      */
     public function all(array $params = [])
     {
-        $this->users = $this->retrieveAll('/users.json', $params);
+        $this->users = $this->retrieveData('/users.json', $params);
 
         return $this->users;
     }
@@ -115,11 +118,9 @@ class User extends AbstractApi
         );
         $params['include'] = implode(',', $params['include']);
 
-        return $this->get(sprintf(
-            '/users/%s.json?%s',
-            urlencode($id),
-            http_build_query($params)
-        ));
+        return $this->get(
+            PathSerializer::create('/users/'.urlencode($id).'.json', $params)->getPath()
+        );
     }
 
     /**
@@ -129,7 +130,7 @@ class User extends AbstractApi
      *
      * @param array $params the new user data
      *
-     * @throws \Exception Missing mandatory parameters
+     * @throws MissingParameterException Missing mandatory parameters
      *
      * @return string|false
      */
@@ -150,7 +151,7 @@ class User extends AbstractApi
          || !isset($params['firstname'])
          || !isset($params['mail'])
         ) {
-            throw new \Exception('Missing mandatory parameters');
+            throw new MissingParameterException('Theses parameters are mandatory: `login`, `lastname`, `firstname`, `mail`');
         }
         $xml = new \SimpleXMLElement('<?xml version="1.0"?><user></user>');
         foreach ($params as $k => $v) {

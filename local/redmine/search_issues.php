@@ -47,11 +47,10 @@ echo html_writer::start_div('results');
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// TODO: use local/redmine/settings.php ?
 $client = new \Redmine\Client\NativeCurlClient(
-    get_config('theme_petel', 'redmineurl'),
-    get_config('theme_petel', 'redmineusername'),
-    get_config('theme_petel', 'redminepassword'));
+    get_config('local_redmine', 'redmineurl'),
+    get_config('local_redmine', 'redmineusername'),
+    get_config('local_redmine', 'redminepassword'));
 
 if (!empty($CFG->proxyhost)) {
     $client->setCurlOption(CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);

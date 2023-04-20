@@ -2,6 +2,10 @@
 
 namespace Redmine\Api;
 
+use Exception;
+use Redmine\Exception\MissingParameterException;
+use Redmine\Serializer\PathSerializer;
+
 /**
  * Handling of groups.
  *
@@ -24,7 +28,7 @@ class Group extends AbstractApi
      */
     public function all(array $params = [])
     {
-        $this->groups = $this->retrieveAll('/groups.json', $params);
+        $this->groups = $this->retrieveData('/groups.json', $params);
 
         return $this->groups;
     }
@@ -56,7 +60,7 @@ class Group extends AbstractApi
      *
      * @param array $params the new group data
      *
-     * @throws \Exception Missing mandatory parameters
+     * @throws MissingParameterException Missing mandatory parameters
      *
      * @return \SimpleXMLElement
      */
@@ -71,7 +75,7 @@ class Group extends AbstractApi
         if (
             !isset($params['name'])
         ) {
-            throw new \Exception('Missing mandatory parameters');
+            throw new MissingParameterException('Theses parameters are mandatory: `name`');
         }
 
         $xml = $this->buildXML($params);
@@ -86,11 +90,11 @@ class Group extends AbstractApi
      *
      * @param int $id
      *
-     * @throws \Exception Not implemented
+     * @throws Exception Not implemented
      */
     public function update($id, array $params = [])
     {
-        throw new \Exception('Not implemented');
+        throw new Exception('Not implemented');
     }
 
     /**
@@ -107,7 +111,9 @@ class Group extends AbstractApi
      */
     public function show($id, array $params = [])
     {
-        return $this->get('/groups/'.urlencode($id).'.json?'.http_build_query($params));
+        return $this->get(
+            PathSerializer::create('/groups/'.urlencode($id).'.json', $params)->getPath()
+        );
     }
 
     /**

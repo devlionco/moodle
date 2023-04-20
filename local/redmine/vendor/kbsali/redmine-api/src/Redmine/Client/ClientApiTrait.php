@@ -2,8 +2,8 @@
 
 namespace Redmine\Client;
 
-use InvalidArgumentException;
 use Redmine\Api;
+use Redmine\Exception\InvalidApiNameException;
 
 /**
  * Provide API instantiation to clients.
@@ -38,12 +38,12 @@ trait ClientApiTrait
     ];
 
     /**
-     * @throws InvalidArgumentException if $name is not a valid api name
+     * @throws InvalidApiNameException if $name is not a valid api name
      */
     public function getApi(string $name): Api
     {
         if (!isset($this->apiClassnames[$name])) {
-            throw new InvalidArgumentException(sprintf('`%s` is not a valid api. Possible apis are `%s`', $name, implode('`, `', array_keys($this->apiClassnames))));
+            throw new InvalidApiNameException(sprintf('`%s` is not a valid api. Possible apis are `%s`', $name, implode('`, `', array_keys($this->apiClassnames))));
         }
         if (isset($this->apiInstances[$name])) {
             return $this->apiInstances[$name];
@@ -52,5 +52,21 @@ trait ClientApiTrait
         $this->apiInstances[$name] = new $class($this);
 
         return $this->apiInstances[$name];
+    }
+
+    private function isUploadCall(string $path): bool
+    {
+        $path = strtolower($path);
+
+        return (false !== strpos($path, '/uploads.json')) || (false !== strpos($path, '/uploads.xml'));
+    }
+
+    private function isValidFilePath(string $body): bool
+    {
+        return
+            '' !== $body
+            && strlen($body) <= \PHP_MAXPATHLEN
+            && is_file(strval(str_replace("\0", '', $body)))
+        ;
     }
 }

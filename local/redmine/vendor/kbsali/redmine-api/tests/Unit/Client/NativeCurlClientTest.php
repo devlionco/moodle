@@ -16,9 +16,9 @@ class NativeCurlClientTest extends TestCase
 {
     use PHPMock;
 
-    const __NAMESPACE__ = 'Redmine\Client';
+    public const __NAMESPACE__ = 'Redmine\Client';
 
-    const DEFAULT_CURL_OPTIONS = [
+    public const DEFAULT_CURL_OPTIONS = [
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_PORT => 80,
         CURLOPT_URL => 'http://test.local/path',
@@ -32,7 +32,7 @@ class NativeCurlClientTest extends TestCase
     ];
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function shouldPassApiKeyToConstructor()
@@ -47,7 +47,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function shouldPassUsernameAndPasswordToConstructor()
@@ -63,7 +63,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testGetLastResponseStatusCodeIsInitialNull()
@@ -77,7 +77,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testGetLastResponseContentTypeIsInitialEmpty()
@@ -91,7 +91,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testGetLastResponseBodyIsInitialEmpty()
@@ -105,7 +105,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testStartAndStopImpersonateUser()
@@ -174,7 +174,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetSslVersion()
@@ -242,7 +242,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetSslVerifypeer()
@@ -311,7 +311,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetSslVerifyhost()
@@ -380,7 +380,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetCustomHttpHeaders()
@@ -455,7 +455,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetCustomHost()
@@ -526,7 +526,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testSetPort()
@@ -594,7 +594,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testCustomPortWillSetFromSchema()
@@ -650,7 +650,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testCustomPortWillSetFromUrl()
@@ -706,7 +706,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      * @dataProvider getRequestReponseData
      */
@@ -771,7 +771,49 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
+     * @test
+     */
+    public function testHandlingOfResponseWithoutContent()
+    {
+        $content = '';
+        $statusCode = 204;
+        $contentType = null;
+
+        $curl = $this->createMock(stdClass::class);
+
+        $curlInit = $this->getFunctionMock(self::__NAMESPACE__, 'curl_init');
+        $curlInit->expects($this->exactly(1))->willReturn($curl);
+
+        $curlExec = $this->getFunctionMock(self::__NAMESPACE__, 'curl_exec');
+        $curlExec->expects($this->exactly(1))->willReturn('');
+
+        $curlSetoptArray = $this->getFunctionMock(self::__NAMESPACE__, 'curl_setopt_array');
+
+        $curlGetinfo = $this->getFunctionMock(self::__NAMESPACE__, 'curl_getinfo');
+        $curlGetinfo->expects($this->exactly(2))->will($this->returnValueMap(([
+            [$curl, CURLINFO_HTTP_CODE, $statusCode],
+            [$curl, CURLINFO_CONTENT_TYPE, $contentType],
+        ])));
+
+        $curlErrno = $this->getFunctionMock(self::__NAMESPACE__, 'curl_errno');
+        $curlErrno->expects($this->exactly(1))->willReturn(CURLE_OK);
+
+        $curlClose = $this->getFunctionMock(self::__NAMESPACE__, 'curl_close');
+
+        $client = new NativeCurlClient(
+            'http://test.local',
+            'access_token'
+        );
+
+        $this->assertSame(true, $client->requestPut('/path', '{"foo":"bar"}'));
+        $this->assertSame($statusCode, $client->getLastResponseStatusCode());
+        $this->assertSame('', $client->getLastResponseContentType());
+        $this->assertSame($content, $client->getLastResponseBody());
+    }
+
+    /**
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function testCurlErrorThrowsException()
@@ -806,7 +848,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      *
      * @param string $apiName
@@ -849,7 +891,7 @@ class NativeCurlClientTest extends TestCase
     }
 
     /**
-     * @covers \Redmine\NativeCurlClient
+     * @covers \Redmine\Client\NativeCurlClient
      * @test
      */
     public function getApiShouldThrowException()

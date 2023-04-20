@@ -2,10 +2,10 @@
 
 namespace Redmine\Tests\Unit\Api;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Redmine\Api\Project;
 use Redmine\Client\Client;
+use Redmine\Exception\MissingParameterException;
 
 /**
  * @coversDefaultClass \Redmine\Api\Project
@@ -23,7 +23,8 @@ class ProjectTest extends TestCase
     public function testAllReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -34,12 +35,15 @@ class ProjectTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Project($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->all());
+        $this->assertSame($expectedReturn, $api->all());
     }
 
     /**
@@ -52,7 +56,8 @@ class ProjectTest extends TestCase
     {
         // Test values
         $parameters = ['not-used'];
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -68,12 +73,15 @@ class ProjectTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Project($client);
 
         // Perform the tests
-        $this->assertSame([$response], $api->all($parameters));
+        $this->assertSame($expectedReturn, $api->all($parameters));
     }
 
     /**
@@ -86,7 +94,8 @@ class ProjectTest extends TestCase
     public function testShowReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -100,12 +109,15 @@ class ProjectTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Project($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->show(5));
+        $this->assertSame($expectedReturn, $api->show(5));
     }
 
     /**
@@ -119,7 +131,8 @@ class ProjectTest extends TestCase
     {
         // Test values
         $parameters = ['include' => ['parameter1', 'parameter2', 'enabled_modules']];
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -135,12 +148,15 @@ class ProjectTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Project($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->show(5, $parameters));
+        $this->assertSame($expectedReturn, $api->show(5, $parameters));
     }
 
     /**
@@ -337,8 +353,8 @@ class ProjectTest extends TestCase
         // Create the object under test
         $api = new Project($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `name`, `identifier`');
 
         // Perform the tests
         $this->assertSame($response, $api->create(['id' => 5]));
@@ -365,8 +381,8 @@ class ProjectTest extends TestCase
         // Create the object under test
         $api = new Project($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `name`, `identifier`');
 
         // Perform the tests
         $this->assertSame($response, $api->create($parameters));
@@ -393,8 +409,8 @@ class ProjectTest extends TestCase
         // Create the object under test
         $api = new Project($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `name`, `identifier`');
 
         // Perform the tests
         $this->assertSame($response, $api->create($parameters));

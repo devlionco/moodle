@@ -2,10 +2,10 @@
 
 namespace Redmine\Tests\Unit\Api;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Redmine\Api\Group;
 use Redmine\Client\Client;
+use Redmine\Exception\MissingParameterException;
 
 /**
  * @coversDefaultClass \Redmine\Api\Group
@@ -23,7 +23,8 @@ class GroupTest extends TestCase
     public function testAllReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -36,12 +37,15 @@ class GroupTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Group($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->all());
+        $this->assertSame($expectedReturn, $api->all());
     }
 
     /**
@@ -54,7 +58,8 @@ class GroupTest extends TestCase
     {
         // Test values
         $parameters = ['not-used'];
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -70,12 +75,15 @@ class GroupTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Group($client);
 
         // Perform the tests
-        $this->assertSame([$response], $api->all($parameters));
+        $this->assertSame($expectedReturn, $api->all($parameters));
     }
 
     /**
@@ -201,7 +209,8 @@ class GroupTest extends TestCase
     public function testShowReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -212,12 +221,15 @@ class GroupTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Group($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->show(5));
+        $this->assertSame($expectedReturn, $api->show(5));
     }
 
     /**
@@ -230,8 +242,9 @@ class GroupTest extends TestCase
     public function testShowCallsGetUrlWithParameters()
     {
         // Test values
-        $response = 'API Response';
         $allParameters = ['not-used'];
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -247,12 +260,15 @@ class GroupTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Group($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->show(5, $allParameters));
+        $this->assertSame($expectedReturn, $api->show(5, $allParameters));
     }
 
     /**
@@ -265,7 +281,8 @@ class GroupTest extends TestCase
     public function testRemoveCallsDelete()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = $response;
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -284,12 +301,15 @@ class GroupTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(0))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new Group($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->remove(5));
+        $this->assertSame($expectedReturn, $api->remove(5));
     }
 
     /**
@@ -341,7 +361,7 @@ class GroupTest extends TestCase
      *
      * @test
      */
-    public function testCreateThrowsExceptionIsNameIsMissing()
+    public function testCreateThrowsExceptionIfNameIsMissing()
     {
         // Test values
         $postParameter = [];
@@ -352,8 +372,8 @@ class GroupTest extends TestCase
         // Create the object under test
         $api = new Group($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `name`');
 
         // Perform the tests
         $api->create($postParameter);
