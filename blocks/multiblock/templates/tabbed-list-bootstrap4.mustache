@@ -60,3 +60,38 @@
         {{/multiblock}}
     </div>
 </div>
+
+
+{{#js}}
+require(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+    const removeIndex = function() {
+        var links = $(this).closest('ul').find('.nav-link');
+        links.attr('tabindex', 0);
+    };
+
+    $('.nav-item').on('click', function(){
+        setTimeout(removeIndex.bind(this),500);
+    });
+
+    $('.nav-item').keydown(function(){
+        setTimeout(removeIndex.bind(this),500);
+    })
+
+    $('.multiblock-tabbed-list ul li').click(function() {
+        let block = $(this).find('a');
+        if(!block.hasClass('active')){
+            Ajax.call([{
+                methodname: 'block_multiblock_send_event_tab_click',
+                args: {
+                    type: block.data('type'),
+                    title: block.text(),
+                },
+                done: function (response) {
+
+                },
+                fail: Notification.exeption
+            }]);
+        }
+    });
+});
+{{/js}}
