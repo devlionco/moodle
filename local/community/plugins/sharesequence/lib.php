@@ -152,7 +152,7 @@ function community_sharesequence_output_fragment_upload_sequence_catalog_page_2(
         $course = get_course($args->courseid);
         $mainsections = community_sharesequense_get_main_sections($course);
     } catch (Exception $e) {
-
+        throw new \moodle_exception('error');
     }
 
     $data = array(

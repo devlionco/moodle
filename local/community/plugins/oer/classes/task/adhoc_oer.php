@@ -173,7 +173,7 @@ class adhoc_oer extends \core\task\adhoc_task {
                 ";
                 $DB->execute($sqlupdateblock, [$CFG->eladresearch_cohort_a]);
             } catch (\Exception $e) {
-                // TODO: echo debug message.
+                throw new \moodle_exception('error');
             }
         }
     }

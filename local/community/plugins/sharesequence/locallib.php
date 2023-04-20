@@ -98,7 +98,7 @@ function community_sharesequense_get_structure_section($sectionid) {
                     'modicon' => $OUTPUT->pix_icon('icon', '', $act->modname, array('class' => ''))
             ];
         } catch (Exception $e) {
-
+            throw new \moodle_exception('error');
         }
     }
 

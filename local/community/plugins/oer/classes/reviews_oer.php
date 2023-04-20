@@ -199,7 +199,7 @@ class reviews_oer {
                                 try {
                                     $DB->insert_record('cohort_members', $cohortmember);
                                 } catch (\Exception $e) {
-                                    // Probably duplicate key, if user already in cohort.
+                                    throw new \moodle_exception('error');
                                 }
 
                                 $DB->insert_record('community_oerctlg_rvw_rqsts', $request);
@@ -942,14 +942,18 @@ class reviews_oer {
     protected static function send_error($error) {
         global $CFG, $USER, $DB, $COURSE;
 
-        if (get_config('theme_petel', 'redminestatus')) {
+        if (get_config('local_redmine', 'redminestatus')) {
 
-            require_once($CFG->dirroot . '/theme/petel/redmine/vendor/autoload.php');
+            require_once($CFG->dirroot . '/local/redmine/vendor/autoload.php');
 
-            $client = new \Redmine\Client(
-                    get_config('theme_petel', 'redmineurl'),
-                    get_config('theme_petel', 'redmineusername'),
-                    get_config('theme_petel', 'redminepassword'));
+            $client = new \Redmine\Client\NativeCurlClient(
+                get_config('local_redmine', 'redmineurl'),
+                get_config('local_redmine', 'redmineusername'),
+                get_config('local_redmine', 'redminepassword'));
+
+            if (!empty($CFG->proxyhost)) {
+                $client->setCurlOption(CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
+            }
 
             switch ($error['errortype']) {
                 case 'bug':
@@ -1011,20 +1015,20 @@ class reviews_oer {
                     'tracker_id' => $trackerid,
             ];
 
-            $newissuexml = $client->issue->create($issue);
+            $newissuexml = $client->getApi('issue')->create($issue);
 
             $redmineid = (isset($newissuexml->id['0'])) ? $newissuexml->id['0'] : '#0000';
 
             if (count($error['errorimages'])) {
                 foreach ($error['errorimages'] as $image) {
-                    $upload = json_decode($client->attachment->upload($image['content']));
-                    $attachment = array(
-                            'token' => $upload->upload->token,
-                            'filename' => $image['filename'],
-                            'description' => $image['description'],
-                            'content_type' => $image['content_type'],
-                    );
-                    $client->issue->attach($redmineid, $attachment);
+
+                    $upload = json_decode($client->getApi('attachment')->upload($image['content']));
+                    $client->getApi('issue')->attach($redmineid, [
+                        'token' => $upload->upload->token,
+                        'filename' => $image['filename'],
+                        'description' => $image['description'],
+                        'content_type' => $image['content_type'],
+                    ]);
                 }
             }
 
