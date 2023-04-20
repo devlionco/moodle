@@ -198,7 +198,7 @@ class graph_submission {
                     margin: 60
                 },
                 subtitle: {
-                    text: "' . $this->coursename . '<br>' .
+                    text: "' . str_replace(['"',"'"],'',$this->coursename) . '<br>' .
                              get_string("begin_date", "block_analytics_graphs") . ': ' .
                              userdate($this->startdate, get_string("strftimerecentfull")) . '",
                 },
@@ -222,7 +222,7 @@ class graph_submission {
         $arrlength = count($arrayofassignments);
         for ($x = 0; $x < $arrlength; $x++) {
             $chart .= '"<b>';
-            $chart .= substr($arrayofassignments[$x], 0, 35);
+            $chart .= str_replace(['"',"'"],'',mb_substr($arrayofassignments[$x], 0, 15));
             if ($arrayofduedates[$x]) {
                 $chart .= '</b><br>'. userdate($arrayofduedates[$x], get_string("strftimerecentfull")) . '",';
             } else {
