@@ -1080,7 +1080,7 @@ class community_sharequestion_external extends external_api {
                 \community_sharequestion\duplicate_question::copy_question_metadata($qid, $newquestionid);
                 \community_sharequestion\duplicate_question::add_question_to_quiz($params['cmid'], $newquestionid);
             } catch (\Exception $e) {
-
+                throw new \moodle_exception('error');
             }
 
             $DB->insert_record('community_sharequestion_shr', [

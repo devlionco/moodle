@@ -157,7 +157,7 @@ function community_sharewith_output_fragment_upload_activity_maagar($args) {
                         $defaultcompetencies[] = $obj->get('competencyid');
                     }
                 } catch (\Exception $e) {
-
+                    throw new \moodle_exception('error');
                 }
             }
         }
