@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Redmine\Client;
 
-use Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Redmine\Exception\ClientException;
 
 /**
  * Psr18 client.
@@ -136,7 +136,7 @@ final class Psr18Client implements Client
     /**
      * Create and run a request.
      *
-     * @throws Exception If anything goes wrong on the request
+     * @throws ClientException If anything goes wrong on the request
      *
      * @return bool true if status code of the response is not 4xx oder 5xx
      */
@@ -149,7 +149,7 @@ final class Psr18Client implements Client
         try {
             $this->lastResponse = $this->httpClient->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw new ClientException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $this->lastResponse->getStatusCode() < 400;
@@ -181,7 +181,9 @@ final class Psr18Client implements Client
 
         switch ($method) {
             case 'POST':
-                if ($this->isUploadCall($path, $body)) {
+                if ($this->isUploadCall($path) && $this->isValidFilePath($body)) {
+                    @trigger_error('Uploading an attachment by filepath is deprecated, use file_get_contents() to upload the file content instead.', E_USER_DEPRECATED);
+
                     $request = $request->withBody(
                         $this->streamFactory->createStreamFromFile($body)
                     );
@@ -203,7 +205,7 @@ final class Psr18Client implements Client
         // set Content-Type header
         $tmp = parse_url($this->url.$path);
 
-        if (preg_match('/\/uploads.(json|xml)/i', $path)) {
+        if ($this->isUploadCall($path)) {
             $request = $request->withHeader('Content-Type', 'application/octet-stream');
         } elseif ('json' === substr($tmp['path'], -4)) {
             $request = $request->withHeader('Content-Type', 'application/json');
@@ -212,14 +214,5 @@ final class Psr18Client implements Client
         }
 
         return $request;
-    }
-
-    private function isUploadCall(string $path, string $body): bool
-    {
-        return
-            (preg_match('/\/uploads.(json|xml)/i', $path)) &&
-            '' !== $body &&
-            is_file(strval(str_replace("\0", '', $body)))
-        ;
     }
 }

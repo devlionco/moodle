@@ -2,10 +2,10 @@
 
 namespace Redmine\Tests\Unit\Api;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Redmine\Api\TimeEntry;
 use Redmine\Client\Client;
+use Redmine\Exception\MissingParameterException;
 
 /**
  * @coversDefaultClass \Redmine\Api\TimeEntry
@@ -23,7 +23,8 @@ class TimeEntryTest extends TestCase
     public function testAllReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -34,12 +35,15 @@ class TimeEntryTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new TimeEntry($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->all());
+        $this->assertSame($expectedReturn, $api->all());
     }
 
     /**
@@ -56,7 +60,8 @@ class TimeEntryTest extends TestCase
             'user_id' => 10,
             'limit' => 2,
         ];
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -74,12 +79,15 @@ class TimeEntryTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new TimeEntry($client);
 
         // Perform the tests
-        $this->assertSame([$response], $api->all($parameters));
+        $this->assertSame($expectedReturn, $api->all($parameters));
     }
 
     /**
@@ -92,7 +100,8 @@ class TimeEntryTest extends TestCase
     public function testShowReturnsClientGetResponse()
     {
         // Test values
-        $response = 'API Response';
+        $response = '["API Response"]';
+        $expectedReturn = ['API Response'];
 
         // Create the used mock objects
         $client = $this->createMock(Client::class);
@@ -103,12 +112,15 @@ class TimeEntryTest extends TestCase
         $client->expects($this->exactly(1))
             ->method('getLastResponseBody')
             ->willReturn($response);
+        $client->expects($this->exactly(1))
+            ->method('getLastResponseContentType')
+            ->willReturn('application/json');
 
         // Create the object under test
         $api = new TimeEntry($client);
 
         // Perform the tests
-        $this->assertSame($response, $api->show(5));
+        $this->assertSame($expectedReturn, $api->show(5));
     }
 
     /**
@@ -158,8 +170,8 @@ class TimeEntryTest extends TestCase
         // Create the object under test
         $api = new TimeEntry($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `issue_id` or `project_id`, `hours`');
 
         // Perform the tests
         $this->assertSame($response, $api->create(['id' => 5]));
@@ -186,8 +198,8 @@ class TimeEntryTest extends TestCase
         // Create the object under test
         $api = new TimeEntry($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `issue_id` or `project_id`, `hours`');
 
         // Perform the tests
         $this->assertSame($response, $api->create($parameters));
@@ -215,8 +227,8 @@ class TimeEntryTest extends TestCase
         // Create the object under test
         $api = new TimeEntry($client);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Missing mandatory parameters');
+        $this->expectException(MissingParameterException::class);
+        $this->expectExceptionMessage('Theses parameters are mandatory: `issue_id` or `project_id`, `hours`');
 
         // Perform the tests
         $this->assertSame($response, $api->create($parameters));
@@ -293,6 +305,7 @@ class TimeEntryTest extends TestCase
         $response = 'API Response';
         $parameters = [
             'hours' => '10.25',
+            'comments' => 'some text with xml entities: & < > " \' ',
             'custom_fields' => [
                 [
                     'id' => 1,

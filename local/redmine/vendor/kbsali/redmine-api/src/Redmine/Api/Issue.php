@@ -2,6 +2,8 @@
 
 namespace Redmine\Api;
 
+use Redmine\Serializer\PathSerializer;
+
 /**
  * Listing issues, searching, editing and closing your projects issues.
  *
@@ -11,11 +13,11 @@ namespace Redmine\Api;
  */
 class Issue extends AbstractApi
 {
-    const PRIO_LOW = 1;
-    const PRIO_NORMAL = 2;
-    const PRIO_HIGH = 3;
-    const PRIO_URGENT = 4;
-    const PRIO_IMMEDIATE = 5;
+    public const PRIO_LOW = 1;
+    public const PRIO_NORMAL = 2;
+    public const PRIO_HIGH = 3;
+    public const PRIO_URGENT = 4;
+    public const PRIO_IMMEDIATE = 5;
 
     /**
      * List issues.
@@ -38,7 +40,7 @@ class Issue extends AbstractApi
      */
     public function all(array $params = [])
     {
-        return $this->retrieveAll('/issues.json', $params);
+        return $this->retrieveData('/issues.json', $params);
     }
 
     /**
@@ -59,7 +61,9 @@ class Issue extends AbstractApi
             $params['include'] = implode(',', $params['include']);
         }
 
-        return $this->get('/issues/'.urlencode($id).'.json?'.http_build_query($params));
+        return $this->get(
+            PathSerializer::create('/issues/'.urlencode($id).'.json', $params)->getPath()
+        );
     }
 
     /**
@@ -160,9 +164,14 @@ class Issue extends AbstractApi
             'due_date' => null,
         ];
         $params = $this->cleanParams($params);
-        $params = $this->sanitizeParams($defaults, $params);
+        $sanitizedParams = $this->sanitizeParams($defaults, $params);
 
-        $xml = $this->buildXML($params);
+        // Allow assigned_to_id to be `` (empty string) to unassign a user from an issue
+        if (array_key_exists('assigned_to_id', $params) && '' === $params['assigned_to_id']) {
+            $sanitizedParams['assigned_to_id'] = '';
+        }
+
+        $xml = $this->buildXML($sanitizedParams);
 
         return $this->put('/issues/'.$id.'.xml', $xml->asXML());
     }

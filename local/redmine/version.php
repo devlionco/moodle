@@ -27,8 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_redmine';
 $plugin->release = 'INITIAL';
-$plugin->version = 2021061900;
+$plugin->version = 2021061906;
 $plugin->requires = 2016052300;
-// Dependency, because of redmine setting
-// TODO: refactor, and move all theme_petel redmine code into local_redmine
-$plugin->dependencies = array('theme_petel' => 2019070328);

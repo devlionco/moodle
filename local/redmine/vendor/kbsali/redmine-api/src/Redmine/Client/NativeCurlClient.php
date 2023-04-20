@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Redmine\Client;
 
-use Exception;
 use Redmine\Api;
+use Redmine\Exception\ClientException;
 
 /**
  * Native cURL client.
@@ -210,7 +210,7 @@ final class NativeCurlClient implements Client
     }
 
     /**
-     * @throws Exception If anything goes wrong on curl request
+     * @throws ClientException If anything goes wrong on curl request
      */
     private function request(string $method, string $path, string $body = ''): bool
     {
@@ -225,14 +225,18 @@ final class NativeCurlClient implements Client
         $curlErrorNumber = curl_errno($curl);
 
         if (CURLE_OK !== $curlErrorNumber) {
-            $e = new Exception(curl_error($curl), $curlErrorNumber);
+            $e = new ClientException(curl_error($curl), $curlErrorNumber);
             curl_close($curl);
             throw $e;
         }
 
         $this->lastResponseBody = (false === $response) ? '' : $response;
         $this->lastResponseStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $this->lastResponseContentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
+        $possibleContentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
+
+        if (is_string($possibleContentType)) {
+            $this->lastResponseContentType = $possibleContentType;
+        }
 
         curl_close($curl);
 
@@ -267,7 +271,9 @@ final class NativeCurlClient implements Client
         switch ($method) {
             case 'post':
                 $curlOptions[CURLOPT_POST] = 1;
-                if ($this->isUploadCall($path, $body)) {
+                if ($this->isUploadCall($path) && $this->isValidFilePath($body)) {
+                    @trigger_error('Uploading an attachment by filepath is deprecated, use file_get_contents() to upload the file content instead.', E_USER_DEPRECATED);
+
                     $file = fopen($body, 'r');
                     $size = filesize($body);
                     $filedata = fread($file, $size);
@@ -305,15 +311,6 @@ final class NativeCurlClient implements Client
         curl_setopt_array($curl, $curlOptions);
 
         return $curl;
-    }
-
-    private function isUploadCall(string $path, string $body): bool
-    {
-        return
-            (preg_match('/\/uploads.(json|xml)/i', $path)) &&
-            '' !== $body &&
-            is_file(strval(str_replace("\0", '', $body)))
-        ;
     }
 
     private function createHttpHeader(string $path): array
@@ -356,7 +353,7 @@ final class NativeCurlClient implements Client
         // Content type headers
         $tmp = parse_url($this->url.$path);
 
-        if (preg_match('/\/uploads.(json|xml)/i', $path)) {
+        if ($this->isUploadCall($path)) {
             $httpHeaders[] = 'Content-Type: application/octet-stream';
         } elseif ('json' === substr($tmp['path'], -4)) {
             $httpHeaders[] = 'Content-Type: application/json';

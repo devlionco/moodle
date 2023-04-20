@@ -5,7 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/kbsali/php-redmine-api/compare/v2.0.0...v2.x)
+## [Unreleased](https://github.com/kbsali/php-redmine-api/compare/v2.2.0...v2.x)
+
+## [v2.2.0](https://github.com/kbsali/php-redmine-api/compare/v2.1.1...v2.2.0) - 2022-03-01
+
+### Added
+
+- New method `Redmine\Client\AbstractApi::retrieveData()` to retrieve as many elements as you want as array (even if the total number of elements is greater than 100).
+- New exception `Redmine\Client\SerializerException` for JSON/XML serializer related exceptions
+
+### Fixed
+
+- Allow unassign user from an issue
+
+### Deprecated
+
+- `Redmine\Api\AbstractApi::retrieveAll()` is deprecated, use `Redmine\Api\AbstractApi::retrieveData()` instead
+
+## [v2.1.1](https://github.com/kbsali/php-redmine-api/compare/v2.1.0...v2.1.1) - 2022-01-15
+
+### Fixed
+
+- Special characters in comments when updating time entries will be escaped
+
+## [v2.1.0](https://github.com/kbsali/php-redmine-api/compare/v2.0.1...v2.1.0) - 2022-01-04
+
+### Added
+
+- New interface `Redmine\Exception` that is implemented by every library-related exception
+- New exception `Redmine\Exception\ClientException` for client related exceptions
+- New exception `Redmine\Exception\InvalidApiNameException` if an invalid API instance is requested
+- New exception `Redmine\Exception\InvalidParameterException` for invalid parameter provided to an API instance
+- New exception `Redmine\Exception\MissingParameterException` for missing parameter while using an API instance
+
+### Changed
+
+- Switched from Travis-CI to Github Actions
+
+### Fixed
+
+- Avoid warning if path of uploaded file is longer than the maximum allowed path length
+
+### Deprecated
+
+- `Redmine\Api\AbstractApi::lastCallFailed()` is deprecated, use `Redmine\Client\Client::getLastResponseStatusCode()` instead
+- Uploading an attachment using `Redmine\Api\Attachment::upload()` with filepath is deprectead, use `file_get_contents()` to upload the file content instead
+
+## [v2.0.1](https://github.com/kbsali/php-redmine-api/compare/v2.0.0...v2.0.1) - 2021-09-22
+
+### Fixed
+
+- Fixed the handling of a response if the content type header is missing
 
 ## [v2.0.0](https://github.com/kbsali/php-redmine-api/compare/v1.8.1...v2.0.0) - 2021-06-08
 

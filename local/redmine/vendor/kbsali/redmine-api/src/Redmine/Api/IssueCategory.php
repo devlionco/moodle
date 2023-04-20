@@ -2,6 +2,9 @@
 
 namespace Redmine\Api;
 
+use Redmine\Exception\MissingParameterException;
+use Redmine\Serializer\PathSerializer;
+
 /**
  * Listing issue categories, creating, editing.
  *
@@ -25,7 +28,7 @@ class IssueCategory extends AbstractApi
      */
     public function all($project, array $params = [])
     {
-        $this->issueCategories = $this->retrieveAll('/projects/'.$project.'/issue_categories.json', $params);
+        $this->issueCategories = $this->retrieveData('/projects/'.$project.'/issue_categories.json', $params);
 
         return $this->issueCategories;
     }
@@ -91,7 +94,7 @@ class IssueCategory extends AbstractApi
      * @param string|int $project project id or literal identifier
      * @param array      $params  the new issue category data
      *
-     * @throws \Exception Missing mandatory parameters
+     * @throws MissingParameterException Missing mandatory parameters
      *
      * @return string|false
      */
@@ -106,7 +109,7 @@ class IssueCategory extends AbstractApi
         if (
             !isset($params['name'])
         ) {
-            throw new \Exception('Missing mandatory parameters');
+            throw new MissingParameterException('Theses parameters are mandatory: `name`');
         }
 
         $xml = new \SimpleXMLElement('<?xml version="1.0"?><issue_category></issue_category>');
@@ -156,6 +159,8 @@ class IssueCategory extends AbstractApi
      */
     public function remove($id, array $params = [])
     {
-        return $this->delete('/issue_categories/'.$id.'.xml?'.http_build_query($params));
+        return $this->delete(
+            PathSerializer::create('/issue_categories/'.$id.'.xml', $params)->getPath()
+        );
     }
 }

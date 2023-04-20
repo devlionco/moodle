@@ -1,5 +1,10 @@
 # PHP Redmine API
 
+[![Latest Version](https://img.shields.io/github/release/kbsali/php-redmine-api.svg)](https://github.com/kbsali/php-redmine-api/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-blueviolet.svg)](LICENSE)
+[![Build Status](https://github.com/kbsali/php-redmine-api/actions/workflows/tests.yml/badge.svg?branch=v2.x)](https://github.com/kbsali/php-redmine-api/actions)
+[![Total Downloads](https://img.shields.io/packagist/dt/kbsali/redmine-api.svg)](https://packagist.org/packages/kbsali/redmine-api)
+
 A simple PHP Object Oriented wrapper for Redmine API.
 
 Uses [Redmine API](http://www.redmine.org/projects/redmine/wiki/Rest_api/).
@@ -11,25 +16,25 @@ Uses [Redmine API](http://www.redmine.org/projects/redmine/wiki/Rest_api/).
 [PSR-18](https://www.php-fig.org/psr/psr-18/) http client like
 [Guzzle](https://github.com/guzzle/guzzle) for handling http connections
 * API entry points implementation state:
-  * OK Attachments
-  * OK Groups
-  * OK Custom Fields
-  * OK Issues
-  * OK Issue Categories
-  * OK Issue Priorities
-  * *NOK Issue Relations - only partially implemented*
-  * OK Issue Statuses
-  * OK News
-  * OK Projects
-  * OK Project Memberships
-  * OK Queries
-  * OK Roles
-  * OK Time Entries
-  * OK Time Entry Activities
-  * OK Trackers
-  * OK Users
-  * OK Versions
-  * OK Wiki
+  * :heavy_check_mark: Attachments
+  * :heavy_check_mark: Groups
+  * :heavy_check_mark: Custom Fields
+  * :heavy_check_mark: Issues
+  * :heavy_check_mark: Issue Categories
+  * :heavy_check_mark: Issue Priorities
+  * :x: *Issue Relations - only partially implemented*
+  * :heavy_check_mark: Issue Statuses
+  * :heavy_check_mark: News
+  * :heavy_check_mark: Projects
+  * :heavy_check_mark: Project Memberships
+  * :heavy_check_mark: Queries
+  * :heavy_check_mark: Roles
+  * :heavy_check_mark: Time Entries
+  * :heavy_check_mark: Time Entry Activities
+  * :heavy_check_mark: Trackers
+  * :heavy_check_mark: Users
+  * :heavy_check_mark: Versions
+  * :heavy_check_mark: Wiki
 
 ## Todo
 
@@ -210,8 +215,8 @@ $client = new Redmine\Client\NativeCurlClient('https://redmine.example.com', '12
 The `Psr18Client` requires
 
 - a `Psr\Http\Client\ClientInterface` implementation (like guzzlehttp/guzzle), [see](https://packagist.org/providers/psr/http-client-implementation)
-- a `Psr\Http\Message\ServerRequestFactoryInterface` implementation (like nyholm/psr7), [see](https://packagist.org/providers/psr/http-factory-implementation)
-- a `Psr\Http\Message\StreamFactoryInterface` implementation (like nyholm/psr7), [see](https://packagist.org/providers/psr/http-message-implementation)
+- a `Psr\Http\Message\ServerRequestFactoryInterface` implementation (like guzzlehttp/psr7), [see](https://packagist.org/providers/psr/http-factory-implementation)
+- a `Psr\Http\Message\StreamFactoryInterface` implementation (like guzzlehttp/psr7), [see](https://packagist.org/providers/psr/http-message-implementation)
 - a URL to your Redmine instance
 - an Apikey or username
 - and optional a password if you want tu use username/password.
@@ -223,13 +228,26 @@ The `Psr18Client` requires
 
 require_once 'vendor/autoload.php';
 +
-+$guzzle = \GuzzleHttp\Client();
-+$psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
++$guzzle = new \GuzzleHttp\Client();
++$psr17Factory = new \GuzzleHttp\Psr7\HttpFactory();
 +
 +// Instantiate with ApiKey
-+$client = new \Redmine\Client\Prs18Client($guzzle, $psr17Factory, $psr17Factory, 'https://redmine.example.com', '1234567890abcdfgh');
++$client = new \Redmine\Client\Psr18Client(
++    $guzzle,
++    $psr17Factory,
++    $psr17Factory,
++    'https://redmine.example.com',
++    '1234567890abcdfgh'
++);
 +// ...or Instantiate with Username/Password (not recommended)
-+$client = new \Redmine\Client\Prs18Client($guzzle, $psr17Factory, $psr17Factory, 'https://redmine.example.com', 'username', 'password');
++$client = new \Redmine\Client\Psr18Client(
++    $guzzle,
++    $psr17Factory,
++    $psr17Factory,
++    'https://redmine.example.com',
++    'username',
++    'password'
++);
 ```
 
 ##### Guzzle configuration
@@ -280,7 +298,7 @@ $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
 +};
 +
 // Instantiate with ApiKey
-$client = new \Redmine\Client\Prs18Client(
+$client = new \Redmine\Client\Psr18Client(
 -    $guzzle,
 +    $guzzleWrapper,
     $psr17Factory,
@@ -318,7 +336,7 @@ $client->getApi('issue')->create([
     'project_id'  => 'test',
     'subject'     => 'some subject',
     'description' => 'a long description blablabla',
-    'assigned_to_id' => 123, // or 'assigned_to' => 'user1'
+    'assigned_to_id' => 123, // or 'assigned_to' => 'user1' OR 'groupXX'
 ]);
 $client->getApi('issue')->all([
     'limit' => 1000

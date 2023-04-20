@@ -46,27 +46,83 @@ function local_redmine_extend_navigation_course(navigation_node $navigation, std
  * @param stdClass $context
  * @param stdClass $course The course to object for the report
  */
+// Disabled, after we added full support menu functionality to main toolbar.
+/*
 function local_redmine_extend_navigation_menuuser($returnobject, $user, $context, $course) {
     global $CFG, $DB, $USER;
 
     // Only site (cohort) teachers can see this link.
-    $teachers_cohort = $CFG->siteteachers;//'teachers';
-    $sql = "SELECT *
+    if (!empty($CFG->siteteachers)) {
+        $teachers_cohort = $CFG->siteteachers;//'teachers';
+        $sql = "SELECT *
             FROM {cohort_members} cm
             JOIN {cohort} c ON c.id = cm.cohortid
             WHERE c.idnumber=? AND cm.userid=?";
-    $isteacher = $DB->get_records_sql($sql, [$teachers_cohort, $USER->id]);
+        $isteacher = $DB->get_records_sql($sql, [$teachers_cohort, $USER->id]);
 
-    if ($isteacher) {
-        $usermenuitem = new stdClass();
-        $usermenuitem->itemtype = 'link';
-        $usermenuitem->url = new moodle_url('/local/redmine/search_issues.php', array(
-            //'fullusername' => 'יפעת זית',
-        ));
-        $usermenuitem->pix = "t/preferences";
-        $usermenuitem->title = get_string('myissues', 'local_redmine');
-        $usermenuitem->titleidentifier = 'myissues,local_redmine';
-        return $usermenuitem;
+        if ($isteacher) {
+            $usermenuitem = new stdClass();
+            $usermenuitem->itemtype = 'link';
+            $usermenuitem->url = new moodle_url('/local/redmine/search_issues.php', array(
+                //'fullusername' => 'שם של מורה',
+            ));
+            $usermenuitem->pix = "t/preferences";
+            $usermenuitem->title = get_string('myissues', 'local_redmine');
+            $usermenuitem->titleidentifier = 'myissues,local_redmine';
+            return $usermenuitem;
+        }
+    }
+}
+*/
+
+function local_redmine_render_navbar_output() {
+    global $PAGE, $CFG;
+
+    if(isloggedin()) {
+        $PAGE->requires->js_call_amd('local_redmine/support', 'init', []);
     }
 
+    return '';
+}
+
+/**
+ * Serves the files from the hvp file areas
+ *
+ * @package mod_hvp
+ * @category files
+ *
+ * @param stdClass $course the course object
+ * @param stdClass $cm the course module object
+ * @param stdClass $context the newmodule's context
+ * @param string $filearea the name of the file area
+ * @param array $args extra arguments (itemid, path)
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ *
+ * @return true|false Success
+ */
+function local_redmine_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, $options = array()) {
+
+    $filename = array_pop($args);
+    $itemid = array_shift($args);
+    $filepath = '/';
+
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'local_redmine', $filearea, $itemid, $filepath, $filename);
+
+    if (!$file) {
+        return false; // No such file.
+    }
+
+    if ($file->is_valid_image()) {
+        $forcedownload = true;
+    }
+
+    // Totara: use allowxss option to prevent application/x-javascript mimetype
+    // from being converted to application/x-forcedownload.
+    $options['allowxss'] = '1';
+
+    send_stored_file($file, 86400, 0, $forcedownload, $options);
+
+    return true;
 }
