@@ -70,3 +70,4 @@ $string['table:actions'] = 'Actions';
 $string['table:blocktitle'] = 'Block title';
 $string['table:blocktype'] = 'Block type';
 $string['table:lastupdated'] = 'Updated';
+$string['eventtabclick'] = 'Tab click';

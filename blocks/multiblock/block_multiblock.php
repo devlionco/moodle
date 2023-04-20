@@ -117,6 +117,8 @@ class block_multiblock extends block_base {
         $context = $DB->get_record('context', ['contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id]);
 
         $this->load_multiblocks($context->id);
+        // Make sure user is in "teachers" cohort.
+        $isuserrealteacher = $this->is_user_real_teacher();
 
         $multiblock = [];
         $isodd = true;
@@ -165,16 +167,29 @@ class block_multiblock extends block_base {
                 continue;
             }
             $content = $block->blockinstance->get_content_for_output($this->output);
-            $multiblock[] = [
-                'id' => $id,
-                'class' => 'block_' . $block->blockinstance->name(),
-                'type' => $block->blockinstance->name(),
-                'is_odd' => $isodd,
-                'title' => $block->blockinstance->get_title(),
-                'content' => !empty($content->content) ? $content->content : '',
-                'footer' => !empty($content->footer) ? $content->footer : '',
-            ];
-            $isodd = !$isodd;
+
+            $available_to_cohort_teachers = false;
+            // Some blocks are available only to realteachers (cohort=teachers),
+            // and they have a special method to control it.
+            if (method_exists($block->blockinstance, 'available_to_cohort_teachers')) {
+                $available_to_cohort_teachers = $block->blockinstance->available_to_cohort_teachers();
+            }
+            $displayblock = true;
+            if ($available_to_cohort_teachers && !$isuserrealteacher) {
+                $displayblock = false;
+            }
+            if ($displayblock) {
+                $multiblock[] = [
+                    'id' => $id,
+                    'class' => 'block_' . $block->blockinstance->name(),
+                    'type' => $block->blockinstance->name(),
+                    'is_odd' => $isodd,
+                    'title' => $block->blockinstance->get_title(),
+                    'content' => !empty($content->content) ? $content->content : '',
+                    'footer' => !empty($content->footer) ? $content->footer : '',
+                ];
+                $isodd = !$isodd;
+            }
         }
 
         $template = '';
@@ -200,6 +215,30 @@ class block_multiblock extends block_base {
             'footer' => ''
         ];
         return $this->content;
+    }
+
+    /**
+     * @param null $userid - userid of real teacher. otherwise use $USER.
+     * @return false|mixed
+     * @throws dml_exception
+     */
+    private function is_user_real_teacher($userid = null) {
+        global $DB, $CFG, $USER;
+
+        // NOTE: legacy method to detect a teacher that has complete
+        // strpos($USER->icq, 'מורה') === false)
+        if (isset($userid)) {
+            $teacheruserid = $userid;
+        } else {
+            $teacheruserid = $USER->id;
+        }
+        $CFG->realteachers_cohort = 'teachers';
+        $sql = "SELECT *
+                    FROM {cohort_members} cm
+                    JOIN {cohort} c ON c.id = cm.cohortid
+                    WHERE c.idnumber=? AND cm.userid=?";
+        $isteacher = $DB->get_records_sql($sql, [$CFG->realteachers_cohort, $teacheruserid]);
+        return $isteacher;
     }
 
     /**
