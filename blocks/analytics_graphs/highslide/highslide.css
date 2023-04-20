@@ -888,3 +888,17 @@ html>/**/body .highslide-gallery ul img {
 .highslide-thumbstrip-float .highslide-marker {
 	display: none;
 }
+
+/* Fixed RTL UI */
+
+#tasklist_outerdiv,
+.draggable-header .highslide-maincontent {
+	direction: rtl;
+}
+.dialog-content.ui-widget-content {
+	direction: rtl;
+	padding: 6px;
+}
+.ui-draggable .ui-dialog-titlebar {
+	text-align: right;
+}
