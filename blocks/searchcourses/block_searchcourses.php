@@ -57,19 +57,32 @@ class block_searchcourses extends block_base
         global $CFG;
         $this->content = new stdClass();
         $params = array();
-        $count = "";
+        $count = "15";
         $module = array(
             'name' => 'course_search_ac',
             'fullpath' => '/blocks/searchcourses/js/module.js'
         );
         if (!is_null($this->config)) {
+            if (($count = $this->config->course_count) == ''){
+                $count = '15';
+            }
+
             $params = array(
-                'course_count' => $this->config->course_count
+                'course_count' => $count
             );
+
             $this->page->requires->data_for_js('ac_course_count', array(
-                'count' => $this->config->course_count
+                'count' => $count
             ));
-           $count     = $this->config->course_count;
+        }
+
+        $systemcontext = context_system::instance();
+        $isadmin = has_capability('moodle/site:config', $systemcontext);
+        if ($isadmin) {
+            // Admin, can see a list of all courses.
+            $mycoursesflag = 'false';
+        } else {
+            $mycoursesflag = 'true';
         }
 
         $form_html = "";
@@ -78,8 +91,8 @@ class block_searchcourses extends block_base
         ), false, $module);
         $form_html .= "<div id=\"course_search_ac\">";
         $form_html .= "<label for=\"ac-input\">" . get_string('search_label', 'block_searchcourses') . "</label>";
-        $form_html .= "<input id=\"ac-input\" type = \"text\" title = \"Start here by typing a course...\"></input>";
-        $form_html .= "<div id=\"my_courses_container\"><label for = \"my_courses_flag\">My Courses</label><input type=\"checkbox\" id=\"my_courses_flag\"  name=\"my_courses_flag\" value=\"0\"/></div>";
+        $form_html .= "<input id=\"ac-input\" type = \"text\" title = \"Start here by typing a course...\">";
+        $form_html .= "<input type=\"hidden\" id=\"my_courses_flag\"  name=\"my_courses_flag\" value=\"$mycoursesflag\"/>";
         $form_html .= "<input type=\"hidden\" id=\"course_count\" value=\"$count\" />";
         $form_html .= "</div>";
         $this->content->text = $form_html;

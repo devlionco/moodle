@@ -18,7 +18,7 @@ YUI().use('autocomplete', 'autocomplete-highlighters', 'cookie', 'transition', f
 
     InpNode.on('click', function (e) {
         var my_courses_flag = Y.one('#my_courses_flag');
-        var val = my_courses_flag.get('checked');
+        var val = my_courses_flag.get('value');
         if (params.length == 0) {
             params.course_count = [];
         }
@@ -65,11 +65,13 @@ M.search_autocomplete.AutoCompletePlugin = function (Y, node, params) {
             var highlighted = result.highlighted;
             var courselink = M.cfg.wwwroot + '/course/view.php?id=' + course.id;
             if (course.id == 'na') {
-                var msg = '<i>No Results</i>';
+                var msg = course.msg ;
+                Y.one('#ac-input').set('aria-expanded', false);
                 return Y.Lang.sub(noResTemplate, {
                     msg: msg
                 });
             }
+            Y.one('#ac-input').set('aria-expanded', true);
             // Use string substitution to fill out the  template and
             // return an HTML string for this result.
             return Y.Lang.sub(courseTemplate, {
