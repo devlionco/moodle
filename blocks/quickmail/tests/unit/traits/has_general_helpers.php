@@ -44,7 +44,7 @@ trait has_general_helpers {
 
         return ! $asstring
             ? $userids
-            : implode($userids, ',');
+            : implode( ',', $userids);
     }
 
     public function get_course_config_params(array $overrideparams = []) {
@@ -132,10 +132,9 @@ trait has_general_helpers {
     }
 
     public function get_future_time() {
-        // return $this->get_timestamp_for_date('nov 30 2018');
 
-        // 2020-10-30, Segun Babalola
-        // The hardcoded, date above is now in the past. Modifying this method to always return a future date
+        // 2020-10-30, Segun Babalola.
+        // The hardcoded, date above is now in the past. Modifying this method to always return a future date.
         return strtotime("+10 years");
     }
 
