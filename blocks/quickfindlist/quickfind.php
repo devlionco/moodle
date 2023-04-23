@@ -34,7 +34,7 @@ $role = required_param('role', PARAM_INT);
 $courseformat = required_param('courseformat', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_TEXT);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 
 if (isloggedin() && has_capability('block/quickfindlist:use', $context) && confirm_sesskey()) {
 
@@ -76,7 +76,10 @@ if (isloggedin() && has_capability('block/quickfindlist:use', $context) && confi
             $params[] = "%{$sStrings[1]}%";
             $params[] = "%{$sStrings[0]}%";
             $params[] = "%{$sStrings[1]}%";
-            $where .= "(" . $DB->sql_like("firstname", "?", false, false) . " AND " . $DB->sql_like("lastname", "?", false, false) . ") OR (" . $DB->sql_like("lastname", "?", false, false) . " AND " . $DB->sql_like("firstname", "?", false, false) . ")";
+            $where .= "(" . $DB->sql_like("firstname", "?", false, false) . " AND "
+                . $DB->sql_like("lastname", "?", false, false) . ") OR ("
+                . $DB->sql_like("lastname", "?", false, false) . " AND "
+                . $DB->sql_like("firstname", "?", false, false) . ")";
         }
 
         if ($role != -1) {
