@@ -211,7 +211,7 @@ class block_quickmail_plugin {
      * @param  context $coursecontext
      * @return array
      */
-    public static function get_compose_message_recipients($course, $user, $includeusergroupinfo = false, $coursecontext) {
+    public static function get_compose_message_recipients($course, $user, $includeusergroupinfo, $coursecontext) {
 
         // Initialize a container for the collection of user data results.
         $courseuserdata = [
