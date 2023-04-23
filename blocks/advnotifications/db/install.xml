@@ -7,6 +7,7 @@
         <FIELD NAME="title" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="To be used for notification's title"/>
         <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="To be used as notification's message"/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="info" SEQUENCE="false" COMMENT="What type of notification to be displayed"/>
+        <FIELD NAME="cohort" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Which Cohort can see notification"/>
         <FIELD NAME="aicon" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Toggle whether an icon should be displayed or not"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Toggle whether notification is enabled/displayed or not"/>
         <FIELD NAME="global" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Toggles whether notification is a global or instance-based"/>

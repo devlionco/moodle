@@ -103,6 +103,15 @@ function xmldb_block_advnotifications_upgrade($oldversion) {
     }
 
     // Add future upgrade points here.
+    if ($oldversion < 2020101319) {
+        $table = new xmldb_table('block_advnotifications');
+        $field = new xmldb_field('cohort', XMLDB_TYPE_TEXT, 'medium', null, null /* XMLDB_NOTNULL */, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_block_savepoint(true, 2020101319, 'advnotifications');
 
+
+    }
     return true;
 }

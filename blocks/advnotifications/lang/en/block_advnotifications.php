@@ -72,6 +72,7 @@ $string['add_notification_global_notice'] = 'This notification will be displayed
 $string['add_notif_local_notice'] = 'This notification will <em>only</em> be displayed on the page you\'re managing this block from!';
 $string['advnotifications_title'] = 'Title';
 $string['advnotifications_message'] = 'Message';
+$string['advnotifications_cohort'] = 'Cohort';
 $string['advnotifications_type'] = 'Type';
 $string['advnotifications_times'] = '# of times';
 $string['advnotifications_times_label'] = 'Number of times to display the notification to a user (0 = forever)';
@@ -128,6 +129,14 @@ $string['setting/auto_perma_delete_default'] = '';
 $string['setting/auto_delete_user_data'] = 'Auto delete user data:';
 $string['setting/auto_delete_user_data_desc'] = 'Toggles whether user data (such as whether the user has seen/dismissed notifications that don\'t exist anymore, etc) related to advanced notifications is automatically deleted.<br>(Helps with housekeeping/management)<hr>';
 $string['setting/auto_delete_user_data_default'] = '';
+
+$string['manage_carousel'] = 'Manage carousel';
+$string['advnotifications_ids'] = 'Notifications IDs to enable carusel';
+$string['advnotifications_ids_desc'] = 'Set notifications ids to enable carusel';
+$string['advnotifications_ids_default'] = '';
+$string['advnotifications_duration'] = 'Carousel duration in seconds';
+$string['advnotifications_duration_desc'] = 'Carousel duration in seconds';
+$string['advnotifications_duration_default'] = '5';
 
 // Navigation Links.
 $string['advnotifications_nav_heading'] = 'Notifications:';

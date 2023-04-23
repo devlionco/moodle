@@ -39,34 +39,128 @@ class block_advnotifications_renderer extends plugin_renderer_base
      * @param   array $notifications Attributes about notifications to render.
      * @return  string Returns HTML to render notification.
      */
-    public function render_notification($notifications) {
+    public function render_notification($notifications, $carousel = null) {
         $html = '';
-
         // Render all the appropriate notifications.
-        foreach ($notifications as $notification) {
-            // Open notification block.
-            $html .= '<div class="notification-block-wrapper' . $notification['extraclasses'] .
+
+        if (!$carousel) {
+            foreach ($notifications as $notification) {
+                // Open notification block.
+                $html .= '<div class="notification-block-wrapper' . $notification['extraclasses'] . ' mb-3 d-flex p-0 alert alert-' . $notification['alerttype'] .
                 '" data-dismiss="' . $notification['notifid'] .
-                '"><div class="alert alert-' . $notification['alerttype'] . '">';
+                /* '"><div class="d-flex p-0 alert alert-' . $notification['alerttype'] . */
+                '"><div class="alert-colorblock"></div><div class="alert-inner d-flex flex-no-wrap align-items-start">';
 
-            if (!empty($notification['aiconflag']) && $notification['aiconflag'] == 1) {
-                $html .= '<img class="notification_aicon" src="' .
-                    $this->image_url($notification['aicon'], 'block_advnotifications') . '"/>';
-            }
-            if (!empty($notification['title'])) {
+                // TODO: temporary hidden. WE have not Title on mockup
+                /*  if (!empty($notification['title'])) {
                 $html .= '<strong>' . $notification['title'] . '</strong> ';
+                } */
+
+                // If icon, add icon.
+                if (!empty($notification['aiconflag']) && $notification['aiconflag'] == 1) {
+                    $alerttype = $notification['aicon'];
+                    if ($alerttype == 'warning') {
+                        $html .= '<div class="icon-wrapper"><i class=" fal fa-exclamation-triangle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'danger') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-exclamation-circle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'success') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-check-circle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'info') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-exclamation-circle mt-1"></i></div>';
+                    }
+
+                    /*   $html .= '<img class="notification_aicon" src="' .
+                $this->image_url($notification['aicon'], 'block_advnotifications') . '"/>'; */
+                }
+                $html .= '<div class="alert-wrapper"><h5 class="alert-title"></h5>';
+                if (!empty($notification['message'])) {
+                    if (get_config('block_advnotifications', 'html') == 1) {
+                        $html .= '<div class="m-0 alert-text">' . format_text($notification['message']) . '</div>';
+                    } else {
+                        $html .= '<p class="m-0 alert-text">' . $notification['message'] . '</p>';
+                    }
+                }
+                $html .= '</div>';
+                // If dismissible, add close button.
+                if ($notification['dismissible'] == 1) {
+                    $html .= '<div class="notification-block-close ml-auto mt-1"><i class="fal fa-times-circle"></i></div>';
+                }
+
+                // Close notification block.
+                $html .= '</div></div>';
             }
-            if (!empty($notification['message'])) {
-                $html .= $notification['message'];
+        } else {
+            $uniqid = uniqid();
+            $html .= '<div id="advnotifcarousel'.$uniqid.'" class="carousel mt-4 slide" data-ride="carousel">
+                        <div class="carousel-inner">';
+            $active = 'active';
+            foreach ($notifications as $notification) {
+                // Open notification block.
+                $html .= '<div class="carousel-item '.$active.'" data-interval='. ($carousel->duration * 1000) . '">';
+                $active = '';
+
+                $html .= '<div class="notification-block-wrapper' . $notification['extraclasses'] . ' mb-3 d-flex p-0 alert alert-' . $notification['alerttype'] .
+                '" data-dismiss="' . $notification['notifid'] .
+                /* '"><div class="d-flex p-0 alert alert-' . $notification['alerttype'] . */
+                '"><div class="alert-colorblock"></div><div class="alert-inner d-flex flex-no-wrap align-items-start">';
+
+                // TODO: temporary hidden. WE have not Title on mockup
+                /*  if (!empty($notification['title'])) {
+                $html .= '<strong>' . $notification['title'] . '</strong> ';
+                } */
+
+                // If icon, add icon.
+                if (!empty($notification['aiconflag']) && $notification['aiconflag'] == 1) {
+                    $alerttype = $notification['aicon'];
+                    if ($alerttype == 'warning') {
+                        $html .= '<div class="icon-wrapper"><i class=" fal fa-exclamation-triangle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'danger') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-exclamation-circle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'success') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-check-circle mt-1"></i></div>';
+                    }
+                    if ($alerttype == 'info') {
+                        $html .= '<div class="icon-wrapper"><i class="aicon fal fa-exclamation-circle mt-1"></i></div>';
+                    }
+
+                    /*   $html .= '<img class="notification_aicon" src="' .
+                $this->image_url($notification['aicon'], 'block_advnotifications') . '"/>'; */
+                }
+                $html .= '<div class="alert-wrapper"><h5 class="alert-title"></h5>';
+                if (!empty($notification['message'])) {
+                    if (get_config('block_advnotifications', 'html') == 1) {
+                        $html .= '<div class="m-0 alert-text">' . format_text($notification['message']) . '</div>';
+                    } else {
+                        $html .= '<p class="m-0 alert-text">' . $notification['message'] . '</p>';
+                    }
+                }
+                $html .= '</div>';
+                // If dismissible, add close button.
+                if ($notification['dismissible'] == 1) {
+                    $html .= '<div class="notification-block-close ml-auto mt-1"><i class="fal fa-times-circle"></i></div>';
+                }
+
+                // Close notification block.
+                $html .= '</div></div>';
+                $html .= '</div>';
             }
 
-            // If dismissible, add close button.
-            if ($notification['dismissible'] == 1) {
-                $html .= '<div class="notification-block-close"><strong>&times;</strong></div>';
-            }
+            $html .= '  </div>
+                        <button class="carousel-control-prev btn mb-3 ml-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </button>
+                        <button class="carousel-control-next btn mb-3 mr-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </button>
+                    </div>';
 
-            // Close notification block.
-            $html .= '</div></div>';
         }
 
         return $html;
@@ -79,10 +173,14 @@ class block_advnotifications_renderer extends plugin_renderer_base
      * @return  string - returns HTML to render (add notification form HTML).
      * @throws  coding_exception
      */
-    public function add_notification($params) {
+    public function add_notification($params, $cohorts) {
         global $CFG;
-
         $html = '';
+
+        $cho = '';
+        foreach($cohorts as $key => $value) {
+            $cho .= '<option value="' . $key . '">' . $value . '</option>'; //close your tags!!
+        }
 
         // New Notification Form.
         $html .= '<div id="add_notification_wrapper_id" class="add_notification_wrapper">
@@ -128,6 +226,20 @@ class block_advnotifications_renderer extends plugin_renderer_base
                                 <textarea id="add_notification_message" class="form-control" name="message" placeholder="' .
                                     get_string('advnotifications_message', 'block_advnotifications') . '"></textarea>
                             </div>
+    
+                            <div class="form-group row">
+                                <select id="add_notification_cohort" class="form-control col-7" name="cohort" required>
+                                    <option selected disabled>' .
+                                        get_string('cohort', 'core_cohort').' 
+                                    <option value="0">'. get_string('profilevisibleall', 'core_admin').'</option>'.$cho.'
+                                        
+                                  </select>
+                                <label for="add_notification_cohort" class="col">
+                                    <strong class="required">*</strong>
+                                </label>
+                            </div>
+
+
                             <div class="form-group row">
                                 <select id="add_notification_type" class="form-control col-7" name="type" required>
                                     <option selected disabled>' .
@@ -233,6 +345,51 @@ class block_advnotifications_renderer extends plugin_renderer_base
                                 <div class="done" style="display: none;">' .
                                     get_string('advnotifications_add_done', 'block_advnotifications') .
                                 '</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>';
+
+        return $html;
+    }
+
+    public function manage_order() {
+        global $CFG;
+        $html = '';
+
+        // Get actual IDS and DURARTION.
+        $idsraw = get_config('block_advnotifications', 'carousel_ids');
+        $duration = get_config('block_advnotifications', 'carousel_duration') ?? 5;
+
+        // New Notification Form.
+        $html .= '<div id="manage_carousel_wrapper_id" class="manage_carousel_wrapper">
+                    <div class="manage_carousel_header"><h2>' .
+                        get_string('manage_carousel', 'block_advnotifications') .
+                        '</h2>
+                    </div>
+                    <div class="manage_carousel_form_wrapper">
+                        <form id="manage_carousel_form" action="' . $CFG->wwwroot .
+                            '/blocks/advnotifications/pages/process.php" method="POST">
+                            <div class="form-group">
+                                <label for="manage_carousel_ids" class="form-check-label">' .
+                                    get_string('advnotifications_ids', 'block_advnotifications') . '</label>
+                                <input type="text" id="manage_carousel_ids" class="form-control w-25" name="ids" placeholder="' .
+                                    get_string('advnotifications_ids_desc', 'block_advnotifications') . '" value="'.$idsraw.'"/>
+                                <label for="manage_carousel_duration" class="form-check-label">' .
+                                    get_string('advnotifications_duration', 'block_advnotifications') . '</label>
+                                <input type="text" id="manage_carousel_duration" class="form-control w-25" name="duration" placeholder="' .
+                                    get_string('advnotifications_duration_desc', 'block_advnotifications') . '"  value="'.$duration.'"/>
+                            </div>
+
+                            <input type="hidden" id="manage_carousel_sesskey" name="sesskey" value="' . sesskey() . '"/>
+                            <input type="hidden" id="manage_carousel_purpose" name="purpose" value="carousel"/>
+                            <div class="form-group">
+                                <input type="submit"
+                                    id="manage_carousel_save"
+                                    class="btn btn-primary"
+                                    role="button"
+                                    name="save"
+                                    value="' . get_string('advnotifications_save', 'block_advnotifications') . '"/>
                             </div>
                         </form>
                     </div>

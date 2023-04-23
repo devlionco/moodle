@@ -37,6 +37,7 @@ define(['jquery'], function($) {
                         console.error("No 'dismiss' response received.");
                     }).done(function() {
                         // User dismissed notification. Do something maybe...
+                        document.location.reload();
                     });
                 });
             });

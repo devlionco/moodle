@@ -31,8 +31,12 @@ require_once($CFG->dirroot . '/lib/tablelib.php');
 // Call in block's table file.
 require_once($CFG->dirroot . '/blocks/advnotifications/classes/notifications_table.php');
 
+// Call to get cohot list.
+require_once($CFG->dirroot . '/blocks/advnotifications/locallib.php');
+
 // PARAMS.
 $params = array();
+$cohort = get_cohort();
 
 // Determines whether or not to download the table.
 $download = optional_param('download', '', PARAM_ALPHA);
@@ -143,12 +147,14 @@ echo '<div id="advnotifications_manage">' .
         get_string('setting/navigation_desc', 'block_advnotifications', $navbuttons) .
         '</div><br><br>';
 
+echo $renderer->manage_order();
+
 // Add a wrapper with an id, which makes reloading the table easier (when using ajax).
 echo '<div id="advnotifications_table_wrapper">';
 $table->out(20, true);
 echo '</div><hr>';
 
-echo $renderer->add_notification($params);
+echo $renderer->add_notification($params, $cohort);
 
 if (!$table->is_downloading()) {
     echo $OUTPUT->footer();
