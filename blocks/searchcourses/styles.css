@@ -1,9 +1,9 @@
 .block_searchcourses .yui3-aclist-input{width:75%;}
 .block_searchcourses .yui3-aclist-input{color:gray;margin-left:10px}
-.block_searchcourses  .yui3-aclist-content .yui3-aclist-item{background: url([[pix:block_searchcourses|arrow_next_right]])
-no-repeat right top;}
-.block_searchcourses  .yui3-aclist-content .yui3-aclist-item-hover{background: url([[pix:block_searchcourses|arrow_next_right]])
-no-repeat right top;
+/*.block_searchcourses  .yui3-aclist-content .yui3-aclist-item{background: url([[pix:block_searchcourses|arrow_next_right]])*/
+/*no-repeat right top;}*/
+/*.block_searchcourses  .yui3-aclist-content .yui3-aclist-item-hover{background: url([[pix:block_searchcourses|arrow_next_right]])*/
+/*no-repeat right top;*/
 opacity:0.6;
 z-index:1;
 }
