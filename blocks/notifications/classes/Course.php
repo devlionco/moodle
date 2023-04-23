@@ -186,10 +186,10 @@ class Course {
 		$events = '';
 		//$standard_names = SupportedEvents::getStandardNames();
 		foreach(SupportedEvents::getShortNames() as $block_instance_setting => $platform_event_name) {
-			$eventname = preg_replace('/\\\/', '_', $platform_event_name);
+			$eventname = preg_replace('/\\\\/', '_', $platform_event_name);
 			$eventname = preg_replace('/^_/', '', $eventname);
 
-			if($global_config->$eventname == 1 and $course_registration->$block_instance_setting == 1) {
+			if($global_config->$eventname == 1 && $course_registration->$block_instance_setting == 1) {
 				$events .= "'".addslashes($platform_event_name)."',";
 			}
 		}
@@ -228,23 +228,12 @@ class Course {
 			if($this->is_admin($log->get_data()['userid'])) {
 				continue;
 			}
-			/* print_r("\n\nlog::::::::::::::::\n\n"); */
-			/* print_r($log); */
 			// filter invisible modules
 			$skip_module = false;
 			$new_record = new stdClass();
 			switch($log->get_data()['eventname']) {
 				case '\core\event\calendar_event_created':
-					$new_record->module = $log->get_data()['target'];
-					$new_record->name = $log->get_data()['other']['name'];
-				break;
-
 				case '\core\event\calendar_event_updated':
-					// check if the previous calendar_event data has been updated
-					$new_record->module = $log->get_data()['target'];
-					$new_record->name = $log->get_data()['other']['name'];
-				break;
-
 				case '\core\event\calendar_event_deleted':
 					$new_record->module = $log->get_data()['target'];
 					$new_record->name = $log->get_data()['other']['name'];
@@ -260,7 +249,7 @@ class Course {
 					try {
 						$module = null;
 						if( empty($modinfo->cms[$log->get_data()['contextinstanceid']]) ) {
-							continue;
+							continue 2;
 						} else {
                              $coursemoduleid = $log->get_data()['contextinstanceid'];
                              // Check to see if the coursemoduleid exists b/c if it does not exist, 
@@ -324,9 +313,6 @@ class Course {
 			$new_record->time_created = $log->get_data()['timecreated'];
 			$new_record->other = json_encode($log->get_data()['other']);
 			$new_record->status = $status;
-
-			//print_r("inserting::::::::::::::\n\n");
-			//print_r($new_record);
 
 			$DB->insert_record( 'block_notifications_log', $new_record );
 		}
