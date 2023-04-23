@@ -45,8 +45,8 @@ block_quickmail_plugin::require_user_can_send('compose', $USER, $coursecontext);
 $courseuserdata = block_quickmail_plugin::get_compose_message_recipients(
     $course,
     $USER,
-    block_quickmail_plugin::user_prefers_multiselect_recips($USER),
-    $coursecontext
+    $coursecontext,
+    block_quickmail_plugin::user_prefers_multiselect_recips($USER)
 );
 
 // Construct the page.
@@ -161,7 +161,7 @@ try {
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $composeform->set_error_exception($e);
 } catch (\block_quickmail\exceptions\critical_exception $e) {
-    throw new \moodle_exception('critical_error', 'block_quickmail');
+    throw new moodle_exception('critical_error', 'block_quickmail');
 }
 
 // Render page.
