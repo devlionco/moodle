@@ -59,6 +59,7 @@ if (get_config('block_advnotifications', 'html')) {
     $message = optional_param('message', null, PARAM_TEXT);
 }
 $type = optional_param('type', null, PARAM_TEXT);
+$cohort = optional_param('cohort', null, PARAM_INT);
 $times = optional_param('times', null, PARAM_INT);
 $aicon = optional_param('aicon', null, PARAM_TEXT);
 $dismissible = optional_param('dismissible', null, PARAM_TEXT);
@@ -68,6 +69,8 @@ $dateto = optional_param('date_to', null, PARAM_TEXT);
 $dismiss = optional_param('dismiss', null, PARAM_TEXT);                 // User dismissed notification.
 $purpose = optional_param('purpose', null, PARAM_TEXT);                 // Purpose of request.
 $tableaction = optional_param('tableaction', null, PARAM_TEXT);         // ID of item to action.
+$ids = optional_param('ids', null, PARAM_TEXT);
+$duration = optional_param('duration', null, PARAM_TEXT);
 
 // Check if ajax call or not (Progressive Enhancement - yay!).
 $ajax = false;
@@ -263,6 +266,8 @@ if ($purpose == 'update') {
     $urow->id = $id;
     $urow->title = $title;
     $urow->message = $message;
+    $urow->cohort = $cohort;
+    $urow->type = $type;
     $urow->type = $type;
     $urow->aicon = $aicon;
     $urow->enabled = $enabled;
@@ -310,6 +315,10 @@ if ($purpose == "add") {
         $fields[] = 'type';
         $error .= '"' . get_string('advnotifications_type', 'block_advnotifications') . '"';
     }
+    if (!isset($cohort)) {
+        $fields[] = 'cohort';
+        $error .= '"' . get_string('advnotifications_cohort', 'block_advnotifications') . '"';
+    }
     if (!isset($times)) {
         $fields[] = 'times';
 
@@ -346,6 +355,7 @@ if ($purpose == "add") {
     $row->title = $title;
     $row->message = $message;
     $row->type = $type;
+    $row->cohort = $cohort;
     $row->aicon = $aicon;
     $row->enabled = $enabled;
     $row->global = $global;
@@ -377,5 +387,21 @@ if ($purpose == "add") {
         exit();
     } else {
         redirect(new moodle_url('/blocks/advnotifications/pages/notifications.php', $params));
+    }
+}
+
+if ($purpose == "carousel") {
+
+    // Save settings IDS and DURATION.
+    set_config('carousel_ids', $ids, 'block_advnotifications');
+    set_config('carousel_duration', $duration, 'block_advnotifications');
+
+    // Send JSON response if AJAX call was made, otherwise simply redirect to origin page.
+    if ($ajax) {
+        // Return Successful.
+        echo json_encode("I: Successful");
+        exit();
+    } else {
+        redirect(new moodle_url('/blocks/advnotifications/pages/notifications.php'));
     }
 }

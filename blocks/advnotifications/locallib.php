@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return  array Array of notifications' attributes needed for rendering.
  * @throws  dml_exception
  */
-function prep_notifications($instanceid) {
+function prep_notifications($instanceid, $carousel = null) {
     global $DB, $USER;
 
     $filternotif = false;
@@ -60,25 +60,44 @@ function prep_notifications($instanceid) {
         $userseen = $DB->get_record('block_advnotificationsdissed',
             array('user_id' => $USER->id, 'not_id' => $notif->id)
         );
+        if (!$carousel) {
+            // Keep track of number of times the user has seen the notification.
+            // Check if a record of the user exists in the dismissed/seen table.
+            // TODO: Move DB queries out of loop.
 
-        // Get notification settings to determine whether to render it or not.
-        $render = false;
+            // Get notification settings to determine whether to render it or not.
+            $render = false;
 
-        // Check if forever or in date-range.
-        if (($notif->date_from === $notif->date_to) || ($notif->date_from < time() && $notif->date_to > time())) {
-            $render = true;
-        }
+            // Check if forever or in date-range.
+            if (($notif->date_from === $notif->date_to) || ($notif->date_from < time() && $notif->date_to > time())) {
+                $render = true;
+            }
 
-        // Don't render if user has seen it more (or equal) to the times specified or if they've dismissed it.
-        if ($userseen !== false) {
-            if (($userseen->seen >= $notif->times && $notif->times != 0) || ($userseen->dismissed > 0)) {
+            // Check if for everyone or specific cohort.
+            if ($notif->cohort != 0) {
+                $user_cohort = $DB->get_record('cohort_members', array('cohortid' => $notif->cohort, 'userid' => $USER->id));
+                if (!$user_cohort) {
+                    $render = false;
+                }
+            }
+
+            // Don't render if user has seen it more (or equal) to the times specified or if they've dismissed it.
+            if ($userseen !== false) {
+                if (($userseen->seen >= $notif->times && $notif->times != 0) || ($userseen->dismissed > 0)) {
+                    $render = false;
+                }
+            }
+
+            // Don't render if notification isn't a global notification and the instanceid's/blockid's don't match.
+            if ($notif->blockid != $instanceid && $notif->global == 0) {
                 $render = false;
             }
-        }
-
-        // Don't render if notification isn't a global notification and the instanceid's/blockid's don't match.
-        if ($notif->blockid != $instanceid && $notif->global == 0) {
-            $render = false;
+        } else {
+            $render = true;
+            // Don't render if notification not in carousel IDs in carousel mode.
+            if (!is_null($carousel) && !in_array($notif->id, $carousel->ids)) {
+                $render = false;
+            }
         }
 
         if ($render) {
@@ -125,6 +144,7 @@ function prep_notifications($instanceid) {
             // Construct notification - also format title/text to support multilang (filtered) strings.
             $rendernotif[] = array('extraclasses' => $extraclasses,                                         // Additional classes.
                 'notifid' => $notif->id,                                                                    // Notification id.
+                'cohort' => $notif->cohort,                                                                // cohort to dispa.
                 'alerttype' => $notif->type,                                                                // Alert type (styling).
                 'aiconflag' => $notif->aicon,                                                               // Render icon flag.
                 'aicon' => $aicon,                                                                          // Which icon to render.
@@ -158,4 +178,30 @@ function get_date_formats() {
     $formats['j F Y'] = date('j F Y', $timestamp);
 
     return $formats;
+}
+
+function get_cohort(){
+    global $DB;
+    $cohort = $DB->get_records('cohort', array('visible' => '1'),'','id, name');
+    foreach ($cohort as $value) {
+        $cohorts[$value->id] = $value->name;
+    }
+    return $cohorts;
+}
+
+function carousel_mode() {
+    $response = null;
+
+    if ($idsraw = get_config('block_advnotifications', 'carousel_ids')) {
+        $idsraw = preg_replace('/[^0-9,]+/', '', $idsraw);
+        $ids    = array_filter(explode(',', $idsraw));
+        if (count($ids) != 0) {
+            $duration           = get_config('block_advnotifications', 'carousel_duration') ?? 5;
+            $response           = new stdClass;
+            $response->ids      = $ids;
+            $response->duration = $duration;
+        }
+    }
+
+    return $response;
 }

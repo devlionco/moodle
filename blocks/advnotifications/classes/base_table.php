@@ -59,6 +59,7 @@ class advnotifications_base_table extends table_sql {
         $columns = array(
             'id',
             'title',
+            'cohort',
             'type',
             'enabled',
             'global',
@@ -75,6 +76,7 @@ class advnotifications_base_table extends table_sql {
         $headers = array(
             get_string('advnotifications_field_id', 'block_advnotifications'),          // Id: 1.
             get_string('advnotifications_field_title', 'block_advnotifications'),       // Title: Site Maintenance.
+            get_string('cohort', 'core_cohort'),        // Type: info.
             get_string('advnotifications_field_type', 'block_advnotifications'),        // Type: info.
             get_string('advnotifications_field_enabled', 'block_advnotifications'),     // Enabled: Yes.
             get_string('advnotifications_field_global', 'block_advnotifications'),      // Global: Yes.
@@ -116,6 +118,25 @@ class advnotifications_base_table extends table_sql {
     public function col_title($values) {
         return shorten_text($values->title, 22, true);
     }
+
+
+    /**
+     * This function is called for each data row to allow processing of the
+     * type value.
+     *
+     * @param object $values Contains object with all the values of record.
+     * @return $string Return notification type (for styling purposes)
+     */
+    public function col_cohort($values) {
+        GLOBAL $DB;
+
+        if($values->cohort == 0){
+            return get_string('profilevisibleall', 'core_admin');
+        }
+        $name = $DB-> get_record('cohort',['id' => $values->cohort]);
+        return $name->name;
+    }
+
 
     /**
      * This function is called for each data row to allow processing of the

@@ -221,7 +221,7 @@ define(['jquery'], function($) {
 
                 // LIVE PREVIEW.
                 // Dynamically update preview alert as user changes textbox content.
-                addregion.on('input propertychange paste', '#add_notification_title, #add_notification_message', function() {
+                addregion.on('input propertychange paste', '#add_notification_title, #add_notification_message', function () {
                     reloadPreview();
                 });
 
@@ -243,25 +243,31 @@ define(['jquery'], function($) {
                 // Check if preview is displaying correct (Update it).
                 var reloadPreview = function() {
                     // Update title.
-                    var title = addregion.find('#add_notification_title');
-                    if (title.val().length > 0) {
-                        addregion.find('.preview-title')[0].innerHTML = title.val();
+                    var titleText = addregion.find('#add_notification_title').val().trim();
+                    let title = addregion.find('h4.alert-title');
+                    if (titleText.length > 0) {
+                        title.show();
+                        title.html(titleText);
+                    } else if (titleText.length == 0) {
+                        title.hide();
                     } else {
-                        addregion.find('.preview-title')[0].innerHTML = strings.title;
+                        title.show();
+                        title.html(strings.title);
                     }
 
                     // Update message.
                     var message = addregion.find('#add_notification_message');
+                    let previewMessage = addregion.find('.alert-text').children().first();
                     if (message.val().length > 0) {
-                        addregion.find('.preview-message')[0].innerHTML = message.val();
+                        previewMessage.html(message.val());
                     } else {
-                        addregion.find('.preview-message')[0].innerHTML = strings.message;
+                        previewMessage.html(strings.message);
                     }
 
                     // Check notification type.
                     var alerttype = $('#add_notification_type').val();
-                    var previewalert = $('#add_notification_wrapper_id .preview-alert');
-
+                    // var previewalert = $('#add_notification_wrapper_id .preview-alert');
+                    var previewalert = $('.notification-block-wrapper');
                     // Clear existing classes.
                     previewalert.removeClass('alert-info alert-success alert-danger alert-warning announcement');
 
@@ -279,24 +285,44 @@ define(['jquery'], function($) {
                     // Add type of alert class.
                     previewalert.addClass('alert-' + alerttype);
 
-                    $('.preview-aicon').find('> img').attr('src', M.util.image_url(alerttype, 'block_advnotifications'));
+                    // Add correct icon
+                    const icon = previewalert.find('.icon-wrapper');
+                    if (alerttype === 'warning') {
+                        icon.html('<i class=" fal fa-exclamation-triangle mt-1"></i>');
+                    }
+                    if (alerttype === 'danger' || alerttype === 'info') {
+                        icon.html('<i class=" fal fa-exclamation-circle mt-1"></i>');
+                    }
+                    if (alerttype === 'success') {
+                        icon.html('<i class=" fal fa-check-circle mt-1"></i>');
+                    }
 
                     // Check if dismissable.
                     if (!$('#add_notification_dismissible')[0].checked) {
-                        $('.preview-alert-dismissible').hide();
+                        $('.notification-block-close').hide();
                         previewalert.removeClass('dismissible');
                     } else {
-                        $('.preview-alert-dismissible').show();
+                        $('.notification-block-close').show();
                         previewalert.addClass('dismissible');
                     }
 
                     // Check if icon should be shown.
                     if (!$('#add_notification_aicon')[0].checked) {
-                        $('.preview-aicon').hide();
+                        $('.icon-wrapper').hide();
                         previewalert.removeClass('aicon');
                     } else {
-                        $('.preview-aicon').show();
+                        $('.icon-wrapper').show();
                         previewalert.addClass('aicon');
+                        let icon = '<i class="fal fa-exclamation-circle mt-1"></i>';
+                        // Change icon type
+                        if (alerttype === 'warning') {
+                            icon = '<i class="fal fa-exclamation-triangle mt-1"></i>';
+                        }
+                        if (alerttype === 'success') {
+                            icon = '<i class="fal fa-check-circle mt-1"></i>';
+                        }
+                        previewalert.find('.icon-wrapper').html('');
+                        $(icon).appendTo(previewalert.find('.icon-wrapper'));
                     }
                 };
 
@@ -328,21 +354,25 @@ define(['jquery'], function($) {
                 // Shiny new and fresh preview.
                 var refreshPreview = function() {
                     var previewelem = $('#notification_preview_wrapper');
-                    var previewdom =
-                        '<div id="notification_preview_wrapper">' +
-                            '<strong>' + strings.preview + '</strong><br>' +
-                            '<div class="alert alert-info preview-alert">' +
-                                '<div class="preview-aicon" style="display: none;">' +
-                                    '<img src="' + M.util.image_url('info', 'block_advnotifications') + '" />' +
-                                '</div>' +
-                                '<strong class="preview-title">' + strings.title + '</strong> ' +
-                                '<div class="preview-message">' + strings.message + '</div> ' +
-                                '<div class="preview-alert-dismissible" style="display: none;"><strong>&times;</strong></div>' +
-                            '</div>' +
-                        '</div>';
+                    const previewdom = `
+                        <strong>${strings.preview}</strong>
+                        <div id="notification_preview_wrapper" class="notification-block-wrapper alert-preview dismissible limitedtimes aicon d-flex mb-3 p-0 alert alert-info">
+                            <div class="alert-colorblock"></div>
+                            <div class="alert-inner d-flex flex-no-wrap align-items-start">
+                                <div class="icon-wrapper" style="display: none;"></div>
+                                <div class="alert-wrapper">
+                                    <h4 class="alert-title mb-0">${strings.title}</h4>
+                                    <div class="m-0 alert-text">${strings.message}</div>
+                                </div>
+                                <div class="notification-block-close ml-auto mt-1" style="display: none;">
+                                    <i class="fal fa-times-circle"></i>
+                                </div>
+                            </div>            
+                        </div>`;
 
                     // If it exists already, remove before adding again.
                     if (previewelem.length > 0) {
+                        previewelem.parent().find('strong').remove();
                         previewelem.remove();
                         // Don't slide in.
                         $(previewdom).prependTo($(addregion));

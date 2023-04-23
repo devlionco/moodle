@@ -62,11 +62,13 @@ class block_advnotifications extends block_base
             // Get the renderer for this page.
             $renderer = $this->page->get_renderer('block_advnotifications');
 
+            $carousel = carousel_mode();
+
             // Get & prepare notifications to render.
-            $notifications = prep_notifications($this->instance->id);
+            $notifications = prep_notifications($this->instance->id, $carousel);
 
             // Render notifications.
-            $html = $renderer->render_notification($notifications);
+            $html = $renderer->render_notification($notifications, $carousel);
 
             $this->content->text = $html;
 
