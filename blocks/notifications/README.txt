@@ -63,6 +63,8 @@ and global presets.
 
 Bugs:
 If you find a bug please submit it here:
+https://github.com/gianlucawork/moodle_notifications_20
+Original version (deprecated):
 https://github.com/arael/moodle_notifications_20/issues
 
 Please provide the bug description and don't forget Moodle and 
