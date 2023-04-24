@@ -1,0 +1,34 @@
+.block_oer_reviews .intro {
+    margin-bottom: 1rem;
+}
+
+@-webkit-keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+    to {
+        background: #fff;
+    }
+}
+@-moz-keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+    to {
+        background: #fff;
+    }
+}
+@keyframes yellow-fade {
+    from {
+        background: #f96;
+    }
+    to {
+        background: #fff;
+    }
+}
+.block_oer_reviews {
+    -webkit-animation: yellow-fade 1s ease-in-out 0s;
+    -moz-animation: yellow-fade 1s ease-in-out 0s;
+    -o-animation: yellow-fade 1s ease-in-out 0s;
+    animation: yellow-fade 1s ease-in-out 0s;
+}
