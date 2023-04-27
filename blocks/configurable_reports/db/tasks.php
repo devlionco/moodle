@@ -15,24 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Block plugin "configurable_reports"
  *
- * Configurable Reports - A Moodle block for creating customizable reports
- *
- * @package     block_configurable_reports
- * @author:     Juan leyva <http://www.twitter.com/jleyvadelgado>
- * @date:       2013-09-07
- *
- * @copyright  Juan leyva <http://www.twitter.com/jleyvadelgado>
+ * @package    block_configurable_reports
+ * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020110301;  // Plugin version.
-$plugin->requires = 2017111300; // require Moodle version (3.4).
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '3.9.0';
-$plugin->component = 'block_configurable_reports'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 86400; // = Once in 24h, Set min time between cron executions.
-                            // Should probably be at night to off load CPU load.
+$tasks = array(
+        array(
+                'classname' => 'block_configurable_reports\task\schedule_cr',
+                'blocking' => 0,
+                'minute' => 0,
+                'hour' => 1,
+                'day' => '*',
+                'dayofweek' => '*',
+                'month' => '*',
+        ),
+);

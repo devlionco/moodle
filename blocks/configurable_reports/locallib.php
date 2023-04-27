@@ -22,6 +22,10 @@
  * @date: 2009
  */
 
+define("CR_SQL_ADHOC_EMPTY", 0);
+define("CR_SQL_ADHOC_PROCESS", 1);
+define("CR_SQL_ADHOC_DONE", 2);
+
 function cr_print_js_function() {
 ?>
     <script type="text/javascript">
@@ -49,6 +53,7 @@ function cr_add_jsdatatables($cssid, \moodle_page $page) {
     global $OUTPUT;
     $data = array();
     $data['selector'] = $cssid;
+    $data['columnfilter'] = optional_param('columnfilter', 0, PARAM_INT);
 
     $page->requires->string_for_js('thousandssep', 'langconfig');
     $page->requires->strings_for_js(
@@ -569,4 +574,28 @@ function cr_logging_info() {
     }
 
     return array($uselegacyreader, $useinternalreader, $logtable);
+}
+
+function cr_add_sql_adhoc($id) {
+    global $DB;
+
+    if ($report = $DB->get_record('block_configurable_reports', ['id' => $id])) {
+
+        // Create task (run immediately) for recalculate.
+        $task = new \block_configurable_reports\task\adhoc_cr();
+        $task->set_custom_data(
+                array(
+                        'id' => $id
+                )
+        );
+        \core\task\manager::queue_adhoc_task($task);
+
+        $report->lastexecutiontime = 0;
+        $report->sqladhocstatus = CR_SQL_ADHOC_PROCESS;
+        $report->sqldata = '';
+        $report->sqladhocdate = time();
+        $DB->update_record('block_configurable_reports', $report);
+    }
+
+    return true;
 }

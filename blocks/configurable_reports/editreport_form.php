@@ -47,9 +47,19 @@ class report_edit_form extends moodleform {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
+        // Alias is a "unique id" alternative to ID, that should work when distributing reports to other systems.
+        // (also, used to link internal reports)
+        $mform->addElement('text', 'alias', get_string('alias','block_configurable_reports'),array('maxlength' => 64, 'size' => 30));
+        $mform->addHelpButton('alias','alias', 'block_configurable_reports');
+        $mform->setType('alias', PARAM_ALPHA);
+
         $mform->addElement('editor', 'summary_editor', get_string('summary'), null, $this->get_editor_options());
         $mform->setType('summary_editor', PARAM_RAW);
         $typeoptions = cr_get_report_plugins($this->_customdata['courseid']);
+
+        $mform->addElement('textarea', 'customhtml', get_string('customhtml', 'block_configurable_reports'),
+            array('rows'=>'15', 'cols'=>'80'));
+        $mform->setType('customhtml', PARAM_RAW);
 
         $eloptions = array();
         if (isset($this->_customdata['report']->id) && $this->_customdata['report']->id) {
@@ -83,6 +93,10 @@ class report_edit_form extends moodleform {
         $mform->addHelpButton('remote', 'remote', 'block_configurable_reports');
         $mform->setDefault('remote', 0);
 
+        $mform->addElement('checkbox', 'sqladhoc', get_string('sqladhoc', 'block_configurable_reports'), get_string('sqladhocdescription', 'block_configurable_reports'));
+        $mform->addHelpButton('sqladhoc', 'sqladhoc', 'block_configurable_reports');
+        $mform->setDefault('sqladhoc', 0);
+
         $mform->addElement('header', 'exportoptions', get_string('exportoptions', 'block_configurable_reports'));
         $options = cr_get_export_plugins();
 
@@ -103,7 +117,7 @@ class report_edit_form extends moodleform {
         }
 
         // Buttons.
-        $this->add_action_buttons(true, get_string('add'));
+        $this->add_action_buttons(true, get_string('save'));
     }
 
     public function validation($data, $files) {
@@ -117,11 +131,35 @@ class report_edit_form extends moodleform {
      * @return stdClass
      */
     function get_data() {
+        global $DB;
+
         $data = parent::get_data();
 
         if ($data !== null and isset($data->summary_editor)) {
             $data->summaryformat = $data->summary_editor['format'];
             $data->summary = $data->summary_editor['text'];
+        }
+
+        if ($data !== null and !isset($data->sqladhoc)) {
+            $data->sqladhoc = 0;
+        }
+
+        if ($data !== null and isset($data->id)) {
+            $prev = $DB->get_record('block_configurable_reports', ['id' => $data->id]);
+
+            // Disable adhoc.
+            if($prev && $prev->sqladhoc == 1 && $data->sqladhoc != 1){
+                $prev->sqladhocstatus = CR_SQL_ADHOC_EMPTY;
+                $prev->sqldata = '';
+                $prev->sqladhocdate = 0;
+
+                $DB->update_record('block_configurable_reports', $prev);
+            }
+
+            // Enable adhoc.
+            if($prev && $prev->sqladhoc != 1 && $data->sqladhoc == 1){
+                cr_add_sql_adhoc($prev->id);
+            }
         }
 
         return $data;

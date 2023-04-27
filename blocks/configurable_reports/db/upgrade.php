@@ -144,5 +144,42 @@ function xmldb_block_configurable_reports_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019062001, 'block', 'configurable_reports');
     }
 
+    if ($oldversion < 2020110301) {
+
+        $table = new xmldb_table('block_configurable_reports');
+
+        $field = new xmldb_field('customhtml', XMLDB_TYPE_TEXT, 'long');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('alias', XMLDB_TYPE_CHAR, '64', null, false, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sqladhoc', XMLDB_TYPE_INTEGER, '4', null, false, null, 0, 'alias');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sqladhocstatus', XMLDB_TYPE_INTEGER, '4', null, false, null, null, 'sqladhoc');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sqldata', XMLDB_TYPE_TEXT, 'long', null, false, null, null, 'sqladhocstatus');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('sqladhocdate', XMLDB_TYPE_INTEGER, '20', null, false, null, null, 'sqldata');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2020110301, 'block', 'configurable_reports');
+    }
+
     return true;
 }

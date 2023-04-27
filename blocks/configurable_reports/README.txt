@@ -50,6 +50,13 @@ Release date: Tuesday, 3 November 2020
 Thanks Alex Rowe, David Saylor, Michael Gardener, Muhammad Osama Arshad, Daniel Poggenpohl, Daniel Neis, François Parlant and all the contributors who have sent several fixes and improvements.
 
 
+3.9.0 (2019122001) for Moodle 3.4, 3.5, 3.6, 3.7, 3.8
+Release date: Friday, 4 Sep 2020
+----------------------------------------------------------------------
+
+- Enable unique aliases to each report, so they can be invoked by other reports persistently across Moodle systems.
+- Add CustomHTML report field to support embedding of JS and CSS on report page.
+
 3.8.0 (2019122000) for Moodle 3.4, 3.5, 3.6, 3.7, 3.8
 Release date: Friday, 20 Dec 2019
 ----------------------------------------------------------------------

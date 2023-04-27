@@ -54,9 +54,15 @@ class report_sql extends report_base {
             $sql = str_replace('%%FILTER_VAR%%', $filtervar, $sql);
         }
 
+        $courseid = optional_param('courseid', null, PARAM_INT);
+        if (!empty($courseid)) {
+            $sql = str_replace('%%COURSEID%%', $courseid, $sql);
+        }
+
         $sql = str_replace('%%USERID%%', $USER->id, $sql);
         $sql = str_replace('%%COURSEID%%', $COURSE->id, $sql);
         $sql = str_replace('%%CATEGORYID%%', $COURSE->category, $sql);
+        $sql = str_replace('%%SESSKEY%%', $USER->sesskey, $sql);
 
         // See http://en.wikipedia.org/wiki/Year_2038_problem.
         $sql = str_replace(array('%%STARTTIME%%', '%%ENDTIME%%'), array('0', '2145938400'), $sql);
@@ -129,22 +135,38 @@ class report_sql extends report_base {
 
             $sql = $this->prepare_sql($sql);
 
-            if ($rs = $this->execute_query($sql)) {
-                foreach ($rs as $row) {
-                    if (empty($finaltable)) {
-                        foreach ($row as $colname => $value) {
-                            $tablehead[] = $colname;
+            // Use Moodle filters on each cell data.
+            $usemoodlefilters = (boolean)get_config('block_configurable_reports', 'usemoodlefilters');
+
+            if($this->config->sqladhoc != 1) {
+                if ($rs = $this->execute_query($sql)) {
+                    foreach ($rs as $row) {
+                        if (empty($finaltable)) {
+                            foreach ($row as $colname => $value) {
+                                $tablehead[] = $colname;
+                            }
                         }
-                    }
-                    $arrayrow = array_values((array) $row);
-                    foreach ($arrayrow as $ii => $cell) {
-                        if (!$this->isForExport()) {
-                            $cell = format_text($cell, FORMAT_HTML, array('trusted' => true, 'noclean' => true, 'para' => false));
+                        $arrayrow = array_values((array) $row);
+                        foreach ($arrayrow as $ii => $cell) {
+                            $cell = format_text($cell, FORMAT_HTML,
+                                    array('trusted' => true, 'noclean' => true, 'para' => false,
+                                            'filter' => $usemoodlefilters));
+                            $arrayrow[$ii] = str_replace('[[QUESTIONMARK]]', '?', $cell);
                         }
-                        $arrayrow[$ii] = str_replace('[[QUESTIONMARK]]', '?', $cell);
+                        $totalrecords++;
+                        $finaltable[] = $arrayrow;
                     }
-                    $totalrecords++;
-                    $finaltable[] = $arrayrow;
+                }
+            }else{
+                if($this->config->sqladhocstatus == CR_SQL_ADHOC_DONE && !empty($this->config->sqldata)){
+                    $obj = json_decode($this->config->sqldata, true);
+                    $tablehead = $obj['tablehead'];
+                    $totalrecords = $obj['totalrecords'];
+                    $finaltable = $obj['finaltable'];
+                }else{
+                    $tablehead = [];
+                    $totalrecords = 0;
+                    $finaltable = [];
                 }
             }
         }

@@ -461,7 +461,16 @@ $string['email_send'] = 'Send';
 
 $string['sqlsecurity'] = 'SQL Security';
 $string['sqlsecurityinfo'] = 'Disable for executing SQL queries with statements for inserting data';
+$string['requireprefix'] = 'Require tables to use prefix_';
+$string['requireprefixinfo'] = 'Disabling this option will allow tables to start with mdl_ and not prefix_';
+$string['requirevalidation'] = 'Require SQL validation';
+$string['requirevalidationinfo'] = 'Run SQL validation when saving the SQL query';
+$string['usemoodlefilters'] = 'Use moodle filters';
+$string['usemoodlefiltersinfo'] = 'Use moodle filters on each report cell value';
 
+$string['customhtml'] = 'Add external JavaScript and CSS libs';
+$string['alias'] = 'Alias';
+$string['alias_help'] = 'Alias, is a unique (all English letters) identifier for this report, so it can be link between reports and not break when deployed to other systems';
 $string['global'] = 'Global report';
 $string['enableglobal'] = 'This is a global report (accesible from any course)';
 $string['global_help'] = 'Global report can be accessed from any course in the platform just appending &courseid=MY_COURSE_ID in the report URL';
@@ -527,6 +536,13 @@ $string['privacy:metadata:block_configurable_reports:components'] = 'The configu
  the filters...';
 $string['privacy:metadata:block_configurable_reports:lastexecutiontime'] = 'Time this report took to run last time it was executed,
  in milliseconds.';
+
+// Adhoc.
+$string['sqladhoc'] = 'Run sql query in adhoc';
+$string['sqladhocdescription'] = 'Do you want to run sql query in adhoc';
+$string['adhoctask'] = "Configurable reports task";
+$string['adhocinprocess'] = "Recalculate in process. Please wait...";
+$string['adhocdone'] = 'Last recalculate was in {$a->date} and took {$a->lastexecutiontime} seconds';
 // Filter forms.
 $string['add'] = 'Add';
 $string['description'] = 'Description';
@@ -550,3 +566,4 @@ $string['checksql_execution'] = 'Block Configurable Reports SQL execution';
 $string['checksql_execution_ok'] = 'SQL execution is disabled.';
 $string['checksql_execution_warning'] = 'It is recommended to disable SQL execution to avoid execution of arbitrary SQL code in your server.';
 $string['checksql_execution_details'] = 'By allowing SQL code execution there is a potential security issue with users adding arbitrary code. SQL code execution should be disable to only allow SQL queries for reading/retreaving data. SQL execution can be disabled in your config.php file by setting $CFG->block_configurable_reports_enable_sql_execution to 0';
+$string['sqladhoc_help'] = '';

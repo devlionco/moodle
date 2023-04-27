@@ -2,7 +2,8 @@ define(
     [
         'jquery',
         'block_configurable_reports/jquery.tablesorter',
-        'block_configurable_reports/jquery.dataTables',
+        //'block_configurable_reports/jquery.dataTables',
+        'https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js',
         'block_configurable_reports/codemirror',
         'block_configurable_reports/sql'
     ], function ($, tablesorter, dataTable, CodeMirror) {
@@ -26,6 +27,39 @@ define(
         },
         add_jsdatatables: function (params) {
             $(params.selector).dataTable({
+                initComplete: function () {
+                    if (params.columnfilter === 1) {
+                        this.api().columns().every( function () {
+                            var column = this;
+                            var select = $('<select><option value=""></option></select>')
+                                //.appendTo( $(column.footer()).empty() )
+                                .appendTo( $(column.header()) )
+                                .on( 'change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+
+                                    column
+                                        .search( val ? '^'+val+'$' : '', true, false )
+                                        .draw();
+                                } );
+
+                            //column.data().unique().sort().each( function ( d, j ) {
+                            column.cells('', column[0]).render('display').sort().unique().each( function ( d, j ) {
+                                if(column.search() === '^'+d+'$'){
+                                    select.append( '<option value="'+d+'" selected="selected">'+d+'</option>' )
+                                } else {
+                                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                                }
+                            } );
+                        } );
+                    }
+                },
+                "iDisplayLength": 25,
+                'aLengthMenu': [[ 25, 100, 200, -1], [ 25, 100, 200, 'All']],
+                "sScrollY": "700",
+                //"bScrollCollapse": false,
+                //"bScrollInfinite": true,
                 'bAutoWidth': false,
                 'sPaginationType': 'full_numbers',
                 'fixedHeader': true,

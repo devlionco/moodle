@@ -25,13 +25,31 @@
 require_once("../../config.php");
 require_once($CFG->dirroot."/blocks/configurable_reports/locallib.php");
 
-$id = required_param('id', PARAM_INT);
+$id = optional_param('id', 1, PARAM_INT);
 $download = optional_param('download', false, PARAM_BOOL);
 $format = optional_param('format', '', PARAM_ALPHA);
 $courseid = optional_param('courseid', null, PARAM_INT);
+$alias = optional_param('alias','',PARAM_ALPHA);
+$adhoc = optional_param('adhoc',false,PARAM_BOOL);
 
-if (!$report = $DB->get_record('block_configurable_reports', ['id' => $id])) {
-    print_error('reportdoesnotexists', 'block_configurable_reports');
+if ($id === 0 && $alias === '') {
+    print_error('Please supply report ID or Alias to run the report');
+}
+
+// Try looking for alias first, before using report ID.
+if (!empty($alias)) {
+    if (!$report = $DB->get_record('block_configurable_reports', array('alias' => $alias))) {
+        print_error('reportdoesnotexists', 'block_configurable_reports');
+    }
+} else {
+    if (!$report = $DB->get_record('block_configurable_reports', array('id' => $id))) {
+        print_error('reportdoesnotexists', 'block_configurable_reports');
+    }
+}
+
+if($report->type == 'sql' && $report->sqladhoc == 1 && $adhoc == true) {
+    cr_add_sql_adhoc($report->id);
+    $report = $DB->get_record('block_configurable_reports', array('id' => $report->id));
 }
 
 if ($courseid && $report->global) {
@@ -99,6 +117,49 @@ if (!$download) {
     $PAGE->set_heading( $reportname);
     $PAGE->set_cacheable( true);
     echo $OUTPUT->header();
+
+    if($report->type == 'sql' && $report->sqladhoc == 1){
+
+        $html = '';
+        switch ($report->sqladhocstatus) {
+            case CR_SQL_ADHOC_PROCESS:
+                $html = '
+                    <div class="alert alert-danger" role="alert">
+                        <span>'.get_string('adhocinprocess', 'block_configurable_reports').'</span> 
+                    </div>        
+                ';
+                $refresh_result_page = $CFG->cr_refresh_result_page ?? 30000;
+                $PAGE->requires->js_amd_inline('require(["jquery"], function($) {
+                    setInterval(function () {
+                        window.location.replace("'.$PAGE->url->out().'");
+                    }, '.$refresh_result_page.');
+                });');
+
+                break;
+            case CR_SQL_ADHOC_EMPTY:
+            case CR_SQL_ADHOC_DONE:
+            default:
+                $url = new moodle_url($PAGE->url, array('adhoc'=> 1));
+
+                $message = '';
+                if($report->sqladhocdate){
+                    $a = new \StdClass();
+                    $a->date = date('Y-m-d H:i:s', $report->sqladhocdate);
+                    $a->lastexecutiontime = $report->lastexecutiontime / 1000;
+                    $message = get_string('adhocdone', 'block_configurable_reports', $a);
+                }
+
+                $html = '
+                    <div class="alert alert-success" role="alert">
+                        <span>'.$message.'</span>&nbsp;&nbsp;&nbsp; 
+                        <a href="'.$url->out().'" class="btn btn-outline-primary">'.get_string('refresh').'</a> 
+                    </div>        
+                ';
+                break;
+        }
+
+        echo $html;
+    }
 
     if ($hasmanageallcap || ($hasmanageowncap && $report->ownerid == $USER->id)) {
         $currenttab = 'viewreport';

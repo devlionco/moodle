@@ -35,9 +35,23 @@ require_once($CFG->libdir.'/formslib.php');
 class customsql_form extends moodleform {
 
     public function definition() {
-        global $DB, $CFG, $COURSE;
+        global $DB, $CFG, $COURSE, $PAGE;
 
         $mform =& $this->_form;
+
+        if (get_config('block_configurable_reports', 'sqlsyntaxhighlight')) {
+            $PAGE->requires->js_call_amd('block_configurable_reports/editor', 'init');
+
+            $tablearray = $DB->get_tables();
+            $tableobject  = new stdClass();
+            foreach ($tablearray as $table) {
+                $prefixtable = $table;
+                $tableobject->$prefixtable = array_keys($DB->get_columns($table));
+            }
+            $tablejson = json_encode($tableobject);
+            $mform->addElement('hidden', 'tablejson', $tablejson, ['id' => 'tablejson']);
+            $mform->setType('tablejson', PARAM_RAW);
+        }
 
         $mform->addElement('textarea', 'querysql', get_string('querysql', 'block_configurable_reports'), 'rows="35" cols="80"');
         $mform->addRule('querysql', get_string('required'), 'required', null, 'client');
@@ -104,14 +118,25 @@ class customsql_form extends moodleform {
             // Do not allow any semicolons.
             $errors['querysql'] = get_string('nosemicolon', 'report_customsql');
 
-        } else if ($CFG->prefix != '' && preg_match('/\b' . $CFG->prefix . '\w+/i', $sql)) {
+        } else if (get_config('block_configurable_reports', 'requireprefix') &&
+                    $CFG->prefix != '' && preg_match('/\b' . $CFG->prefix . '\w+/i', $sql)) {
             // Make sure prefix is prefix_, not explicit.
             $errors['querysql'] = get_string('noexplicitprefix', 'block_configurable_reports');
 
-        } else {
+        } else if (get_config('block_configurable_reports', 'requirevalidation')) {
             // Now try running the SQL, and ensure it runs without errors.
 
             $sql = $this->_customdata['reportclass']->prepare_sql($sql);
+
+            // Rename table names.
+            foreach ($DB->get_tables() as $table) {
+                $prefixtable = 'prefix_'.$table;
+                $sql = str_replace(' '.$table.' ', ' '.$prefixtable.' ', $sql);
+                $sql = str_replace(' '.$table, ' '.$prefixtable, $sql);
+                $sql = str_replace(' '.$table.'.', ' '.$prefixtable.'.', $sql);
+                $sql = str_replace(','.$table.'.', ','.$prefixtable.'.', $sql);
+            }
+
             $rs = null;
             try {
                 $rs = $this->_customdata['reportclass']->execute_query($sql, 2);
