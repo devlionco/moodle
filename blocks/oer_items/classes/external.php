@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/blocks/oer_items/lib.php');
+require_once($CFG->dirroot . '/blocks/oer_items/funcs.php');
 
 /**
  * Course external functions
