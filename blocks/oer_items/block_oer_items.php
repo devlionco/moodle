@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/oer_items/lib.php');
+require_once($CFG->dirroot . '/blocks/oer_items/funcs.php');
 
 class block_oer_items extends block_list {
     public function init() {
