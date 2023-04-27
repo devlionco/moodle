@@ -31,15 +31,26 @@ class component_customsql extends component_base {
         $this->form = true;
         $this->help = true;
 
-        if (get_config('block_configurable_reports', 'sqlsyntaxhighlight')) {
-            $PAGE->requires->js_call_amd('block_configurable_reports/main', 'cmirror');
-        }
+        // Previous CodeMirror.
+        //if (get_config('block_configurable_reports', 'sqlsyntaxhighlight')) {
+        //    $PAGE->requires->js_call_amd('block_configurable_reports/main', 'cmirror');
+        //}
     }
 
     public function form_process_data(&$cform) {
         global $DB;
         if ($this->form) {
             $data = $cform->get_data();
+
+            // Rename table names.
+            foreach ($DB->get_tables() as $table) {
+                $prefixtable = 'prefix_'.$table;
+                $data->querysql = str_replace(' '.$table.' ', ' '.$prefixtable.' ', $data->querysql);
+                $data->querysql = str_replace(' '.$table, ' '.$prefixtable, $data->querysql);
+                $data->querysql = str_replace(' '.$table.'.', ' '.$prefixtable.'.', $data->querysql);
+                $data->querysql = str_replace(','.$table.'.', ','.$prefixtable.'.', $data->querysql);
+            }
+
             // Function cr_serialize() will add slashes.
             $components = cr_unserialize($this->config->components);
             $components['customsql']['config'] = $data;
@@ -53,6 +64,13 @@ class component_customsql extends component_base {
             $fdata = new stdclass;
             $components = cr_unserialize($this->config->components);
             $sqlconfig = (isset($components['customsql']['config'])) ? $components['customsql']['config'] : new stdclass;
+
+            $sqlconfig->querysql = str_replace('prefix_', '', $sqlconfig->querysql);
+
+            if(isset($sqlconfig->tablejson)){
+                unset($sqlconfig->tablejson);
+            }
+
             $cform->set_data($sqlconfig);
         }
     }

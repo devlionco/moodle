@@ -22,15 +22,26 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_configurable_reports/dbname', get_string('dbname', 'block_configurable_reports'),
                     get_string('dbnameinfo', 'block_configurable_reports'), '', PARAM_RAW, 30));
     $settings->add(new admin_setting_configpasswordunmask('block_configurable_reports/dbuser', get_string('dbuser', 'block_configurable_reports'),
-                    get_string('dbuserinfo', 'block_configurable_reports'), '', PARAM_RAW, 30));
+                    get_string('dbuserinfo', 'block_configurable_reports'), ''));
     $settings->add(new admin_setting_configpasswordunmask('block_configurable_reports/dbpass', get_string('dbpass', 'block_configurable_reports'),
-                    get_string('dbpassinfo', 'block_configurable_reports'), '', PARAM_RAW, 30));
+                    get_string('dbpassinfo', 'block_configurable_reports'), ''));
 
     $settings->add(new admin_setting_configtime('block_configurable_reports/cron_hour', 'cron_minute',
         get_string('executeat', 'block_configurable_reports'), get_string('executeatinfo', 'block_configurable_reports'), array('h' => 0, 'm' => 0)));
 
     $settings->add(new admin_setting_configcheckbox('block_configurable_reports/sqlsecurity', get_string('sqlsecurity', 'block_configurable_reports'),
         get_string('sqlsecurityinfo', 'block_configurable_reports'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('block_configurable_reports/requireprefix', get_string('requireprefix', 'block_configurable_reports'),
+        get_string('requireprefixinfo', 'block_configurable_reports'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('block_configurable_reports/requirevalidation',
+        get_string('requirevalidation', 'block_configurable_reports'),
+        get_string('requirevalidationinfo', 'block_configurable_reports'), 1));
+
+    $settings->add(new admin_setting_configcheckbox('block_configurable_reports/usemoodlefilters',
+        get_string('usemoodlefilters', 'block_configurable_reports'),
+        get_string('usemoodlefiltersinfo', 'block_configurable_reports'), 1));
 
     $settings->add(new admin_setting_configtext('block_configurable_reports/crrepository', get_string('crrepository', 'block_configurable_reports'),
         get_string('crrepositoryinfo', 'block_configurable_reports'), 'jleyva/moodle-configurable_reports_repository', PARAM_URL, 40));

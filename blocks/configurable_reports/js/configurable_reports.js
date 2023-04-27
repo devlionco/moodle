@@ -1,5 +1,6 @@
 var editor_querysql = null;
 var editor_remotequerysql = null;
+var editor_customhtml = null;
 
 M.block_configurable_reports = {
 
@@ -199,3 +200,22 @@ function menuplugin(event,args) {
     location.href = args.url+document.getElementById('menuplugin').value;
 }
 
+if (document.getElementById('id_customhtml')) {
+    editor_customhtml = CodeMirror.fromTextArea(document.getElementById('id_customhtml'), {
+        mode: "text/javascript",
+        rtlMoveVisually: true,
+        indentWithTabs: true,
+        smartIndent: true,
+        lineNumbers: true,
+        matchBrackets : true,
+        autofocus: true,
+        extraKeys: {
+            "F11": function(cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            "Esc": function(cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            },
+            "Ctrl-Space": "autocomplete"}
+    });
+}
