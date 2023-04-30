@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2018020500;
+$plugin->version = 2019030801;
 $plugin->requires = 2015051100; // Moodle 2.9+
 $plugin->component = 'block_quickfindlist';
 $plugin->maturity = MATURITY_STABLE;
