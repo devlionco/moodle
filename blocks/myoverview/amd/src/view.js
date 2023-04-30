@@ -28,6 +28,9 @@ import * as CustomEvents from 'core/custom_interaction_events';
 import * as Notification from 'core/notification';
 import * as Templates from 'core/templates';
 import * as CourseEvents from 'core_course/events';
+import * as ModalFactory from 'core/modal_factory';
+import * as ModalEventForm from 'core_calendar/modal_event_form';
+import * as Message from 'block_myoverview/message';
 import SELECTORS from 'block_myoverview/selectors';
 import * as PagedContentEvents from 'core/paged_content_events';
 import * as Aria from 'core/aria';
@@ -37,7 +40,8 @@ const TEMPLATES = {
     COURSES_CARDS: 'block_myoverview/view-cards',
     COURSES_LIST: 'block_myoverview/view-list',
     COURSES_SUMMARY: 'block_myoverview/view-summary',
-    NOCOURSES: 'core_course/no-courses'
+    NOCOURSES: 'core_course/no-courses',
+    COURSES_PETEL: 'block_myoverview/view-petel'
 };
 
 const GROUPINGS = {
@@ -479,6 +483,8 @@ const renderCourses = (root, coursesData) => {
         currentTemplate = TEMPLATES.COURSES_CARDS;
     } else if (filters.display === 'list') {
         currentTemplate = TEMPLATES.COURSES_LIST;
+    } else if (filters.display === 'petel') {
+        currentTemplate = TEMPLATES.COURSES_PETEL;
     } else {
         currentTemplate = TEMPLATES.COURSES_SUMMARY;
     }
@@ -718,6 +724,13 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
 
     pagedContentPromise.then((html, js) => {
         registerPagedEventHandlers(root, namespace);
+
+        if($('.block_myoverview').data('myoverview_loaded') === undefined){
+            $('.block_myoverview').data('myoverview_loaded', 'loaded' );
+            var event = new Event('loadmyoverview');
+            document.dispatchEvent(event);
+        }
+
         return Templates.replaceNodeContents(root.find(SELECTORS.courseView.region), html, js);
     }).catch(Notification.exception);
 };
@@ -763,6 +776,45 @@ const registerEventListeners = (root, page) => {
         const target = $(e.target).closest(SELECTORS.ACTION_SHOW_COURSE);
         const courseId = getCourseId(target);
         showCourse(root, courseId);
+        data.originalEvent.preventDefault();
+    });
+
+    root.on(CustomEvents.events.activate, SELECTORS.ACTION_SEND_MESSAGE, (e, data) => {
+        var target = $(e.target).parents(SELECTORS.COURSE_ITEM);
+        var id = getCourseId(target);
+
+        var message = new Message.init();
+        message.openForm(id, 'class');
+    });
+
+    root.on(CustomEvents.events.activate, SELECTORS.ACTION_SEND_MESSAGE_TEACHER, (e, data) => {
+        var target = $(e.target).parents(SELECTORS.COURSE_ITEM);
+        var id = getCourseId(target);
+
+        var message = new Message.init();
+        message.openForm(id, 'teacher');
+    });
+
+    root.on(CustomEvents.events.activate, SELECTORS.ACTION_NEW_EVENT, (e, data) => {
+        var target = $(e.target).parents(SELECTORS.COURSE_ITEM);
+        var id = getCourseId(target);
+
+        var contextId = $('#context_'+id).val();
+
+        var eventFormPromise = ModalFactory.create({
+            type: ModalEventForm.TYPE,
+            large: true
+        });
+
+        eventFormPromise.then(function(modal) {
+            modal.setContextId(contextId);
+            modal.setCourseId(id);
+            modal.show();
+            return;
+        })
+            .fail(Notification.exception);
+
+        //e.preventDefault();
         data.originalEvent.preventDefault();
     });
 

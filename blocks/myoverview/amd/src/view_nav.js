@@ -79,6 +79,41 @@ const registerSelector = root => {
             const pref = option.attr('data-pref');
             const customfieldvalue = option.attr('data-customfieldvalue');
 
+            if(filter === 'grouping') {
+                if(option.parent().hasClass('grouping-buttons')){
+
+                    // If click from buttons.
+                    $('*[data-filter="grouping"]').each(function (index) {
+
+                        if($(this).parent().hasClass('grouping-buttons')){
+                            $(this).removeClass('active');
+                            $(this).removeClass('btn-primary');
+                            $(this).addClass('btn-light');
+                        }else{
+                            $(this).removeAttr('aria-current');
+                            $('#groupingdropdown').find('span').text('');
+                        }
+
+                        option.removeClass('btn-light');
+                        option.addClass('active');
+                        option.addClass('btn-primary');
+                    });
+
+                }else{
+
+                    // If click from select.
+                    $('*[data-filter="grouping"]').each(function (index) {
+
+                        if($(this).parent().hasClass('grouping-buttons')){
+                            $(this).removeClass('active');
+                            $(this).removeClass('btn-primary');
+                            $(this).addClass('btn-light');
+                        }
+                    });
+
+                }
+            }
+
             root.find(SELECTORS.courseView.region).attr('data-' + filter, option.attr('data-value'));
             updatePreferences(filter, pref);
 

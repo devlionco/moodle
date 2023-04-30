@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/nav-grouping-selector
+
+    This template renders grouping dropdown.
+
+    Example context (json):
+    {
+        "allincludinghidden": false,
+        "all": true,
+        "inprogress": false,
+        "future": false,
+        "past": false,
+        "favourites": false,
+        "hidden": false,
+        "displaygroupingallincludinghidden": false,
+        "displaygroupingall": true,
+        "displaygroupinginprogress": true,
+        "displaygroupingfuture": true,
+        "displaygroupingpast": true,
+        "displaygroupingfavourites": true,
+        "displaygroupinghidden": true,
+        "displaygroupingselector": true
+    }
+}}
+{{#displaygroupingselector}}
+
+    <div class="grouping-buttons">
+        {{#displaygroupinginprogress}}
+            <a class="btn mx-2 {{#inprogress}}btn-primary active{{/inprogress}} {{^inprogress}}btn-light{{/inprogress}}"
+               href="#" data-filter="grouping" data-value="inprogress" data-pref="inprogress" role="button"
+               aria-label="{{#str}} aria:inprogress, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} inprogress, block_myoverview {{/str}}
+            </a>
+        {{/displaygroupinginprogress}}
+
+        {{#displaygroupingfuture}}
+            <a class="btn mx-2 {{#future}}btn-primary active{{/future}} {{^future}}btn-light{{/future}}" href="#"
+               data-filter="grouping" data-value="future" data-pref="future" role="button"
+               aria-label="{{#str}} aria:future, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} future, block_myoverview {{/str}}
+            </a>
+        {{/displaygroupingfuture}}
+
+        {{#displaygroupingpast}}
+            <a class="btn mx-2 {{#past}}btn-primary active{{/past}} {{^past}}btn-light{{/past}}" href="#"
+               data-filter="grouping" data-value="past" data-pref="past" role="button"
+               aria-label="{{#str}} aria:past, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                {{#str}} past, block_myoverview {{/str}}
+            </a>
+        {{/displaygroupingpast}}
+    </div>
+
+{{/displaygroupingselector}}

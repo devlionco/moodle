@@ -55,6 +55,7 @@ define('BLOCK_MYOVERVIEW_SORTING_SHORTNAME', 'shortname');
 define('BLOCK_MYOVERVIEW_VIEW_CARD', 'card');
 define('BLOCK_MYOVERVIEW_VIEW_LIST', 'list');
 define('BLOCK_MYOVERVIEW_VIEW_SUMMARY', 'summary');
+define('BLOCK_MYOVERVIEW_VIEW_PETEL', 'petel');
 
 /**
  * Constants for the user paging preferences
@@ -122,7 +123,8 @@ function block_myoverview_user_preferences(): array {
         'choices' => array(
             BLOCK_MYOVERVIEW_VIEW_CARD,
             BLOCK_MYOVERVIEW_VIEW_LIST,
-            BLOCK_MYOVERVIEW_VIEW_SUMMARY
+            BLOCK_MYOVERVIEW_VIEW_SUMMARY,
+            BLOCK_MYOVERVIEW_VIEW_PETEL
         ),
         'permissioncallback' => [core_user::class, 'is_current_user'],
     );
@@ -162,4 +164,32 @@ function block_myoverview_pre_course_delete(\stdClass $course) {
     // Removing any favourited courses which have been created for users, for this course.
     $service = \core_favourites\service_factory::get_service_for_component('core_course');
     $service->delete_favourites_by_type_and_item('courses', $course->id);
+}
+
+function block_myoverview_assignment_human_dates($unixtime, $defaulttime) {
+    $currenttime = time();
+
+    if ($unixtime - $currenttime <= 0) {
+        $str = get_string('cut_of_date', 'block_myoverview');
+        $url = new moodle_url('/calendar/view.php', array('view' => 'day', 'time' => $unixtime));
+        $date = html_writer::link($url, $str);
+
+        // one day before assignment
+    } else if ( 0 < ($unixtime - $currenttime) && ($unixtime - $currenttime) <= (1*24*60*60)) {
+        $str = get_string('one_day_before_assignment', 'block_myoverview');
+        $url = new moodle_url('/calendar/view.php', array('view' => 'day', 'time' => $unixtime));
+        $date = html_writer::link($url, $str);
+
+        // two day before assignment
+    } else if ( (1*24*60*60) < ($unixtime - $currenttime) &&  ($unixtime - $currenttime) <= (2*24*60*60)) {
+        $str = get_string('two_days_before_assignment', 'block_myoverview');
+        $url = new moodle_url('/calendar/view.php', array('view' => 'day', 'time' => $unixtime));
+        $date = html_writer::link($url, $str);
+
+        // more than two days before assignment
+    } else {
+        $date = $defaulttime;
+    }
+
+    return $date;
 }

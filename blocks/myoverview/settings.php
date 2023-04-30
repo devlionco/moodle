@@ -40,7 +40,8 @@ if ($ADMIN->fulltree) {
             1));
 
     // Enable / Disable available layouts.
-    $choices = array(BLOCK_MYOVERVIEW_VIEW_CARD => get_string('card', 'block_myoverview'),
+    $choices = array(BLOCK_MYOVERVIEW_VIEW_PETEL => get_string('petel', 'block_myoverview'),
+            BLOCK_MYOVERVIEW_VIEW_CARD => get_string('card', 'block_myoverview'),
             BLOCK_MYOVERVIEW_VIEW_LIST => get_string('list', 'block_myoverview'),
             BLOCK_MYOVERVIEW_VIEW_SUMMARY => get_string('summary', 'block_myoverview'));
     $settings->add(new admin_setting_configmulticheckbox(
@@ -120,4 +121,124 @@ if ($ADMIN->fulltree) {
             get_string('hiddencourses', 'block_myoverview'),
             '',
             1));
+
+    $name = 'block_myoverview/links';
+    $title = get_string('links', 'block_myoverview');
+    $description = '';
+    $setting = new admin_setting_heading($name, $title, $description);
+    $settings->add($setting);
+
+    $name = 'block_myoverview/badgelink';
+    $title = get_string('badgelink', 'block_myoverview');
+    $description = get_string('badgelinkdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide', 'block_myoverview'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+
+    $name = 'block_myoverview/gradelink';
+    $title = get_string('gradelink', 'block_myoverview');
+    $description = get_string('gradelinkdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide', 'block_myoverview'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+
+    $name = 'block_myoverview/studentlistlink';
+    $title = get_string('studentlist', 'block_myoverview');
+    $description = get_string('studentlistdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide', 'block_myoverview'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+    $name = 'block_myoverview/links';
+    $title = get_string('links', 'block_myoverview');
+    $description = '';
+    $setting = new admin_setting_heading($name, $title, $description);
+    $settings->add($setting);
+
+    $name = 'block_myoverview/badgelink';
+    $title = get_string('badgelink', 'block_myoverview');
+    $description = get_string('badgelinkdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+
+    $name = 'block_myoverview/gradelink';
+    $title = get_string('gradelink', 'block_myoverview');
+    $description = get_string('gradelinkdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+
+    $name = 'block_myoverview/studentlistlink';
+    $title = get_string('studentlist', 'block_myoverview');
+    $description = get_string('studentlistdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+    $name = 'block_myoverview/events';
+    $title = get_string('events', 'block_myoverview');
+    $description = get_string('eventsdesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            0 => get_string('hide'),
+            1 => get_string('show', 'block_myoverview'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+    $name = 'block_myoverview/cache';
+    $title = get_string('cache', 'block_myoverview');
+    $description = '';
+    $setting = new admin_setting_heading($name, $title, $description);
+    $settings->add($setting);
+
+    $name = 'block_myoverview/cacheenable';
+    $title = get_string('cacheenable', 'block_myoverview');
+    $description = get_string('cacheenabledesc', 'block_myoverview');
+    $default = 1;
+    $choices = array(
+            1 => get_string('yes'),
+            0 => get_string('no'),
+    );
+    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+
+    $name = 'block_myoverview/cachetimeout';
+    $title = get_string('cachetimeout', 'block_myoverview');
+    $description = get_string('cachetimeoutdesc', 'block_myoverview');
+    $default = 0;
+    $settings->add(new admin_setting_configtext($name, $title, $description, $default));
+
+    $name = 'block_myoverview/tags';
+    $title = get_string('tags');
+    $description = '';
+    $setting = new admin_setting_heading($name, $title, $description);
+    $settings->add($setting);
+
+    $name = 'block_myoverview/excludetags';
+    $title = get_string('excludetags', 'block_myoverview');
+    $description = get_string('excludetagsdesc', 'block_myoverview');
+    $default = '';
+    $settings->add(new admin_setting_configtext($name, $title, $description, $default));
 }
