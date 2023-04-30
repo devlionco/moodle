@@ -40,4 +40,9 @@ export default {
         clearIcon: '[data-action="clearsearch"]',
         searchInput: '[data-action="search"]',
     },
+    COURSE_ITEM: '.course-listitem',
+    ACTION_SEND_MESSAGE: '[data-action="send-message-to-class"]',
+    ACTION_SEND_MESSAGE_TEACHER: '[data-action="send-message-to-teacher"]',
+    ACTION_NEW_EVENT: '[data-action="new-course-event"]',
+    ACTION_FAST_ACCESS: '[data-action="course-fast-access"]',
 };

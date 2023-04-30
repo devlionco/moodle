@@ -28,6 +28,8 @@ use renderable;
 use renderer_base;
 use templatable;
 use stdClass;
+use core_course_category;
+use context_coursecat;
 
 require_once($CFG->dirroot . '/blocks/myoverview/lib.php');
 
@@ -200,7 +202,7 @@ class main implements renderable, templatable {
         }
 
         // Check and remember the given view.
-        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_PETEL;
 
         // Check and remember the given page size, `null` indicates no page size set
         // while a `0` indicates a paging size of `All`.
@@ -409,6 +411,7 @@ class main implements renderable, templatable {
         global $CFG, $USER;
 
         $nocoursesurl = $output->image_url('courses', 'block_myoverview')->out();
+        $category = core_course_category::get_default();
 
         $newcourseurl = '';
         $coursecat = \core_course_category::user_top();
@@ -448,6 +451,34 @@ class main implements renderable, templatable {
             $sort = $this->sort == BLOCK_MYOVERVIEW_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc';
         }
 
+        require_once($CFG->dirroot . '/cohort/lib.php');
+        $cohorts = cohort_get_user_cohorts($USER->id);
+        $courserequest = false;
+
+        if (!empty($CFG->defaultcohortscourserequest)) {
+            if ($permitedcohorts = explode(',', $CFG->defaultcohortscourserequest)) {
+                foreach ($cohorts as $cohort) {
+                    if (in_array($cohort->idnumber, $permitedcohorts)) {
+                        $courserequest = true;
+                    }
+                }
+            }
+        }
+
+        if (!empty($CFG->cohortnocourserequest)) {            
+            if ($notpermitedcohorts = explode(',', $CFG->cohortnocourserequest)) {
+                foreach ($cohorts as $cohort) {
+                    if (in_array($cohort->idnumber, $notpermitedcohorts)) {
+                        $courserequest = false;
+                    }
+                }
+            }
+        }
+
+        if (is_siteadmin()) {
+            $courserequest = true;
+        }
+
         $defaultvariables = [
             'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
             'nocoursesimg' => $nocoursesurl,
@@ -474,6 +505,7 @@ class main implements renderable, templatable {
             'customfieldvalues' => $customfieldvalues,
             'selectedcustomfield' => $selectedcustomfield,
             'showsortbyshortname' => $CFG->courselistshortnames,
+            'courserequest' => $courserequest,
         ];
         return array_merge($defaultvariables, $preferences);
 

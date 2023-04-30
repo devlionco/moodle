@@ -26,17 +26,30 @@
 <div id="block-myoverview-{{uniqid}}" class="block-myoverview block-cards" data-region="myoverview" role="navigation">
     <hr class="mt-0"/>
 
-    <div role="search" data-region="filter" class="d-flex align-items-center my-2" aria-label="{{#str}} aria:controls, block_myoverview {{/str}}">
+    <div role="search" data-region="filter" class="d-flex align-items-center my-2 justify-content-between flex-wrap mb-1" aria-label="{{#str}} aria:controls, block_myoverview {{/str}}">
         <div class="row no-gutters">
             {{> block_myoverview/nav-grouping-selector }}
+            {{> block_myoverview/nav-grouping-buttons }}
 
             {{> block_myoverview/nav-search-widget }}
 
-            {{> block_myoverview/nav-sort-selector }}
+            <div class="d-flex align-items-center my-2 justify-content-between flex-wrap mb-1">
+                {{> block_myoverview/nav-sort-selector }}
 
-            {{#displaydropdown}}
-                {{> block_myoverview/nav-display-selector }}
-            {{/displaydropdown}}
+                {{#displaydropdown}}
+                    {{> block_myoverview/nav-display-selector }}
+                {{/displaydropdown}}
+
+                {{! PTL 3139 }}
+                {{#courserequest}}
+                    <div class="mb-1 mr-1 d-flex align-items-center">
+                        <a type="button" role="button" class="btn btn-secondary rounded create_course_template"
+                           href = "javascript:void(0);">
+                            {{#str}}courserequest, block_myoverview {{/str}}
+                        </a>
+                    </div>
+                {{/courserequest}}
+            </div>
         </div>
     </div>
 

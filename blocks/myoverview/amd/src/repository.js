@@ -39,7 +39,7 @@ import * as Notification from 'core/notification';
  */
 export const getEnrolledCoursesByTimeline = args => {
     const request = {
-        methodname: 'core_course_get_enrolled_courses_by_timeline_classification',
+        methodname: 'block_myoverview_get_enrolled_courses_by_timeline_classification',
         args: args
     };
 
@@ -57,7 +57,7 @@ export const getEnrolledCoursesByTimeline = args => {
  */
 export const setFavouriteCourses = args => {
     const request = {
-        methodname: 'core_course_set_favourite_courses',
+        methodname: 'block_myoverview_set_favourite_courses',
         args: args
     };
 
@@ -81,7 +81,7 @@ export const setFavouriteCourses = args => {
  */
 export const updateUserPreferences = args => {
     const request = {
-        methodname: 'core_user_update_user_preferences',
+        methodname: 'block_myoverview_update_user_preferences',
         args: args
     };
 
