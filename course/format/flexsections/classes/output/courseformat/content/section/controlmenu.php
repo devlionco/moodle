@@ -65,8 +65,7 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
 
         $controls = [];
 
-        if (has_capability('moodle/course:update', $coursecontext) && $section->section &&
-                (!$section->collapsed || $section->section == $this->format->get_viewed_section())) {
+        if (has_capability('moodle/course:update', $coursecontext) && $section->section) {
             $addsubsectionurl = new \moodle_url($url, ['addchildsection' => $section->section]);
             $controls['addsubsection'] = [
                 'url' => $addsubsectionurl,
@@ -111,7 +110,7 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
                 ];
             }
         }
-
+/* Disable sectionSwitchCollapsed (each section has separate page).
         if ($section->section && has_capability('moodle/course:update', $coursecontext) &&
                 $section->section != $this->format->get_viewed_section()) {
             $collapseurl = new \moodle_url($url, ['switchcollapsed' => $section->section]);
@@ -138,7 +137,7 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
                 ];
             }
         }
-
+*/
         if ($section->parent && has_capability('moodle/course:update', $coursecontext) &&
                 $section->section != $this->format->get_viewed_section()) {
             $mergeupurl = new \moodle_url($url, ['mergeup' => $section->section]);

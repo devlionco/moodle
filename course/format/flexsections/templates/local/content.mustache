@@ -113,7 +113,7 @@
         </a>
     </div>
 {{/collapsemenu}}
-
+<div class = "course-image border rounded" style = "background-image: url({{courseimageurl}});"></div>
 <div id="{{uniqid}}-course-format">
     <h2 class="accesshide">{{{title}}}</h2>
     {{{completionhelp}}}
@@ -121,10 +121,21 @@
         {{#initialsection}}
             {{> format_flexsections/local/content/section }}
         {{/initialsection}}
-        {{#sections}}
-            {{> format_flexsections/local/content/section }}
-        {{/sections}}
+        {{^showascard}}
+            {{#sections}}
+                {{> format_flexsrc/local/content/section }}
+            {{/sections}}
+        {{/showascard}}
     </ul>
+    {{#showascard}}
+    <div class="card-deck dashboard-card-deck {{format}}"
+         role="list"
+         data-for="course_sectionlist">
+        {{#sections}}
+                {{> format_flexsections/local/content/section-card }}
+        {{/sections}}
+    </div>
+    {{/showascard}}
     {{#hasnavigation}}
         <div class="single-section">
             {{#sectionnavigation}}

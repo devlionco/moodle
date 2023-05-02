@@ -59,3 +59,33 @@ $string['addsubsectionfor'] = 'Add subsection for \'{$a}\'';
 $string['cancelmoving'] = 'Cancel moving \'{$a}\'';
 $string['removemarker'] = 'Do not mark as current';
 $string['setmarker'] = 'Mark as current';
+
+$string['image'] = 'Image';
+$string['editcard'] = 'Add image';
+$string['editimage:resizefailed'] = 'Failed to resize the selected image. The card will use the image at it\'s original size. You can try re-uploading the image later.';
+
+// Settings
+$string['settings:name'] = 'Flexsections format settings';
+$string['form:course:usedefault'] = 'Default ({$a})';
+
+$string['form:course:hiddensections'] = 'Hidden sections';
+$string['form:course:hiddensections_help'] = 'Whether hidden sections are displayed to students as not available (perhaps for a course in weekly format to indicate holidays) or are completely hidden.';
+
+$string['form:course:showprogress'] = 'Section progress';
+$string['form:course:showprogress:description'] = 'Whether to display progress within each section on the card';
+$string['form:course:showprogress:show'] = 'Shown';
+$string['form:course:showprogress:hide'] = 'Hidden';
+$string['form:course:progressformat'] = 'Display progress as';
+$string['form:course:progressformat:count'] = 'A count of items';
+$string['form:course:progressformat:percentage'] = 'A percentage';
+$string['form:course:cardorientation'] = 'Card orientation';
+$string['form:course:cardorientation:vertical'] = 'Vertical';
+$string['form:course:cardorientation:horizontal'] = 'Horizontal';
+$string['form:course:showsummary'] = 'Section summary';
+$string['form:course:showsummary:show'] = 'Shown';
+$string['form:course:showsummary:hide'] = 'Hidden';
+$string['form:course:showsummary_help'] = 'Whether to show the section summary on cards';
+$string['form:course:section0'] = 'General section';
+$string['form:course:section0_help'] = 'The general section is the first section in your course, which usually contains the course\'s announcements page. You can choose to have this visible either only on the course\'s main page, on top of the card deck, or visible on the main page and each individual section page.';
+$string['form:course:section0:coursepage'] = 'Only show on the main course page';
+$string['form:course:section0:allpages'] = 'Show on all pages, including individual sections';
