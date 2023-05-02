@@ -52,12 +52,15 @@ class content extends \core_courseformat\output\local\content {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
+        global $PAGE, $OUTPUT;
         $data = parent::export_for_template($output);
 
         // If we are on course view page for particular section.
         if ($this->format->get_viewed_section()) {
             // Do not display the "General" section when on a page of another section.
-            $data->initialsection = null;
+            if ($this->format->get_format_option('section0') == FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE) {
+                $data->initialsection = null;
+            }
 
             // Add 'back to parent' control.
             $section = $this->format->get_section($this->format->get_viewed_section());
@@ -81,6 +84,18 @@ class content extends \core_courseformat\output\local\content {
             // Hide add section link below page content.
             $data->numsections = false;
         }
+
+        // On the course main page, display this section as a card unless the
+        // user is currently editing the page. Section #0 should never be
+        // displayed as a card.
+        //$issinglesectionpage = $this->format->get_section_number() != 0;
+        $data->showascard  = !$PAGE->user_is_editing();
+
+        $courseimage = \core_course\external\course_summary_exporter::get_course_image($this->format->get_course());
+        if (!$courseimage) {
+            $courseimage = $OUTPUT->get_generated_image_for_id($this->format->get_course()->id);
+        }
+        $data->courseimageurl = $courseimage;
 
         return $data;
     }

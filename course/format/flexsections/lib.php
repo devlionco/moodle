@@ -26,9 +26,24 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot. '/course/format/lib.php');
 
 use core\output\inplace_editable;
+use format_flexsections\forms\editcard_form;
 
 define('FORMAT_FLEXSECTIONS_COLLAPSED', 1);
 define('FORMAT_FLEXSECTIONS_EXPANDED', 0);
+define('FORMAT_FLEXSECTIONS_USEDEFAULT', 0);
+define('FORMAT_FLEXSECTIONS_FILEAREA_IMAGE', 'image');
+define('FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW', 1);
+define('FORMAT_FLEXSECTIONS_SHOWPROGRESS_HIDE', 2);
+define('FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT', 1);
+define('FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE', 2);
+define('FORMAT_FLEXSECTIONS_HIDDENSECTION_COLLAPSED', 0);
+define('FORMAT_FLEXSECTIONS_HIDDENSECTION_VISIBLE', 1);
+define('FORMAT_FLEXSECTIONS_ORIENTATION_VERTICAL', 1);
+define('FORMAT_FLEXSECTIONS_ORIENTATION_HORIZONTAL', 2);
+define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW', 1);
+define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE', 2);
+define('FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE', 1);
+define('FORMAT_FLEXSECTIONS_SECTION0_ALLPAGES', 2);
 
 /**
  * Main class for the Flexible sections course format.
@@ -140,6 +155,7 @@ class format_flexsections extends core_courseformat\base {
      *     'sr' (int) used by multipage formats to specify to which section to return
      * @return null|moodle_url
      */
+
     public function get_view_url($section, $options = []) {
         $url = new moodle_url('/course/view.php', ['id' => $this->courseid]);
 
@@ -383,8 +399,8 @@ class format_flexsections extends core_courseformat\base {
                     )
                 ),
                 'cache' => true,
-                'cachedefault' => FORMAT_FLEXSECTIONS_EXPANDED,
-                'default' => COURSE_DISPLAY_SINGLEPAGE,
+                'cachedefault' => FORMAT_FLEXSECTIONS_COLLAPSED,
+                'default' => FORMAT_FLEXSECTIONS_COLLAPSED,
             )
         );
     }
@@ -416,6 +432,16 @@ class format_flexsections extends core_courseformat\base {
             }
             array_unshift($elements, $element);
         }
+
+        $defaultshowprogress = get_config('format_flexsextions', 'showprogress');
+        $hiddenvalues = [
+            FORMAT_FLEXSECTIONS_SHOWPROGRESS_HIDE
+        ];
+
+        if ($defaultshowprogress == FORMAT_FLEXSECTIONS_SHOWPROGRESS_HIDE) {
+            $hiddenvalues[] = FORMAT_FLEXSECTIONS_USEDEFAULT;
+        }
+        $mform->hideIf('progressformat', 'showprogress', 'in', $hiddenvalues);
 
         return $elements;
     }
@@ -1206,6 +1232,325 @@ class format_flexsections extends core_courseformat\base {
         // Partial rebuild section cache that has been purged.
         rebuild_course_cache($this->courseid, true, true);
     }
+
+    // TODO updated functions
+
+    /**
+     * Modify the edit section form to include controls for editing
+     * the image for a section
+     *
+     * @param string $action
+     * @param array $customdata
+     * @return editcard_form
+     */
+    public function editsection_form($action, $customdata = []) {
+        if (!array_key_exists('course', $customdata)) {
+            $customdata['course'] = $this->get_course();
+        }
+
+        $form = new editcard_form($action, $customdata);
+
+        $draftimageid = file_get_submitted_draft_itemid('image');
+        file_prepare_draft_area(
+            $draftimageid,
+            context_course::instance($this->get_courseid())->id,
+            'format_flexsections',
+            FORMAT_FLEXSECTIONS_FILEAREA_IMAGE,
+            $customdata['cs']->id
+        );
+
+        $form->set_data([ 'id' => null, 'name' => null, 'image' => $draftimageid ]);
+
+        return $form;
+    }
+
+    /**
+     * When the section form is changed, make sure any uploaded
+     * images are saved properly
+     *
+     * @param stdClass|array $data Return value from moodleform::get_data() or array with data
+     * @return bool True if changes were made
+     * @throws coding_exception
+     */
+    public function update_section_format_options($data) {
+        $changes = parent::update_section_format_options($data);
+
+        // Make sure we don't accidentally clobber any existing saved images if we get here
+        // from inplace_editable.
+        if (!array_key_exists('image', $data)) {
+            return $changes;
+        }
+
+        file_save_draft_area_files(
+            $data['image'],
+            context_course::instance($this->get_courseid())->id,
+            'format_flexsections',
+            FORMAT_FLEXSECTIONS_FILEAREA_IMAGE,
+            $data['id']
+        );
+
+        // Try and resize the image. It's no big deal if this fails -- we still
+        // have the image, it'll just affect page load times.
+        try {
+            $this->resize_card_image($data['id']);
+        } catch (moodle_exception $e) {
+            notification::add(
+                get_string('editimage:resizefailed', 'format_flexsections'),
+                notification::WARNING
+            );
+        }
+
+        return $changes;
+    }
+    /**
+     * When a section is deleted successfully, make sure we also delete
+     * the card image
+     *
+     * @param int|stdClass|section_info $section
+     * @param bool $forcedeleteifnotempty
+     * @return bool
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function delete_section($section, $forcedeleteifnotempty = false) {
+        global $DB;
+
+        if (!is_object($section)) {
+            $section = $DB->get_record('course_sections',
+                [
+                    'course' => $this->get_courseid(),
+                    'section' => $section
+                ]);
+        }
+
+        $filestorage = get_file_storage();
+        $context = context_course::instance($this->get_courseid());
+        $images = $filestorage->get_area_files(
+            $context->id,
+            'format_shiftsections',
+            FORMAT_FLEXSECTIONS_FILEAREA_IMAGE,
+            $section->id
+        );
+
+        foreach ($images as $image) {
+            $image->delete();
+        }
+
+        return parent::delete_section($section, $forcedeleteifnotempty);
+    }
+    /**
+     * Attempt to resize the image uploaded for a card
+     *
+     * @param int|stdClass $section Section ID or class
+     * @return void
+     * @throws coding_exception
+     * @throws file_exception
+     * @throws moodle_exception
+     * @throws stored_file_creation_exception
+     */
+    public function resize_card_image($section) {
+        global $CFG;
+
+        require_once("$CFG->libdir/gdlib.php");
+
+        if (is_object($section)) {
+            $section = $section->id;
+        }
+
+        $course = $this->get_course();
+        $context = context_course::instance($course->id);
+        $storage = get_file_storage();
+
+        // First, grab the file.
+        $images = $storage->get_area_files(
+            $context->id,
+            'format_flexsections',
+            FORMAT_FLEXSECTIONS_FILEAREA_IMAGE,
+            $section,
+            'itemid, filepath, filename',
+            false
+        );
+
+        if (empty($originalimage)) {
+            return;
+        }
+
+        /** @var stored_file $originalimage */
+        $originalimage = reset($images);
+
+        $tempfilepath = $originalimage->copy_content_to_temp('format_flexsections', 'sectionimage_');
+
+        $resized = resize_image($tempfilepath, null, 500, false);
+
+        if (!$resized) {
+            throw new moodle_exception('failedtoresize', 'format_flexsections');
+        }
+
+        $originalimage->delete();
+
+        try {
+            $storage->create_file_from_string(
+                [
+                    'contextid' => $originalimage->get_contextid(),
+                    'component' => $originalimage->get_component(),
+                    'filearea' => $originalimage->get_filearea(),
+                    'itemid' => $originalimage->get_itemid(),
+                    'filepath' => $originalimage->get_filepath(),
+                    'filename' => $originalimage->get_filename()
+                ], $resized
+            );
+            $originalimage->delete();
+        } finally {
+            unlink($tempfilepath);
+        }
+    }
+    /**
+     * Gets a list of user options for this course format
+     *
+     * @param bool $foreditform
+     * @return array|array[]|false
+     * @throws coding_exception
+     * @throws dml_exception
+     */
+    public function course_format_options($foreditform = false) {
+
+        $defaults = get_config('format_flexsections');
+        // We always show one section per page.
+        //$options['coursedisplay']['default'] = COURSE_DISPLAY_MULTIPAGE;
+
+        $createselect = function (string $name, array $options, int $default, bool $hashelp = false): array {
+            $option = [
+                'default' => FORMAT_FLEXSECTIONS_USEDEFAULT,
+                'type' => PARAM_INT,
+                'label' => new lang_string("form:course:$name", 'format_flexsections'),
+                'element_type' => 'select',
+                'element_attributes' => [
+                    array_merge(
+                        [
+                            FORMAT_FLEXSECTIONS_USEDEFAULT => new lang_string(
+                                'form:course:usedefault',
+                                'format_cards',
+                                $options[$default])
+                        ],
+                        $options
+                    )
+                ],
+            ];
+
+            if ($hashelp) {
+                $option['help'] = "form:course:$name";
+                $option['help_component'] = 'format_flexsections';
+            }
+
+            return $option;
+        };
+
+        static $options = false;
+        if ($options === false) {
+            $courseconfig = get_config('moodlecourse');
+            $options = [
+                'hiddensections' => [
+                    'default' => $courseconfig->hiddensections,
+                    'type' => PARAM_INT,
+                ]
+            ];
+        }
+        if ($foreditform) {
+            $courseformatoptionsedit = [
+                'hiddensections' => [
+                    'label' => new lang_string('hiddensections'),
+                    'help' => 'hiddensections',
+                    'help_component' => 'moodle',
+                    'element_type' => 'select',
+                    'element_attributes' => [
+                        [
+                            0 => new lang_string('hiddensectionscollapsed'),
+                            1 => new lang_string('hiddensectionsinvisible')
+                        ],
+                    ],
+                ]
+            ];
+            $options = array_merge_recursive($options, $courseformatoptionsedit);
+        }
+
+        $section0options = [
+            FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE => new lang_string('form:course:section0:coursepage', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SECTION0_ALLPAGES => new lang_string('form:course:section0:allpages', 'format_flexsections')
+        ];
+        $options['section0'] = $createselect('section0', $section0options, $defaults->section0, true);
+
+        $orientationoptions = [
+            FORMAT_FLEXSECTIONS_ORIENTATION_VERTICAL => new lang_string('form:course:cardorientation:vertical', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_ORIENTATION_HORIZONTAL => new lang_string('form:course:cardorientation:horizontal', 'format_flexsections')
+        ];
+        $options['cardorientation'] = $createselect('cardorientation', $orientationoptions, $defaults->cardorientation);
+
+        $summaryoptions = [
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW => new lang_string('form:course:showsummary:show', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE => new lang_string('form:course:showsummary:hide', 'format_flexsections')
+        ];
+
+        $options['showsummary'] = $createselect('showsummary', $summaryoptions, $defaults->showsummary);
+
+        $showprogressoptions = [
+            FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW => new lang_string('form:course:showprogress:show', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SHOWPROGRESS_HIDE => new lang_string('form:course:showprogress:hide', 'format_flexsections')
+        ];
+
+        $options['showprogress'] = $createselect('showprogress', $showprogressoptions, $defaults->showprogress);
+
+        $progressformatoptions = [
+            FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT => new lang_string('form:course:progressformat:count', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE => new lang_string('form:course:progressformat:percentage', 'format_flexsections')
+        ];
+
+        $options['progressformat'] = $createselect('progressformat', $progressformatoptions, $defaults->progressformat);
+
+        return $options;
+    }
+
+    /**
+     * Fetch a format option from the settings. If it's one of the options that can have an admin provided default,
+     * use that unless it's been overridden for this course
+     *
+     * @param string $name Option key
+     * @param null|int|section_info|stdClass $section The section this option applies to, or 0 for the whole course
+     * @return mixed The option's valie
+     * @throws dml_exception
+     */
+    public function get_format_option(string $name, $section = null) {
+        $options = $this->get_format_options($section);
+        $defaults = get_config('format_flexsections');
+
+        if (array_key_exists($name, $options)) {
+            $value = $options[$name];
+        } else {
+            $value = $defaults->$name;
+        }
+
+        if (!object_property_exists($defaults, $name)) {
+            return $value;
+        }
+
+        if ($value != FORMAT_FLEXSECTIONS_USEDEFAULT) {
+            return $value;
+        }
+
+        if (!is_null($section)) {
+            $coursedefaults = (object) $this->get_format_options();
+
+            if (!object_property_exists($coursedefaults, $name)) {
+                return $defaults->$name;
+            }
+
+            if ($coursedefaults->$name != FORMAT_FLEXSECTIONS_USEDEFAULT) {
+                return $coursedefaults->$name;
+            }
+        }
+
+        return $defaults->$name;
+    }
+
 }
 
 /**
@@ -1234,4 +1579,46 @@ function format_flexsections_get_fontawesome_icon_map() {
     return [
         'format_flexsections:mergeup' => 'fa-level-up',
     ];
+}
+
+/**
+ * Serves files for format_flexsections
+ *
+ * @param stdClass $course
+ * @param stdClass|null $coursemodule
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return void
+ * @throws coding_exception
+ */
+function format_flexsections_pluginfile(stdClass $course,
+                                 ?stdClass $coursemodule,
+                                 context $context,
+                                 string $filearea,
+                                 array $args,
+    $forcedownload,
+                                 array $options = []) {
+    if ($context->contextlevel != CONTEXT_COURSE && $context->contextlevel != CONTEXT_SYSTEM) {
+        send_file_not_found();
+    }
+
+    if ($filearea != FORMAT_FLEXSECTIONS_FILEAREA_IMAGE) {
+        send_file_not_found();
+    }
+
+    $itemid = array_shift($args);
+
+    $filename = array_pop($args);
+    if (!$args) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    $filestorage = get_file_storage();
+    $file = $filestorage->get_file($context->id, 'format_flexsections', $filearea, $itemid, $filepath, $filename);
+    send_stored_file($file, 86400, 0, $forcedownload, $options);
 }

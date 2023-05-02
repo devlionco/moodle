@@ -1,0 +1,5 @@
+0000000000000000000000000000000000000000 59a0f0129b022fa2c2075f1ae3cf119a22c01e44 Ilya Dymshits <ilya@devlion.co> 1680281201 +0300	clone: from github.com:marinaglancy/moodle-format_flexsections.git
+59a0f0129b022fa2c2075f1ae3cf119a22c01e44 655bdb0234b03494c1803ba66cd5484ee1e79b9b Ilya Dymshits <ilya@devlion.co> 1680281213 +0300	checkout: moving from main to MOODLE_400_STABLE
+655bdb0234b03494c1803ba66cd5484ee1e79b9b 655bdb0234b03494c1803ba66cd5484ee1e79b9b Ilya Dymshits <ilya@devlion.co> 1680281233 +0300	checkout: moving from MOODLE_400_STABLE to petel
+655bdb0234b03494c1803ba66cd5484ee1e79b9b 655bdb0234b03494c1803ba66cd5484ee1e79b9b Ilya Dymshits <ilya@devlion.co> 1680281248 +0300	checkout: moving from petel to format_petel
+655bdb0234b03494c1803ba66cd5484ee1e79b9b 1070b35260a8eaadebf3886e627a1c3bcd81bd03 Ilya Dymshits <ilya@devlion.co> 1680379553 +0300	commit: prototype

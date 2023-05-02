@@ -388,15 +388,4 @@ export default class extends BaseComponent {
         event.preventDefault();
         this.reactive.dispatch('addSubSection', parseInt(target.dataset.parentid ?? 0));
     }
-
-    /**
-     * Handle a request to switch the section mode (displayed on the same page vs as a link).
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    _requestSectionSwitchCollapsed(target, event) {
-        event.preventDefault();
-        this.reactive.dispatch('sectionSwitchCollapsed', target.dataset.id ?? 0);
-    }
 }

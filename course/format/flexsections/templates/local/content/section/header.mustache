@@ -40,25 +40,25 @@
         {{/indenttitle}}
     {{/headerdisplaymultipage}}
     {{^headerdisplaymultipage}}
-    {{#num}}
-        <a role="button" data-toggle="collapse"
-           href="#coursecontentcollapse{{num}}"
-           id="collapssesection{{num}}"
-           aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
-           aria-controls="coursecontentcollapse{{num}}"
-           class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
+        {{#num}}
+            <a role="button" data-toggle="collapse"
+               href="#coursecontentcollapse{{num}}"
+               id="collapssesection{{num}}"
+               aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
+               aria-controls="coursecontentcollapse{{num}}"
+               class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
                {{^editing}} stretched-link {{/editing}}
-               {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
-           aria-label="{{name}}">
+                   {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
+               aria-label="{{name}}">
         <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
             {{#pix}} t/expandedchevron, core {{/pix}}
         </span>
-        <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
+                <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
             <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
             <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
         </span>
-        </a>
-    {{/num}}
+            </a>
+        {{/num}}
     {{/headerdisplaymultipage}}
     <h3 class="sectionid-{{id}}-title sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
         id="coursecontentsection{{num}}" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
