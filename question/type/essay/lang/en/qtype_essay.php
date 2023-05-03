@@ -86,3 +86,4 @@ $string['wordcounttoomuch'] = 'Word count: {$a->count}, more than the limit of {
 $string['allowcheck'] = 'Allow "Check"';
 $string['waitteacherreview'] = 'Your answer is awaiting teacher review';
 $string['pleaseenterananswer'] = 'Please enter an answer.';
+$string['studentanswer'] = 'Student answer:';

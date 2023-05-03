@@ -27,3 +27,4 @@ $string['allowcheck'] = 'להציג כפתור "הגשת תשובה"';
 $string['waitteacherreview'] = 'תשובתך ממתינה לבדיקת מורה';
 $string['combinedcontrolnameessay'] = 'נדרש מענה על סעיף שאלה פתוחה';
 $string['pleaseenterananswer'] = 'יש להזין תשובה.';
+$string['studentanswer'] = 'תשובת התלמיד:';

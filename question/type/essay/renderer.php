@@ -98,6 +98,7 @@ class qtype_essay_renderer extends qtype_renderer {
         ];
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
+        $result .= html_writer::tag('div', get_string('studentanswer', 'qtype_essay'), array('class' => 'answer-label'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
 
         // If there is a response and min/max word limit is set in the form then check the response word count.
