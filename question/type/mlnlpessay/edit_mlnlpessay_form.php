@@ -1,0 +1,247 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Defines the editing form for the essay question type.
+ *
+ * @package    qtype
+ * @subpackage mlnlpEssay
+ * @copyright  2022 Dor-Herbesman Devlion
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once $CFG->dirroot . '/question/type/mlnlpessay/locallib.php';
+
+/**
+ * mlnlpEssay question type editing form.
+ *
+ * @copyright  2022 Dor Herbesman - team Devlion
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_mlnlpessay_edit_form extends question_edit_form {
+
+    protected function definition_inner($mform) {
+        global $CFG, $OUTPUT, $USER, $DB, $PAGE, $COURSE;
+
+        $qtype = question_bank::get_qtype('mlnlpessay');
+        $context = \context_user::instance($USER->id);
+
+        // to preload categories weights from DB to JS
+        // $mform->addElement('hidden', 'categoriesweight');
+        // $mform->setType('categoriesweight', PARAM_RAW);
+        $parsedcategories = [];
+        if (isset($this->question->options)) {
+            $categoriesweight = json_decode($this->question->options->categoriesweight);
+            // foreach ($categoriesweight as $category) {
+            //     $parsedcategories[] = ['name' => str_replace('_', ' ', $category->name), 'weight' => $category->weight];
+            // }
+            $parsedcategories = (array) $categoriesweight;
+        }
+        //add categoriers name,tag,weight,and selected status.
+        $mform->addElement('header', 'rubiccategoryheader', get_string('rubiccategoryheader', 'qtype_mlnlpessay'));
+        $mform->setExpanded('rubiccategoryheader');
+        $settings = get_config('qtype_mlnlpessay');
+        $activecategories = get_config('qtype_mlnlpessay', 'numberofcategories');
+        $i = 1;
+        $name = [];
+        $tag = [];
+
+        //getting categories names for js display
+        while ($i <= $activecategories) {
+            $categoryname = 'category' . $i . 'name';
+            if ($settings->$categoryname != '') {
+                $name[] = $settings->$categoryname;
+                $tempstring = 'tag' . $i . 'name';
+                $tag[] = $settings->$tempstring;
+            }
+            $i++;
+        }
+
+        $nametagarray = [];
+
+        $types = get_category_types();
+
+        $params = [];
+        $params['types'] = $types;
+
+        $datatemp = [];
+
+        $hascapedit = hascapedit($COURSE->id, $USER->id);
+
+        if (count($parsedcategories) != 0) {
+            foreach ($parsedcategories as $key => $value) {
+                $value->edit = $hascapedit;
+                $value->tag = $tag[$value->id];
+                $nametagarray[$key] = $value;
+            }
+        } else {
+            for ($i = 0; $i < $activecategories; $i++) {
+                $nametagarray[$i] = ['name' => $name[$i], 'tag' => $tag[$i], 'edit' => $hascapedit, 'id' => $i];
+            }
+        }
+
+        $datatemp = [
+                $nametagarray,
+                $params,
+                $hascapedit,
+        ];
+
+        $html = '
+                <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+                <style>
+                .tabulator-row:not(:hover).tabulator-selectable:not(:hover).tabulator-row-even .editablecol:not(:hover) {
+                    background: #99c1de;
+                }
+                .tabulator-row:not(:hover).tabulator-selectable:not(:hover).tabulator-row-odd .editablecol:not(:hover) {
+                    background: #bcd4e6;
+                }
+                </style>
+                <div id="rubiccategoryfulltable-table"></div>
+                ';
+        $mform->addElement('html', $html, get_string('rubiccategorytable', 'qtype_mlnlpessay'), 'rubiccategorytable');
+
+        $mform->addElement('hidden', 'rubiccategoryfulltable', '', ['id' => 'rubiccategoryfulltable']);
+        $mform->setType('rubiccategoryfulltable', PARAM_RAW);
+
+        $PAGE->requires->js_call_amd('qtype_mlnlpessay/categories', 'init', $datatemp);
+
+        $mform->addElement('static', 'rubriccategoryfake', ' ', ' ');
+
+        $mform->addElement('header', 'responseoptions', get_string('responseoptions', 'qtype_mlnlpessay'));
+        $mform->setExpanded('responseoptions');
+
+        $mform->addElement('select', 'responseformat',
+                get_string('responseformat', 'qtype_mlnlpessay'), $qtype->response_formats());
+        // PTL-5029 Chemistry - config.php => $CFG->qtype_mlnlpessay_responseformat = 'editorfilepicker'
+        $responseformat = (!empty($CFG->qtype_mlnlpessay_responseformat)) ? $CFG->qtype_mlnlpessay_responseformat : 'editor';
+        $mform->setDefault('responseformat', $responseformat);
+
+        $mform->addElement('select', 'responserequired',
+                get_string('responserequired', 'qtype_mlnlpessay'), $qtype->response_required_options());
+        $mform->setDefault('responserequired', 1);
+        $mform->disabledIf('responserequired', 'responseformat', 'eq', 'noinline');
+
+        $mform->addElement('select', 'responsefieldlines',
+                get_string('responsefieldlines', 'qtype_mlnlpessay'), $qtype->response_sizes());
+        $mform->setDefault('responsefieldlines', 15);
+        $mform->disabledIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+
+        $mform->addElement('select', 'attachments',
+                get_string('allowattachments', 'qtype_mlnlpessay'), $qtype->attachment_options());
+        // PTL-5029 Chemistry - config.php => $CFG->qtype_mlnlpessay_attachments = 1
+        $attachments = (!empty($CFG->qtype_mlnlpessay_attachments)) ? $CFG->qtype_mlnlpessay_attachments : 0;
+        $mform->setDefault('attachments', $attachments);
+
+        $mform->addElement('select', 'attachmentsrequired',
+                get_string('attachmentsrequired', 'qtype_mlnlpessay'), $qtype->attachments_required_options());
+        $mform->setDefault('attachmentsrequired', 0);
+        $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_mlnlpessay');
+        $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
+
+        $mform->addElement('filetypes', 'filetypeslist', get_string('acceptedfiletypes', 'qtype_mlnlpessay'));
+        $mform->addHelpButton('filetypeslist', 'acceptedfiletypes', 'qtype_mlnlpessay');
+        $mform->disabledIf('filetypeslist', 'attachments', 'eq', 0);
+
+        $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_mlnlpessay'));
+        $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_mlnlpessay'),
+                array('rows' => 10), $this->editoroptions); //array_merge($this->editoroptions, array('maxfiles' => 0))
+        $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_mlnlpessay');
+
+        $mform->addElement('header', 'graderinfoheader', get_string('graderinfoheader', 'qtype_mlnlpessay'));
+        $mform->setExpanded('graderinfoheader');
+        $mform->addElement('editor', 'graderinfo', get_string('graderinfo', 'qtype_mlnlpessay'),
+                array('rows' => 10), $this->editoroptions);
+    }
+
+    protected function data_preprocessing($question) {
+
+        $question = parent::data_preprocessing($question);
+
+        if (empty($question->options)) {
+            return $question;
+        }
+        $question->responseformat = $question->options->responseformat;
+        $question->responserequired = $question->options->responserequired;
+        $question->responsefieldlines = $question->options->responsefieldlines;
+        $question->attachments = $question->options->attachments;
+        $question->attachmentsrequired = $question->options->attachmentsrequired;
+        $question->filetypeslist = $question->options->filetypeslist;
+
+        $draftid = file_get_submitted_draft_itemid('graderinfo');
+        $question->graderinfo = array();
+        $question->graderinfo['text'] = file_prepare_draft_area(
+                $draftid, // Draftid
+                $this->context->id, // context
+                'qtype_mlnlpessay', // component
+                'graderinfo', // filarea
+                !empty($question->id) ? (int) $question->id : null, // itemid
+                $this->fileoptions, // options
+                $question->options->graderinfo// text.
+        );
+        $question->graderinfo['format'] = $question->options->graderinfoformat;
+        $question->graderinfo['itemid'] = $draftid;
+
+        $question->responsetemplate = array(
+                'text' => $question->options->responsetemplate,
+                'format' => $question->options->responsetemplateformat,
+        );
+        $question->categoriesweight = $question->options->categoriesweight;
+
+        return $question;
+    }
+
+    public function validation($fromform, $files) {
+        global $COURSE, $USER;
+
+        $errors = parent::validation($fromform, $files);
+
+        // Don't allow both 'no inline response' and 'no attachments' to be selected,
+        // as these options would result in there being no input requested from the user.
+        if ($fromform['responseformat'] == 'noinline' && !$fromform['attachments']) {
+            $errors['attachments'] = get_string('mustattach', 'qtype_mlnlpessay');
+        }
+
+        // If 'no inline response' is set, force the teacher to require attachments;
+        // otherwise there will be nothing to grade.
+        if ($fromform['responseformat'] == 'noinline' && !$fromform['attachmentsrequired']) {
+            $errors['attachmentsrequired'] = get_string('mustrequire', 'qtype_mlnlpessay');
+        }
+
+        // Don't allow the teacher to require more attachments than they allow; as this would
+        // create a condition that it's impossible for the student to meet.
+        if ($fromform['attachments'] != -1 && $fromform['attachments'] < $fromform['attachmentsrequired']) {
+            $errors['attachmentsrequired'] = get_string('mustrequirefewer', 'qtype_mlnlpessay');
+        }
+
+        $hascapedit = hascapedit($COURSE->id, $USER->id);
+
+        if ($hascapedit) {
+            foreach (json_decode($fromform['rubiccategoryfulltable']) as $key => $value) {
+                if (isset($value->iscategoryselected) && $value->iscategoryselected &&
+                        (!(isset($value->weight)) || !is_numeric($value->weight))) {
+                    $errors['rubriccategoryfake'] = get_string('weighterror', 'qtype_mlnlpessay');
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    public function qtype() {
+        return 'mlnlpessay';
+    }
+}
