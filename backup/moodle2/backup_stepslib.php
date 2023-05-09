@@ -2526,6 +2526,14 @@ class backup_questions_structure_step extends backup_structure_step {
         $question->add_child($tags);
         $tags->add_child($tag);
 
+        // Backup competencies.
+        $competencies = new backup_nested_element('competencies');
+        $competency = new backup_nested_element('competency', array('id', 'qid'), array(
+            'timecreated', 'timemodified', 'usermodified' ,'sortorder','competencyid', 'ruleoutcome'));
+
+        $question->add_child($competencies);
+        $competencies->add_child($competency);
+
         $qcategory->set_source_sql("
             SELECT gc.*,
                    contextlevel,
@@ -2559,6 +2567,13 @@ class backup_questions_structure_step extends backup_structure_step {
                                WHERE ti.itemid = ?
                                  AND ti.itemtype = 'question'
                                  AND ti.component = 'core_question'", [backup::VAR_PARENTID]);
+
+        $competency->set_source_sql("SELECT c.*
+                              FROM {competency_questioncomp} c
+                              WHERE c.qid = ?",
+            [
+                backup::VAR_PARENTID
+            ]);
 
         // Don't need to annotate ids nor files.
         // ...(already done by {@see backup_annotate_all_question_files()}.

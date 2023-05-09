@@ -5207,6 +5207,48 @@ class restore_create_categories_and_questions extends restore_structure_step {
         }
     }
 
+    /**
+     * Process (save) competencies for each question, and also add it on course level, if needed.
+     *
+     * @param $data object competency
+     * @throws dml_exception
+     */
+    protected function process_competency($data) {
+        global $DB, $COURSE;
+
+        $data = (object)$data;
+        $newquestion = $this->get_new_parentid('question');
+        $questioncreated = (bool) $this->get_mappingid('question_created', $this->get_old_parentid('question'));
+        if (!$questioncreated) {
+            // This question already exists in the question bank. Nothing for us to do.
+            return;
+        }
+        if (get_config('core_competency', 'enabled')) {
+            // Restore and link competencies with new question.
+            $competency = new stdClass();
+            $competency->qid = $newquestion;
+            $competency->timecreated = $data->timecreated;
+            $competency->timemodified = $data->timemodified;
+            $competency->usermodified = $data->usermodified;
+            $competency->sortorder = $data->sortorder;
+            $competency->competencyid = $data->competencyid;
+            $competency->ruleoutcome = $data->ruleoutcome;
+            // TODO: maybe use \core_competency\question_competency::update_question_competencies()
+            $newquestioncompetency = $DB->insert_record('competency_questioncomp', $competency);
+
+            // We must add the competency on the course level,
+            // for it to be available for the question(s).
+            $restorecourseid = $this->task->get_courseid();
+            if (!$cc = $DB->get_record('competency_coursecomp',
+                ['competencyid' => $competency->competencyid, 'courseid' => $restorecourseid])) {
+                $competency->courseid = $restorecourseid;
+                unset($competency->qid);
+                // TODO: maybe use \core_competency\course_competency:: ???
+                $newcoursecompetency = $DB->insert_record('competency_coursecomp', $competency);
+            }
+        }
+    }
+
     protected function after_execute() {
         global $DB;
 

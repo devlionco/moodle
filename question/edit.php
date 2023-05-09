@@ -47,10 +47,6 @@ $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
-// Add smartselect js and css call.
-$PAGE->requires->js_amd_inline('require(["jquery", "core_form/select2"], function($) {$(".smartselect2").select2()});');
-$PAGE->requires->css('/lib/form/css/select2.min.css');
-
 echo $OUTPUT->header();
 
 // Print horizontal nav if needed.

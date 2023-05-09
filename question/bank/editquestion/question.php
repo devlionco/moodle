@@ -77,10 +77,6 @@ if ($scrollpos) {
 }
 $PAGE->set_url($url);
 
-// Add smartselect js and css call.
-$PAGE->requires->js_amd_inline('require(["jquery", "core_form/select2"], function($) {$(".smartselect2").select2()});');
-$PAGE->requires->css('/lib/form/css/select2.min.css');
-
 if ($cmid) {
     $questionbankurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
 } else {
@@ -306,6 +302,14 @@ if ($mform->is_cancelled()) {
         // If we have and course context level tags then set those now.
         core_tag_tag::set_item_tags('core_question', 'question', $question->id,
                 context_course::instance($fromform->courseid), $fromform->coursetags, 0);
+    }
+
+    // Saving competencies
+    if (get_config('core_competency', 'enabled')
+            && isset($fromform->competency_rule) && isset($fromform->competencies)) {
+        // We bypass the API here and go direct to the persistent layer - because we don't want to do permission
+        // checks here - we need to load the real list of existing course module competencies.
+        \core_competency\question_competency::update_question_competencies($question, $fromform);
     }
 
     // Update custom fields if there are any of them in the form.

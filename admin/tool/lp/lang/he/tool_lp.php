@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Strings for component 'tool_lp', language 'he'
  *
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese
@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
-$plugin->version   = 2022112801; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022111800; // Requires this Moodle version.
-$plugin->component = 'tool_lp'; // Full name of the plugin (used for diagnostics).
+$string['qcompetencies'] = 'תיוג נושאי לימוד ומיומנויות';
+$string['qcompetencies_help'] = 'תיוג נושאי לימוד ומיומנויות מתוך עץ מיומנויות מובנה של תחום הדעת.';
+$string['uponquestioncompletion'] = 'לאחר השלמת שאלה בהצלחה';

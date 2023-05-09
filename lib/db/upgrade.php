@@ -3111,5 +3111,37 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022112805.14);
     }
 
+    if ($oldversion < 2022112804.09) {
+        // Define table competency_questioncomp to be created.
+        $table = new xmldb_table('competency_questioncomp');
+
+        // Adding fields to table competency_questioncomp.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('qid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('competencyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('ruleoutcome', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table competency_questioncomp.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('qidkey', XMLDB_KEY_FOREIGN, array('qid'), 'question', array('id'));
+        $table->add_key('competencyidkey', XMLDB_KEY_FOREIGN, array('competencyid'), 'competency_competency', array('id'));
+
+        // Adding indexes to table competency_questioncomp.
+        $table->add_index('qidruleoutcome', XMLDB_INDEX_NOTUNIQUE, array('qid', 'ruleoutcome'));
+        $table->add_index('qidcompetencyid', XMLDB_INDEX_UNIQUE, array('qid', 'competencyid'));
+
+        // Conditionally launch create table for competency_questioncomp.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112804.09);
+    }
+
     return true;
 }

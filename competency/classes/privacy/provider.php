@@ -203,6 +203,13 @@ class provider implements
             'usermodified' => 'privacy:metadata:usermodified',
         ], 'privacy:metadata:competency_userevidencecomp');
 
+        $collection->add_database_table('competency_questioncomp', [
+            'timecreated' => 'privacy:metadata:timecreated',
+            'timemodified' => 'privacy:metadata:timemodified',
+            'usermodified' => 'privacy:metadata:usermodified',
+        ], 'privacy:metadata:competency_questioncomp');
+
+
         // Comments can be left on learning plans and competencies.
         $collection->link_subsystem('core_comment', 'privacy:metadata:core_comments');
 
