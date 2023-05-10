@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_bdi-button",
+  "builds": {
+    "moodle-atto_bdi-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}
