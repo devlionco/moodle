@@ -1,0 +1,7 @@
+{
+    "moodle-atto_bdi-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}
