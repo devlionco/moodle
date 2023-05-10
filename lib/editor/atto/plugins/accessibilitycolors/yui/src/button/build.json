@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_accessibilitycolors-button",
+    "builds": {
+        "moodle-atto_accessibilitycolors-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}
