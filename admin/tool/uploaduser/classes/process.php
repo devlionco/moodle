@@ -355,7 +355,7 @@ class process {
      * @return \stdClass|null
      */
     protected function prepare_user_record(array $line): ?\stdClass {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $user = new \stdClass();
 
@@ -388,6 +388,25 @@ class process {
         if (!isset($user->username)) {
             // Prevent warnings below.
             $user->username = '';
+        }
+
+        // PTL-767 Check existing idnumber.
+        $errorstr = get_string('error');
+        if ($DB->record_exists('user', array('idnumber' => $user->idnumber))) {
+            $this->upt->track('status', get_string('idnumberexist', 'core_petel', $user->idnumber), 'error');
+            $this->upt->track('idnumber', $errorstr, 'error');
+            $this->userserrors++;
+            return null;
+        }
+        // Remove leading ZEROs and check again...
+        if (substr($user->idnumber, 0, 1) === '0') {
+            $user->idnumber = ltrim($user->idnumber, '0');
+        }
+        if ($DB->record_exists('user', array('idnumber' => $user->idnumber))) {
+            $this->upt->track('status', get_string('idnumberexist', 'core_petel', $user->idnumber), 'error');
+            $this->upt->track('idnumber', $errorstr. ' leading zero removed from idnumber', 'error');
+            $this->userserrors++;
+            return null;
         }
 
         if ($this->get_operation_type() == UU_USER_ADDNEW or $this->get_operation_type() == UU_USER_ADDINC) {

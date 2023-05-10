@@ -128,6 +128,28 @@ class preview extends \html_table {
                 if ($DB->record_exists_select('user', $select , $params)) {
                     $rowcols['status'][] = get_string('useremailduplicate', 'error');
                 }
+                $select = $DB->sql_like('email', ':email', false, true, false, '|');
+                $params = array('email' => $DB->sql_like_escape($rowcols['email'], '|'));
+                // PTL-767 Check existing email + link to user profile.
+                if ($userexist = $DB->get_record_select('user', $select , $params)) {
+                    $linktoexistinguser = new \moodle_url($CFG->wwwroot.'/user/editadvanced.php', ['id' => $userexist->id]);
+                    $rowcols['status'][] = html_writer::link($linktoexistinguser, get_string('useremailduplicate', 'error'), ['target'=>'_new']);
+                }
+            }
+
+            // PTL-767 Check existing idnumber.
+            if (isset($rowcols['idnumber'])) {
+                // Remove leading ZEROs and check again...
+                $idnumber_nolzero = '99999999999';
+                if (substr($rowcols['idnumber'][0], 0, 1) === '0') {
+                    $idnumber_nolzero = ltrim($rowcols['idnumber'], '0');
+                }
+                if ($existingidnumber = $DB->get_record_sql("SELECT * FROM {user} 
+                                                                WHERE idnumber = ? OR idnumber LIKE ? OR idnumber = ? OR idnumber = ? ",
+                    array($rowcols['idnumber'], '%'.$idnumber_nolzero, $idnumber_nolzero, '0'.$rowcols['idnumber']))) {
+                    $linktoexistinguser = new \moodle_url($CFG->wwwroot.'/user/editadvanced.php', ['id' => $existingidnumber->id]);
+                    $rowcols['status'][] = html_writer::link($linktoexistinguser, get_string('idnumberexist', 'core_petel', $existingidnumber->idnumber),['target'=>'_new']);
+                }
             }
 
             if (isset($rowcols['theme'])) {
