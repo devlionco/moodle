@@ -1,0 +1,4 @@
+.tinymce_sketch-iframe {
+    width: 100%;
+    height: calc(100% - 8px);
+}
