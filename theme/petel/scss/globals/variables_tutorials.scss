@@ -1,0 +1,12 @@
+// Tutorials specific color palette
+$petel-primary: #004080 !default;
+$petel-secondary: #0066cc !default;
+$petel-secondarymedium: #79b6f2 !default;
+$petel-secondarylight: #bbdaf8 !default;
+$petel-light: #ddecfb !default;
+
+.footer-petel {
+    .footer-logo {
+        background-image: url("[[pix:theme|logowis]]") !important;
+    }
+}
