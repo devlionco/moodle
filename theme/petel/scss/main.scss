@@ -1,0 +1,24 @@
+
+// Get BOOST SCSS
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+//MUST BE before bootstrap (adding globals to use for block_advnotification (#7528))
+$carousel-control-color: $petel-primary !default;
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+// Uncomment the following, to debug SCSS using CLI sassc compiler
+// $ sassc theme/petel/scss/main.scss petel_preview.css
+//@import 'globals/variables_physics';
+//@import 'globals/variables_chemistry';
+
+/*
+@import "globals/petel-common";
+@import 'plugins/sharequestion';
+@import 'plugins/oer';
+@import 'plugins/diagnostic';
+@import 'plugins/sharesequence';
+@import 'plugins/redmine-messages';
+@import 'plugins/local_quizpresets';
+*/

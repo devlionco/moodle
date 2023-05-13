@@ -1,0 +1,455 @@
+//local/community/plugins/resources page styles
+
+// Main
+.main-title {
+    font-family: $font-family-headers;
+    font-size: $h2-font-size;
+}
+
+.main-filter-block {
+    .main-filter-nav {
+        font-family: $font-family-text;
+    }
+    .main-filter-form {
+        button {
+            font-size: $h4-font-size;
+        }
+    }
+
+    .main-search-input {
+        background-color: $petel-light;
+        color: $petel-body-text;
+        border-color: $petel-secondarymedium;
+    }
+    .nav-item {
+        .nav-link {
+            font-family: $font-family-text;
+            font-weight: $font-weight-normal;
+            background-color: $petel-secondarylight;
+            border-color: $petel-secondarylight;
+            color: $petel-body-text;
+            &:hover {
+                background-color: $petel-light;
+                border-color: $petel-secondarymedium;
+            }
+            &.active {
+                background-color: $petel-secondary;
+                border-color: $petel-secondary;
+                font-weight: $font-weight-medium;
+                color: $white;
+            }
+            &.disabled {
+                background-color: $petel-lightgray;
+                border-color: $petel-lightgray;
+            }
+        }
+    }
+}
+
+// Activity.
+
+.activity-aside-menu {
+    background-color: $petel-fairgray !important;
+    box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
+    .activity-aside-menu-title {
+        color: $petel-primary;
+        font-size: $h2-font-size;
+        font-family: $font-family-headers;
+        font-weight: $font-weight-black;
+    }
+    .activity-aside-menu-block {
+        font-family: $font-family-text;
+    }
+    .menu-heading {
+        font-size: $h4-font-size;
+        font-family: $font-family-headers;
+        color: $petel-body-text;
+    }
+    .submenu-heading,
+    .sub-submenu-heading {
+        color: $petel-body-text;
+    }
+    .sub-submenu-heading {
+        font-weight: $font-weight-light;
+    }
+    .sub-menu-item,
+    .sub-sub-menu-item {
+        color: $petel-body-text;
+        font-family: $font-family-text;
+        font-weight: $font-weight-light;
+        &:hover {
+            font-weight: $font-weight-normal;
+        }
+    }
+    .activity-aside-menu-divider {
+        border-top: solid 0.0625rem $petel-secondarymedium !important;
+    }
+    .heading-wrapp {
+        &:hover {
+            text-decoration: none;
+            background-color: $petel-secondarylight;
+        }
+
+        i.fa-caret-left {
+            color: $petel-secondary;
+        }
+    }
+    .collapsed {
+        .heading-wrapp {
+            i.fa-caret-left {
+                color: $petel-secondarymedium;
+            }
+        }
+    }
+    li {
+        &.active a:not(.sub-sub-menu-item) {
+            font-weight: $font-weight-normal;
+        }
+
+        .sub-sub-menu-item {
+            font-weight: $font-weight-light;
+            &.active {
+                font-weight: $font-weight-normal;
+            }
+        }
+        a {
+            &:hover {
+                text-decoration: none;
+                background-color: $petel-secondarylight;
+                box-shadow: none;
+            }
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.activity-filters {
+    .btns-block {
+        .filter-pic .fal {
+            color: $petel-secondary;
+        }
+    }
+    .card.card-body {
+        background-color: $petel-fairgray;
+        border-color: $petel-lightgray;
+    }
+    .form-col-title {
+        font-family: $font-family-headers, sans-serif;
+        font-size: $h4-font-size;
+        color: $petel-secondary;
+    }
+    .custom-control.custom-checkbox {
+        &:hover {
+            background-color: $petel-secondarylight;
+        }
+    }
+    .custom-control-label {
+        color: $petel-body-text;
+        font-weight: $font-weight-light;
+    }
+}
+.activity-block-title,
+.activity-title {
+    font-family: $font-family-headers, sans-serif;
+    font-size: $h4-font-size;
+}
+.activity-info-block {
+    i,
+    p,
+    span {
+        color: $petel-secondary !important;
+    }
+}
+.activity-item {
+    font-family: $font-family-text, sans-serif;
+    border-color: $petel-secondarylight !important;
+}
+
+.activity-block-header-btn,
+.filter-btn {
+    background-color: $white;
+    border: 0.0625rem solid $petel-secondary;
+    color: $petel-secondary;
+    box-shadow: 0 0.1875rem 0.3125rem 0 rgba($petel-body-text, 0.15);
+    &:hover {
+        background-color: $white !important;
+        border: 0.0125rem solid $petel-primary !important;
+        box-shadow: 0 0.375rem 0.75rem 0 rgba($petel-body-text, 0.2) !important;
+        color: $petel-secondary !important;
+    }
+    &:active,
+    &.active {
+        background-color: $petel-light !important;
+        border: 0.0125rem solid $petel-secondary !important;
+        box-shadow: 0 0.1875rem 0.1875rem 0 rgba($petel-body-text, 0.35) !important;
+        color: $petel-secondary !important;
+    }
+    &:focus {
+        outline: none;
+    }
+    &:disabled,
+    &.disabled,
+    &:disabled:hover,
+    &.disabled:hover {
+        background-color: $petel-lightgray !important;
+        box-shadow: none !important;
+        border: none !important;
+        color: $petel-body-text !important;
+    }
+}
+.btn-secondary {
+    background-color: $petel-secondary;
+    border: 0.0625rem solid $petel-secondary;
+    color: $white;
+    box-shadow: 0 0.1875rem 0.3125rem 0 rgba($petel-body-text, 0.15);
+    &:hover {
+        background-color: $petel-light !important;
+        border: 0.0125rem solid $petel-secondarymedium !important;
+        box-shadow: 0 0.375rem 0.75rem 0 rgba($petel-body-text, 0.2) !important;
+        color: $petel-secondary !important;
+    }
+    &:active,
+    &.active {
+        background-color: $petel-primary !important;
+        border: 0.0125rem solid $petel-primary !important;
+        box-shadow: 0 0.1875rem 0.1875rem 0 rgba($petel-body-text, 0.35) !important;
+        color: $white !important;
+    }
+    &:focus {
+        outline: none;
+    }
+    &:disabled,
+    &.disabled,
+    &:disabled:hover,
+    &.disabled:hover {
+        background-color: $petel-lightgray !important;
+        box-shadow: none !important;
+        border: none !important;
+        color: $petel-body-text !important;
+    }
+}
+
+//copy activity btn dropdown styles
+.resources-tooltip {
+    font-family: $font-family-text, sans-serif !important;
+    .tooltip-inner {
+        background-color: $white;
+        box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
+        color: $petel-body-text;
+        border: 0.0625rem solid $petel-secondary;
+    }
+    .arrow::before {
+        border-bottom-color: $white !important;
+    }
+    .arrow::after {
+        border-bottom-color: $petel-secondary !important;
+    }
+}
+
+//activity "what's new" stripe
+.new-stripe {
+    background: $petel-secondarylight !important;
+    color: $petel-primary;
+    &::after {
+        border-top: 26px solid $white;
+    }
+    &::before {
+        border-top: 19px solid $white;
+    }
+    .stripe-content {
+        font-weight: $font-weight-bold;
+        color: $petel-primary;
+        box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
+    }
+    .left_corner {
+        border-top: 0.3125rem solid $petel-secondary;
+    }
+    .right_corner {
+        border-top: 0.3125rem solid $petel-secondary;
+    }
+}
+.activityrating-stripe {
+    background: $petel-secondary !important;
+    color: $white;
+    &::after {
+        border-top: 26px solid $white;
+    }
+    &::before {
+        border-top: 19px solid $white;
+    }
+    .stripe-content {
+        font-weight: $font-weight-bold;
+        color: $white;
+        box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
+    }
+    .left_corner {
+        border-top: 0.3125rem solid $petel-secondary;
+    }
+    .right_corner {
+        border-top: 0.3125rem solid $petel-secondary;
+    }
+}
+.notvisible-stripe {
+    background: $red !important;
+}
+//
+
+//color circle stamps
+.certificate_stamp-wrapper {
+    .certificate_stamp {
+        &[data-type="teachers_offer"] {
+            background-color: $petel-yellowhighlight !important;
+            color: $petel-body-text !important;
+        }
+        &[data-type="tested_by_petel"] {
+            background-color: #6830c1 !important;
+            color: $white;
+        }
+        &[data-type="tested_by_teachers"] {
+            background-color: #287d28 !important;
+            color: $white;
+        }
+        span {
+            color: inherit;
+        }
+    }
+}
+
+// Question
+.question-block {
+    font-family: $font-family-text, sans-serif;
+
+    .total-questions-block {
+        font-size: 16px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: normal;
+        font-size: $h4-font-size;
+    }
+
+    .question-item-wrapper {
+        background: $white;
+        box-shadow: 0 0.1875rem 0.1875rem 0 rgba($petel-body-text, 0.25);
+        &:hover {
+            background: $petel-light;
+            box-shadow: 0 0.375rem 0.75rem 0 rgba($petel-body-text, 0.25);
+
+            .question-item-cell {
+                color: $petel-primary;
+            }
+        }
+        &.active {
+            .question-item {
+                background-color: $petel-secondarylight;
+            }
+        }
+        .fa-caret-down {
+            color: $petel-secondary !important;
+        }
+    }
+    .hide-questions-label {
+        i.fa {
+            color: $petel-secondary !important;
+        }
+    }
+    .question-item {
+        i {
+            color: $petel-secondary !important;
+        }
+    }
+}
+
+//both pages custom tooltip
+.oer-tooltip {
+    background-color: $white;
+    border: 0.0625rem solid $petel-secondary !important;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
+    color: $petel-body-text;
+    z-index: 10;
+    &::after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0.3125rem 0.5rem 0.3125rem;
+        border-color: transparent transparent $petel-secondary transparent !important;
+    }
+    &::before {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0.3125rem 0.5rem 0.3125rem;
+        border-color: transparent transparent $white transparent !important;
+        margin-top: 0.0625rem;
+        z-index: 5;
+    }
+    a {
+        text-decoration: underline;
+    }
+}
+
+#page-question-preview .question-preview-iframe {
+    *:not(input):not(select):not(.btn):not(button):not(.editor_atto_toolbar):not(.editor_atto_content):not(.editor_atto_content_wrap):not(textarea):not(foreignObject):not(.stack):not(g):not(path) {
+        background-color: $petel-fairgray;
+    }
+
+    .editor_atto_content p {
+        background-color: $white !important;
+    }
+
+    .formulation.clearfix {
+        border-color: $petel-fairgray;
+    }
+}
+
+// Sequence.
+.sequence-blocks-content {
+    .sequence-item {
+        border: solid 1px $petel-secondarylight !important;
+        h2 {
+            font-family: $font-family-headers, sans-serif;
+            color: $petel-body-text;
+        }
+        &-info {
+            i {
+                color: $petel-secondary;
+            }
+            span {
+                color: $petel-body-text;
+            }
+        }
+        &-content {
+            background-color: $petel-fairgray !important;
+        }
+        &-content {
+            .nav-control {
+                color: $petel-secondary;
+                background: transparent !important;
+            }
+            .nav-tabs-inner {
+                .nav-link{
+                    border: solid 1px $petel-secondarymedium  !important;
+                    color: $petel-secondary  !important;
+                    font-family: $font-family-text;
+                    &.active {
+                        border: solid .125rem $petel-secondary !important;
+                        background-color: $petel-secondarylight !important;
+                    }
+                }
+            }
+        }
+        .copy-sequence-btn {
+
+            box-shadow: 0 0.375rem 0.75rem 0 rgba($petel-body-text, 0.25);
+
+        }
+    }
+}
