@@ -1,0 +1,70 @@
+/* stylelint-disable declaration-no-important */
+
+body {
+    &.at-contrast {
+        &.at-contrast-gb * {
+            color: $green !important;
+            background-color: $black !important;
+            border-color: $green !important;
+            a,
+            .btn {
+                &:hover,
+                &:focus,
+                &:active,
+                &.active {
+                    * {
+                        background-color: $green !important;
+                        color: $black !important;
+                    }
+                    background-color: $green !important;
+                    color: $black !important;
+                }
+            }
+            .dropdown-item {
+                &:hover,
+                &:focus,
+                &:focus-within,
+                &:active {
+                    background-color: $green !important;
+                    color: $black !important;
+                    a,
+                    a i {
+                        background-color: $green !important;
+                        color: $black !important;
+                    }
+                }
+            }
+            .initialbar .active * {
+                background-color: $green !important;
+                color: $black !important;
+            }
+            #region-main {
+                a {
+                    &:not(.dropdown-item) {
+                        border-bottom: solid 1px $green;
+                    }
+                }
+            }
+            .navbar {
+                border-bottom: solid 1px $green;
+            }
+            #gridshadebox_overlay {
+                background-color: $grey !important;
+            }
+            #gridshadebox_content {
+                .gridshadebox_area * {
+                    background-color: $grey !important;
+                }
+            }
+            .block {
+                .minicalendar {
+                    td {
+                        &.weekend {
+                            color: $green !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
