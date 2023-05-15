@@ -550,4 +550,9 @@ class tool_customlang_translator implements renderable {
         $this->numofrows = $DB->count_records_sql($csql.$sql, $params);
         $this->strings = $DB->get_records_sql($fsql.$sql.$osql, $params, ($this->currentpage) * self::PERPAGE, self::PERPAGE);
     }
+
+    /* get protected filter variables */
+    public function get_filter($var) {
+        return $this->filter->{$var};
+    }
 }

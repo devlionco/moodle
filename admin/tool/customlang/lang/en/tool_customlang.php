@@ -60,6 +60,7 @@ $string['filteronlyhelps'] = 'Help only';
 $string['filtershowstrings'] = 'Show strings';
 $string['filterstringid'] = 'String identifier';
 $string['filtersubstring'] = 'Only strings containing';
+$string['filterreplacewith'] = 'Replace with';
 $string['headingcomponent'] = 'Component';
 $string['headinglocal'] = 'Local customisation';
 $string['headingstandard'] = 'Standard text';

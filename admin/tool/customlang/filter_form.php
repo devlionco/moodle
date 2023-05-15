@@ -31,7 +31,10 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 class tool_customlang_filter_form extends moodleform {
 
     function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
+        $current = (isset($this->_customdata['current'])) ? $this->_customdata['current']:'';
 
         $mform->addElement('header', 'filtersettings', get_string('filter', 'tool_customlang'));
 
@@ -66,12 +69,20 @@ class tool_customlang_filter_form extends moodleform {
         $mform->addElement('text', 'substring', get_string('filtersubstring', 'tool_customlang'));
         $mform->setType('substring', PARAM_RAW);
 
+        // Replace (Substring) with
+        $mform->addElement('text', 'replacewith', get_string('filterreplacewith', 'tool_customlang'));
+        $mform->setType('replacewith', PARAM_RAW);
+
         // String identifier
         $mform->addElement('text', 'stringid', get_string('filterstringid', 'tool_customlang'));
         $mform->setType('stringid', PARAM_STRINGID);
 
         // Show strings - submit button
         $mform->addElement('submit', 'submit', get_string('filtershowstrings', 'tool_customlang'));
+
+        // Add smartselect js and css call.
+        $PAGE->requires->js_amd_inline('require(["jquery", "core_form/select2"], function($) {$(".smartselect2").select2({dropdownAutoWidth: true})});');
+        $PAGE->requires->css('/lib/form/css/select2.min.css');
     }
 }
 
