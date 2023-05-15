@@ -173,7 +173,7 @@ class block_grade_me extends block_base {
      * @return array The formats which apply to this block
      */
     public function applicable_formats() {
-        return array('all' => true);
+        return array('all' => true, 'my' => false);
     }
 
     /**
