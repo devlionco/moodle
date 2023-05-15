@@ -84,6 +84,19 @@ class translator implements renderable, templatable {
                 if ($string->original !== $string->master) {
                     $string->showoriginalvsmaster = true;
                 }
+
+                // Replace a substring within the local translation with a new one,
+                // (helps the translator, global search and replace strings).
+                if ($this->translator->get_filter('replacewith') && $this->translator->get_filter('substring')) {
+                    if (is_null($string->local)) {
+                        $string->local = str_replace($this->translator->get_filter('substring'),
+                                $this->translator->get_filter('replacewith'), $string->master);
+                    } else {
+                        $string->local = str_replace($this->translator->get_filter('substring'),
+                                $this->translator->get_filter('replacewith'), $string->local);
+                    }
+                }
+
                 $string->local = s($string->local);
                 $data->strings[] = $string;
             }
