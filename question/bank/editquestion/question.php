@@ -77,6 +77,10 @@ if ($scrollpos) {
 }
 $PAGE->set_url($url);
 
+// Add smartselect js and css call.
+$PAGE->requires->js_amd_inline('require(["jquery", "core_form/select2"], function($) {$(".smartselect2").select2()});');
+$PAGE->requires->css('/lib/form/css/select2.min.css');
+
 if ($cmid) {
     $questionbankurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
 } else {
