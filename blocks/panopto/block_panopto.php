@@ -212,7 +212,7 @@ class block_panopto extends block_base {
     public function applicable_formats() {
         // Since block is dealing with courses and enrollment's the only possible.
         // place where Panopto block can be used is the course.
-        return array('course-view' => true);
+        return array('course-view' => true, 'all' => false);
     }
 
     /**
