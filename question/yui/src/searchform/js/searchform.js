@@ -8,7 +8,9 @@
     NS = M.question.searchform = {};
 
     NS.init = function() {
-        Y.delegate('change', this.option_changed, Y.config.doc, SELECTORS.OPTIONS, this);
+        $('body').on('select2:select', SELECTORS.OPTIONS, function(e) {
+            $(e.target).parents('form').submit();
+        });
     };
 
     NS.option_changed = function(e) {

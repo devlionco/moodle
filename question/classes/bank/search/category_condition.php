@@ -154,10 +154,10 @@ class category_condition extends condition {
         debugging('Function display_category_form() is deprecated,
          please use the core_question renderer instead.', DEBUG_DEVELOPER);
         echo \html_writer::start_div('choosecategory');
-        $catmenu = question_category_options($contexts, true, 0, true, -1, false);
+        $catmenu = question_category_options($contexts, false, 0, true, -1, false);
         echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory', true, ["class" => "mr-1"]);
         echo \html_writer::select($catmenu, 'category', $current, [],
-                array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
+                array('class' => 'searchoptions custom-select smartselect2', 'id' => 'id_selectacategory'));
         echo \html_writer::end_div() . "\n";
     }
 
