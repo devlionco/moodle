@@ -121,8 +121,8 @@ H5P.xAPICompletedListener = function (event) {
 // Save total user score for each 'answered' interaction.
 H5P.externalDispatcher.on('xAPI', function (event) {
   if (event.getVerb() === 'answered') {
-    var total_score = this.parent.getUsersScore();
-    var total_maxScore = this.parent.getUsersMaxScore();
+    var total_score = this.parent.getScore();
+    var total_maxScore = this.parent.getMaxScore();
     var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
     if (H5P.opened[contentId] === undefined) {
       H5P.opened[contentId] = new Date();
