@@ -704,9 +704,11 @@ iframe.h5peditor-semi-fullscreen {
 .h5p-dir-rtl .h5p-question .h5p-question-next:before {
   content: "\f053";
 }
+/* Was causing UI error in arithmetic quiz game
 .h5p-dir-rtl .h5p-joubelui-button:first-child {
   margin: 0 0 1em 0.5em;
 }
+*/
 .h5p-dir-rtl .h5p-joubelui-button:before {
   padding-left: 0.5em;
 }
@@ -950,4 +952,34 @@ iframe.h5peditor-semi-fullscreen {
   direction: rtl;
   right: 0;
   left: auto;
+}
+
+/* HTP - RTL reset activity settings */
+.h5p-dir-rtl .h5p-popup-dialog.h5p-content-user-data-reset-dialog.h5p-open {
+  direction: rtl;
+  text-align: center;
+}
+
+/* fix long scrollbar on "fill in the words" interaction, in RTL mode */
+.h5p-interactive-video .hidden-but-read {
+  display:none;
+}
+
+.h5p-dir-rtl .h5p-branching-question-title p {
+  text-align: right;
+}
+.h5p-dir-rtl .h5p-branching-question .h5p-feedback-has-image {
+  text-align: right;
+}
+
+.h5p-dir-rtl .h5p-branching-question.h5p-feedback-has-image .h5p-feedback-content {
+  margin-right: 1em;
+  margin-left: unset;
+}
+
+.h5p-dir-rtl .h5p-interactive-book-status-arrow.h5p-interactive-book-status-button .icon-previous::before {
+  content: '\e908';
+}
+.h5p-dir-rtl .h5p-interactive-book-status-arrow.h5p-interactive-book-status-button .icon-next::before {
+  content: '\e907';
 }
