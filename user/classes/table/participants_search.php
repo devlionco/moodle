@@ -223,7 +223,7 @@ class participants_search {
                 $wheres[] = user_get_user_lastaccess_sql($accesssince, 'u', $matchaccesssince);
             }
         } else {
-            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess, g.name AS groups $userfieldssql";
+            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess, g.name AS `groups` $userfieldssql";
             // Not everybody has accessed the course yet.
             $outerjoins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
             $params['courseid2'] = $this->course->id;
