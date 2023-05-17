@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_mlnlpessay';
-$plugin->version = 2023012203;
+$plugin->version = 2023042800;
 
-$plugin->requires = 2020060900;
+$plugin->requires  = 2022111800;
 
 $plugin->maturity = MATURITY_STABLE;

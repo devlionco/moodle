@@ -14,28 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks essay questions through some attempts.
- *
- * @package   qtype_mlnlpessay
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_mlnlpessay;
 
+use question_bank;
+use question_engine;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
- * Unit tests for the essay question type.
+ * Unit tests for the mlnlpessay question type.
  *
+ * @package   qtype_mlnlpessay
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function check_contains_textarea($name, $content = '', $height = 10) {
         $fieldname = $this->quba->get_field_prefix($this->slot) . $name;
@@ -46,7 +43,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
                 $this->currentoutput);
 
         if ($content) {
-            $this->assertRegExp('/' . preg_quote(s($content), '/') . '/', $this->currentoutput);
+            $this->assertMatchesRegularExpression('/' . preg_quote(s($content), '/') . '/', $this->currentoutput);
         }
     }
 
@@ -62,7 +59,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
     protected function save_file_to_draft_area($usercontextid, $draftitemid, $filename, $contents) {
         $fs = get_file_storage();
 
-        $filerecord = new stdClass();
+        $filerecord = new \stdClass();
         $filerecord->contextid = $usercontextid;
         $filerecord->component = 'user';
         $filerecord->filearea = 'draft';
@@ -80,8 +77,8 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // Required to init a text editor.
         $PAGE->set_url('/');
 
-        // Create an essay question.
-        $q = test_question_maker::make_question('essay', 'editor');
+        // Create an mlnlpessay question.
+        $q = \test_question_maker::make_question('mlnlpessay', 'editor');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         $prefix = $this->quba->get_field_prefix($this->slot);
@@ -124,7 +121,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->check_current_state(question_state::$needsgrading);
         $this->check_current_mark(null);
         $this->render();
-        $this->assertRegExp('/' . preg_quote($response, '/') . '/', $this->currentoutput);
+        $this->assertMatchesRegularExpression('/' . preg_quote($response, '/') . '/', $this->currentoutput);
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($q),
                 $this->get_contains_general_feedback_expectation($q));
@@ -132,8 +129,8 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
     public function test_deferred_feedback_plain_text() {
 
-        // Create an essay question.
-        $q = test_question_maker::make_question('essay', 'plain');
+        // Create an mlnlpessay question.
+        $q = \test_question_maker::make_question('mlnlpessay', 'plain');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         $prefix = $this->quba->get_field_prefix($this->slot);
@@ -176,7 +173,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->check_current_state(question_state::$needsgrading);
         $this->check_current_mark(null);
         $this->render();
-        $this->assertRegExp('/' . preg_quote(s($response), '/') . '/', $this->currentoutput);
+        $this->assertMatchesRegularExpression('/' . preg_quote(s($response), '/') . '/', $this->currentoutput);
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($q),
                 $this->get_contains_general_feedback_expectation($q));
@@ -190,8 +187,8 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // Required to init a text editor.
         $PAGE->set_url('/');
 
-        // Create an essay question.
-        $q = test_question_maker::make_question('essay', 'responsetemplate');
+        // Create an mlnlpessay question.
+        $q = \test_question_maker::make_question('mlnlpessay', 'responsetemplate');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         $prefix = $this->quba->get_field_prefix($this->slot);
@@ -233,7 +230,8 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->check_current_state(question_state::$needsgrading);
         $this->check_current_mark(null);
         $this->render();
-        $this->assertRegExp('/' . preg_quote(s('Once upon a time there was a little green frog.'), '/') . '/', $this->currentoutput);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(s('Once upon a time there was a little green frog.'), '/') . '/', $this->currentoutput);
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($q),
                 $this->get_contains_general_feedback_expectation($q));
@@ -246,13 +244,13 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->setAdminUser();
         // Required to init a text editor.
         $PAGE->set_url('/');
-        $usercontextid = context_user::instance($USER->id)->id;
+        $usercontextid = \context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 
-        // Create an essay question in the DB.
+        // Create an mlnlpessay question in the DB.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('essay', 'editorfilepicker', array('category' => $cat->id));
+        $question = $generator->create_question('mlnlpessay', 'editorfilepicker', array('category' => $cat->id));
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -266,11 +264,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // First we need to get the draft item ids.
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -294,11 +292,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -327,7 +325,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $q = question_bank::load_question($question->id);
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-                context_system::instance());
+                \context_system::instance());
         $this->quba->set_preferred_behaviour('deferredfeedback');
         $this->slot = $this->quba->add_question($q, 1);
         $this->quba->start_question_based_on($this->slot, $oldqa);
@@ -342,11 +340,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -370,13 +368,13 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->setAdminUser();
         // Required to init a text editor.
         $PAGE->set_url('/');
-        $usercontextid = context_user::instance($USER->id)->id;
+        $usercontextid = \context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 
-        // Create an essay question in the DB.
+        // Create an mlnlpessay question in the DB.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('essay', 'editorfilepicker', array('category' => $cat->id));
+        $question = $generator->create_question('mlnlpessay', 'editorfilepicker', array('category' => $cat->id));
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -390,11 +388,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // First we need to get the draft item ids.
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -422,7 +420,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $q = question_bank::load_question($question->id);
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-                context_system::instance());
+                \context_system::instance());
         $this->quba->set_preferred_behaviour('deferredfeedback');
         $this->slot = $this->quba->add_question($q, 1);
         $this->quba->start_question_based_on($this->slot, $oldqa);
@@ -435,7 +433,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // Check the display.
         $this->load_quba();
         $this->render();
-        $this->assertRegExp('/I refuse to draw you a picture, so there!/', $this->currentoutput);
+        $this->assertMatchesRegularExpression('/I refuse to draw you a picture, so there!/', $this->currentoutput);
     }
 
     public function test_deferred_feedback_plain_attempt_on_last() {
@@ -443,12 +441,12 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $usercontextid = context_user::instance($USER->id)->id;
+        $usercontextid = \context_user::instance($USER->id)->id;
 
-        // Create an essay question in the DB.
+        // Create an mlnlpessay question in the DB.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('essay', 'plain', array('category' => $cat->id));
+        $question = $generator->create_question('mlnlpessay', 'plain', array('category' => $cat->id));
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -483,7 +481,7 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
 
         $q = question_bank::load_question($question->id);
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-                context_system::instance());
+                \context_system::instance());
         $this->quba->set_preferred_behaviour('deferredfeedback');
         $this->slot = $this->quba->add_question($q, 1);
         $this->quba->start_question_based_on($this->slot, $oldqa);
@@ -497,9 +495,10 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->load_quba();
         $this->render();
         // Test taht no HTML comment has been added to the response.
-        $this->assertRegExp('/Once upon a time there was a frog called Freddy. He lived happily ever after.(?!&lt;!--)/', $this->currentoutput);
+        $this->assertMatchesRegularExpression(
+            '/Once upon a time there was a frog called Freddy. He lived happily ever after.(?!&lt;!--)/', $this->currentoutput);
         // Test for the hash of an empty file area.
-        $this->assertNotContains('d41d8cd98f00b204e9800998ecf8427e', $this->currentoutput);
+        $this->assertStringNotContainsString('d41d8cd98f00b204e9800998ecf8427e', $this->currentoutput);
     }
 
     public function test_deferred_feedback_html_editor_with_files_attempt_wrong_filetypes() {
@@ -509,13 +508,13 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->setAdminUser();
         // Required to init a text editor.
         $PAGE->set_url('/');
-        $usercontextid = context_user::instance($USER->id)->id;
+        $usercontextid = \context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 
-        // Create an essay question in the DB.
+        // Create an mlnlpessay question in the DB.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('essay', 'editorfilepicker', array('category' => $cat->id));
+        $question = $generator->create_question('mlnlpessay', 'editorfilepicker', array('category' => $cat->id));
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -530,11 +529,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // First we need to get the draft item ids.
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -568,13 +567,13 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->setAdminUser();
         // Required to init a text editor.
         $PAGE->set_url('/');
-        $usercontextid = context_user::instance($USER->id)->id;
+        $usercontextid = \context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 
-        // Create an essay question in the DB.
+        // Create an mlnlpessay question in the DB.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
-        $question = $generator->create_question('essay', 'editorfilepicker', array('category' => $cat->id));
+        $question = $generator->create_question('mlnlpessay', 'editorfilepicker', array('category' => $cat->id));
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
@@ -589,11 +588,11 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         // First we need to get the draft item ids.
         $this->render();
         if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('Editor draft item id not found.');
+            throw new \coding_exception('Editor draft item id not found.');
         }
         $editordraftid = $matches[1];
         if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
-            throw new coding_exception('File manager draft item id not found.');
+            throw new \coding_exception('File manager draft item id not found.');
         }
         $attachementsdraftid = $matches[1];
 
@@ -618,5 +617,114 @@ class qtype_mlnlpessay_walkthrough_testcase extends qbehaviour_walkthrough_test_
         $this->check_current_mark(null);
         $this->check_step_count(3);
         $this->save_quba();
+    }
+
+    public function test_deferred_feedback_word_limits() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an mlnlpessay question.
+        /** @var qtype_mlnlpessay_question $q */
+        $q = \test_question_maker::make_question('mlnlpessay', 'editor');
+        $q->minwordlimit = 3;
+        $q->maxwordlimit = 7;
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', '');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_does_not_contain_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Save a response that is too short (and give the word-count code a tricky case).
+        $response = '<div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">One</h3>
+                            <div class="card-text">
+                                <ul>
+                                    <li>Two</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>';
+        $this->process_submission(['answer' => $response, 'answerformat' => FORMAT_HTML]);
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', $response);
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_contains_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+        $this->assertStringContainsString('This question requires a response of at least 3 words and you are ' .
+                'attempting to submit 2 words. Please expand your response and try again.',
+                $this->currentoutput);
+
+        // Save a response that is just long enough.
+        $this->process_submission(['answer' => '<p>One two three.</p>', 'answerformat' => FORMAT_HTML]);
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', '<p>One two three.</p>');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_does_not_contain_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Save a response that is as long as possible short.
+        $this->process_submission(['answer' => '<p>One two three four five six seven.</p>',
+                'answerformat' => FORMAT_HTML]);
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', '<p>One two three four five six seven.</p>');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_does_not_contain_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Save a response that is just too long.
+        $this->process_submission(['answer' => '<p>One two three four five six seven eight.</p>',
+                'answerformat' => FORMAT_HTML]);
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_contains_textarea('answer', '<p>One two three four five six seven eight.</p>');
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_contains_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+        $this->assertStringContainsString('The word limit for this question is 7 words and you are ' .
+                'attempting to submit 8 words. Please shorten your response and try again.',
+                $this->currentoutput);
+
+        // Now submit all and finish.
+        $this->finish();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_contains_general_feedback_expectation($q));
+        $this->assertStringContainsString('Word count: 8, more than the limit of 7 words.',
+                $this->currentoutput);
     }
 }

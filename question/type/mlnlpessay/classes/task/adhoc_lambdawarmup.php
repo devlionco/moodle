@@ -41,11 +41,11 @@ class adhoc_lambdawarmup extends \core\task\adhoc_task {
                 $secret = get_config('qtype_mlnlpessay', 'aws_labmda_secret');
                 $region = get_config('qtype_mlnlpessay', 'aws_labmda_region');
                 $functionname = get_config('qtype_mlnlpessay', 'aws_labmda_functionname');
-
+                $cattemp = ["C1","C2"];
                 $payload = '{
                       "textfilepath": "text text",
                       "question_attempt": "1",
-                      "categoriesids": "[1,3,5,7]",
+                      "categoriesids": ' . json_encode($cattemp) . ',
                       "num_models": "1"
                     }';
 

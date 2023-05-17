@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test helpers for the essay question type.
+ * Test helpers for the mlnlpessay question type.
  *
  * @package    qtype_mlnlpessay
  * @copyright  2013 The Open University
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Test helper class for the essay question type.
+ * Test helper class for the mlnlpessay question type.
  *
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,45 +41,48 @@ class qtype_mlnlpessay_test_helper extends question_test_helper {
      * Helper method to reduce duplication.
      * @return qtype_mlnlpessay_question
      */
-    protected function initialise_essay_question() {
-        question_bank::load_question_definition_classes('essay');
+    protected function initialise_mlnlpessay_question() {
+        question_bank::load_question_definition_classes('mlnlpessay');
         $q = new qtype_mlnlpessay_question();
         test_question_maker::initialise_a_question($q);
-        $q->name = 'Essay question (HTML editor)';
+        $q->name = 'mlnlpessay question (HTML editor)';
         $q->questiontext = 'Please write a story about a frog.';
         $q->generalfeedback = 'I hope your story had a beginning, a middle and an end.';
         $q->responseformat = 'editor';
         $q->responserequired = 1;
         $q->responsefieldlines = 10;
+        $q->minwordlimit = null;
+        $q->maxwordlimit = null;
         $q->attachments = 0;
         $q->attachmentsrequired = 0;
+        $q->maxbytes = 0;
         $q->filetypeslist = null;
         $q->graderinfo = '';
         $q->graderinfoformat = FORMAT_HTML;
-        $q->qtype = question_bank::get_qtype('essay');
+        $q->qtype = question_bank::get_qtype('mlnlpessay');
 
         return $q;
     }
 
     /**
-     * Makes an essay question using the HTML editor as input.
+     * Makes an mlnlpessay question using the HTML editor as input.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_editor() {
-        return $this->initialise_essay_question();
+    public function make_mlnlpessay_question_editor() {
+        return $this->initialise_mlnlpessay_question();
     }
 
     /**
-     * Make the data what would be received from the editing form for an essay
+     * Make the data what would be received from the editing form for an mlnlpessay
      * question using the HTML editor allowing embedded files as input, and up
      * to three attachments.
      *
      * @return stdClass the data that would be returned by $form->get_gata();
      */
-    public function get_essay_question_form_data_editor() {
+    public function get_mlnlpessay_question_form_data_editor() {
         $fromform = new stdClass();
 
-        $fromform->name = 'Essay question (HTML editor)';
+        $fromform->name = 'mlnlpessay question (HTML editor)';
         $fromform->questiontext = array('text' => 'Please write a story about a frog.', 'format' => FORMAT_HTML);
         $fromform->defaultmark = 1.0;
         $fromform->generalfeedback = array('text' => 'I hope your story had a beginning, a middle and an end.', 'format' => FORMAT_HTML);
@@ -88,32 +91,34 @@ class qtype_mlnlpessay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
+        $fromform->maxbytes = 0;
+        $fromform->filetypeslist = ''; // Although once saved in the DB, this becomes null, the form returns '' here.
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
 
     /**
-     * Makes an essay question using the HTML editor allowing embedded files as
+     * Makes an mlnlpessay question using the HTML editor allowing embedded files as
      * input, and up to three attachments.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_editorfilepicker() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_editorfilepicker() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responseformat = 'editorfilepicker';
         $q->attachments = 3;
         return $q;
     }
 
     /**
-     * Makes an essay question using the HTML editor allowing embedded files as
+     * Makes an mlnlpessay question using the HTML editor allowing embedded files as
      * input, and up to two attachments, two needed.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_editorfilepickertworequired() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_editorfilepickertworequired() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responseformat = 'editorfilepicker';
         $q->attachments = 2;
         $q->attachmentsrequired = 2;
@@ -121,16 +126,16 @@ class qtype_mlnlpessay_test_helper extends question_test_helper {
     }
 
     /**
-     * Make the data what would be received from the editing form for an essay
+     * Make the data what would be received from the editing form for an mlnlpessay
      * question using the HTML editor allowing embedded files as input, and up
      * to three attachments.
      *
      * @return stdClass the data that would be returned by $form->get_gata();
      */
-    public function get_essay_question_form_data_editorfilepicker() {
+    public function get_mlnlpessay_question_form_data_editorfilepicker() {
         $fromform = new stdClass();
 
-        $fromform->name = 'Essay question with filepicker and attachments';
+        $fromform->name = 'mlnlpessay question with filepicker and attachments';
         $fromform->questiontext = array('text' => 'Please write a story about a frog.', 'format' => FORMAT_HTML);
         $fromform->defaultmark = 1.0;
         $fromform->generalfeedback = array('text' => 'I hope your story had a beginning, a middle and an end.', 'format' => FORMAT_HTML);
@@ -139,34 +144,36 @@ class qtype_mlnlpessay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 3;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
+        $fromform->maxbytes = 0;
+        $fromform->filetypeslist = ''; // Although once saved in the DB, this becomes null, the form returns '' here.
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
 
     /**
-     * Makes an essay question using plain text input.
+     * Makes an mlnlpessay question using plain text input.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_plain() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_plain() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responseformat = 'plain';
         return $q;
     }
 
     /**
-     * Make the data what would be received from the editing form for an essay
+     * Make the data what would be received from the editing form for an mlnlpessay
      * question using the HTML editor allowing embedded files as input, and up
      * to three attachments.
      *
      * @return stdClass the data that would be returned by $form->get_gata();
      */
-    public function get_essay_question_form_data_plain() {
+    public function get_mlnlpessay_question_form_data_plain() {
         $fromform = new stdClass();
 
-        $fromform->name = 'Essay question with filepicker and attachments';
+        $fromform->name = 'mlnlpessay question with filepicker and attachments';
         $fromform->questiontext = array('text' => 'Please write a story about a frog.', 'format' => FORMAT_HTML);
         $fromform->defaultmark = 1.0;
         $fromform->generalfeedback = array('text' => 'I hope your story had a beginning, a middle and an end.', 'format' => FORMAT_HTML);
@@ -175,40 +182,43 @@ class qtype_mlnlpessay_test_helper extends question_test_helper {
         $fromform->responsefieldlines = 10;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
+        $fromform->maxbytes = 0;
+        $fromform->filetypeslist = ''; // Although once saved in the DB, this becomes null, the form returns '' here.
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
 
     /**
-     * Makes an essay question using monospaced input.
+     * Makes an mlnlpessay question using monospaced input.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_monospaced() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_monospaced() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responseformat = 'monospaced';
         return $q;
     }
 
-    public function make_essay_question_responsetemplate() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_responsetemplate() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responsetemplate = 'Once upon a time';
         $q->responsetemplateformat = FORMAT_HTML;
         return $q;
     }
 
     /**
-     * Makes an essay question without an online text editor.
+     * Makes an mlnlpessay question without an online text editor.
      * @return qtype_mlnlpessay_question
      */
-    public function make_essay_question_noinline() {
-        $q = $this->initialise_essay_question();
+    public function make_mlnlpessay_question_noinline() {
+        $q = $this->initialise_mlnlpessay_question();
         $q->responseformat = 'noinline';
         $q->attachments = 3;
         $q->attachmentsrequired = 1;
         $q->filetypeslist = '';
+        $q->maxbytes = 0;
         return $q;
     }
 

@@ -23,11 +23,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Checks file access for essay questions.
  *
+ * @package  qtype_mlnlpessay
+ * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
  * @param stdClass $context context object

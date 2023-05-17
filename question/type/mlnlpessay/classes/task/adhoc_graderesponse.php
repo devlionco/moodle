@@ -8,6 +8,7 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->dirroot . '/question/engine/lib.php';
+require_once $CFG->dirroot . '/question/type/mlnlpessay/locallib.php';
 
 class adhoc_graderesponse extends \core\task\adhoc_task {
 
@@ -51,18 +52,17 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         mtrace('question_attempt');
         mtrace(json_encode(json_decode($question_attempt), JSON_UNESCAPED_UNICODE));
 
-
         if ($answertext != '') {
-
+            $categories = get_enabled_categories($questionid);
             $processingmode = get_config('qtype_mlnlpessay', 'processing_mode');
-
             switch ($processingmode) {
                 case '0': // Random
                     $output = [];
-                    foreach ($categoriesweight as $catn) {
-                        $output[$catn->id] = random_int(0, 1);
+                    foreach ($categories as $cat) {
+                        $tag = get_config('qtype_mlnlpessay', 'tag' . ($cat->id + 1) . 'name');
+                        $output[$tag] = random_int(0, 1);
                     }
-                    mtrace(" Generating random respons in qtype_mlnlp_wo_python mode: " . print_r($output, 1));
+                    mtrace(" Generating random respons in qtype_mlnlp_wo_python mode: " . json_encode($output, 1));
                     $output = (object) $output;
                     break;
 
@@ -162,14 +162,20 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                         $region = get_config('qtype_mlnlpessay', 'aws_labmda_region');
                         $functionname = get_config('qtype_mlnlpessay', 'aws_labmda_functionname');
 
-                        $payload = new stdClass;
-                        $payload->textfilepath = $answertext;
-                        $payload->question_attempt = $qa;
-                        $payload->categoriesids = $categoriesids;
-                        $payload->num_models = $models_number;
+                        $cattemp = [];
+                        foreach (json_decode($categoriesids) as $cat) {
+                            $tag = get_config('qtype_mlnlpessay', 'tag' . ($cat + 1) . 'name');
+                            $cattemp[] = $tag;
+                        }
 
-                        $payload = json_encode($payload);
-                        mtrace(json_encode(json_decode($payload), JSON_UNESCAPED_UNICODE));
+                        $payload = '{
+                                  "textfilepath": "' . $answertext . '",
+                                  "question_attempt": "' . $qa . '",
+                                  "categoriesids": ' . json_encode($cattemp) . ',
+                                  "num_models": "' . $models_number . '"
+                                }';
+
+                        mtrace($payload);
 
                         $client = \Aws\Lambda\LambdaClient::factory(array(
                                 'credentials' => array(
@@ -184,7 +190,6 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                                 'Payload' => $payload,
                         ));
                         mtrace($result);
-
                         $resboby = $result['body'];
                         mtrace('Lambda response body');
                         mtrace(json_encode(json_decode($resboby), JSON_UNESCAPED_UNICODE));
@@ -233,7 +238,8 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         }
 
         foreach ($categoriesweight as $catid => $category) {
-            $catgrade = $output->$catid;
+            $tag = get_config('qtype_mlnlpessay', 'tag' . ($catid + 1) . 'name');
+            $catgrade = $output->$tag;
             $overridden = 0;
             if (isset($overriddenpythonresponse[$catid])) {
                 $catgrade = $overriddenpythonresponse[$catid];

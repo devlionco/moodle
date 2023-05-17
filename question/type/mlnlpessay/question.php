@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->dirroot . '/question/type/questionbase.php';
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Represents an mlnlpessay question.
@@ -41,7 +41,17 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
     public $responserequired;
 
     public $responsefieldlines;
+
+    /** @var int indicates whether the minimum number of words required */
+    public $minwordlimit;
+
+    /** @var int indicates whether the maximum number of words required */
+    public $maxwordlimit;
+
     public $attachments;
+
+    /** @var int maximum file size in bytes */
+    public $maxbytes;
 
     /** @var int The number of attachments required for a response to be complete. */
     public $attachmentsrequired;
@@ -105,10 +115,14 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
     }
 
     public function un_summarise_response(string $summary) {
-        if (!empty($summary)) {
-            return ['answer' => text_to_html($summary)];
-        } else {
+        if (empty($summary)) {
             return [];
+        }
+
+        if (str_contains($this->responseformat, 'editor')) {
+            return ['answer' => text_to_html($summary), 'answerformat' => FORMAT_HTML];
+        } else {
+            return ['answer' => $summary, 'answerformat' => FORMAT_PLAIN];
         }
     }
 
@@ -119,6 +133,13 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
     public function is_complete_response(array $response) {
         // Determine if the given response has online text and attachments.
         $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');
+
+        // If there is a response and min/max word limit is set in the form then validate the number of words in response.
+        if ($hasinlinetext) {
+            if ($this->check_input_word_count($response['answer'])) {
+                return false;
+            }
+        }
         $hasattachments = array_key_exists('attachments', $response)
                 && $response['attachments'] instanceof question_response_files;
 
@@ -126,15 +147,14 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
         if ($hasattachments) {
             // Check the filetypes.
             $filetypesutil = new \core_form\filetypes_util();
-            $whitelist = $filetypesutil->normalize_file_types($this->filetypeslist);
+            $allowlist = $filetypesutil->normalize_file_types($this->filetypeslist);
             $wrongfiles = array();
             foreach ($response['attachments']->get_files() as $file) {
-                if (!$filetypesutil->is_allowed_file_type($file->get_filename(), $whitelist)) {
+                if (!$filetypesutil->is_allowed_file_type($file->get_filename(), $allowlist)) {
                     $wrongfiles[] = $file->get_filename();
                 }
             }
-            if ($wrongfiles) {
-                // At least one filetype is wrong.
+            if ($wrongfiles) { // At least one filetype is wrong.
                 return false;
             }
             $attachcount = count($response['attachments']->get_files());
@@ -153,16 +173,38 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
         return $hascontent && $meetsinlinereq && $meetsattachmentreq;
     }
 
+    /**
+     * Return null if is_complete_response() returns true
+     * otherwise, return the minmax-limit error message
+     *
+     * @param array $response
+     * @return string
+     */
+    public function get_validation_error(array $response) {
+        if ($this->is_complete_response($response)) {
+            return '';
+        }
+        return $this->check_input_word_count($response['answer']);
+    }
+
     public function is_gradable_response(array $response) {
+        // Determine if the given response meets the minimum maximum wordcount requirements.
+        if (!$this->check_wordcount_passed($response)) {
+            return false;
+        }
         // Determine if the given response has online text and attachments.
         if (array_key_exists('answer', $response) && ($response['answer'] !== '')) {
             return true;
         } else if (array_key_exists('attachments', $response)
                 && $response['attachments'] instanceof question_response_files) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
+    }
+
+    public function check_wordcount_passed(array $response) {
+        return $this->check_input_word_count($response['answer']) === null;
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
@@ -177,8 +219,8 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
             $value2 = '';
         }
         return $value1 === $value2 && ($this->attachments == 0 ||
-                        question_utils::arrays_same_at_key_missing_is_blank(
-                                $prevresponse, $newresponse, 'attachments'));
+                question_utils::arrays_same_at_key_missing_is_blank(
+                $prevresponse, $newresponse, 'attachments'));
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
@@ -190,7 +232,7 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
             // Response attachments visible if the question has them.
             return $this->responseformat === 'editorfilepicker';
 
-        } else if ($component == 'qtype_mlnlpessay' && $filearea == 'graderinfo') {
+        } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
             return $options->manualcomment && $args[0] == $this->id;
 
         } else {
@@ -199,19 +241,41 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
         }
     }
 
+    /**
+     * Return the question settings that define this question as structured data.
+     *
+     * @param question_attempt $qa the current attempt for which we are exporting the settings.
+     * @param question_display_options $options the question display options which say which aspects of the question
+     * should be visible.
+     * @return mixed structure representing the question settings. In web services, this will be JSON-encoded.
+     */
+    public function get_question_definition_for_external_rendering(question_attempt $qa, question_display_options $options) {
+        // This is a partial implementation, returning only the most relevant question settings for now,
+        // ideally, we should return as much as settings as possible (depending on the state and display options).
+
+        $settings = [
+            'responseformat' => $this->responseformat,
+            'responserequired' => $this->responserequired,
+            'responsefieldlines' => $this->responsefieldlines,
+            'attachments' => $this->attachments,
+            'attachmentsrequired' => $this->attachmentsrequired,
+            'maxbytes' => $this->maxbytes,
+            'filetypeslist' => $this->filetypeslist,
+            'responsetemplate' => $this->responsetemplate,
+            'responsetemplateformat' => $this->responsetemplateformat,
+            'minwordlimit' => $this->minwordlimit,
+            'maxwordlimit' => $this->maxwordlimit,
+        ];
+
+        return $settings;
+    }
+
     public function classify_response(array $response) {
         if (!array_key_exists('answer', $response)) {
             return array($this->id => question_classified_response::no_response());
         }
         list($fraction) = $this->grade_response($response);
         return ($fraction);
-    }
-
-    public function get_validation_error(array $response) {
-        if ($this->is_gradable_response($response)) {
-            return '';
-        }
-        return get_string('pleaseselectananswer', 'qtype_mlnlpessay');
     }
 
     public function getProtectedValue($obj, $name) {
@@ -290,5 +354,65 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
     public static function clean($string) {
         $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
         return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+    }
+
+    /**
+     * Check the input word count and return a message to user
+     * when the number of words are outside the boundary settings.
+     *
+     * @param string $responsestring
+     * @return string|null
+     .*/
+    private function check_input_word_count($responsestring) {
+        if (!$this->responserequired) {
+            return null;
+        }
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return null;
+        }
+
+        // Count the number of words in the response string.
+        $count = count_words($responsestring);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('maxwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('minwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * If this question uses word counts, then return a display of the current
+     * count, and whether it is within limit, for when the question is being reviewed.
+     *
+     * @param array $response responses, as returned by
+     *      {@see question_attempt_step::get_qt_data()}.
+     * @return string If relevant to this question, a display of the word count.
+     */
+    public function get_word_count_message_for_review(array $response): string {
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return '';
+        }
+
+        if (!array_key_exists('answer', $response) || ($response['answer'] === '')) {
+            // No response.
+            return '';
+        }
+
+        $count = count_words($response['answer']);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('wordcounttoomuch', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('wordcounttoofew', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return get_string('wordcount', 'qtype_essay', $count);
+        }
     }
 }

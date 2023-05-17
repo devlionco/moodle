@@ -138,19 +138,25 @@ function get_enabled_categories($questionid) {
  * @throws dml_exception
  */
 function lambdawarmup($event) {
-    global $DB;
-    $quiz = isset($event->get_data()['other']['quizid']) ? $event->get_data()['other']['quizid'] : 0;
-    if (empty($quiz)) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    $quizid = isset($event->get_data()['other']['quizid']) ? $event->get_data()['other']['quizid'] : 0;
+    if (empty($quizid)) {
         return;
     }
 
-    //check if it has mlnlpquestion
-    $sql = "SELECT qa.id
-            FROM {quiz_slots} AS qa 
-            LEFT JOIN {question} AS q ON (qa.questionid = q.id)
-            WHERE qa.quizid = :quizid AND q.qtype = 'mlnlpessay' limit 1;";
+    $quizobj = quiz::create($quizid);
+    $quizobj->preload_questions();
+    $quizobj->load_questions();
+    $questions = $quizobj->get_questions();
+    $hasmlnlp = false;
+    foreach ($questions as $question) {
+        if ($question->qtype == 'mlnlpessay') {
+            $hasmlnlp = true;
+        }
+    }
 
-    if (!$DB->get_record_sql($sql, ['quizid' => $quiz])) {
+    if (!$hasmlnlp) {
         return false;
     }
 
