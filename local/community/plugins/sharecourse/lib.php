@@ -90,7 +90,7 @@ function community_sharecourse_extend_navigation_course($parentnode, $course, $c
         if ($flagcourse || $isadmin) {
             $strmetadata = get_string('menucoursenode', 'community_sharecourse');
 
-            $url = 'Javascript:void(0)';
+            $url = new \moodle_url('Javascript:void(0)');
             $courseduplicatenode = \navigation_node::create($strmetadata, $url, \navigation_node::TYPE_CUSTOM,
                     'courseduplicate', 'courseduplicate', new \pix_icon('t/copy', $strmetadata)
             );
