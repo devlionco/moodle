@@ -41,7 +41,11 @@ if ($ADMIN->fulltree) {
         get_string('default_config_desc', 'qtype_shortmath'), '', $menu));
 
     // Link to configuration manager page.
-    $returnurl = $PAGE->url->out_as_local_url(false);
+    if (isset($CFG->upgraderunning) && $CFG->upgraderunning < time()) {
+        $returnurl = $PAGE->url->out_as_local_url(false);
+    } else {
+        $returnurl = '';
+    }
     $settings->add(new admin_setting_description('qtype_shortmath/templatemanager',
         get_string('manage_templates_link_desc', 'qtype_shortmath'),
         get_string('template_manager_link', 'qtype_shortmath',

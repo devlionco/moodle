@@ -31,8 +31,8 @@
     outline: none;
     cursor: pointer;
     border: none;
-    margin: 0;
     padding: 0;
+    margin: 1px .1rem;
     min-width: 40px;
     min-height: 40px;
     font-size: 1.2em;
