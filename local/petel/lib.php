@@ -286,7 +286,7 @@ function local_petel_extend_navigation_course($parentnode, $course, $context) {
         if ($flagcourse || $isadmin) {
             $title = get_string('linktodemo', 'local_petel');
 
-            $url = 'Javascript:void(0)';
+            $url = new \moodle_url('Javascript:void(0)');
             $coursedemonode = \navigation_node::create($title, $url, \navigation_node::TYPE_CUSTOM,
                     'coursedemo', 'coursedemo',
                     new \pix_icon('e/insert_edit_link', $title, 'theme')
