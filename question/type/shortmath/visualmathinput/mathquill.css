@@ -505,3 +505,37 @@
   filter: progid:DXImageTransform.Microsoft.Chroma(color='white');
   margin-top: -0.1em;
 }
+
+.mq-math-mode .mq-underset {
+  font-size: 70%;
+  text-align: center;
+  vertical-align: 0.13em;
+  padding: 0 0.2em;
+  display: -moz-groupbox;
+  display: inline-block;
+}
+
+.mq-math-mode .mq-overset {
+  font-size: 70%;
+  text-align: center;
+  vertical-align: 0.92em;
+  padding: 0 0.2em;
+  display: -moz-groupbox;
+  display: inline-block;
+}
+
+.mq-math-mode .mq-overset .mq-over,
+.mq-math-mode .mq-underset .mq-over {
+  display: block;
+  padding: 0 0.1em;
+}
+
+.mq-math-mode .mq-overset .mq-under,
+.mq-math-mode .mq-underset .mq-under {
+  display: block;
+  /*border-top: 1px solid;*/
+  float: right;
+  width: 100%;
+  margin-top: -0.21em;
+  /*padding: 0.1em;*/
+}

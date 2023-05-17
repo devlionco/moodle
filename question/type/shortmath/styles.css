@@ -39,3 +39,20 @@
     display: block;
     max-width: 100%;
 }
+
+/* PETEL beautify */
+.que.shortmath .visual-math-input-wrapper {
+    margin: 0;
+    background-color: #ceffff;
+}
+
+/* RTL support */
+/*rtl:ignore*/
+.que.shortmath .visual-math-input-field {
+    text-align: left;
+    direction: ltr;
+}
+.que.shortmath .mq-math-mode * {
+    /*rtl:ignore*/
+    direction: ltr;
+}

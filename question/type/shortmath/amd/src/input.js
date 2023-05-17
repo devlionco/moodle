@@ -21,21 +21,22 @@
  * @copyright  2018 NTNU
  */
 import VisualMath from "qtype_shortmath/visual-math-input";
-import { getShortmathEditorconfig } from "./api_helpers";
+import {getShortmathEditorconfig} from "./api_helpers";
+import $ from 'jquery';
 
-export const initialize = async (inputname, readonly, questionId) => {
-    var readOnly = readonly;
-    inputname = inputname.replace(":", "\\:");
-    var shortanswerInput = document.querySelector(`#${inputname}`);
+export const initialize = async(inputname, readonly, questionId, customscale = false) => {
+    let readOnly = readonly;
+    inputname = inputname.replaceAll(":", "\\:");
+    let shortanswerInput = document.querySelector(`#${inputname}`);
     // Remove class "d-inline" added in shortanswer renderer class, which prevents input from being hidden.
     shortanswerInput.classList.remove('d-inline');
-    var parent = shortanswerInput.parentElement;
+    let parent = shortanswerInput.parentElement;
 
-    var input = new VisualMath.Input(shortanswerInput, parent);
+    let input = new VisualMath.Input(shortanswerInput, parent);
     input.rawInput.style.display = "none";
 
     if (!readonly) {
-        input.onEdit = function ($input, field) {
+        input.onEdit = function($input, field) {
             $input.value = field.latex();
             $input.dispatchEvent(new Event('change')); // Event firing needs to be on a vanilla dom object.
         };
@@ -43,6 +44,7 @@ export const initialize = async (inputname, readonly, questionId) => {
     } else {
         readOnly = true;
         input.disabled = true;
+        input.disable();
     }
 
     if (shortanswerInput.value.length > 0) {
@@ -53,17 +55,56 @@ export const initialize = async (inputname, readonly, questionId) => {
 
     if (!readOnly) {
         const template = await getShortmathEditorconfig(parseInt(questionId));
-        var controlsWrapper = shortanswerInput.closest('.shortmath').querySelector('.controls_wrapper');
-        var controls = new VisualMath.ControlList(controlsWrapper);
+        let controlsWrapper = shortanswerInput.closest('.shortmath').querySelector('.controls_wrapper');
+        let controls = new VisualMath.ControlList(controlsWrapper);
+
+        // Set single input.
+        controls.bindInput(input);
+
         if (template === null) {
             controls.defineDefault();
         } else {
             template.forEach(value => {
-                let html = value['button'];
-                let command = value['expression'];
+                let html = value.button;
+                let command = value.expression;
                 controls.define(command, html, field => field.write(command));
             });
         }
         controls.enableAll();
+
+        // Custom scale.
+        if (customscale) {
+            let scale = $(controls)[0].wrapper;
+
+            $(scale).hide();
+            $(scale).addClass('customscale');
+
+            // Add icon.
+            let inputblock = $(parent).parent();
+            inputblock.after('<span class="open-icon-visual-math mr-2 ml-2"><i class="fas fa-keyboard"></i></span>');
+
+            //$(parent).find('.visual-math-input-field').add(inputblock.parent().find('.open-icon-visual-math')).click(function() {
+            inputblock.parent().find('.open-icon-visual-math').click(function() {
+
+                let flagopened = false;
+                if ($(scale).is(":visible")) {
+                    flagopened = true;
+                }
+
+                $('.visual-math-input-wrapper').each(function() {
+                    if ($(this).hasClass('customscale')) {
+                        $(this).hide();
+                    }
+                });
+
+                if (flagopened) {
+                    $(scale).hide();
+                } else {
+                    $(scale).show();
+                }
+
+            });
+        }
+
     }
 };

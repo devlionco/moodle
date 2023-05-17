@@ -50,8 +50,8 @@ class qtype_shortmath_renderer extends qtype_shortanswer_renderer {
         $inputname = $qa->get_qt_field_name('answer');
         $questionid = $qa->get_question()->id;
 
-        $result .= html_writer::div('', '', ['class' => 'controls_wrapper']);
         $result .= parent::formulation_and_controls($qa, $options);
+        $result .= html_writer::div('', '', ['class' => 'controls_wrapper']);
 
         $params = array(
             'inputname' => $inputname,

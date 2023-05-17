@@ -20,36 +20,53 @@
  * @copyright  2020 NTNU
  */
 
-import { render } from "qtype_shortmath/template_preview";
-import { getShortmathTemplate, getShortmathEditorconfig } from "qtype_shortmath/api_helpers";
+import {render} from "qtype_shortmath/template_preview";
+import {getShortmathTemplate, getShortmathEditorconfig} from "qtype_shortmath/api_helpers";
 
-export const init = async (questionid) => {
+export const init = async(questionid) => {
     let template;
     const containerId = "template-container";
-    
+
     const select = document.querySelector('[name="editorconfig"]');
     const templateid = select.value;
     if (templateid === "-1") {
         template = await getShortmathEditorconfig(questionid);
-    } else {  
+    } else {
         template = await getShortmathTemplate(templateid);
     }
     render(template, containerId);
-    
+
+    addSelectEventListener(select, questionid, containerId);
+};
+
+export const initCombinable = async(questionid, selectname) => {
+    let template;
+    const containerId = "template-container_" + selectname;
+
+    const select = document.querySelector('[name="' + selectname + '"]');
+    const templateid = select.value;
+
+    if (templateid === "-1") {
+        template = await getShortmathEditorconfig(questionid);
+    } else {
+        template = await getShortmathTemplate(templateid);
+    }
+    render(template, containerId);
+
     addSelectEventListener(select, questionid, containerId);
 };
 
 
 function addSelectEventListener(selectElement, questionid, containerId) {
     const container = document.getElementById(containerId);
-    selectElement.addEventListener('change', async () => {
+    selectElement.addEventListener('change', async() => {
         let template;
         const templateid = selectElement.value;
         container.innerHTML = "";
 
         if (templateid === "-1") {
             template = await getShortmathEditorconfig(questionid);
-        } else {  
+        } else {
             template = await getShortmathTemplate(templateid);
         }
         await render(template, containerId);
