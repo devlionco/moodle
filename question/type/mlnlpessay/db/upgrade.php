@@ -126,5 +126,35 @@ function xmldb_qtype_mlnlpessay_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2023042800) {
+
+        // Define field minwordlimit to be added to qtype_essay_options.
+        $table = new xmldb_table('qtype_mlnlpessay_options');
+        $field = new xmldb_field('minwordlimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'responsefieldlines');
+
+        // Conditionally launch add field minwordlimit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('maxwordlimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'minwordlimit');
+
+        // Conditionally launch add field maxwordlimit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('maxbytes', XMLDB_TYPE_INTEGER, '10', null,
+            XMLDB_NOTNULL, null, '0', 'responsetemplateformat');
+
+        // Conditionally launch add field maxbytes.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Essay savepoint reached.
+        upgrade_plugin_savepoint(true, 2023042800, 'qtype', 'mlnlpessay');
+    }
+
     return true;
 }

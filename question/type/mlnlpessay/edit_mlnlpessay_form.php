@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the essay question type.
+ * Defines the editing form for the mlnlpessay question type.
  *
  * @package    qtype
  * @subpackage mlnlpEssay
  * @copyright  2022 Dor-Herbesman Devlion
  */
+
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -126,39 +127,61 @@ class qtype_mlnlpessay_edit_form extends question_edit_form {
 
         $mform->addElement('select', 'responseformat',
                 get_string('responseformat', 'qtype_mlnlpessay'), $qtype->response_formats());
-        // PTL-5029 Chemistry - config.php => $CFG->qtype_mlnlpessay_responseformat = 'editorfilepicker'
-        $responseformat = (!empty($CFG->qtype_mlnlpessay_responseformat)) ? $CFG->qtype_mlnlpessay_responseformat : 'editor';
-        $mform->setDefault('responseformat', $responseformat);
+        $mform->setDefault('responseformat', $this->get_default_value('responseformat', 'editor'));
 
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_mlnlpessay'), $qtype->response_required_options());
-        $mform->setDefault('responserequired', 1);
-        $mform->disabledIf('responserequired', 'responseformat', 'eq', 'noinline');
+        $mform->setDefault('responserequired', $this->get_default_value('responserequired', 1));
+        $mform->hideIf('responserequired', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'responsefieldlines',
                 get_string('responsefieldlines', 'qtype_mlnlpessay'), $qtype->response_sizes());
-        $mform->setDefault('responsefieldlines', 15);
-        $mform->disabledIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+        $mform->setDefault('responsefieldlines', $this->get_default_value('responsefieldlines', 10));
+        $mform->hideIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+
+        // Create a text box that can be enabled/disabled for max/min word limits options.
+        $wordlimitoptions = ['size' => '6', 'maxlength' => '6'];
+        $mingrp[] = $mform->createElement('text', 'minwordlimit', '', $wordlimitoptions);
+        $mform->setType('minwordlimit', PARAM_INT);
+        $mingrp[] = $mform->createElement('checkbox', 'minwordenabled', '', get_string('enable'));
+        $mform->setDefault('minwordenabled', 0);
+        $mform->addGroup($mingrp, 'mingroup', get_string('minwordlimit', 'qtype_mlnlpessay'), ' ', false);
+        $mform->addHelpButton('mingroup', 'minwordlimit', 'qtype_mlnlpessay');
+        $mform->disabledIf('minwordlimit', 'minwordenabled', 'notchecked');
+        $mform->hideIf('mingroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('mingroup', 'responseformat', 'eq', 'noinline');
+
+        $maxgrp[] = $mform->createElement('text', 'maxwordlimit', '', $wordlimitoptions);
+        $mform->setType('maxwordlimit', PARAM_INT);
+        $maxgrp[] = $mform->createElement('checkbox', 'maxwordenabled', '', get_string('enable'));
+        $mform->setDefault('maxwordenabled', 0);
+        $mform->addGroup($maxgrp, 'maxgroup', get_string('maxwordlimit', 'qtype_mlnlpessay'), ' ', false);
+        $mform->addHelpButton('maxgroup', 'maxwordlimit', 'qtype_mlnlpessay');
+        $mform->disabledIf('maxwordlimit', 'maxwordenabled', 'notchecked');
+        $mform->hideIf('maxgroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('maxgroup', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'attachments',
                 get_string('allowattachments', 'qtype_mlnlpessay'), $qtype->attachment_options());
-        // PTL-5029 Chemistry - config.php => $CFG->qtype_mlnlpessay_attachments = 1
-        $attachments = (!empty($CFG->qtype_mlnlpessay_attachments)) ? $CFG->qtype_mlnlpessay_attachments : 0;
-        $mform->setDefault('attachments', $attachments);
+        $mform->setDefault('attachments', $this->get_default_value('attachments', 0));
 
         $mform->addElement('select', 'attachmentsrequired',
                 get_string('attachmentsrequired', 'qtype_mlnlpessay'), $qtype->attachments_required_options());
-        $mform->setDefault('attachmentsrequired', 0);
+        $mform->setDefault('attachmentsrequired', $this->get_default_value('attachmentsrequired', 0));
         $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_mlnlpessay');
-        $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
+        $mform->hideIf('attachmentsrequired', 'attachments', 'eq', 0);
 
         $mform->addElement('filetypes', 'filetypeslist', get_string('acceptedfiletypes', 'qtype_mlnlpessay'));
         $mform->addHelpButton('filetypeslist', 'acceptedfiletypes', 'qtype_mlnlpessay');
-        $mform->disabledIf('filetypeslist', 'attachments', 'eq', 0);
+        $mform->hideIf('filetypeslist', 'attachments', 'eq', 0);
+
+        $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'qtype_mlnlpessay'), $qtype->max_file_size_options());
+        $mform->setDefault('maxbytes', $this->get_default_value('maxbytes', 0));
+        $mform->hideIf('maxbytes', 'attachments', 'eq', 0);
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_mlnlpessay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_mlnlpessay'),
-                array('rows' => 10), $this->editoroptions); //array_merge($this->editoroptions, array('maxfiles' => 0))
+                array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_mlnlpessay');
 
         $mform->addElement('header', 'graderinfoheader', get_string('graderinfoheader', 'qtype_mlnlpessay'));
@@ -174,12 +197,18 @@ class qtype_mlnlpessay_edit_form extends question_edit_form {
         if (empty($question->options)) {
             return $question;
         }
+
         $question->responseformat = $question->options->responseformat;
         $question->responserequired = $question->options->responserequired;
         $question->responsefieldlines = $question->options->responsefieldlines;
+        $question->minwordenabled = $question->options->minwordlimit ? 1 : 0;
+        $question->minwordlimit = $question->options->minwordlimit;
+        $question->maxwordenabled = $question->options->maxwordlimit ? 1 : 0;
+        $question->maxwordlimit = $question->options->maxwordlimit;
         $question->attachments = $question->options->attachments;
         $question->attachmentsrequired = $question->options->attachmentsrequired;
         $question->filetypeslist = $question->options->filetypeslist;
+        $question->maxbytes = $question->options->maxbytes;
 
         $draftid = file_get_submitted_draft_itemid('graderinfo');
         $question->graderinfo = array();
@@ -196,8 +225,8 @@ class qtype_mlnlpessay_edit_form extends question_edit_form {
         $question->graderinfo['itemid'] = $draftid;
 
         $question->responsetemplate = array(
-                'text' => $question->options->responsetemplate,
-                'format' => $question->options->responsetemplateformat,
+            'text' => $question->options->responsetemplate,
+            'format' => $question->options->responsetemplateformat,
         );
         $question->categoriesweight = $question->options->categoriesweight;
 
@@ -223,8 +252,8 @@ class qtype_mlnlpessay_edit_form extends question_edit_form {
 
         // Don't allow the teacher to require more attachments than they allow; as this would
         // create a condition that it's impossible for the student to meet.
-        if ($fromform['attachments'] != -1 && $fromform['attachments'] < $fromform['attachmentsrequired']) {
-            $errors['attachmentsrequired'] = get_string('mustrequirefewer', 'qtype_mlnlpessay');
+        if ($fromform['attachments'] > 0 && $fromform['attachments'] < $fromform['attachmentsrequired'] ) {
+            $errors['attachmentsrequired']  = get_string('mustrequirefewer', 'qtype_mlnlpessay');
         }
 
         $hascapedit = hascapedit($COURSE->id, $USER->id);
@@ -238,6 +267,36 @@ class qtype_mlnlpessay_edit_form extends question_edit_form {
             }
         }
 
+        if ($fromform['responserequired']) {
+            if (isset($fromform['minwordenabled'])) {
+                if (!is_numeric($fromform['minwordlimit'])) {
+                    $errors['mingroup'] = get_string('err_numeric', 'form');
+                }
+                if ($fromform['minwordlimit'] < 0) {
+                    $errors['mingroup'] = get_string('err_minwordlimitnegative', 'qtype_mlnlpessay');
+                }
+                if (!$fromform['minwordlimit']) {
+                    $errors['mingroup'] = get_string('err_minwordlimit', 'qtype_mlnlpessay');
+                }
+            }
+            if (isset($fromform['maxwordenabled'])) {
+                if (!is_numeric($fromform['maxwordlimit'])) {
+                    $errors['maxgroup'] = get_string('err_numeric', 'form');
+                }
+                if ($fromform['maxwordlimit'] < 0) {
+                    $errors['maxgroup'] = get_string('err_maxwordlimitnegative', 'qtype_mlnlpessay');
+                }
+                if (!$fromform['maxwordlimit']) {
+                    $errors['maxgroup'] = get_string('err_maxwordlimit', 'qtype_mlnlpessay');
+                }
+            }
+            if (isset($fromform['maxwordenabled']) && isset($fromform['minwordenabled'])) {
+                if ($fromform['maxwordlimit'] < $fromform['minwordlimit'] &&
+                    $fromform['maxwordlimit'] > 0 && $fromform['minwordlimit'] > 0) {
+                    $errors['maxgroup'] = get_string('err_maxminmismatch', 'qtype_mlnlpessay');
+                }
+            }
+        }
         return $errors;
     }
 

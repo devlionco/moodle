@@ -50,6 +50,16 @@ class qtype_mlnlpessay extends question_type {
         parent::get_question_options($question);
     }
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('responseformat', $fromform->responseformat);
+        $this->set_default_value('responserequired', $fromform->responserequired);
+        $this->set_default_value('responsefieldlines', $fromform->responsefieldlines);
+        $this->set_default_value('attachments', $fromform->attachments);
+        $this->set_default_value('attachmentsrequired', $fromform->attachmentsrequired);
+        $this->set_default_value('maxbytes', $fromform->maxbytes);
+    }
+
     public function save_question_options($formdata) {
         global $DB, $USER, $COURSE;
 
@@ -70,13 +80,21 @@ class qtype_mlnlpessay extends question_type {
         $options->responseformat = $formdata->responseformat;
         $options->responserequired = $formdata->responserequired;
         $options->responsefieldlines = $formdata->responsefieldlines;
+        $options->minwordlimit = isset($formdata->minwordenabled) ? $formdata->minwordlimit : null;
+        $options->maxwordlimit = isset($formdata->maxwordenabled) ? $formdata->maxwordlimit : null;
         $options->attachments = $formdata->attachments;
-        $options->attachmentsrequired = $formdata->attachmentsrequired;
+        if ((int)$formdata->attachments === 0 && $formdata->attachmentsrequired > 0) {
+            // Adjust the value for the field 'attachmentsrequired' when the field 'attachments' is set to 'No'.
+            $options->attachmentsrequired = 0;
+        } else {
+            $options->attachmentsrequired = $formdata->attachmentsrequired;
+        }
         if (!isset($formdata->filetypeslist)) {
             $options->filetypeslist = null;
         } else {
             $options->filetypeslist = $formdata->filetypeslist;
         }
+        $options->maxbytes = $formdata->maxbytes ?? 0;
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_mlnlpessay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
@@ -115,6 +133,8 @@ class qtype_mlnlpessay extends question_type {
         $question->responseformat = $questiondata->options->responseformat;
         $question->responserequired = $questiondata->options->responserequired;
         $question->responsefieldlines = $questiondata->options->responsefieldlines;
+        $question->minwordlimit = $questiondata->options->minwordlimit;
+        $question->maxwordlimit = $questiondata->options->maxwordlimit;
         $question->attachments = $questiondata->options->attachments;
         $question->attachmentsrequired = $questiondata->options->attachmentsrequired;
         $question->graderinfo = $questiondata->options->graderinfo;
@@ -123,6 +143,7 @@ class qtype_mlnlpessay extends question_type {
         $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
         $filetypesutil = new \core_form\filetypes_util();
         $question->filetypeslist = $filetypesutil->normalize_file_types($questiondata->options->filetypeslist);
+        $question->maxbytes = $questiondata->options->maxbytes;
     }
 
     public function delete_question($questionid, $contextid) {
@@ -160,7 +181,10 @@ class qtype_mlnlpessay extends question_type {
      * @return array the choices that should be offered for the input box size.
      */
     public function response_sizes() {
-        $choices = array();
+        $choices = [
+            2 => get_string('nlines', 'qtype_essay', 2),
+            3 => get_string('nlines', 'qtype_essay', 3),
+        ];
         for ($lines = 5; $lines <= 40; $lines += 5) {
             $choices[$lines] = get_string('nlines', 'qtype_mlnlpessay', $lines);
         }
@@ -172,11 +196,11 @@ class qtype_mlnlpessay extends question_type {
      */
     public function attachment_options() {
         return array(
-                0 => get_string('no'),
-                1 => '1',
-                2 => '2',
-                3 => '3',
-                -1 => get_string('unlimited'),
+            0 => get_string('no'),
+            1 => '1',
+            2 => '2',
+            3 => '3',
+            -1 => get_string('unlimited'),
         );
     }
 
@@ -190,6 +214,15 @@ class qtype_mlnlpessay extends question_type {
                 2 => '2',
                 3 => '3',
         );
+    }
+
+    /**
+     * Return array of the choices that should be offered for the maximum file sizes.
+     * @return array|lang_string[]|string[]
+     */
+    public function max_file_size_options() {
+        global $CFG, $COURSE;
+        return get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
@@ -216,12 +249,18 @@ class qtype_mlnlpessay extends question_type {
                 "</responserequired>\n";
         $expout .= "    <responsefieldlines>" . $question->options->responsefieldlines .
                 "</responsefieldlines>\n";
+        $expout .= "    <minwordlimit>" . $question->options->minwordlimit .
+            "</minwordlimit>\n";
+        $expout .= "    <maxwordlimit>" . $question->options->minwordlimit .
+            "</maxwordlimit>\n";
         $expout .= "    <attachments>" . $question->options->attachments .
                 "</attachments>\n";
         $expout .= "    <attachmentsrequired>" . $question->options->attachmentsrequired .
                 "</attachmentsrequired>\n";
         $expout .= "    <filetypeslist>" . $question->options->filetypeslist .
                 "</filetypeslist>\n";
+        $expout .= "    <maxbytes>" . $question->options->maxbytes .
+            "</maxbytes>\n";
         $expout .= "    <graderinfo " .
                 $format->format($question->options->graderinfoformat) . ">\n";
         $expout .= $format->writetext($question->options->graderinfo, 3);
@@ -252,6 +291,14 @@ class qtype_mlnlpessay extends question_type {
                 array('#', 'responseformat', 0, '#'), 'editor');
         $qo->responsefieldlines = $format->getpath($data,
                 array('#', 'responsefieldlines', 0, '#'), 15);
+        $qo->responsefieldlines = $format->getpath($data,
+            array('#', 'responsefieldlines', 0, '#'), 15);
+        $qo->minwordlimit = $format->getpath($data,
+            array('#', 'minwordlimit', 0, '#'), 0);
+        $qo->maxwordlimit = $format->getpath($data,
+            array('#', 'maxwordlimit', 0, '#'), 0);
+        $qo->maxbytes = $format->getpath($data,
+            array('#', 'maxbytes', 0, '#'), 0);
         $qo->responserequired = $format->getpath($data,
                 array('#', 'responserequired', 0, '#'), 1);
         $qo->attachments = $format->getpath($data,

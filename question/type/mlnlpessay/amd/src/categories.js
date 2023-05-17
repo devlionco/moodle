@@ -15,7 +15,7 @@ define(['jquery', 'https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js']
             if (lang === "he") {
                 var table = new Tabulator("#rubiccategoryfulltable-table", {
                     movableRows: hascapedit,
-                    height: 400,
+                    height: 540,
                     data: tabledata,
                     textDirection: "rtl",
                     layout: "fitColumns",
@@ -104,7 +104,7 @@ define(['jquery', 'https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js']
             else {
                 var table = new Tabulator("#rubiccategoryfulltable-table", {
                     movableRows: hascapedit,
-                    height: 400,
+                    height: 540,
                     data: tabledata,
                     textDirection: "ltr",
                     layout: "fitColumns",

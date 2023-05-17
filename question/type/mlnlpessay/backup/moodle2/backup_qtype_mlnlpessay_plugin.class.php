@@ -50,8 +50,9 @@ class backup_qtype_mlnlpessay_plugin extends backup_qtype_plugin {
         // Now create the qtype own structures.
         $mlnlpessay = new backup_nested_element('mlnlpessay', array('id'), array(
                 'responseformat', 'responserequired', 'responsefieldlines',
+                'minwordlimit', 'maxwordlimit',
                 'attachments', 'attachmentsrequired', 'graderinfo',
-                'graderinfoformat', 'responsetemplate', 'responsetemplateformat', 'filetypeslist', 'categoriesweightteacher', 'categoriesweight', 'timecreated', 'timemodified'));
+                'graderinfoformat', 'responsetemplate', 'responsetemplateformat', 'filetypeslist', 'maxbytes', 'categoriesweightteacher', 'categoriesweight', 'timecreated', 'timemodified'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($mlnlpessay);
