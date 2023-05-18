@@ -35,7 +35,6 @@ $strname = get_string('pluginname', 'community_social');
 $PAGE->set_url('/local/community/plugins/social/profile.php', array());
 
 $PAGE->set_title($strname);
-$PAGE->set_pagelayout('clean');
 
 echo $OUTPUT->header();
 echo html_writer::start_div('social');
