@@ -107,3 +107,4 @@ $string['weighting'] = 'Weighting';
 $string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
 $string['yougotnright'] = '{$a->num} of your answers are correct.';
 $string['yougot1right'] = '1 of your answers is correct.';
+$string['essaygradebeforemanually'] = 'Answer: {$a}';

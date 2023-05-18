@@ -68,7 +68,7 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
             $hint = $qa->get_applicable_hint();
         }
 
-        if ($options->numpartscorrect) {
+        if (!$options->feedback && $options->numpartscorrect) {
             $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
                                                  array('class' => 'numpartscorrect'));
         }
