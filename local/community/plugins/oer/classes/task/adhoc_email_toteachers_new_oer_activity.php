@@ -73,7 +73,7 @@ class adhoc_email_toteachers_new_oer_activity extends \core\task\adhoc_task {
                 $customdata['course'], $customdata['cmid']], $content);
 
         $url = new \moodle_url('/local/community/plugins/oer/removefrom_magarmaillist.php');
-        $content .= get_string('removefrommagarmaillist', 'community_oer', array('url' => $url));
+        $content .= get_string('removefrommagarmaillist', 'community_oer', array('url' => $url->out()));
 
         $sql = "
         SELECT u.* 
