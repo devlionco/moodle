@@ -301,3 +301,25 @@ ol.checklist label {
 .checklist-groupingname {
     color: #ccc;
 }
+
+/* PTL-1354 mod/checklist - fix list of the user  */
+#page-mod-checklist-report .dataTableWrapper {
+    /*overflow: auto;*/
+    height: 100%;
+}
+#page-mod-checklist-report .dataTable th {
+    position: sticky;
+    top: 50px;
+    z-index: 10;
+    background: white;
+}
+#page-mod-checklist-report .dataTable tbody td.c0 {
+    background: white;
+    position: sticky;
+    z-index: 5;
+    left: 0;
+}
+td.cell.c0 {
+    max-width: 100%;
+    white-space: nowrap;
+}

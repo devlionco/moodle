@@ -352,7 +352,35 @@ class checklist_class {
                     if ($item->displaytext != $modname) {
                         $this->updateitem($item->id, $modname, false, null, null, null, false, true);
                     }
-                    if (($item->hidden == CHECKLIST_HIDDEN_BYMODULE) && $mods->get_cm($cmid)->visible) {
+
+                    $hideactivity = false;
+                    if ($this->checklist->haveduedate && in_array($mods->get_cm($cmid)->modname, ['assign', 'quiz'])) {
+                        switch ($mods->get_cm($cmid)->modname) {
+                            case "assign":
+                                $result = $DB->get_record('assign', ['id' => $mods->get_cm($cmid)->instance]);
+                                if (empty($result->duedate)) {
+                                    $hideactivity = true;
+                                }
+                                break;
+                            case "quiz":
+                                $result = $DB->get_record('quiz', ['id' => $mods->get_cm($cmid)->instance]);
+                                if (empty($result->timeclose)) {
+                                    $hideactivity = true;
+                                }
+                                break;
+                            default:
+                        }
+                    }
+
+                    if ($hideactivity) {
+                        // if due date is enabled hidden the activity
+                        $item->hidden = CHECKLIST_HIDDEN_BYMODULE;
+                        $upd = new stdClass;
+                        $upd->id = $item->id;
+                        $upd->hidden = $item->hidden;
+                        $DB->update_record('checklist_item', $upd);
+                        $changes = true;
+                    } else if (($item->hidden == CHECKLIST_HIDDEN_BYMODULE) && ($mods->get_cm($cmid)->visible && $mods->get_cm($cmid)->completion > 0)) {
                         // Course module was hidden and now is not.
                         $item->hidden = CHECKLIST_HIDDEN_NO;
                         $upd = new stdClass;
@@ -360,8 +388,7 @@ class checklist_class {
                         $upd->hidden = $item->hidden;
                         $DB->update_record('checklist_item', $upd);
                         $changes = true;
-
-                    } else if (($item->hidden == CHECKLIST_HIDDEN_NO) && !$mods->get_cm($cmid)->visible) {
+                    } else if (($item->hidden == CHECKLIST_HIDDEN_NO) && (!$mods->get_cm($cmid)->visible || !$mods->get_cm($cmid)->completion)) {
                         // Course module is now hidden.
                         $item->hidden = CHECKLIST_HIDDEN_BYMODULE;
                         $upd = new stdClass;
@@ -1067,7 +1094,7 @@ class checklist_class {
         $editchecks = $this->caneditother() && optional_param('editchecks', false, PARAM_BOOL);
 
         $page = optional_param('page', 0, PARAM_INT);
-        $perpage = optional_param('perpage', 30, PARAM_INT);
+        $perpage = optional_param('perpage', 300, PARAM_INT);
 
         $thisurl = new moodle_url('/mod/checklist/report.php', array('id' => $this->cm->id, 'sesskey' => sesskey()));
         if ($editchecks) {
@@ -1305,6 +1332,24 @@ class checklist_class {
                     continue;
                 }
 
+                // PTL-2716 Add links to module names at table header.
+                $headertext = format_string($item->displaytext).$this->output->item_grouping($item);
+                $headertext_size = strlen($headertext);
+                if($headertext_size > 30){
+                    $short_headertext = mb_substr($headertext,0,30,'UTF-8') . '...';
+                    if ($item->get_link_url() !== null) {
+                        $table->head[] = '<a data-toggle="tooltip" data-placement="bottom" title="'.$headertext.'" target="new" href="'.$item->get_link_url().'">'.$short_headertext.'</a>';
+                    } else {
+                        $table->head[] = '<span data-toggle="tooltip" data-placement="bottom" title="'.$headertext.'">'.$short_headertext.'</span>';
+                    }
+                }
+                else {
+                    if ($item->get_link_url() !== null) {
+                        $table->head[] = '<a data-toggle="tooltip" data-placement="bottom" title="' . $headertext . '" target="new" href="' . $item->get_link_url() . '">' . $headertext . '</a>';
+                    } else {
+                        $table->head[] = $headertext;
+                    }
+                }
                 $table->head[] = format_string($item->displaytext).$this->output->item_grouping($item);
                 $table->level[] = ($item->indent < 3) ? $item->indent : 2;
                 $table->size[] = '80px';
@@ -1357,7 +1402,7 @@ class checklist_class {
                 }
             }
 
-            $out .= '<div style="overflow:auto">';
+            $out .= '<div class = "dataTableWrapper">';
             $out .= $this->print_report_table($table, $editchecks, $disableditems);
             $out .= '</div>';
 
@@ -1429,13 +1474,14 @@ class checklist_class {
         $output = '';
 
         $output .= '<table summary="'.get_string('reporttablesummary', 'checklist').'"';
-        $output .= ' cellpadding="5" cellspacing="1" class="generaltable boxaligncenter checklistreport">';
+        $output .= ' cellpadding="5" cellspacing="1" class="generaltable boxaligncenter checklistreport dataTable">';
 
         $showteachermark = !($this->checklist->teacheredit == CHECKLIST_MARKING_STUDENT);
         $showstudentmark = !($this->checklist->teacheredit == CHECKLIST_MARKING_TEACHER);
         $teachermarklocked = $this->checklist->lockteachermarks && !has_capability('mod/checklist:updatelocked', $this->context);
 
         // Sort out the heading row.
+        $output .= '<thead>';
         $output .= '<tr>';
         $keys = array_keys($table->head);
         $lastkey = end($keys);
@@ -1459,6 +1505,8 @@ class checklist_class {
             $output .= $heading.'</th>';
         }
         $output .= '</tr>';
+        $output .= '</thead>';
+        $output .= '<tbody>';
 
         // If we are in editing mode, run the add_row function that adds the button and necessary code to the document.
         if ($editchecks) {
@@ -1560,7 +1608,7 @@ class checklist_class {
             }
             $output .= '</tr>';
         }
-
+        $output .= '</tbody>';
         $output .= '</table>';
 
         return $output;

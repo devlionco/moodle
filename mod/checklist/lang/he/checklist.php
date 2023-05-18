@@ -14,17 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Version information
+ * Strings for component 'checklist', language 'en'
  *
- * @copyright Davo Smith <moodle@davosmith.co.uk>
- * @package mod_checklist
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_checklist
+ * @copyright 2021 Davo Smith
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2023031101;  // The current module version (Date: YYYYMMDDXX).
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '3.9.3.3';
-$plugin->requires = 2020061500; // Moodle 3.9.0.
-$plugin->component = 'mod_checklist';
+$string['haveduedate_help'] = 'סמן בקופסת הסימון מטה אם להראות פעילויות עם תאריך יעד לבוחן או מטלה';
+$string['haveduedate'] = 'רק פעילויות עם תאריך יעד';

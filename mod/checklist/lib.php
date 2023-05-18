@@ -428,8 +428,13 @@ function checklist_update_grades($checklist, $userid = 0) {
 
                         if ($recipients = get_users_by_capability($context, 'mod/checklist:emailoncomplete',
                                                                   'u.*', '', '', '', $groups)) {
+
+                            $coursecontext = context_course::instance($course->id);
                             foreach ($recipients as $recipient) {
-                                email_to_user($recipient, $grade, $subj, $content, '', '', '', false);
+                                $roles = get_user_roles($coursecontext, $recipient->id);
+                                if(!empty($roles)){
+                                    email_to_user($recipient, $grade, $subj, $content, '', '', '', false);
+                                }
                             }
                         }
                     }

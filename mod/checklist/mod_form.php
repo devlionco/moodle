@@ -71,7 +71,7 @@ class mod_checklist_mod_form extends moodleform_mod {
         $mform->addElement('select', 'teacheredit', get_string('teacheredit', 'checklist'), $teditoptions);
 
         $mform->addElement('select', 'duedatesoncalendar', get_string('duedatesoncalendar', 'checklist'), $ynoptions);
-        $mform->setDefault('duedatesoncalendar', 0);
+        $mform->setDefault('duedatesoncalendar', 1);
 
         $mform->addElement('select', 'teachercomments', get_string('teachercomments', 'checklist'), $ynoptions);
         $mform->setDefault('teachercomments', 1);
@@ -96,7 +96,7 @@ class mod_checklist_mod_form extends moodleform_mod {
             CHECKLIST_AUTOPOPULATE_COURSE => get_string('importfromcourse', 'checklist')
         );
         $mform->addElement('select', 'autopopulate', get_string('autopopulate', 'checklist'), $autopopulateoptions);
-        $mform->setDefault('autopopulate', 0);
+        $mform->setDefault('autopopulate', 2);
         $mform->addHelpButton('autopopulate', 'autopopulate', 'checklist');
 
         $checkdisable = true;
@@ -120,8 +120,12 @@ class mod_checklist_mod_form extends moodleform_mod {
         }
 
         $mform->addElement('selectyesno', 'lockteachermarks', get_string('lockteachermarks', 'checklist'));
-        $mform->setDefault('lockteachermarks', 0);
+        $mform->setDefault('lockteachermarks', 1);
         $mform->addHelpButton('lockteachermarks', 'lockteachermarks', 'checklist');
+
+        $mform->addElement('selectyesno', 'haveduedate', get_string('haveduedate', 'checklist'));
+        $mform->setDefault('haveduedate', 0);
+        $mform->addHelpButton('haveduedate', 'haveduedate', 'checklist');
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
