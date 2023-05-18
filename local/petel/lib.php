@@ -343,8 +343,18 @@ EOJS
 }
 
 function local_petel_after_config() {
-    global $CFG, $USER;
-    if (isset($USER->id)) {
-        $CFG->sessiontimeout = local_petel_get_session_timeout($USER->id);
+    global $USER, $CFG;
+
+    // Workaround for DEMO instance that have special
+    // generic login users for demo courses
+    if ($CFG->instancename === 'demo') {
+        return;
+    }
+
+    $timerequred = local_petel_get_session_timeout($USER->id);
+    if (!\core\session\manager::is_loggedinas() &&
+        isset($USER->lastaccess) && isset($timerequred)
+        && (time() - $USER->lastaccess) > $timerequred) {
+        \core\session\manager::terminate_current();
     }
 }
