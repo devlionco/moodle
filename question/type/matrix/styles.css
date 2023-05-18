@@ -257,6 +257,13 @@ body#page-question-type-matrix div#region-main {
   color: black;
   padding: 0px 5px 5px 5px;
 }
+.que.matrix th.header,
+.que.matrix td {
+  text-align: center!important;
+}
+.que.matrix td.c0 {
+  text-align: unset!important;
+}
 /*
 mod_ND : END
 */
