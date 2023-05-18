@@ -33,7 +33,6 @@ $strname = get_string('pluginname', 'community_social');
 $PAGE->set_url('/local/community/plugins/social/admin_reset_request.php', array());
 
 $PAGE->set_title($strname);
-$PAGE->set_pagelayout('clean');
 
 $requestid = optional_param('resetuserrequestid', null, PARAM_RAW);
 

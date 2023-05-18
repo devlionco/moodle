@@ -25,8 +25,6 @@
  */
 // Replace newmodule with the name of your module and remove this line.
 
-defined('MOODLE_INTERNAL') || die();
-
 require_once(__DIR__ . '/../../../../config.php');
 require_once(__DIR__ . '/locallib.php');
 require_once(__DIR__ . '/lib.php');
@@ -41,7 +39,6 @@ set_user_preference('drawer-open-nav', "false");
 $strname = get_string('pluginname', 'community_social');
 $PAGE->set_url('/local/community/plugins/social/teachers.php', array('id' => $USER->id));
 $PAGE->set_title($strname);
-$PAGE->set_pagelayout('clean');
 
 // Check if user active.
 $isvisited = get_user_preferences('community_social_enable');
