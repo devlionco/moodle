@@ -143,7 +143,7 @@ function qtype_formulas_check_for_penalty($dano, $answer, $tolerance) {
     $obj->penalty = 0;
 
     if(empty($answer['unit'])){
-        $answer['unit'] = 'empty unit';
+        return $obj;
     }
 
     //Compare Unit
