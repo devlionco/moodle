@@ -300,7 +300,7 @@ class community_oer_observer {
         list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
 
         if (in_array($event->objectid, $activities)) {
-            local_metadata\mcontext::module()->save($event->objectid, 'version', date("YmdHi"));
+            //local_metadata\mcontext::module()->save($event->objectid, 'version', date("YmdHi"));
 
             $activity = new \community_oer\activity_oer;
             $activity->activity_recalculate_in_db($event->objectid);
@@ -343,7 +343,7 @@ class community_oer_observer {
         list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
 
         if (in_array($event->objectid, $activities)) {
-            local_metadata\mcontext::module()->save($event->objectid, 'version', date("YmdHi"));
+            //local_metadata\mcontext::module()->save($event->objectid, 'version', date("YmdHi"));
 
             $activity = new \community_oer\activity_oer;
             $activity->activity_recalculate_in_db($event->objectid);
