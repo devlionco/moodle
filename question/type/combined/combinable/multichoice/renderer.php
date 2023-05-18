@@ -123,4 +123,19 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
         return $result;
     }
+
+    private function custom_format_text($text, $format, $qa, $component, $filearea, $itemid, $clean = false) {
+        global $CFG;
+
+        $formatoptions = new stdClass();
+        $formatoptions->noclean = !$clean;
+        $formatoptions->para = false;
+        $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea, $itemid);
+        $text = format_text($text, $format, $formatoptions);
+
+        // Prepare image url.
+        $text = str_replace("\"$CFG->wwwroot/brokenfile.php#", "\"$CFG->wwwroot/draftfile.php", $text);
+
+        return $text;
+    }
 }

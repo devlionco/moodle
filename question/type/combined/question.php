@@ -135,15 +135,33 @@ class qtype_combined_question extends question_graded_automatically_with_countba
             $this->combiner->call_all_subqs('is_gradable_response', new qtype_combined_response_array_param($response));
         $subqstates = array();
         $fractionsum = 0;
+
+        //if one of the sub question need grading make the question in status needsgrading
+        $needsgrading = 0;
+        foreach ($subqsgradable as $subqno => $gradable) {
+            if ($this->combiner->get_subq_property($subqno, 'qtype')->name() == 'essay') {
+                $needsgrading = 1;
+            }
+        }
+
         foreach ($subqsgradable as $subqno => $gradable) {
             if ($gradable) {
                 list($subqfraction, $subqstate) =
                     $this->combiner->call_subq($subqno, 'grade_response', new qtype_combined_response_array_param($response));
-                $subqstates[] = $subqstate;
+                if ($needsgrading){
+                    $subqstates[] = question_state::$needsgrading;
+                }else{
+                    $subqstates[] = $subqstate;
+                }
             } else {
                 $subqstates[] = question_state::$gaveup;
                 $subqfraction = 0;
             }
+
+            if ($this->combiner->get_subq_property($subqno, 'qtype')->name() == 'essay') {
+                $subqfraction = 0;
+            }
+
             $fractionsum += $subqfraction * $this->combiner->get_subq_property($subqno, 'defaultmark');
         }
         return array($fractionsum, $this->overall_state($subqstates));

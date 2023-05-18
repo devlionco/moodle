@@ -77,6 +77,8 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
      * @param                 $repeatenabled
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
+        global $CFG;
+
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'),
                 get_string('shuffle', 'qtype_combined'));
         $mform->setDefault($this->form_field_name('shuffleanswers'),
@@ -90,8 +92,12 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
         $answerels = array();
 
         // Answer text.
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
+        $editoroptions['context'] = \context_system::instance();
+
         $answerels[] = $mform->createElement('editor', $this->form_field_name('answer'),
-                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 1]);
+                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 10], $editoroptions);
+
         $mform->setType($this->form_field_name('answer'), PARAM_RAW);
 
         // Answer grade.
@@ -101,7 +107,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
 
         // Answer feedback.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('feedback'),
-                get_string('feedback', 'qtype_multichoice'), ['rows' => 1]);
+                get_string('feedback', 'qtype_multichoice'), ['rows' => 5]);
         $mform->setType($this->form_field_name('feedback'), PARAM_RAW);
 
         if (isset($this->questionrec->options)) {

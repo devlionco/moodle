@@ -159,3 +159,7 @@ body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=fraction
 body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback_] {
     border-bottom: 1px solid #bbb;
 }
+#page-mod-quiz-report .answer {
+    border: 1px solid lightgray;
+    padding: 8px;
+}

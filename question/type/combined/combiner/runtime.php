@@ -150,6 +150,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
                 // No compute final grade method for this question type.
                 $subqfinalgrade = $this->compute_subq_final_grade($subq, $subqresponses);
             }
+
+            if ($this->get_subq_property($subqno, 'qtype')->name() == 'essay') {
+                $subqfinalgrade = 0;
+            }
+
             // Weight grade by subq weighting stored in default mark.
             $finalgrades[$subqno] = $subqfinalgrade * $subq->question->defaultmark;
         }
