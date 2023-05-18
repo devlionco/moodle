@@ -26,6 +26,7 @@
         <FIELD NAME="completionpercenttype" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="percent" SEQUENCE="false" COMMENT="Whether completionpercent represents a percentage or raw number of items"/>
         <FIELD NAME="emailoncomplete" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not to email teachers when a checklist is completed"/>
         <FIELD NAME="lockteachermarks" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="If true, then teachers will be unable to change marks after saving a 'yes'"/>
+        <FIELD NAME="haveduedate" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Help to choose if to show the activity or not"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

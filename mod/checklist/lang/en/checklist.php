@@ -155,6 +155,9 @@ $string['lockteachermarks'] = 'Lock teacher marks';
 $string['lockteachermarks_help'] = 'When this setting is enabled, once a teacher has saved a \'Yes\' mark, they will be unable to change it. Users with the capability \'mod/checklist:updatelocked\' will still be able to change the mark.';
 $string['lockteachermarkswarning'] = 'Note: Once you have saved these marks, you will be unable to change any \'Yes\' marks';
 
+$string['haveduedate'] = 'Show activities with due date';
+$string['haveduedate_help'] = 'Sign the checkbox below to present activities with due date (quiz or assign)';
+
 $string['modulename'] = 'Checklist';
 $string['modulename_help'] = 'The checklist module allows a teacher to create a checklist / todo list / task list for their students to work through.';
 $string['modulename_link'] = 'mod/checklist/view';

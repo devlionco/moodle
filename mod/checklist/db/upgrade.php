@@ -420,5 +420,16 @@ function xmldb_checklist_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2022052801, 'checklist');
     }
 
+    if ($oldversion < 2023031101) {
+        $table = new xmldb_table('checklist');
+        $field = new xmldb_field('haveduedate', XMLDB_TYPE_INTEGER, '4', null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2023031101, 'checklist');
+    }
+
+
     return $result;
 }
