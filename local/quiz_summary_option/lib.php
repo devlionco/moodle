@@ -59,9 +59,8 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
     // Default.
     $objdefault = new \StdClass();
     $objdefault->summary_hideall = $objdefault->summary_numbering = $objdefault->summary_grade
-            = $objdefault->summary_mark = $objdefault->summary_teamwork
-            = $objdefault->summary_teacherdialog = 0;
-    $objdefault->summary_state = $objdefault->summary_questionname = 1;
+            = $objdefault->summary_mark = $objdefault->summary_teacherdialog = 0;
+    $objdefault->summary_state = $objdefault->summary_questionname = $objdefault->summary_teamwork = 1;
 
     if ($row) {
         $obj = json_decode($row->show_elements);
@@ -74,7 +73,7 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
             $objdefault->summary_mark = isset($obj->summary_mark) ? $obj->summary_mark : 0;
             $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ? $obj->summary_teacherdialog : 0;
             $objdefault->summary_questionname = isset($obj->summary_questionname) ? $obj->summary_questionname : 0;
-            $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 0;
+            $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 1;
         }
     }
 
@@ -303,12 +302,12 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
                 $objdefault->summary_mark = isset($obj->summary_mark) ? $obj->summary_mark : 0;
                 $objdefault->summary_teacherdialog = isset($obj->summary_teacherdialog) ? $obj->summary_teacherdialog : 0;
                 $objdefault->summary_questionname = isset($obj->summary_questionname) ? $obj->summary_questionname : 1;
-                $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 0;
+                $objdefault->summary_teamwork = isset($obj->summary_teamwork) ? $obj->summary_teamwork : 1;
             }
         }
 
         if ($objdefault->summary_hideall === 1) {
-            $objdefault->summary_numbering = $objdefault->summary_state =
+            $objdefault->summary_numbering = $objdefault->summary_state = $obj->summary_teamwork =
             $objdefault->summary_grade = $objdefault->summary_mark = $objdefault->summary_teacherdialog =
             $objdefault->summary_questionname = 1;
         }
