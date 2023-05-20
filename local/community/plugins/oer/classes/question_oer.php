@@ -120,14 +120,17 @@ class question_oer {
         $query = "
             SELECT 
                 q.id AS qid,
-                q.category AS qcatid,
+                #q.category AS qcatid,
+                qbe.questioncategoryid AS qcatid,
                 q.name AS qname,
                 q.questiontext AS questiontext,
                 q.qtype AS qtype,
-                q.idnumber AS qidnumber,
+                #q.idnumber AS qidnumber,
+                qbe.idnumber AS qidnumber,
                 q.timecreated AS qtimecreated,
                 q.timemodified AS qtimemodified,
-                q.createdby AS qcreatedby,
+                #q.createdby AS qcreatedby,
+                qbe.ownerid AS qcreatedby,
                 q.modifiedby AS modifiedby,
                 qc.name AS catname,
                 qc.contextid AS coursecontextid,
@@ -136,7 +139,8 @@ class question_oer {
                 qc.idnumber AS catidnumber
                         
             FROM {question} q
-            LEFT JOIN {question_categories} qc ON(q.category = qc.id)            
+            LEFT JOIN {question_bank_entries} qbe ON qbe.id = q.id
+            LEFT JOIN {question_categories} qc ON qbe.questioncategoryid = qc.id            
             WHERE q.id = ?;
         ";
 
