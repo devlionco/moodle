@@ -137,10 +137,8 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
     public function exportContent($id, $target) {
         global $DB;
 
-        $category = $DB->get_field('question', 'category',
-                                   ['id' => $id]);
-        $contextid = $DB->get_field('question_categories', 'contextid',
-                                    ['id' => $category]);
+        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $id]);
+        $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $category]);
         self::exportFileTree($target, $contextid, 'content', '/', $id);
     }
 
@@ -424,7 +422,7 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
     // @codingStandardsIgnoreLine
     public function cloneContentFile($file, $fromid, $tocontent) {
         global $DB;
-        
+
         // Determine source file area and item id.
         if ($fromid === 'editor') {
             $sourcefilearea = 'editor';
@@ -596,10 +594,8 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
     private function getQuestionContextId($qid) {
         global $DB;
 
-        $category = $DB->get_field('question', 'category',
-                                   ['id' => $qid]);
-        $contextid = $DB->get_field('question_categories', 'contextid',
-                                    ['id' => $category]);
+        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $qid]);
+        $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $category]);
         if ($contextid == 0) {
             return 0;
         }
@@ -631,7 +627,6 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         if (is_object($itemid)) {
             $itemid = $itemid->id;
         }
-	
 	$ctxid = $this->getQuestionContextId($itemid);
 
         if ($filearea === 'editor') {
