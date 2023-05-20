@@ -1,0 +1,11 @@
+# pack-refs with: peeled fully-peeled 
+94497821ac1a60425b51fd36533d49b79951a3c3 refs/remotes/origin/debug
+eb03ad2dec73f6acb4a01f69503fb5e3f171063d refs/remotes/origin/fix_image_render
+2828d1269bde2f99d1e43800bf5cef2d99c33a7d refs/remotes/origin/fix_regres
+c9a2eee1cf9a4098ae505986ebc240fdfe8fb906 refs/remotes/origin/main
+271c1e23dbe08a9e37c7607c124066e5db91e5ab refs/remotes/origin/metadatatitle
+103acc2f31a70567243bcb642d5747a86d7d47d2 refs/remotes/origin/mod_hvp_seperate
+d393d152b3f5281f92ab6f453a88dff6849ba9aa refs/remotes/origin/ticket7151
+cfb8f831060cb38140f6e3ba4f0d3d3648d04676 refs/remotes/origin/ticket7197
+5738baa77896eb9574586f0f189387c08945bbbf refs/remotes/origin/ticket7899
+4784555e629ee2d26bc6753637293b348014de61 refs/remotes/origin/ticket8229
