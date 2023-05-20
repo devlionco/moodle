@@ -533,15 +533,15 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
             @set_time_limit(0);
 
             // Generate local tmp file path.
-            $localfolder = $CFG->tempdir . uniqid('/hvp-');
-            $stream      = $localfolder . '.h5p';
+            $localfolder = make_temp_directory(uniqid('hvp-'));
+            $localpath = $localfolder . '.h5p';
 
             // Add folder and file paths to H5P Core.
             $interface = self::instance('interface');
             $interface->getUploadedH5pFolderPath($localfolder);
-            $interface->getUploadedH5pPath($stream);
+            $interface->getUploadedH5pPath($localpath);
 
-            $stream                  = fopen($stream, 'w');
+            $stream = fopen($localpath, 'w');
             $options['CURLOPT_FILE'] = $stream;
         }
 
@@ -562,7 +562,7 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
 
         if ($stream !== null) {
             fclose($stream);
-            @chmod($stream, $CFG->filepermissions);
+            @chmod($localpath, $CFG->filepermissions);
         }
 
         $errorno = $curl->get_errno();
