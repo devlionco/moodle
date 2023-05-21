@@ -1,0 +1,46 @@
+<div class="row py-3">
+    <div class="col-12 d-flex justify-content-between flex-wrap">
+        <div class="card border-0 py-2 py-md-3 px-2 px-md-4" id="charts_average">
+            <div class="d-flex ">
+                <div class="averagescore-title-wrapper d-flex flex-column justify-content-center">
+                    <p class="card-title mb-0">{{#str}}averagegrade, quiz_advancedoverview{{/str}}</p>
+                    <p class="averagescore-title mb-0" style="font-size: 5vmax">{{charts_average_averagegrade}}</p>
+                </div>
+                <div class="averagescore-info-wrapper">
+                    <span class="card-text d-flex mb-3"><span class="mr-3">{{charts_average_maxgrade}}</span>
+                        {{#str}}highestscore, quiz_advancedoverview{{/str}}
+                    </span>
+                    <span class="card-text d-flex"><span class="mr-3">{{charts_average_mingrade}}</span>
+                        {{#str}}lowestscore, quiz_advancedoverview{{/str}}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 py-2 py-md-3 px-2 px-md-4" id="charts_state">
+            <div class="inner d-flex justify-content-md-between">
+                <div class="donut-сhart-legend px-md-3">
+                    <p class="card-title mb-2">{{#str}}classstatus, quiz_advancedoverview{{/str}}</p>
+                    <div class="donut-сhart-legend-title"></div>
+                    <div class="donut-сhart-legend-inner"></div>
+                    <!--<a href="#" class="send-message-link">{{#str}}sendingmassage, quiz_advancedoverview{{/str}}</a>-->
+                </div>
+                <div class="donut-сhart position-relative">
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 py-2 py-md-3 px-2 px-md-4 d-flex flex-column" id="charts_grade">
+            <p class="card-title mb-auto">{{#str}}scoredistribution, quiz_advancedoverview{{/str}}</p>
+
+            <div class="bar-сhart position-relative">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{{#js}}
+    require(['jquery', 'quiz_advancedoverview/charts'], function($, Charts) {
+        Charts.initcharts('{{{charts}}}');
+    });
+{{/js}}

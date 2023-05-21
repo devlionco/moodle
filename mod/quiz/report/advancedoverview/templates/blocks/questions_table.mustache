@@ -1,0 +1,24 @@
+<div class="row py-3 bg-white">
+    <div class="col-12">
+        <h3>
+            {{#str}}numofquestions, quiz_advancedoverview{{/str}}
+            ({{count_according_questions}})</h3>
+
+        {{#enable_table_according_questions}}
+            <div id="questions-table"></div>
+        {{/enable_table_according_questions}}
+
+        {{^enable_table_according_questions}}
+            {{#str}}empty, quiz_advancedoverview{{/str}}
+        {{/enable_table_according_questions}}
+
+    </div>
+</div>
+
+{{#js}}
+    {{#enable_table_according_questions}}
+        require(['jquery', 'quiz_advancedoverview/tables'], function($, Tables) {
+            Tables.initquestionstable('{{{data_table_according_questions}}}');
+        });
+    {{/enable_table_according_questions}}
+{{/js}}

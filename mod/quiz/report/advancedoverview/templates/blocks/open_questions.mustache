@@ -1,0 +1,49 @@
+{{#enable_open_questions}}
+    <div class="row py-3">
+        <div class="col-12 d-flex align-items-center">
+            <div class="dropdown openquestion-wropdown w-100">
+                <button class="btn advancedoverview_report-dropdown-btn-lg dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                        type="button" id="openQuestionsBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 openquestions-count">{{open_questions_count}}</span>
+                        <span class="text mr-auto">
+                            {{#str}}openquestionwaiting, quiz_advancedoverview{{/str}}
+                        </span>
+
+                </button>
+
+                <div class="dropdown-menu openquestions-menu w-100" aria-labelledby="openQuestionsBtn">
+                    {{#open_questions}}
+                        <a class="dropdown-item" href="{{link}}" target="_blank">
+                            <span class="name col1">
+                                {{#str}}question, quiz_advancedoverview{{/str}} {{qnumber}}
+                            </span>
+                            <span class="count col2 mr-auto">
+                                {{name}}
+                            </span>
+                            <div class="col3">
+                                {{count_students}} {{#str}}studentsnograde, quiz_advancedoverview{{/str}}
+                            </div>
+                        </a>
+                    {{/open_questions}}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{{/enable_open_questions}}
+
+{{^enable_open_questions}}
+    <div class="row py-3">
+        <div class="col-12 d-flex align-items-center">
+            <div class="dropdown openquestion-wropdown w-100">
+                <button class="btn advancedoverview_report-dropdown-btn-lg dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                        type="button" id="openQuestionsBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                    <span class="mr-2 openquestions-count">{{open_questions_count}}</span>
+                    <span class="text mr-auto">
+                        {{#str}}openquestionwaiting, quiz_advancedoverview{{/str}}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+{{/enable_open_questions}}
