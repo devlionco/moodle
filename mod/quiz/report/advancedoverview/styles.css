@@ -1,0 +1,615 @@
+@charset "UTF-8";
+/**
+* Styles for quiz_advancedoverview
+*/
+.sticky-stripe {
+  display: flex;
+  height: 3rem;
+  width: 100%;
+  background-color: #fcf15c;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  position: fixed;
+  color: #2b2b2b;
+}
+
+.sticky-stripe i {
+  font-size: 2rem;
+}
+
+.sticky-stripe .link-btn-text {
+  font-size: 1.5rem;
+}
+
+.sticky-stripe .advancedoverview_report-toggle input:checked + label {
+  background-color: #2b2b2b;
+}
+
+.advancedoverview_report-toggle input {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+.advancedoverview_report-toggle label {
+  cursor: pointer;
+  text-indent: -9999px;
+  width: 2.125rem;
+  height: 1rem;
+  background: #b2b2b2;
+  display: block;
+  border-radius: 1rem;
+  position: relative;
+}
+.advancedoverview_report-toggle label:active:after {
+  width: 2.125rem;
+}
+.advancedoverview_report-toggle label:after {
+  content: "";
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  right: unset;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #fff;
+  border-radius: 100%;
+  /* 	transition: 0.1s; */
+  box-shadow: rgba(99, 99, 99, 0.2) 0rem 0.0625rem 0.25rem 0rem;
+}
+.advancedoverview_report-toggle input:checked + label {
+  background: #eee;
+}
+.advancedoverview_report-toggle input:checked + label:after {
+  right: 0.0625rem;
+  left: unset;
+}
+.advancedoverview_report-toggle .link-btn-text {
+  font-size: 1rem;
+}
+
+.block_advancedoverview_report .top-block {
+  padding-bottom: 2rem;
+}
+.block_advancedoverview_report .advancedoverview_report-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+.block_advancedoverview_report .card {
+  box-shadow: 0.0625rem 0.125rem 0.25rem 0 rgba(12, 56, 16, 0.1);
+  border-radius: 0.5rem;
+  width: 32.35%;
+}
+.block_advancedoverview_report .card .card-title {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: normal;
+}
+.block_advancedoverview_report .card .card-text {
+  font-size: 1.5rem;
+  font-weight: normal;
+  line-height: normal;
+}
+.block_advancedoverview_report .chart-tooltip {
+  padding: 0.5rem;
+  box-shadow: 0 0.1875rem 0.375rem 0 rgba(43, 43, 43, 0.25);
+  border: solid 0.0625rem #000;
+  border-radius: 0.25rem;
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  min-width: 10rem;
+  max-height: 20.5rem;
+  z-index: 10000;
+}
+.block_advancedoverview_report .chart-tooltip::after {
+  content: "";
+  display: block;
+  position: absolute;
+  background-color: #fff;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 0.0625rem solid #000;
+  border-top-color: transparent !important;
+  border-left-color: transparent !important;
+  transform: rotate(135deg);
+  left: -0.25rem;
+  top: calc(50% - 0.25rem);
+}
+.block_advancedoverview_report .chart-tooltip .chart-tooltip-title {
+  margin: 0 auto;
+  font-size: 1.5rem;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.block_advancedoverview_report .chart-tooltip .tooltip-link {
+  font-size: 1.125rem;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.block_advancedoverview_report .chart-tooltip .tooltip-link:hover {
+  color: #000 !important;
+}
+.block_advancedoverview_report .chart-tooltip .inner {
+  overflow: auto;
+  max-height: 17.25rem;
+}
+.block_advancedoverview_report .chart-tooltip .chart-tooltip-body.hascolumns {
+  -moz-column-count: 2;
+       column-count: 2;
+  -moz-column-rule: 0.0625rem solid #000;
+       column-rule: 0.0625rem solid #000;
+}
+.block_advancedoverview_report .chart-tooltip .close-tooltip-btn {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: none;
+  box-shadow: none;
+}
+.block_advancedoverview_report .chart-tooltip .close-tooltip-btn i {
+  font-size: 1rem;
+}
+.block_advancedoverview_report #charts_average .card-title {
+  text-align: center;
+}
+.block_advancedoverview_report #charts_average .averagescore-title {
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 100%;
+}
+.block_advancedoverview_report #charts_average .averagescore-info-wrapper {
+  margin-top: 3rem;
+}
+.block_advancedoverview_report #charts_average .averagescore-info-wrapper span {
+  font-weight: 1.5rem;
+}
+.block_advancedoverview_report #charts_average .averagescore-title-wrapper {
+  margin-right: 3.375rem;
+}
+.block_advancedoverview_report #charts_state .donut-сhart-legend-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.625rem;
+}
+.block_advancedoverview_report #charts_state .donut-сhart-legend-row {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.block_advancedoverview_report #charts_state .donut-сhart-legend-row:last-of-type {
+  margin-bottom: 0;
+}
+.block_advancedoverview_report #charts_state .donut-сhart-legend-row .square {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
+.block_advancedoverview_report #charts_state .send-message-link {
+  font-size: 1.125rem;
+}
+.block_advancedoverview_report #charts_state .donut-сhart path:hover {
+  filter: drop-shadow(0 0.1875rem 0.125rem rgba(0, 0, 0, 0.5));
+}
+.block_advancedoverview_report h3 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+.block_advancedoverview_report .advancedoverview_report-btn {
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  height: 2.5rem;
+  min-width: 11rem;
+}
+.block_advancedoverview_report .advancedoverview_report-btn .title {
+  font-size: 1.125rem;
+  white-space: nowrap;
+}
+.block_advancedoverview_report .advancedoverview_report-btn .icon {
+  font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.625rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn {
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1;
+  height: 2.5rem;
+  width: 13rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn::after {
+  font-size: 1.75rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn[aria-expanded=true]::after {
+  transform: scaleY(-1);
+  transition: all 0.25s ease;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-title {
+  font-size: 1.125rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg,
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active {
+  background-color: #fff;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg .openquestions-count,
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active .openquestions-count {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  border: solid 0.125rem transparent;
+  font-size: 2.5rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg .text,
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active .text {
+  font-size: 1.5rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:after,
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active:after {
+  font-size: 1.75rem;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg[aria-expanded=true]:after,
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active[aria-expanded=true]:after {
+  transform: scaleY(-1);
+}
+.block_advancedoverview_report .openquestions-menu {
+  border-width: 0.0625rem;
+  margin-top: 0;
+  padding: 0;
+}
+.block_advancedoverview_report .openquestions-menu .dropdown-item {
+  padding-left: 6rem;
+  padding-right: 1.5rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+.block_advancedoverview_report .openquestions-menu .dropdown-item:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+.block_advancedoverview_report .openquestions-menu .dropdown-item:hover {
+  text-decoration: underline;
+}
+.block_advancedoverview_report .openquestions-menu .col1 {
+  width: 8.22%;
+  padding-right: 1rem;
+}
+.block_advancedoverview_report .openquestions-menu .col3 {
+  width: 12.5%;
+}
+.block_advancedoverview_report .course-group-wrapper > span {
+  font-size: 1.5rem;
+}
+.block_advancedoverview_report .course-group-wrapper .dropdown-menu .dropdown-ite {
+  text-decoration: underline;
+}
+.block_advancedoverview_report .advancedoverview_report-search-input-wrapper i {
+  font-size: 1.5rem;
+  right: 0.5rem;
+}
+.block_advancedoverview_report .advancedoverview_report-search-input {
+  line-height: 1.33;
+  font-size: 1.125rem;
+  min-width: 16rem;
+  padding-right: 2rem;
+}
+.block_advancedoverview_report .nav.nav-tabs {
+  border-bottom: none;
+  border-radius: 1.25rem;
+}
+.block_advancedoverview_report .nav.nav-tabs .nav-item {
+  max-width: 15rem;
+  height: 2.5rem;
+  margin: 0;
+  background-color: transparent;
+  border-radius: 1.25rem;
+}
+.block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link {
+  font-weight: normal;
+  border-radius: 1.25rem !important;
+  background-color: transparent;
+  border-color: transparent;
+}
+.block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link.active p {
+  color: #fff;
+  font-weight: 500;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn[data-target="#studentsActionsCollapse"] {
+  width: 7.5rem;
+}
+.block_advancedoverview_report .filter-pic {
+  margin-right: 0.5rem;
+}
+.block_advancedoverview_report #selectedstudents {
+  font-size: 1.125rem;
+}
+.block_advancedoverview_report #studentsActionsBtn {
+  width: 9rem;
+}
+.block_advancedoverview_report #questions-table.tabulator,
+.block_advancedoverview_report #students-table.tabulator {
+  font-size: 1.125rem;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header {
+  height: 2.5rem;
+  color: #fff;
+  border: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col {
+  border-left: none;
+  border-right: none;
+  height: 2.5rem;
+  padding: 0.375rem 0;
+  background-color: transparent;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col .tabulator-col-content,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  padding: 0;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title-holder,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title-holder {
+  border-right: 0.0625rem solid #fff;
+  padding: 0 0.5rem;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col:last-of-type .tabulator-col-content .tabulator-col-title-holder,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col:last-of-type .tabulator-col-content .tabulator-col-title-holder {
+  border: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col:first-of-type .tabulator-col-title,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col:first-of-type .tabulator-col-title {
+  text-align: left;
+  justify-content: flex-end;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col .tabulator-col-title,
+.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+  text-align: center;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-row:hover,
+.block_advancedoverview_report #students-table.tabulator .tabulator-row:hover {
+  cursor: default;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control {
+  background: none;
+  border: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand {
+  width: 0;
+  height: 0;
+  border: none;
+  border-top: 0.375rem solid transparent;
+  border-bottom: 0.375rem solid transparent;
+  border-left: 0.375rem solid #2b2b2b;
+  background: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand::after, .block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand::before,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand::after,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-expand::before {
+  display: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse {
+  width: 0;
+  height: 0;
+  border-left: 0.375rem solid transparent;
+  border-right: 0.375rem solid transparent;
+  border-top: 0.375rem solid #2b2b2b;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse::after, .block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse::before,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse::after,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-control .tabulator-data-tree-control-collapse::before {
+  display: none;
+}
+.block_advancedoverview_report #questions-table.tabulator .tabulator-data-tree-branch,
+.block_advancedoverview_report #students-table.tabulator .tabulator-data-tree-branch {
+  display: none;
+}
+.block_advancedoverview_report #questions-table .tabulator-header .tabulator-col .tabulator-col-title {
+  padding-right: 0;
+}
+.block_advancedoverview_report #questions-table .tabulator-header .tabulator-headers div:nth-child(3) .tabulator-col-title {
+  text-align: left;
+}
+.block_advancedoverview_report #questions-table .tabulator-row .tabulator-cell {
+  border: none;
+  padding: 0 0.5rem;
+  text-align: center;
+  height: 100%;
+  vertical-align: middle;
+}
+.block_advancedoverview_report #questions-table .tabulator-row .tabulator-cell:first-of-type {
+  padding: 0 1rem;
+  text-align: left;
+}
+.block_advancedoverview_report #questions-table .qname {
+  min-width: 9rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+.block_advancedoverview_report #questions-table .description {
+  font-size: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+}
+.block_advancedoverview_report #students-table .tabulator-header .tabulator-col .tabulator-col-content {
+  height: 100%;
+}
+.block_advancedoverview_report #students-table .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+  display: inline-flex;
+  height: 100%;
+  align-items: center;
+}
+.block_advancedoverview_report #students-table .tabulator-header .tabulator-col:nth-of-type(5) .tabulator-col-title-holder {
+  border-right: none !important;
+}
+.block_advancedoverview_report #students-table .tabulator-row .tabulator-cell {
+  display: inline-flex;
+  align-items: center;
+}
+.block_advancedoverview_report #students-table .tabulator-row .tabulator-cell:nth-of-type(5) {
+  border-right: none !important;
+}
+.block_advancedoverview_report #students-table .tabulator-row .tabulator-cell:first-of-type {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.block_advancedoverview_report #students-table .tabulator-row .row-menu-btn {
+  display: none !important;
+}
+.block_advancedoverview_report #students-table .tabulator-row .row-menu-btn:focus, .block_advancedoverview_report #students-table .tabulator-row .row-menu-btn:hover {
+  display: block !important;
+}
+.block_advancedoverview_report #students-table .tabulator-row:hover .row-menu-btn {
+  display: block !important;
+}
+.block_advancedoverview_report #students-table .incorrect {
+  width: 1rem;
+  height: 1rem;
+  background-image: url("[[pix:core|i/grade_incorrect]]");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto;
+}
+.block_advancedoverview_report #students-table .incorrect .numerical_value {
+  display: none;
+}
+.block_advancedoverview_report #students-table .correct,
+.block_advancedoverview_report #students-table .complete {
+  width: 1rem;
+  height: 1rem;
+  background-image: url("[[pix:core|i/grade_correct]]");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto;
+}
+.block_advancedoverview_report #students-table .correct .numerical_value,
+.block_advancedoverview_report #students-table .complete .numerical_value {
+  display: none;
+}
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .notanswered .sr-only,
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .requiresgrading .sr-only,
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .notyetanswered .sr-only {
+  display: block;
+  font-size: 1rem;
+  width: auto;
+  height: auto;
+  clip: unset;
+}
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .numerical_value {
+  display: none;
+}
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .partiallycorrect {
+  width: 1.2rem;
+  height: 1.2rem;
+  background-image: url("[[pix:core|i/grade_partiallycorrect]]");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto;
+}
+.block_advancedoverview_report #students-table .fname,
+.block_advancedoverview_report #students-table .lname {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.block_advancedoverview_report #students-table .fname::after,
+.block_advancedoverview_report #students-table .lname::after {
+  content: "";
+  display: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  right: 0;
+}
+.block_advancedoverview_report #students-table .fname.active::after,
+.block_advancedoverview_report #students-table .lname.active::after {
+  display: block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  color: #666;
+}
+.block_advancedoverview_report #students-table .fname.active[data-sort=desc]::after,
+.block_advancedoverview_report #students-table .lname.active[data-sort=desc]::after {
+  border-bottom: none;
+  border-top: 6px solid #666;
+}
+.block_advancedoverview_report #students-table .fname.active[data-sort=asc]::after,
+.block_advancedoverview_report #students-table .lname.active[data-sort=asc]::after {
+  border-bottom: 6px solid #666;
+}
+
+#studentsActionsBlock #downloadXlsTable {
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  border-left: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 75%;
+  background-image: url([[pix:quiz_advancedoverview|excel_icon]]);
+  overflow: hidden;
+}
+
+#page-mod-quiz-report #studentsActionsCollapse .custom-checkbox {
+  opacity: 1;
+}
+
+#page-mod-quiz-report #pillsArea {
+  display: flex;
+  align-items: center;
+}
+
+html[dir=rtl] .advancedoverview_report-toggle label:after {
+  right: 0.0625rem;
+  left: unset;
+}
+html[dir=rtl] .advancedoverview_report-toggle input:checked + label:after {
+  left: 0.0625rem;
+  right: unset;
+  /* transform: translateX(100%); */
+}
+html[dir=rtl] .chart-tooltip::after {
+  transform: rotate(45deg);
+  right: -0.25rem;
+  left: unset;
+}
+
+@media (max-width: 1240px) {
+  .block_advancedoverview_report .card {
+    width: 48%;
+    margin-bottom: 1rem;
+  }
+}
+@media (max-width: 940px) {
+  .block_advancedoverview_report .card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}/*# sourceMappingURL=styles.css.map */

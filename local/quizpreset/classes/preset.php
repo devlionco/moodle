@@ -146,7 +146,7 @@ class preset {
 
             // Number of attempts.
             if ($numattempts) {
-                $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'teacheroverview'));
+                $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
                 $links[] = array(
                         'url' => $url3->out(false),
                         'title' => get_string('numattempt', 'local_quizpreset', $numattempts),
@@ -196,7 +196,7 @@ class preset {
 
                     // Number of attempts.
                     if ($numattempts) {
-                        $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'teacheroverview'));
+                        $url3 = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
                         $links[] = array(
                                 'url' => $url3->out(false),
                                 'title' => get_string('numattempt', 'local_quizpreset', $numattempts),
