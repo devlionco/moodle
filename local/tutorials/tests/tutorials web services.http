@@ -1,0 +1,146 @@
+### User completion update
+#POST https://hswdwsv01t.weizmann.ac.il:7443/GW/rest/GC_INSERT_PASSED_MDL_TEST
+#POST https://esb-test.weizmann.ac.il/esb/rest/GC_INSERT_PASSED_MDL_TEST_HR
+POST https://esb.weizmann.ac.il/esb/rest/GC_INSERT_PASSED_MDL_TEST_HR
+Content-Type: application/json
+Accept: application/json
+# user: moodle pass: moodle!
+Authorization: Basic bW9vZGxlOm1vb2RsZSE=
+user-agent: phpstorm-test-clent
+
+{
+    "esbOpsIn": {
+        "serviceName": "GC_INSERT_PASSED_MDL_TEST_HR",
+        "reqOrigin": "MOODLE",
+        "reqOriginator": "TEST",
+        "reqOriginApp": "Sexual harassment"
+    },
+    "inputParameters": {
+        "primaryUserId": "liliiam",
+        "courseId": "244",
+        "testDate": "2022-10-19"
+    }
+}
+
+### enrol_manual_enrol_users_feinberg
+POST https://tutorials.weizmann.ac.il/webservice/restful/server.php/enrol_manual_enrol_users_feinberg
+Content-Type: application/json
+Accept: application/json
+Authorization: 469160a90de8f0692f7bb20a4498a90f
+user-agent: phpstorm-test-clent
+
+{
+  "courseid": "10",
+  "enrollments": [
+    {
+      "username": "nadavtest1114",
+      "firstname": "matan first114,שם פרטי",
+      "lastname": "Lastname14,שם משפחה",
+      "email": "maria.last14@weizmann.ac.il",
+      "rolename": "student"
+    }
+  ]
+}
+
+### enrol_manual_unenrol_users_feinberg (PROD)
+POST https://tutorials.weizmann.ac.il/webservice/restful/server.php/enrol_manual_unenrol_users_feinberg
+Content-Type: application/json
+Accept: application/json
+# user feinberg_sis token
+#Authorization: d35e0e89fbe52458be68713466e1ad94
+Authorization: 9266cc48696034e85ca3b82c045b6cde
+user-agent: phpstorm-test-clent
+
+{
+
+  "enrollments" : [
+    {
+      "username":"test11",
+      "firstname":"test11",
+      "lastname":"student1",
+      "email":"nadavkav+test2@gmail.com",
+      "rolename":"student"
+    }
+  ]
+}
+
+### enrol_manual_unenrol_users_feinberg (DEV)
+POST https://petel-dev.weizmann.ac.il/m39/feinberg/webservice/restful/server.php/enrol_manual_unenrol_users_feinberg
+Content-Type: application/json
+Accept: application/json
+# user feinberg_sis token
+#Authorization: d35e0e89fbe52458be68713466e1ad94
+#Authorization: 9266cc48696034e85ca3b82c045b6cde
+# user feinberg_sis token (petel-dev)
+#Authorization: f0c7ffa3b2616d3df56cd236f67c1938
+Authorization: 439f811861f2258a48cda94d0cf5e613
+user-agent: phpstorm-test-clent
+
+{
+  "enrollments": [
+    {
+      "username": "yonir",
+      "courseid": "510",
+      "rolename": "student"
+    }
+  ]
+}
+
+
+### enrol_manual_enrol_users_feinberg (DEV)
+POST https://petel-dev.weizmann.ac.il/m39/feinberg/webservice/restful/server.php/enrol_manual_enrol_users_feinberg
+Content-Type: application/json
+Accept: application/json
+#Authorization: f0c7ffa3b2616d3df56cd236f67c1938
+Authorization: 439f811861f2258a48cda94d0cf5e613
+user-agent: phpstorm-test-clent
+
+{
+  "courseid": "510",
+  "enrollments": [
+    {
+      "username": "yonir",
+      "firstname": "YONI,שם פרטי",
+      "lastname": "ROZMAN,שם משפחה",
+      "email": "david.elbaz@weizmann.ac.il",
+      "rolename": "student"
+    }
+  ]
+}
+
+### core_course_get_courses (DEV)
+POST https://petel-dev.weizmann.ac.il/m39/feinberg/webservice/restful/server.php/core_course_get_courses
+Content-Type: application/json
+Accept: application/json
+Authorization: b1c7ffa3b2616d3df56cd236f67c73d8
+
+{
+  "options": {
+    "ids": [
+      191
+    ]
+  }
+}
+
+### st-moodle to update wordpress stwww1 formidable form entry (matan)
+
+POST https://stwww1.weizmann.ac.il/newforms/wp-json/frm/v2/entries/672
+Content-Type: application/json
+Accept: application/json
+#Authorization: Bearer NJ8O-K9OR-TQ24-EFVY
+Authorization: Basic bmFkYXZrYXY6KVpySVp3VnZwJmRPZSpAKFBtUHFPVEEl
+
+{
+  "1687": "hi"
+}
+
+### AWS WP
+### curl -x bcproxy.weizmann.ac.il:8080 -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer ZZZ" -d '{"field_X": "Y"}' https://stweizmann.proj.ac.il/edup/wp-json/frm/v2/entries/2
+POST https://stweizmann.proj.ac.il/edup/wp-json/frm/v2/entries/2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer 2OZR-IDDF-8MXO-765L
+
+{
+  "2h2jo": "hi"
+}
