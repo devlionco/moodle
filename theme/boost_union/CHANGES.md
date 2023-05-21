@@ -4,6 +4,28 @@ moodle-theme_boost_union
 Changes
 -------
 
+### v4.1-r7
+
+* 2023-04-20 - Feature: Course category breadcrumbs in course header, solves #284.
+* 2023-04-02 - Improvement: Add SCSS code to improve the block regions presentation in our companion plugin Dash Pro, solves #291.
+* 2023-04-17 - Bugfix: Setting activityiconcolorcommunication was not processed anymore, solves #279.
+* 2023-04-13 - Bugfix: When there is no edit switch, as on the assignment grading page, scrollfix should not kick in, solves #276.
+* 2023-04-12 - Feature: Allow right-side blocks drawer of site home to be extended by default #169.
+
+### v4.1-r6
+
+* 2023-03-22 - Feature: Allow admin to provide several additional block regions, solves #30.
+               Please note: This is a comparably large addition. If you encounter any issues with this feature, please report it on <https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/issues>.
+* 2023-03-20 - Improvement: Don't force child themes to reimplement various color settings (e.g. 'brandcolor'), solves #260.
+* 2023-03-17 - Improvement: Reduce code duplication when child theming by checking theme ancestry in theme_boost_union_before_standard_html_head, solves #245.
+
+### v4.1-r5
+
+* 2023-03-19 - Bugfix: Fully support multilang strings in advertisement tiles, solves #258.
+* 2023-03-17 - Improvement: Don't force child themes to reimplement settings 'loginformposition' and 'loginformtransparency', solves #247.
+* 2023-03-15 - Bugfix: $THEME->editor_scss referenced a non-existing sheet. Setting it also ignored Boost's sheets. This solves #242.
+* 2023-03-18 - Bugfix: Fix wrong rgba color definition for advertisement tile backgrounds, solves #244.
+
 ### v4.1-r4
 
 * 2023-03-06 - Bugfix: Align the search bar with the dark navbar look, solves #234.
@@ -106,7 +128,7 @@ Changes
 ### v4.0-r2
 
 * 2022-09-27 - Improvement: Align the fallback CSS file with theme_boost.
-* 2022-09-27 - Improvement: Align the theme's config.php even more with theme_boost. 
+* 2022-09-27 - Improvement: Align the theme's config.php even more with theme_boost.
 * 2022-09-26 - Bugfix: Adopt config.php, solves #67 #82.
 * 2022-09-07 - Feature: Scrollspy, solves #19
 
@@ -127,7 +149,7 @@ Changes
 * 2022-07-05 - Adopt changes in Boost core for MDL-74634
 * 2022-06-21 - Add course related hints feature, solves #5
 * 2022-04-30 - Added footnote functionality, helps to resolve #6.
-* 2022-06-20 - Allow full Behat runs with Boost Campus suite, fixes #14.
+* 2022-06-20 - Allow full Behat runs with Boost Union suite, fixes #14.
 * 2022-06-20 - Prepare settings.php page, solves #2.
 * 2022-06-20 - Fill README.md, helps to resolve #3.
 * 2022-04-29 - Adopt all changes which have happened in Boost core for the Moodle 4.0 release
