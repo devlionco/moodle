@@ -65,6 +65,8 @@ class adhoc_bbb extends \core\task\adhoc_task {
     public function run_cron_bbb() {
         global $CFG;
 
+        require_once($CFG->libdir . '/filelib.php');
+
         if (isset($CFG->bbb_server)) {
             $url = $CFG->bbb_server;
         } else {
@@ -79,6 +81,10 @@ class adhoc_bbb extends \core\task\adhoc_task {
         $xml = simplexml_load_string($bbbapigetmeetingsxml, "SimpleXMLElement", LIBXML_NOCDATA);
         $json = json_encode($xml);
         $meetingarray = json_decode($json, true);
+
+        if($meetingarray == false){
+            return false;
+        }
 
         $bbbusersessions = 0;
         $bbbusersessionsvideo = 0;

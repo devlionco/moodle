@@ -69,7 +69,7 @@ class adhoc_stats_usertimespent extends \core\task\adhoc_task {
         raise_memory_limit(MEMORY_UNLIMITED);
 
         // Support PHP72 missing array_key_first & array_key_last functions.
-        if (!function_exists(‘array_key_first’)) {
+        if (!function_exists('array_key_first')) {
 
             function array_key_first(array $arr) {
                 foreach ($arr as $key => $unused) {
