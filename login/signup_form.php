@@ -31,10 +31,20 @@ require_once($CFG->dirroot . '/user/editlib.php');
 require_once('lib.php');
 
 class login_signup_form extends moodleform implements renderable, templatable {
+
+    // For IDnumber validity.
+    const R_ELEGAL_INPUT = -1;
+    const R_NOT_VALID = -2;
+    const R_VALID = 1;
+
     function definition() {
         global $USER, $CFG;
 
         $mform = $this->_form;
+
+        $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
+
+        $mform->addElement('static', 'usernamerestrictions', '', get_string('usernamerestrictions', 'theme_petel'));
 
         $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12" autocapitalize="none"');
         $mform->setType('username', PARAM_RAW);
@@ -51,15 +61,17 @@ class login_signup_form extends moodleform implements renderable, templatable {
         $mform->setType('password', core_user::get_property_type('password'));
         $mform->addRule('password', get_string('missingpassword'), 'required', null, 'client');
 
+        $mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
+
+        $mform->addElement('static', 'mustgiveemailorphone', '', get_string('mustgiveemailorphone', 'theme_petel'));
+
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
         $mform->setType('email', core_user::get_property_type('email'));
-        $mform->addRule('email', get_string('missingemail'), 'required', null, 'client');
         $mform->setForceLtr('email');
 
-        $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
-        $mform->setType('email2', core_user::get_property_type('email'));
-        $mform->addRule('email2', get_string('missingemail'), 'required', null, 'client');
-        $mform->setForceLtr('email2');
+        $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="15" size="15"');
+        $mform->setType('phone1', core_user::get_property_type('phone1'));
+        $mform->setForceLtr('phone1');
 
         $namefields = useredit_get_required_name_fields();
         foreach ($namefields as $field) {
@@ -72,21 +84,27 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->addRule($field, get_string($stringid), 'required', null, 'client');
         }
 
-        $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="20"');
-        $mform->setType('city', core_user::get_property_type('city'));
+        $mform->addElement('text', 'idnumber', get_string('idnumber', 'theme_petel'), 'maxlength="15" size="15"');
+        $mform->setType('idnumber', PARAM_ALPHANUM);
+        $mform->addRule('idnumber', get_string('missingidnumber', 'theme_petel'), 'required', null, 'client');
+        $mform->setForceLtr('idnumber');
+
         if (!empty($CFG->defaultcity)) {
+            $mform->addElement('hidden', 'city', $CFG->defaultcity);
+            $mform->setType('city', PARAM_TEXT);
             $mform->setDefault('city', $CFG->defaultcity);
+        } else {
+            $mform->addElement('hidden', 'city');
+            $mform->setType('city', PARAM_TEXT);
         }
 
-        $country = get_string_manager()->get_list_of_countries();
-        $default_country[''] = get_string('selectacountry');
-        $country = array_merge($default_country, $country);
-        $mform->addElement('select', 'country', get_string('country'), $country);
-
-        if( !empty($CFG->country) ){
+        if (!empty($CFG->country)) {
+            $mform->addElement('hidden', 'country', $CFG->country);
+            $mform->setType('country', PARAM_TEXT);
             $mform->setDefault('country', $CFG->country);
-        }else{
-            $mform->setDefault('country', '');
+        } else {
+            $mform->addElement('hidden', 'country');
+            $mform->setType('country', PARAM_TEXT);
         }
 
         profile_signup_fields($mform);
@@ -102,8 +120,9 @@ class login_signup_form extends moodleform implements renderable, templatable {
 
         // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but
         // it can be implemented differently in custom sitepolicy handlers.
-        $manager = new \core_privacy\local\sitepolicy\manager();
-        $manager->signup_form($mform);
+        // PTL-3658 Disable site policy agree to register users (usually: students)
+        //$manager = new \core_privacy\local\sitepolicy\manager();
+        //$manager->signup_form($mform);
 
         // buttons
         $this->set_display_vertical();
@@ -130,6 +149,8 @@ class login_signup_form extends moodleform implements renderable, templatable {
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
     public function validation($data, $files) {
+        global $DB;
+
         $errors = parent::validation($data, $files);
 
         // Extend validation for any form extensions from plugins.
@@ -147,7 +168,86 @@ class login_signup_form extends moodleform implements renderable, templatable {
             }
         }
 
+        // Add username validations.
+        // longer then 6 chars.
+        if (strlen($data['username']) < 7) {
+            $errors['username'] = get_string('longerusername', 'theme_petel');
+        }
+        // Not an Israeli IDNUMBER.
+        if( self::R_VALID == $this->validate_israeli_idnumber($data['username'])) {
+            $errors['username'] = get_string('noidnumberinusername', 'theme_petel');
+        }
+
+        // Check for duplicate/existing ID number.
+        if ($DB->record_exists('user', array('idnumber' => $data['idnumber']))) {
+            $errors['idnumber'] = get_string('idnumberexists', 'theme_petel');
+        }
+
+        // Get parent language.
+        $parentlang = get_parent_language(current_language());
+        if(empty($parentlang)){
+            $parentlang = current_language();
+        }
+
+        if(in_array($parentlang, array('he', 'ar'))) {
+            if (self::R_VALID != $this->validate_israeli_idnumber($data['idnumber'])) {
+                $errors['idnumber'] = get_string('idnumbernotvalid', 'theme_petel');
+            }
+        }
+
+        $cleanphone = str_replace('-', '', $data['phone1']);
+        if (empty($cleanphone)) {
+            if (empty($data['email'])) {
+                $errors['phone1'] = get_string('mustgiveemailorphone', 'theme_petel');
+            }
+        } else {
+            if ($DB->record_exists('user', array('phone1' => $cleanphone))) {
+                $errors['phone1'] = get_string('phone1exists', 'theme_petel');
+            }
+            if (!is_numeric($cleanphone)) {
+                $errors['phone1'] = get_string('phonenotnumerical', 'theme_petel');
+            }
+        }
+
+        switch ($parentlang) {
+            case 'en':
+                if (!preg_match("/^[a-zA-Z0-9$@$!%*?&#^-_. +]+$/", $data['lastname'])) {
+                    $errors['lastname'] = get_string('onlyenglishletters', 'theme_petel');
+                }
+                if (!preg_match("/^[a-zA-Z0-9$@$!%*?&#^-_. +]+$/", $data['firstname'])) {
+                    $errors['firstname'] = get_string('onlyenglishletters', 'theme_petel');
+                }
+                break;
+            case 'he':
+                if ( preg_match("#^[\p{Hebrew}\-]{2,15}$#u", $data['lastname']) === 0) {
+                //if (!preg_match("/^\p{Hebrew}+$/u", $data['lastname'])) {
+                //if (!preg_match("/^(?:\p{Hebrew}*|\w*\s*\-*\p{Hebrew}*)$/u", $data['lastname'])) {
+                    $errors['lastname'] = get_string('onlyhebrewletters', 'theme_petel');
+                }
+                if (!preg_match("/^\p{Hebrew}+$/u", $data['firstname'])) {
+                    $errors['firstname'] = get_string('onlyhebrewletters', 'theme_petel');
+                }
+                break;
+            case 'ar':
+                if (!preg_match('/\p{Arabic}/u', $data['lastname'])) {
+                    $errors['lastname'] = get_string('onlyarabicletters', 'theme_petel');
+                }
+                if (!preg_match('/\p{Arabic}/u', $data['firstname'])) {
+                    $errors['firstname'] = get_string('onlyarabicletters', 'theme_petel');
+                }
+                break;
+        }
+
         $errors += signup_validate_data($data, $files);
+
+        // Remove email2 from validation.
+        if(isset($errors['email2'])){
+            unset($errors['email2']);
+        }
+        // Remove email from validation, if phone1 is set.
+        if(isset($cleanphone)){
+            unset($errors['email']);
+        }
 
         return $errors;
     }
@@ -168,4 +268,43 @@ class login_signup_form extends moodleform implements renderable, templatable {
         ];
         return $context;
     }
+
+    /*
+       * Validate Israeli Teudat Zeut ID Number correctness
+       *
+       * Creadit to CodeOassis
+       * http://opencodeoasis.blogspot.com/2008/08/blog-post_10.html
+       */
+    private function validate_israeli_idnumber($str) {
+        //Convert to string, in case numeric input
+        $IDnum = (string)$str;
+
+        //validate correct input
+        if (!ctype_digit($IDnum)) // is it all digits
+            return self::R_ELEGAL_INPUT;
+        if ((strlen($IDnum) > 9) || (strlen($IDnum) < 5))
+            return self::R_ELEGAL_INPUT;
+
+        //If the input length less then 9 and bigger then 5 add leading 0
+        while (strlen($IDnum < 9)) {
+            $IDnum = '0' . $IDnum;
+        }
+
+        $mone = 0;
+        //Validate the ID number
+        for ($i = 0; $i < 9; $i++) {
+            $char = mb_substr($IDnum, $i, 1);
+            $incNum = (int)$char;
+            $incNum *= ($i % 2) + 1;
+            if ($incNum > 9)
+                $incNum -= 9;
+            $mone += $incNum;
+        }
+
+        if ($mone % 10 == 0)
+            return self::R_VALID;
+        else
+            return self::R_NOT_VALID;
+    }
+
 }

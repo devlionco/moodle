@@ -42,7 +42,7 @@ class login_forgot_password_form extends moodleform {
      * Define the forgot password form.
      */
     function definition() {
-        global $USER;
+        global $USER, $CFG;
 
         $mform    = $this->_form;
         $mform->setDisableShortforms(true);
@@ -67,6 +67,16 @@ class login_forgot_password_form extends moodleform {
 
         $submitlabel = get_string('search');
         $mform->addElement('submit', 'submitbuttonemail', $submitlabel);
+
+        if(isset($CFG->smsapicode ) && !empty($CFG->smsapicode )) {
+            $mform->addElement('header', 'searchbyphone', get_string('searchbyphone', 'theme_petel'), '');
+
+            $mform->addElement('text', 'phone', get_string('phone'));
+            $mform->setType('phone', PARAM_RAW_TRIMMED);
+
+            $submitlabel = get_string('search');
+            $mform->addElement('submit', 'submitbuttonemail', $submitlabel);
+        }
     }
 
     /**
