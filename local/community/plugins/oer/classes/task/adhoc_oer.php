@@ -141,37 +141,44 @@ class adhoc_oer extends \core\task\adhoc_task {
                     $archiveoldrequest = 4;
                 }
 
-                $sqlupdate =
-                        "UPDATE {community_oerctlg_rvw_rqsts}
-                        SET state = 99
-                        WHERE id IN (
-                            SELECT rr.id
-                            FROM {community_oerctlg_rvw_rqsts} rr
-                             JOIN {community_oercatalog_log} ol ON ol.id = rr.logid
-                             JOIN {user} u ON rr.userid = u.id
-                             JOIN {course_modules} cm ON cm.id = ol.newactivityid
-                            WHERE rr.state = 0
-                              AND FROM_UNIXTIME(rr.timecreated, '%Y-%m-%d') <
-                                  DATE_SUB(curdate(), INTERVAL $archiveoldrequest WEEK )
-                        )";
-                $DB->execute($sqlupdate);
+                $sql = "
+                    SELECT rr.id
+                    FROM {community_oerctlg_rvw_rqsts} rr
+                    JOIN {community_oercatalog_log} ol ON ol.id = rr.logid
+                    JOIN {user} u ON rr.userid = u.id
+                    JOIN {course_modules} cm ON cm.id = ol.newactivityid
+                    WHERE rr.state = 0
+                    AND FROM_UNIXTIME(rr.timecreated, '%Y-%m-%d') < DATE_SUB(curdate(), INTERVAL $archiveoldrequest WEEK )
+                ";
+
+                if($res = $DB->get_records_sql($sql)){
+                    $arr = [];
+                    foreach($res as $item){
+                        $arr[] = $item->id;
+                    }
+
+                    $sqlupdate = "UPDATE {community_oerctlg_rvw_rqsts} SET state = 99 WHERE id IN (".implode(',', $arr).")";
+                    $DB->execute($sqlupdate);
+                }
 
                 // Add oer_reviews block to teacher my page, if they are in research cohort.
-                $sqlupdateblock = "
-                INSERT INTO mdl_block_instances(blockname,parentcontextid,showinsubcontexts,requiredbytheme,pagetypepattern,
-                                subpagepattern,defaultregion,defaultweight,configdata,timecreated,timemodified)
-                SELECT 'oer_reviews', c.id 'parentcontextid', 0,0,'my-index', mp.id 'subpagepattern','side-pre',1,'',NOW(),NOW()
-                FROM {user} u
-                JOIN {context} c ON c.instanceid = u.id AND c.contextlevel = 30
-                JOIN {my_pages} mp ON mp.userid = u.id AND mp.private = 1
-                JOIN {cohort_members} cm ON cm.userid = u.id
-                JOIN {cohort} cohort ON cohort.id = cm.cohortid
-                WHERE cohort.idnumber = ?
-                    AND c.id NOT IN (SELECT parentcontextid
-                                 FROM {block_instances}
-                                 WHERE blockname = 'oer_reviews' AND pagetypepattern ='my-index')
+                if(isset($CFG->eladresearch_cohort_a)){
+                    $sqlupdateblock = "
+                    INSERT INTO mdl_block_instances(blockname,parentcontextid,showinsubcontexts,requiredbytheme,pagetypepattern,
+                                    subpagepattern,defaultregion,defaultweight,configdata,timecreated,timemodified)
+                    SELECT 'oer_reviews', c.id 'parentcontextid', 0,0,'my-index', mp.id 'subpagepattern','side-pre',1,'',NOW(),NOW()
+                    FROM {user} u
+                    JOIN {context} c ON c.instanceid = u.id AND c.contextlevel = 30
+                    JOIN {my_pages} mp ON mp.userid = u.id AND mp.private = 1
+                    JOIN {cohort_members} cm ON cm.userid = u.id
+                    JOIN {cohort} cohort ON cohort.id = cm.cohortid
+                    WHERE cohort.idnumber = ?
+                        AND c.id NOT IN (SELECT parentcontextid
+                                     FROM {block_instances}
+                                     WHERE blockname = 'oer_reviews' AND pagetypepattern ='my-index')
                 ";
-                $DB->execute($sqlupdateblock, [$CFG->eladresearch_cohort_a]);
+                    $DB->execute($sqlupdateblock, [$CFG->eladresearch_cohort_a]);
+                }
             } catch (\Exception $e) {
                 throw new \moodle_exception('error');
             }
