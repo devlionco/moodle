@@ -119,8 +119,7 @@ class question_oer {
 
         $query = "
             SELECT 
-                q.id AS qid,
-                #q.category AS qcatid,
+                q.id AS qid,                
                 qbe.questioncategoryid AS qcatid,
                 q.name AS qname,
                 q.questiontext AS questiontext,
@@ -329,8 +328,9 @@ class question_oer {
         foreach ($categorieslist as $catid) {
             $sql = "
                 SELECT * 
-                FROM {question}        
-                WHERE category = ? ;
+                FROM {question} q
+                LEFT JOIN {question_bank_entries} qbe ON qbe.id = q.id
+                WHERE qbe.questioncategoryid = ? ;
             ";
 
             foreach ($DB->get_records_sql($sql, [$catid]) as $item) {

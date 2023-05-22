@@ -166,7 +166,8 @@ class course_oer {
                 
             LEFT JOIN {competency_modulecomp} compm ON (cm.id = compm.cmid)
             LEFT JOIN {quiz_slots} quizslots ON cm.instance = (quizslots.quizid)
-            LEFT JOIN {competency_questioncomp} compq ON (quizslots.questionid = compq.qid)            
+            LEFT JOIN {question_references} qr ON qr.itemid = quizslots.id
+            LEFT JOIN {competency_questioncomp} compq ON (qr.questionbankentryid = compq.qid)
             
             WHERE cm.deletioninprogress != 1 AND cm.id IN (" . implode(',', $cmids) . ")
             GROUP BY cm.id
