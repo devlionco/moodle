@@ -89,7 +89,9 @@ if ($mform_signup->is_cancelled()) {
     // Plugins can perform post sign up actions once data has been validated.
     core_login_post_signup_requests($user);
 
-    $authplugin->user_signup($user, true); // prints notice and link to login/index.php
+    //$authplugin->user_signup($user, true); // prints notice and link to login/index.php
+    $authplugin->user_signup($user, false);
+    redirect(new \moodle_url('/my'), get_string('successfulyregisterd', 'theme_petel'), 5);
     exit; //never reached
 }
 
@@ -100,7 +102,9 @@ $login      = get_string('login');
 $PAGE->navbar->add($login);
 $PAGE->navbar->add($newaccount);
 
-$PAGE->set_pagelayout('login');
+//$PAGE->set_pagelayout('login');
+$PAGE->set_pagelayout('standard');
+
 $PAGE->set_title($newaccount);
 $PAGE->set_heading($SITE->fullname);
 

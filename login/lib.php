@@ -38,21 +38,24 @@ define('PWRESET_STATUS_ALREADYSENT', 4);
  *  Where they have supplied identifier, the function will check their status, and send email as appropriate.
  */
 function core_login_process_password_reset_request() {
-    global $OUTPUT, $PAGE;
+    global $OUTPUT, $PAGE, $CFG;
     $mform = new login_forgot_password_form();
+    $CFG->issmsvalidation = false;
 
     if ($mform->is_cancelled()) {
         redirect(get_login_url());
 
     } else if ($data = $mform->get_data()) {
 
-        $username = $email = '';
+        $username = $email = $phone = '';
         if (!empty($data->username)) {
             $username = $data->username;
-        } else {
+        } else if (!empty($data->email)){
             $email = $data->email;
+        }else{
+            $phone = $data->phone;
         }
-        list($status, $notice, $url) = core_login_process_password_reset($username, $email);
+        list($status, $notice, $url) = core_login_process_password_reset($username, $email, $phone);
 
         // Plugins can perform post forgot password actions once data has been validated.
         core_login_post_forgot_password_requests($data);
@@ -81,10 +84,10 @@ function core_login_process_password_reset_request() {
  * @return array an array containing fields indicating the reset status, a info notice and redirect URL.
  * @since  Moodle 3.4
  */
-function core_login_process_password_reset($username, $email) {
+function core_login_process_password_reset($username, $email, $phone) {
     global $CFG, $DB;
 
-    if (empty($username) && empty($email)) {
+    if (empty($username) && empty($email) && empty($phone)) {
         throw new \moodle_exception('cannotmailconfirm');
     }
 
@@ -94,7 +97,7 @@ function core_login_process_password_reset($username, $email) {
         $username = core_text::strtolower($username); // Mimic the login page process.
         $userparams = array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0, 'suspended' => 0);
         $user = $DB->get_record('user', $userparams);
-    } else {
+    } else if (!empty($email)){
         // Try to load the user record based on email address.
         // This is tricky because:
         // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the account for pw reset
@@ -121,6 +124,25 @@ function core_login_process_password_reset($username, $email) {
         );
 
         $user = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
+    }else{
+
+        // Mimic the login page process.
+        $phone = core_text::strtolower($phone);
+        $userparams = array('phone1' => $phone, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0, 'suspended' => 0);
+        $userphone1 = $DB->get_record('user', $userparams, '*', IGNORE_MULTIPLE);
+        $userparams = array('phone2' => $phone, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0, 'suspended' => 0);
+        $userphone2 = $DB->get_record('user', $userparams, '*', IGNORE_MULTIPLE);
+
+        $user = false;
+        if($userphone1) $user = $userphone1;
+        if($userphone2) $user = $userphone2;
+        $CFG->issmsvalidation = true;
+        $CFG->smsphone = $phone;
+
+        // Remove rows in user_password_resets by user.
+        if($user){
+            $DB->delete_records('user_password_resets', array('userid' => $user->id));
+        }
     }
 
     // Target user details have now been identified, or we know that there is no such account.
@@ -165,7 +187,8 @@ function core_login_process_password_reset($username, $email) {
                 $sendemail = false;
             }
 
-            if ($sendemail) {
+            // Send email.
+            if ($sendemail && !$CFG->issmsvalidation) {
                 $sendresult = send_password_change_confirmation_email($user, $resetrecord);
                 if ($sendresult) {
                     $pwresetstatus = PWRESET_STATUS_TOKENSENT;
@@ -173,7 +196,25 @@ function core_login_process_password_reset($username, $email) {
                     throw new \moodle_exception('cannotmailconfirm');
                 }
             }
+
+            // Send sms.
+            if (!empty($sendemail) && $CFG->issmsvalidation) {
+                $sendresult = core_login_send_sms_to_user($user, $resetrecord);
+                if ($sendresult) {
+                    $pwresetstatus = PWRESET_STATUS_TOKENSENT;
+                } else {
+                    print_error('cannotsmsconfirm');
+                }
+            }
+
         }
+    }
+
+    // Sms validation redirect.
+    if (!empty($sendemail) && !empty($CFG->protectusernames && $CFG->issmsvalidation)) {
+        // Neither confirm, nor deny existance of any username or email address in database.
+        redirect($CFG->wwwroot . '/login/sms_validation.php');
+        die; // Never reached.
     }
 
     $url = $CFG->wwwroot.'/index.php';
@@ -319,11 +360,20 @@ function core_login_process_password_set($token) {
  * @return record created.
  */
 function core_login_generate_password_reset ($user) {
-    global $DB;
+    global $DB, $CFG;
     $resetrecord = new stdClass();
     $resetrecord->timerequested = time();
     $resetrecord->userid = $user->id;
-    $resetrecord->token = random_string(32);
+
+    if($CFG->issmsvalidation){
+        //$smscode = random_string(6);
+        $smscode = rand(10,99).rand(10,99);
+        $resetrecord->smscode = $smscode;
+        $resetrecord->token = md5($smscode);
+    }else{
+        $resetrecord->token = random_string(32);
+    }
+
     $resetrecord->id = $DB->insert_record('user_password_resets', $resetrecord);
     return $resetrecord;
 }
@@ -379,10 +429,24 @@ function core_login_validate_forgot_password_data($data) {
 
     $errors = array();
 
-    if ((!empty($data['username']) and !empty($data['email'])) or (empty($data['username']) and empty($data['email']))) {
-        $errors['username'] = get_string('usernameoremail');
-        $errors['email']    = get_string('usernameoremail');
+    $usernamebool = (!empty($data['username']))?true:false;
+    $emailbool = (!empty($data['email']))?true:false;
+    $phonebool = (!empty($data['phone']))?true:false;
 
+    //if ((!empty($data['username']) and !empty($data['email'])) or (empty($data['username']) and empty($data['email']))) {
+
+    if (($usernamebool and $emailbool) or ($usernamebool and $phonebool) or ($emailbool and $phonebool)
+            or (!$usernamebool and !$emailbool and !$phonebool)) {
+
+        if(isset($CFG->smsapicode ) && !empty($CFG->smsapicode )) {
+            $errors['username'] = get_string('usernameoremailorphone', 'theme_petel');
+            $errors['email'] = get_string('usernameoremailorphone', 'theme_petel');
+            $errors['phone'] = get_string('usernameoremailorphone', 'theme_petel');
+        }else{
+            $errors['username'] = get_string('usernameoremail');
+            $errors['email'] = get_string('usernameoremail');
+            $errors['phone'] = get_string('usernameoremail');
+        }
     } else if (!empty($data['email'])) {
         if (!validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail');
@@ -409,7 +473,7 @@ function core_login_validate_forgot_password_data($data) {
             }
         }
 
-    } else {
+    } else if (!empty($data['username'])){
         if ($user = get_complete_user_data('username', $data['username'])) {
             if (empty($user->confirmed)) {
                 send_confirmation_email($user);
@@ -421,9 +485,29 @@ function core_login_validate_forgot_password_data($data) {
         if (!$user and empty($CFG->protectusernames)) {
             $errors['username'] = get_string('usernamenotfound');
         }
+    }else{
+        //SMS
+        //$phone = check_phone_number($data['phone']);
+        //if($phone) {
+        //
+        //}else{
+        //    $errors['phone'] = get_string('wrongphone', 'theme_peteli');
+        //}
     }
 
     return $errors;
+}
+
+function check_phone_number($number) {
+
+    $number = str_replace('+', '', $number);
+    if(strlen($number) == 10) return $number;
+
+    if(strlen($number) == 12){
+        return '0'.substr($number, 3);
+    }
+
+    return false;
 }
 
 /**
@@ -613,5 +697,71 @@ function core_login_post_signup_requests($data) {
             $pluginfunction($data);
         }
     }
+}
+
+function core_login_send_sms_to_user($user, $resetrecord) {
+    global $DB, $CFG;
+
+    if (!isset($CFG->smsapicode)) {
+        return false;
+    }
+
+    if (isset($CFG->smsphonefrom) && !empty($CFG->smsphonefrom)) {
+        $fromNumber = $CFG->smsphonefrom;
+    } else {
+        $fromNumber = '+972520000000';
+    }
+    // In case cellular phone is stored in phone2 (and not in phone1)
+    if (empty($user->phone1) && !empty($user->phone2)) {
+        $usercellphone = $user->phone2;
+    } else if (!empty($user->phone1)) { // get cellular phone number from phone1
+        $usercellphone = $user->phone1;
+    }
+    $toNumber = '+972' . substr($usercellphone, 1);
+
+    $endpoint = 'https://ssl-vp.com/rest/v1/Messages?sendNow=true';
+    $header = array('Content-type: application/json', 'Authorization: ' . $CFG->smsapicode);
+    $params = array('toMembersByCell' => array($toNumber),
+            'body' => get_string('textforsmscode', 'theme_petel') . ' ' . $resetrecord->smscode,
+            'fromNumber' => $fromNumber);
+
+    $curl = new \curl(array('debug' => false));
+    $curl->setHeader($header);
+    $response = $curl->post($endpoint, json_encode($params));
+    $curlerrno = $curl->get_errno();
+    if (!empty($curlerrno)) {
+        return false;
+    }
+    $curlinfo = $curl->get_info();
+    if (empty($curlinfo['http_code']) || $curlinfo['http_code'] != 200) {
+        return false;
+    }
+
+    return true;
+}
+
+function core_login_sms_validation_request() {
+    global $DB, $OUTPUT, $CFG, $PAGE;
+    $systemcontext = context_system::instance();
+    $mform = new sms_validation_form();
+
+    if ($mform->is_cancelled()) {
+        redirect(get_login_url());
+
+    } else if ($data = $mform->get_data()) {
+        // Requesting user has submitted form data.
+        // Next find the user account in the database which the requesting user claims to own.
+        if (!empty($data->code)) {
+            // Username has been specified - load the user record based on that.
+            $resetinprogress = $DB->get_record('user_password_resets', array('token' => md5($data->code)));
+            if ($resetinprogress) {
+                redirect($CFG->wwwroot . '/login/forgot_password.php?token=' . $resetinprogress->token);
+            }
+        }
+    }
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string('passwordforgotteninstructions2', 'theme_petel'), 'generalbox boxwidthnormal boxaligncenter');
+    $mform->display();
+    echo $OUTPUT->footer();
 }
 
