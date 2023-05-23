@@ -365,6 +365,11 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
+        // PTL-7191. Previous or default editor data.
+        if(isset($data->assignfeedbackcomments_editor['text'])) {
+            $data->assignfeedbackcomments = $data->assignfeedbackcomments_editor['text'];
+        }
+
         file_prepare_standard_editor(
             $data,
             'assignfeedbackcomments',
