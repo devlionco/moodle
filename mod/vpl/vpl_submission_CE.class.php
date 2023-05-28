@@ -347,6 +347,10 @@ class mod_vpl_submission_CE extends mod_vpl_submission {
         $data->files['vpl_environment.sh'] = $info;
         $data->files['common_script.sh'] = file_get_contents( dirname( __FILE__ ) . '/jail/default_scripts/common_script.sh' );
 
+        if (isset($data->files['vpl_evaluate.cases_qvpl'])) {
+            $data->files['vpl_evaluate.cases'] = $data->files['vpl_evaluate.cases_qvpl'];
+        }
+
         // TODO change jail server to avoid this patch.
         if (count( $data->filestodelete ) == 0) { // If keeping all files => add dummy.
             $data->filestodelete['__vpl_to_delete__'] = 1;

@@ -1481,10 +1481,23 @@ class mod_vpl {
             if ($viewer) {
                 $maintabs[] = $viewtab;
             }
-            $href = vpl_mod_href( 'views/submissionslist.php', 'id', $cmid );
-            $maintabs[] = vpl_create_tabobject( 'submissionslist.php', $href, 'submissionslist' );
+            $href = vpl_mod_href( 'forms/requiredfiles.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'requiredfiles.php', $href, 'requestedfiles' );
+
+            $href = vpl_mod_href( 'forms/testcasesfile.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'testcasesfile.php', $href, 'testcases' );
+
+            $href = vpl_mod_href( 'forms/executionfiles.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'executionfiles.php', $href, 'executionfiles' );
+
+            $href = vpl_mod_href( 'forms/executionoptions.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'executionoptions.php', $href, 'executionoptions' );
+
+            $href = vpl_mod_href( 'forms/executionkeepfiles.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'executionkeepfiles.php', $href, 'executionkeepfiles' );
+
             // Similarity.
-            if ($similarity) {
+            if (false && $similarity) {
                 if ($active == 'listwatermark.php' || $active == 'similarity_form.php' || $active == 'listsimilarity.php') {
                     $tabname = $active;
                 } else {
@@ -1518,6 +1531,9 @@ class mod_vpl {
                     $maintabs[] = new tabobject( $tabname, $href, $text, $text );
                 }
             }
+
+            $href = vpl_mod_href( 'views/submissionslist.php', 'id', $cmid );
+            $maintabs[] = vpl_create_tabobject( 'submissionslist.php', $href, 'submissionslist' );
         }
         switch ($active) {
             case 'view.php' :
@@ -1541,12 +1557,6 @@ class mod_vpl {
                     $tabs[] = $viewtab;
                 }
                 if ($manager || ($grader && $USER->id == $userid)
-                    || (! $grader && $submiter && $this->is_submit_able()
-                    && ! $this->instance->restrictededitor && ! $example)) {
-                    $href = vpl_mod_href( 'forms/submission.php', 'id', $cmid, 'userid', $userid );
-                    $tabs[] = vpl_create_tabobject( 'submission.php', $href, 'submission' );
-                }
-                if ($manager || ($grader && $USER->id == $userid)
                     || (! $grader && $submiter && $this->is_submit_able())) {
                     $href = vpl_mod_href( 'forms/edit.php', 'id', $cmid, 'userid', $userid );
                     $stredit = 'edit';
@@ -1554,6 +1564,12 @@ class mod_vpl {
                         $stredit = 'run';
                     }
                     $tabs[] = vpl_create_tabobject( 'edit.php', $href, $stredit);
+                }
+                if ($manager || ($grader && $USER->id == $userid)
+                    || (! $grader && $submiter && $this->is_submit_able()
+                        && ! $this->instance->restrictededitor && ! $example)) {
+                    $href = vpl_mod_href( 'forms/submission.php', 'id', $cmid, 'userid', $userid );
+                    $tabs[] = vpl_create_tabobject( 'submission.php', $href, 'submission' );
                 }
                 if (! $example) {
                     $href = vpl_mod_href( 'forms/submissionview.php', 'id', $cmid, 'userid', $userid );
@@ -1618,10 +1634,11 @@ class mod_vpl {
                         $tabs[] = vpl_create_tabobject( 'listwatermark.php', $href, 'listwatermarks' );
                     }
                 }
-                print_tabs( array (
-                        $maintabs,
-                        $tabs
-                ), $active );
+            case 'testcasesfile.php' :
+            case 'executionoptions.php' :
+            case 'executionfiles.php' :
+            case 'requiredfiles.php' :
+                print_tabs( array ($maintabs, $tabs), $active );
                 break;
         }
     }

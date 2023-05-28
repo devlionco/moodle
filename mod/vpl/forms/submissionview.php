@@ -87,6 +87,7 @@ if ($USER->id == $userid) {
 }
 
 $PAGE->requires->css( new moodle_url( '/mod/vpl/css/sh.css' ) );
+$PAGE->requires->css( new moodle_url( '/mod/vpl/css/submissionview.css' ) );
 
 // Print header.
 $vpl->print_header( get_string( 'submissionview', VPL ) );

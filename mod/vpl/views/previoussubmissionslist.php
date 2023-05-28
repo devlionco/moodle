@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/../vpl_submission.class.php');
 require_once(dirname(__FILE__).'/workinggraph.php');
 require_once(dirname(__FILE__).'/submissionsgraph.php');
 
-global $CFG, $USER, $OUTPUT;
+global $CFG, $USER, $OUTPUT, $PAGE;
 
 require_login();
 
@@ -48,7 +48,7 @@ function vpl_actions_menu($id, $userid, $subid) {
     return $menu;
 }
 
-
+$PAGE->requires->css( new moodle_url( '/mod/vpl/css/submissionview.css' ) );
 $id = required_param( 'id', PARAM_INT );
 $userid = optional_param( 'userid', null, PARAM_INT );
 $detailed = abs( optional_param( 'detailed', 0, PARAM_INT ) ) % 2;

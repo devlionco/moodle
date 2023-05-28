@@ -87,6 +87,7 @@ define(
                 options.rename = activateModification;
                 options.delete = activateModification;
                 options.comments = options.comments && !options.example;
+                options.console = options.console && !options.example;
                 options.acetheme = true;
             })();
             options.sort = (maxNumberOfFiles - minNumberOfFiles >= 2);
@@ -98,7 +99,8 @@ define(
                 }
                 return options[op];
             };
-            options.console = isOptionAllowed('run') || isOptionAllowed('debug');
+            // PTL-5738 hide/show console from settings
+            // options.console = isOptionAllowed('run') || isOptionAllowed('debug');
             if ((typeof options.fontSize) == 'undefined') {
                 options.fontSize = 12;
             }

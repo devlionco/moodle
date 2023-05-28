@@ -54,6 +54,7 @@ $options['saved'] = true;
 vpl_editor_util::generate_requires($vpl, $options);
 $vpl->print_header( get_string( 'testcases', VPL ) );
 $vpl->print_heading_with_help( 'testcases' );
+$vpl->print_view_tabs('testcasesfile.php');
 
 vpl_editor_util::print_tag();
 vpl_editor_util::print_js_i18n();

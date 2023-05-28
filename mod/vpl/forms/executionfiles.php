@@ -55,6 +55,7 @@ vpl_editor_util::generate_requires($vpl, $options);
 
 $vpl->print_header( get_string( 'executionfiles', VPL ) );
 $vpl->print_heading_with_help( 'executionfiles' );
+$vpl->print_view_tabs(basename( __FILE__ ));
 
 vpl_editor_util::print_tag();
 vpl_editor_util::print_js_i18n();

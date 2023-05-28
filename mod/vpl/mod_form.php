@@ -39,7 +39,7 @@ class mod_vpl_mod_form extends moodleform_mod {
         $mform->setType( 'name', PARAM_TEXT );
         $mform->addRule( 'name', null, 'required', null, 'client' );
         $mform->applyFilter( 'name', 'trim' );
-        $mform->addElement( 'textarea', 'shortdescription', get_string( 'shortdescription', VPL ), array (
+        $mform->addElement( 'hidden', 'shortdescription', get_string( 'shortdescription', VPL ), array (
                 'cols' => 70,
                 'rows' => 1
         ) );
@@ -49,6 +49,8 @@ class mod_vpl_mod_form extends moodleform_mod {
         } else {
             $this->standard_intro_elements( get_string( 'fulldescription', VPL ) );
         }
+        //PTL_7538
+        $mform->addElement( 'hidden', 'evaluate', $plugincfg->evaluate );
         $mform->addElement( 'header', 'submissionperiod', get_string( 'submissionperiod', VPL ) );
         $secondsday = 24 * 60 * 60;
         $now = time();
@@ -66,6 +68,7 @@ class mod_vpl_mod_form extends moodleform_mod {
         $mform->addElement( 'header', 'submissionrestrictions', get_string( 'submissionrestrictions', VPL ) );
         $mform->addElement( 'text', 'maxfiles', get_string( 'maxfiles', VPL ) );
         $mform->setType( 'maxfiles', PARAM_INT);
+        $mform->setDefault( 'maxfiles', 5 );
         $mform->setDefault( 'maxfiles', 1 );
         $mform->addElement( 'select', 'worktype', get_string( 'worktype', VPL ), array (
                 0 => get_string( 'individualwork', VPL ),
