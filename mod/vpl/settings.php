@@ -165,3 +165,16 @@ foreach ($list as $theme) {
 $settings->add(
         new admin_setting_configselect( $prefix . 'editor_theme', get_string( 'editortheme', VPL ),
                 get_string( 'editortheme', VPL ), 'chrome', $themelist ) );
+
+// PTL-7538
+$settings->add(
+    new admin_setting_configselect( $prefix . 'evaluate', get_string( 'evaluate', VPL ),
+        get_string( 'evaluate', VPL ), 1, [0=>get_string('no'), 1=>get_string('yes')] ) );
+
+$settings->add(
+    new admin_setting_configselect( $prefix . 'comments', get_string( 'comments', VPL ),
+        get_string( 'comments', VPL ), 0, [0=>get_string('no'), 1=>get_string('yes')] ) );
+
+$settings->add(
+    new admin_setting_configselect( $prefix . 'console', get_string( 'console', VPL ),
+        get_string( 'console', VPL ), 0, [0=>get_string('no'), 1=>get_string('yes')] ) );

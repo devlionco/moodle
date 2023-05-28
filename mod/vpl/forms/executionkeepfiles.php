@@ -61,6 +61,7 @@ $vpl->require_capability( VPL_MANAGE_CAPABILITY );
 // Display page.
 $vpl->print_header( get_string( 'execution', VPL ) );
 $vpl->print_heading_with_help( 'keepfiles' );
+$vpl->print_view_tabs('executionkeepfiles.php');
 
 $fgp = $vpl->get_execution_fgm();
 $mform = new mod_vpl_executionkeepfiles_form( 'executionkeepfiles.php', $fgp );

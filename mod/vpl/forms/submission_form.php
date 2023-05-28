@@ -42,6 +42,7 @@ class mod_vpl_submission_form extends moodleform {
         global $CFG;
         $mform = & $this->_form;
         $mform->addElement( 'header', 'headersubmission', get_string( 'submission', VPL ) );
+        $mform->addElement( 'static', 'notice_submissionoverwrite', '', get_string( 'notice_submissionoverwrite', VPL ) );
         // Identification info.
         $mform->addElement( 'hidden', 'id' );
         $mform->setType( 'id', PARAM_INT );

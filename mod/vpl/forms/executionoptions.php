@@ -136,6 +136,7 @@ $vpl->require_capability( VPL_MANAGE_CAPABILITY );
 $vpl->print_header( get_string( 'execution', VPL ) );
 $vpl->print_heading_with_help( 'executionoptions' );
 
+$vpl->print_view_tabs('executionoptions.php');
 $mform = new mod_vpl_executionoptions_form( 'executionoptions.php', $vpl );
 if ($fromform = $mform->get_data()) {
     if (isset( $fromform->saveoptions )) {
