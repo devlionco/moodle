@@ -198,7 +198,7 @@ function qtype_vplquestion_extract_fraction($result, $templatevpl) {
         global $CFG;
         require_once($CFG->dirroot .'/mod/vpl/vpl.class.php');
         $maxgrade = (new mod_vpl($templatevpl))->get_grade();
-        $fraction = floatval(preg_replace('/.*: (.*) \/.*/', '$1', $result->grade)) / $maxgrade;
+        $fraction = floatval(preg_replace('/.*: (.*) *\/.*/', '$1', $result->grade)) / $maxgrade;
         return $fraction;
     } else {
         return null;
