@@ -64,6 +64,9 @@ define(['jquery', 'core/url'], function($, url) {
                 event.preventDefault();
             });
 
+            ace.config.set('modePath', url.relativeUrl("/mod/vpl/editor/ace9"));
+            ace.config.set('themePath', url.relativeUrl("/mod/vpl/editor/ace9"));
+
             // This is what creates the Ace editor within the placeholder div.
             aceEditor = ace.edit($editorPlaceholder[0]);
             aceEditor.setOptions({
