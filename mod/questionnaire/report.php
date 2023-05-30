@@ -533,8 +533,15 @@ switch ($action) {
         break;
 
     case 'vall':         // View all responses.
+    case 'vallhiddenname':         // View all responses. & hide student names
     case 'vallasort':    // View all responses sorted in ascending order.
     case 'vallarsort':   // View all responses sorted in descending order.
+
+        //Set anonymous view
+        $anonymous_enable = optional_param('anonymous', '0', PARAM_INT);
+        if($anonymous_enable){
+            $questionnaire->respondenttype = 'anonymous';
+        }
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
         if (!$questionnaire->capabilities->readallresponses && !$questionnaire->capabilities->readallresponseanytime) {
@@ -553,6 +560,9 @@ switch ($action) {
                 break;
             case 'vallarsort':
                 $SESSION->questionnaire->current_tab = 'vallarsort';
+                break;
+            case 'vallhiddenname':
+                $SESSION->questionnaire->current_tab = 'vallhiddenname';
                 break;
             default:
                 $SESSION->questionnaire->current_tab = 'valldefault';
@@ -672,7 +682,7 @@ switch ($action) {
                 $respinfo .= $questionnaire->renderer->action_link($link, null, $action,
                         ['class' => $class, 'title' => $linkname], $htmlicon) . '&nbsp;';
 
-                $respinfo .= get_string('viewallresponses', 'questionnaire') . '. ' . $groupname . '. ';
+                $respinfo .= get_string('viewallresponses_2', 'questionnaire') . '. ' . $groupname . '. ';
                 $strsort = get_string('order_' . $sort, 'questionnaire');
                 $respinfo .= $strsort;
                 $respinfo .= $questionnaire->renderer->help_icon('orderresponses', 'questionnaire');

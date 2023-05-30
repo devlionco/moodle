@@ -42,6 +42,7 @@ define('QUESRATE', 8);
 define('QUESDATE', 9);
 define('QUESNUMERIC', 10);
 define('QUESSLIDER', 11);
+define('QUESFILE', 20);
 define('QUESPAGEBREAK', 99);
 define('QUESSECTIONTEXT', 100);
 
@@ -120,6 +121,7 @@ abstract class question {
         QUESPAGEBREAK => 'pagebreak',
         QUESSECTIONTEXT => 'sectiontext',
         QUESSLIDER => 'slider',
+        QUESFILE => 'file',
     ];
 
     /** @var array $notifications Array of extra messages for display purposes. */
@@ -946,7 +948,7 @@ abstract class question {
             $this->content = '';
         }
         $pagetags->skippedclass = $skippedclass;
-        if ($this->type_id == QUESNUMERIC || $this->type_id == QUESTEXT) {
+        if ($this->type_id == QUESNUMERIC || $this->type_id == QUESTEXT || $this->type_id == QUESFILE) {
             $pagetags->label = (object)['for' => self::qtypename($this->type_id) . $this->id];
         } else if ($this->type_id == QUESDROP) {
             $pagetags->label = (object)['for' => self::qtypename($this->type_id) . $this->name];

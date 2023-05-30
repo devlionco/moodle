@@ -64,8 +64,11 @@ class mod_questionnaire_mod_form extends moodleform_mod {
         $mform->addHelpButton('respondenttype', 'respondenttype', 'questionnaire');
         $mform->disabledIf('respondenttype', 'cannotchangerespondenttype', 'eq', 1);
 
-        $mform->addElement('select', 'resp_view', get_string('responseview', 'questionnaire'), $questionnaireresponseviewers);
+        $mform->addElement('select', 'resp_view', get_string('responseview_form', 'questionnaire'), $questionnaireresponseviewers);
         $mform->addHelpButton('resp_view', 'responseview', 'questionnaire');
+        //PTL#2061  Response options: Students can view ALL responses - NEVER by default
+        $resp_view = get_config('questionnaire', 'respview');
+        $mform->setDefault('resp_view', $resp_view);
 
         $notificationoptions = array(0 => get_string('no'), 1 => get_string('notificationsimple', 'questionnaire'),
             2 => get_string('notificationfull', 'questionnaire'));
@@ -79,6 +82,7 @@ class mod_questionnaire_mod_form extends moodleform_mod {
         $options = array('0' => get_string('no'), '1' => get_string('yes'));
         $mform->addElement('select', 'navigate', get_string('navigate', 'questionnaire'), $options);
         $mform->addHelpButton('navigate', 'navigate', 'questionnaire');
+        $mform->setDefault('navigate', 1);
 
         $mform->addElement('select', 'autonum', get_string('autonumbering', 'questionnaire'), $autonumbering);
         $mform->addHelpButton('autonum', 'autonumbering', 'questionnaire');
@@ -93,6 +97,8 @@ class mod_questionnaire_mod_form extends moodleform_mod {
             $grades[$i] = $i;
         }
         $mform->addElement('select', 'grade', get_string('grade', 'questionnaire'), $grades);
+        $maxgrade = get_config('questionnaire', 'maxgrade');
+        $mform->setDefault('grade', $maxgrade);
 
         if (empty($questionnaire->sid)) {
             if (!isset($questionnaire->id)) {

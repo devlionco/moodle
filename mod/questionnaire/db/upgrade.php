@@ -969,6 +969,40 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2020011507, 'questionnaire');
     }
 
+    if ($oldversion < 2020011510) {
+
+        // Define fields to be added to questionnaire_response_file.
+        $table = new xmldb_table('questionnaire_response_file');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('response_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('question_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('response', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table questionnaire_fb_sections.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for assign_user_mapping.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        $index = new xmldb_index('response_question');
+        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('response_id', 'question_id'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $questiontype = new stdClass();
+        $questiontype->typeid = 11;
+        $questiontype->type = 'File';
+        $questiontype->has_choices = 'n';
+        $questiontype->response_table = 'response_file';
+        $id = $DB->insert_record('questionnaire_question_type', $questiontype);
+
+        // Questionnaire savepoint reached.
+        upgrade_mod_savepoint(true, 2020011510, 'questionnaire');
+    }
+
     if ($oldversion < 2020062301) {
         // Add show progress bar setting.
         $table = new xmldb_table('questionnaire');
@@ -995,6 +1029,35 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
             $DB->insert_record('questionnaire_question_type', $questiontype);
         }
         upgrade_mod_savepoint(true, 2022092200, 'questionnaire');
+    }
+
+    if ($oldversion < 2022092204) {
+        //FIX TYPEID File and Slider
+        $row = $DB->get_record('questionnaire_question_type', ['type' => 'File', 'response_table' => 'response_file']);
+        if ($row) {
+            $row->typeid = 20;
+        }
+        $DB->update_record('questionnaire_question_type', $row);
+        $rows = $DB->get_records('questionnaire_question', ['type_id' => 11]);
+        if ($rows) {
+
+            foreach ($rows as $row) {
+                $row->type_id = 20;
+                $DB->update_record('questionnaire_question', $row);
+            }
+        }
+
+        $exist = $DB->record_exists('questionnaire_question_type', ['typeid' => 11]);
+        if (!$exist) {
+            $questiontype = new stdClass();
+            $questiontype->typeid = 11;
+            $questiontype->type = 'Slider';
+            $questiontype->has_choices = 'n';
+            $questiontype->response_table = 'response_text';
+            $DB->insert_record('questionnaire_question_type', $questiontype);
+        }
+
+        upgrade_mod_savepoint(true, 2022092204, 'questionnaire');
     }
 
     return $result;

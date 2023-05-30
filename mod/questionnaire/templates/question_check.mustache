@@ -54,6 +54,12 @@
     }
     }}
 <!-- Begin HTML generated from question_check template. -->
+{{#message.ifpresent}}
+    <div class="alert alert-icon message alert-block alert-dismissible fade show " role="alert">
+        {{message.message}}
+    </div>
+{{/message.ifpresent}}
+
 {{#qelements}}
 {{#choice}}
 <input id="{{choice.id}}" value="{{choice.value}}" name="{{choice.name}}" type="checkbox" {{#choice.checked}}checked="checked"{{/choice.checked}} />

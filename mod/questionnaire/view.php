@@ -64,6 +64,9 @@ $questionnaire->add_page(new \mod_questionnaire\output\viewpage());
 $PAGE->set_title(format_string($questionnaire->name));
 $PAGE->set_heading(format_string($course->fullname));
 
+$PAGE->requires->css('/mod/questionnaire/css/custom.css');
+$PAGE->requires->js('/mod/questionnaire/javascript/custom.js');
+
 echo $questionnaire->renderer->header();
 // No need to print out intro or name in Moodle 4 and above.
 
@@ -136,11 +139,42 @@ if ($questionnaire->capabilities->readownresponses && ($usernumresp > 0)) {
         '" class="btn btn-primary">' . $titletext . '</a>');
 }
 
-if ($questionnaire->can_view_all_responses($usernumresp)) {
-    $argstr = 'instance='.$questionnaire->id.'&group='.$currentgroupid;
+// Allow Teacher collage to preview.
+if (!$questionnaire->capabilities->isstudent || is_siteadmin() || $questionnaire->capabilities->preview) {
+    $argstr = 'id=' . $questionnaire->cm->id;
+
+    $questionnaire->page->add_to_page('completeadmin',
+        '<a class="btn btn-primary" href="' . $CFG->wwwroot . htmlspecialchars('/mod/questionnaire/preview.php?' .
+            'id=' . $questionnaire->cm->id) . '">' . get_string('preview_task', 'questionnaire') . '</a>');
+}
+
+if ($questionnaire->can_view_all_responses($usernumresp) && !$questionnaire->capabilities->isstudent ||
+        is_siteadmin() || $questionnaire->capabilities->manage || $questionnaire->capabilities->editquestions) {
+    $argstr = 'id=' . $questionnaire->cm->id;
     $questionnaire->page->add_to_page('allresponses',
-        '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr).'" class="btn btn-primary">'.
-        get_string('viewallresponses', 'questionnaire').'</a>');
+            '<a class="btn btn-primary" href="' . $CFG->wwwroot . htmlspecialchars('/mod/questionnaire/questions.php?' . $argstr) .
+            '">' .
+            get_string('edit_question', 'questionnaire') . '</a>
+        ');
+}
+
+if ($questionnaire->can_view_all_responses($usernumresp) && !$questionnaire->capabilities->isstudent ||
+        is_siteadmin() || $questionnaire->capabilities->manage || $questionnaire->capabilities->editquestions) {
+    $argstr = 'instance=' . $questionnaire->id . '&group=' . $currentgroupid . '&anonymous=1';
+    $argstr2 = 'id=' . $questionnaire->cm->id;
+
+    if ($questionnaire->can_view_all_responses()) {
+        $questionnaire->page->add_to_page('yourresponseadmin',
+                '<a class="btn btn-primary" href="' . $CFG->wwwroot . htmlspecialchars('/mod/questionnaire/report.php?' . $argstr) .
+                '">' .
+                get_string('viewallresponses_2', 'questionnaire') . ' (' . $questionnaire->count_submissions() . ')' . '</a>
+        ');
+    } else {
+        $questionnaire->page->add_to_page('yourresponseadmin',
+                '<a class="btn btn-secondary disabled" href="javascript:void(0);">' .
+                get_string('viewallresponses_2', 'questionnaire') . '</a>
+        ');
+    }
 }
 
 echo $questionnaire->renderer->render($questionnaire->page);

@@ -24,6 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot.'/mod/questionnaire/locallib.php');
 
 if ($ADMIN->fulltree) {
     $options = array(0 => get_string('no'), 1 => get_string('yes'));
@@ -51,4 +52,14 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('questionnaire/allowemailreporting',
         get_string('configemailreporting', 'questionnaire'), get_string('configemailreportinglong', 'questionnaire'), 0));
+
+    $settings->add(new admin_setting_configtext('questionnaire/maxgrade',
+        get_string('configmaxgrade', 'questionnaire'),
+        '', 100, PARAM_INT));
+
+
+    global $questionnaireresponseviewers;
+    $settings->add(new admin_setting_configselect('questionnaire/respview',
+        get_string('configrespview', 'questionnaire'), '',0, $questionnaireresponseviewers));
+
 }

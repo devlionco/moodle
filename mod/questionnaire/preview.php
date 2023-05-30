@@ -81,6 +81,9 @@ if ($id !== 0) {
 if ($sid) {
     $url->param('sid', $sid);
 }
+
+$url->param('action', ''); //Add menu
+
 $PAGE->set_url($url);
 
 $PAGE->set_context($context);
@@ -122,6 +125,7 @@ if (!$popup) {
 
 
 $PAGE->requires->js('/mod/questionnaire/module.js');
+$PAGE->requires->js('/mod/questionnaire/javascript/custom.js');
 // Print the tabs.
 
 

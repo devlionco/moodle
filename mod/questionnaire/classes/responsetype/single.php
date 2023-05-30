@@ -227,7 +227,7 @@ class single extends responsetype {
      * @return string
      */
     public function display_results($rids=false, $sort='', $anonymous=false) {
-        global $DB;
+        global $DB, $COURSE;
 
         $rows = $this->get_results($rids, $anonymous);
         if (is_array($rids)) {
@@ -235,8 +235,9 @@ class single extends responsetype {
         } else if (is_int($rids)) {
             $prtotal = 0;
         }
-        $numresps = count($rids);
-
+        // All users.
+        $context = \context_course::instance($COURSE->id);
+        $numresps = count_enrolled_users($context, 'local/petel:studentview', 0, true);
         $responsecountsql = 'SELECT COUNT(DISTINCT r.response_id) ' .
             'FROM {' . $this->response_table() . '} r ' .
             'WHERE r.question_id = ? ';

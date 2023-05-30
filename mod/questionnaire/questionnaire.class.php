@@ -2465,6 +2465,9 @@ class questionnaire {
         // Response_date.
         $values += \mod_questionnaire\responsetype\date::response_select($rid);
 
+        // Response_file.
+        $values += \mod_questionnaire\responsetype\file::response_select($rid);
+
         return($values);
     }
 
@@ -2817,7 +2820,7 @@ class questionnaire {
      * @return string|void
      */
     public function survey_results($rid = '', $uid=false, $pdf = false, $currentgroupid='', $sort='') {
-        global $SESSION, $DB;
+        global $SESSION, $DB, $COURSE;
 
         $SESSION->questionnaire->noresponses = false;
 
@@ -2873,9 +2876,12 @@ class questionnaire {
                 $SESSION->questionnaire->noresponses = true;
                 return;
             }
-            $numresps = count($rows);
+            // All users.
+            $context = context_course::instance($COURSE->id);
+            $countusers = count_enrolled_users($context, 'local/petel:studentview', 0, true);
+            $numresps = $countusers;
             $this->page->add_to_page('respondentinfo',
-                ' '.get_string('responses', 'questionnaire').': <strong>'.$numresps.'</strong>');
+                ' '.get_string('allusers', 'questionnaire').': <strong>'.$numresps.'</strong>');
             if (empty($rows)) {
                 $errmsg = get_string('erroropening', 'questionnaire') .' '. get_string('noresponsedata', 'questionnaire');
                 return($errmsg);
@@ -2907,7 +2913,7 @@ class questionnaire {
         $anonymous = $this->respondenttype == 'anonymous';
 
         foreach ($this->questions as $question) {
-            if ($question->type_id == QUESPAGEBREAK) {
+            if ($question->type_id == QUESPAGEBREAK || $question->type_id == QUESSECTIONTEXT) {
                 continue;
             }
             if ($question->type_id != QUESSECTIONTEXT) {

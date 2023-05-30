@@ -196,6 +196,8 @@ class boolean extends responsetype {
      * @return string
      */
     public function display_results($rids=false, $sort='', $anonymous=false) {
+        global $COURSE;
+        
         $stryes = get_string('yes');
         $strno = get_string('no');
 
@@ -204,7 +206,9 @@ class boolean extends responsetype {
         } else if (is_int($rids)) {
             $prtotal = 0;
         }
-        $numresps = count($rids);
+        // All users.
+        $context = \context_course::instance($COURSE->id);
+        $numresps = count_enrolled_users($context, 'local/petel:studentview', 0, true);
 
         $counts = [$stryes => 0, $strno => 0];
         $numrespondents = 0;
