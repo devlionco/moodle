@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_questionnaire/question_date
+    @template mod_questionnaire/question_text
 
-    Template which defines a date type question survey display.
+    Template which defines a text type question survey display.
 
     Classes required for JS:
     * /mod/questionnaire/module.js
@@ -31,23 +31,30 @@
     {
         "qelements": {
             "choice": {
-                "type": "text",
                 "onkeypress": "dosomething()",
+                "size": 30,
                 "name": "choiceid1",
-                "value": "2010-03-04"
+                "maxlength": 50,
+                "value": "Answer text",
+                "id": "choiceid1"
             }
         }
     }
     }}
-<!-- Begin HTML generated from question_date template. -->
+<!-- Begin HTML generated from question_file template. -->
 {{#qelements}}
-{{#choice}}
-<div class="qn-datemsg">{{# str }}strictdateformatting, mod_questionnaire{{/ str}}</div>
-<div class="qn-date">
-    <label for ="date_{{choice.name}}" class = "accesshide">{{#str}} choosedate, mod_questionnaire {{/str}}</label>
-    <input id ="date_{{choice.name}}" type="{{type}}" name="{{choice.name}}" value="{{choice.value}}" />
-<!--    <input {{#choice.onkeypress}}onkeypress="{{.}}"{{/choice.onkeypress}} type="text" size="12" name="{{choice.name}}" maxlength="10" value="{{choice.value}}" /> -->
-</div>
-{{/choice}}
+    {{#choice}}
+        <input type="hidden" name="file_itemid_{{rid}}" value="{{choice.file_itemid}}">
+        <input type="hidden" data-id=filename {{#choice.onkeypress}}onkeypress="{{.}}"{{/choice.onkeypress}}  name="{{choice.name}}"  value="" id="{{choice.id}}" />
+        {{{choice.file_manager}}}
+        {{#js}}
+            document.addEventListener("submit",function (){
+            var filename=document.getElementsByClassName("fp-filename")[0].innerHTML;
+                if(filename){
+                    document.getElementById("{{choice.id}}").value = filename;
+                }
+            });
+        {{/js}}
+    {{/choice}}
 {{/qelements}}
-<!-- End HTML generated from question_date template. -->
+<!-- End HTML generated from question_text template. -->

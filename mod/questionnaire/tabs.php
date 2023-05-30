@@ -46,7 +46,7 @@ if ($questionnaire->capabilities->manage  && $owner) {
 
 if ($questionnaire->capabilities->editquestions && $owner) {
     $row[] = new tabobject('questions', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
-            'id='.$questionnaire->cm->id), get_string('questions', 'questionnaire'));
+            'id='.$questionnaire->cm->id), get_string('edit_question', 'questionnaire'));
 }
 
 if ($questionnaire->capabilities->editquestions && $owner) {
@@ -74,13 +74,13 @@ if ($questionnaire->capabilities->readownresponses && ($usernumresp > 0)) {
     $row[] = new tabobject('myreport', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.
                            $argstr), $yourrespstring);
 
-    if ($usernumresp > 1 && in_array($currenttab, array('mysummary', 'mybyresponse', 'myvall', 'mydownloadcsv'))) {
+    if ($usernumresp > 1 && in_array($currenttab, array('mysummary', 'mybyresponse', 'myvall', 'mydownloadcsv', 'mydownloadexcel'))) {
         $inactive[] = 'myreport';
         $activated[] = 'myreport';
         $row2 = array();
         $argstr2 = $argstr.'&action=summary';
         $row2[] = new tabobject('mysummary', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
-                                get_string('summary', 'questionnaire'));
+                                get_string('summary_new', 'questionnaire'));
         $argstr2 = $argstr.'&byresponse=1&action=vresp';
         $row2[] = new tabobject('mybyresponse', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
                                 get_string('viewindividualresponse', 'questionnaire'));
@@ -120,18 +120,28 @@ $resplogic = ($numresp > 0) && ($numselectedresps > 0);
 if ($questionnaire->can_view_all_responses_anytime($grouplogic, $resplogic)) {
     $argstr = 'instance='.$questionnaire->id;
     $row[] = new tabobject('allreport', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
-                           $argstr.'&action=vall'), get_string('viewallresponses', 'questionnaire'));
-    if (in_array($currenttab, array('vall', 'vresp', 'valldefault', 'vallasort', 'vallarsort', 'deleteall', 'downloadcsv',
+                           $argstr.'&action=vall'), get_string('viewallresponses_2', 'questionnaire'));
+    if (in_array($currenttab, array('vall', 'vresp', 'valldefault', 'vallasort', 'vallarsort', 'deleteall', 'downloadcsv', 'downloadexcel',
                                      'vrespsummary', 'individualresp', 'printresp', 'deleteresp'))) {
         $inactive[] = 'allreport';
         $activated[] = 'allreport';
         if ($currenttab == 'vrespsummary' || $currenttab == 'valldefault') {
             $inactive[] = 'vresp';
         }
+
+        $anonymous_enable = optional_param('anonymous', '0', PARAM_INT);
+        if($anonymous_enable){
+            $currenttab = 'valldefaultanonymous';
+        }
+
         $row2 = array();
         $argstr2 = $argstr.'&action=vall&group='.$currentgroupid;
+
         $row2[] = new tabobject('vall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
-                                get_string('summary', 'questionnaire'));
+                                get_string('summary_new', 'questionnaire'));
+        $argstr3 = $argstr.'&action=vall&group='.$currentgroupid;
+        $row2[] = new tabobject('vallhiddenname', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr3.'&anonymous=1'),
+            get_string('summary_anonymous', 'questionnaire'));
         if ($questionnaire->capabilities->viewsingleresponse) {
             $argstr2 = $argstr.'&byresponse=1&action=vresp&group='.$currentgroupid;
             $row2[] = new tabobject('vrespsummary', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
@@ -143,8 +153,12 @@ if ($questionnaire->can_view_all_responses_anytime($grouplogic, $resplogic)) {
             }
         }
     }
-    if (in_array($currenttab, array('valldefault',  'vallasort', 'vallarsort', 'deleteall', 'downloadcsv'))) {
-        $activated[] = 'vall';
+    if (in_array($currenttab, array('valldefault', 'valldefaultanonymous' , 'vallasort', 'vallarsort', 'deleteall', 'downloadcsv', 'vallhiddenname'))) {
+        if($currenttab == 'valldefaultanonymous') {
+            $activated[] = 'vallhiddenname';
+        } else {
+            $activated[] = 'vall';
+        }
         $row3 = array();
 
         $argstr2 = $argstr.'&action=vall&group='.$currentgroupid;
@@ -168,6 +182,13 @@ if ($questionnaire->can_view_all_responses_anytime($grouplogic, $resplogic)) {
             $argstr2 = $argstr.'&action=dwnpg&group='.$currentgroupid;
             $link = $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2);
             $row3[] = new tabobject('downloadcsv', $link, get_string('downloadtextformat', 'questionnaire'));
+        }
+
+        //Download Excel
+        if ($questionnaire->capabilities->downloadresponses) {
+            $argstr2 = $argstr.'&action=dwnexcel&group='.$currentgroupid;
+            $link  = $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/download_excel.php?'.$argstr2);
+            $row2[] = new tabobject('downloadexcel', $link, get_string('downloadexcel'));
         }
     }
 
@@ -230,6 +251,19 @@ if ($questionnaire->capabilities->viewsingleresponse && ($canviewallgroups || $c
                     get_string('show_nonrespondents', 'questionnaire'));
 }
 
+//Sort menu
+$arr_sort_value = array('preview', 'allreport', 'questions', 'nonrespondents', 'myreport', 'settings');
+$new_row = array();
+foreach($arr_sort_value as $sort){
+    foreach($row as $item){
+        if($sort == $item->id){
+            $new_row[] = $item;
+        }
+    }
+}
+
+$row = $new_row;
+
 if ((count($row) > 1) || (!empty($row2) && (count($row2) > 1))) {
     $tabs[] = $row;
 
@@ -239,6 +273,26 @@ if ((count($row) > 1) || (!empty($row2) && (count($row2) > 1))) {
 
     if (!empty($row3) && (count($row3) > 1)) {
         $tabs[] = $row3;
+    }
+
+    // Remove tab 'allreport' if user student.
+    $roles = array();
+    $isstudent = false;
+    $context = context_course::instance($COURSE->id);
+    foreach (get_user_roles($context, $USER->id) as $role) {
+        $roles[] = $role->shortname;
+    }
+
+    if (in_array('student', $roles) && count($roles) == 1) {
+        $isstudent = true;
+    }
+
+    if($isstudent && !$questionnaire->resp_view == QUESTIONNAIRE_STUDENTVIEWRESPONSES_ALWAYS){
+        foreach($tabs[0] as $key => $item){
+            if($item->id == 'allreport'){
+                unset($tabs[0][$key]);
+            }
+        }
     }
 
     $questionnaire->page->add_to_page('tabsarea', print_tabs($tabs, $currenttab, $inactive, $activated, true));

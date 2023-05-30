@@ -527,7 +527,7 @@ function questionnaire_pluginfile($course, $cm, $context, $filearea, $args, $for
 
     require_course_login($course, true, $cm);
 
-    $fileareas = ['intro', 'info', 'thankbody', 'question', 'feedbacknotes', 'sectionheading', 'feedback'];
+    $fileareas = ['intro', 'info', 'thankbody', 'question', 'feedbacknotes', 'sectionheading', 'feedback', 'response_file'];
     if (!in_array($filearea, $fileareas)) {
         return false;
     }
@@ -544,6 +544,10 @@ function questionnaire_pluginfile($course, $cm, $context, $filearea, $args, $for
         }
     } else if ($filearea == 'feedback') {
         if (!$DB->record_exists('questionnaire_feedback', ['id' => $componentid])) {
+            return false;
+        }
+    } else if ($filearea == 'response_file') {
+        if (!$DB->record_exists('files', ['itemid' => $componentid, 'filearea' => $filearea])) {
             return false;
         }
     } else {
@@ -564,7 +568,7 @@ function questionnaire_pluginfile($course, $cm, $context, $filearea, $args, $for
     }
 
     // Finally send the file.
-    send_stored_file($file, 0, 0, true); // Download MUST be forced - security!
+    send_stored_file($file, 0, 0, $forcedownload); // Download MUST be forced - security!
 }
 /**
  * Adds module specific settings to the settings block

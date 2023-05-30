@@ -94,12 +94,14 @@ td.selected {
     padding: 0;
 }
 
+/* disable weird blue border
 #page-mod-questionnaire-complete .message,
 #page-mod-questionnaire-preview .message,
 #page-mod-questionnaire-complete .thankbody,
 #page-mod-questionnaire-complete .thankhead {
     border-color: blue;
 }
+*/
 
 .surveyPage {
     background-color: #eee;
@@ -317,7 +319,7 @@ td.selected {
     font-weight: bold;
 }
 
-.qn-info h2.qn-number {
+.qn-info h4.qn-number {
     margin: 0;
     font-size: 1.5em;
     line-height: 1.2em;

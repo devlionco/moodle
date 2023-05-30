@@ -143,13 +143,18 @@ class text extends responsetype {
      * @return string - Display output.
      */
     public function display_results($rids=false, $sort='', $anonymous=false) {
+        global $COURSE;
+
         if (is_array($rids)) {
             $prtotal = 1;
         } else if (is_int($rids)) {
             $prtotal = 0;
         }
         if ($rows = $this->get_results($rids, $anonymous)) {
-            $numrespondents = count($rids);
+            // All users.
+            $context = \context_course::instance($COURSE->id);
+            $numrespondents = count_enrolled_users($context, 'local/petel:studentview', 0, true);
+
             $numresponses = count($rows);
             $pagetags = $this->get_results_tags($rows, $numrespondents, $numresponses, $prtotal);
         } else {
@@ -177,6 +182,8 @@ class text extends responsetype {
         // If array element is an object, outputting non-numeric responses.
         if (is_object(reset($weights))) {
             global $CFG, $SESSION, $questionnaire, $DB;
+            // TODO: Remove because it breaks PTL-4081 (ask Kiril)
+            //$questionnaire->respondenttype = 'anonymous';
             $viewsingleresponse = $questionnaire->capabilities->viewsingleresponse;
             $nonanonymous = $questionnaire->respondenttype != 'anonymous';
             if ($viewsingleresponse && $nonanonymous) {
@@ -242,7 +249,7 @@ class text extends responsetype {
 
                 $response = new \stdClass();
                 $response->respondent = $straverage;
-                $avg = $sum / $nbresponses;
+                $avg = $sum / $participants;
                 $response->text = sprintf('%.' . $this->question->precise . 'f', $avg);
                 $response->evencolor = $evencolor;
                 $pagetags->responses[] = (object)['response' => $response];

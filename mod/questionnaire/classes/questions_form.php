@@ -80,6 +80,16 @@ class questions_form extends \moodleform {
             }
         }
         natsort($qtypes);
+
+        // Shift item[100] to end list.
+        foreach($qtypes as $key => $item){
+            if($key == 100){
+                unset($qtypes[$key]);
+                $qtypes[$key] = $item;
+                break;
+            }
+        }
+
         $addqgroup = array();
         $addqgroup[] =& $mform->createElement('select', 'type_id', '', $qtypes);
 

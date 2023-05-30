@@ -138,7 +138,11 @@ abstract class responsetype {
      * @return \stdClass
      */
     public function get_results_tags($weights, $participants, $respondents, $showtotals = 1, $sort = '') {
-        global $CFG;
+        global $CFG, $COURSE;
+
+        // All users.
+        $context = \context_course::instance($COURSE->id);
+        $numresps = count_enrolled_users($context, 'local/petel:studentview', 0, true);
 
         $pagetags = new \stdClass();
         $precision = 0;
@@ -163,7 +167,7 @@ abstract class responsetype {
                 $response = new \stdClass();
                 $response->text = format_text($content, FORMAT_HTML, ['noclean' => true]);
                 if ($num > 0) {
-                    $percent = round((float)$num / (float)$respondents * 100.0);
+                    $percent = round((float)$num / (float)$numresps * 100.0);
                 } else {
                     $percent = 0;
                 }
@@ -198,7 +202,7 @@ abstract class responsetype {
             if ($showtotals) {
                 $pagetags->total = new \stdClass();
                 if ($respondents > 0) {
-                    $percent = round((float)$respondents / (float)$participants * 100.0);
+                    $percent = round((float)$respondents / (float)$numresps * 100.0);
                 } else {
                     $percent = 0;
                 }

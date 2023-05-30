@@ -41,5 +41,6 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['objecttable'] = 'questionnaire';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['other'] = array('viewed' => 'main');
     }
 }

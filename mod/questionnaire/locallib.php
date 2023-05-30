@@ -203,6 +203,7 @@ function questionnaire_load_capabilities($cmid) {
     $cb->preview = has_capability('mod/questionnaire:preview', $context);
 
     $cb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, null, false);
+    $cb->isstudent              = !has_capability ('moodle/course:update', $context) ? true : false;
 
     return $cb;
 }
@@ -345,6 +346,7 @@ function questionnaire_delete_responses($qid) {
     $DB->delete_records('questionnaire_response_rank', ['question_id' => $qid]);
     $DB->delete_records('questionnaire_resp_single', ['question_id' => $qid]);
     $DB->delete_records('questionnaire_response_text', ['question_id' => $qid]);
+    $DB->delete_records('questionnaire_response_file', ['question_id' => $qid]);
 
     return true;
 }
@@ -489,6 +491,8 @@ function questionnaire_get_type ($id) {
             return get_string('numeric', 'questionnaire');
         case 11:
             return get_string('slider', 'questionnaire');
+        case 20:
+            return get_string('file', 'questionnaire');
         case 100:
             return get_string('sectiontext', 'questionnaire');
         case 99:
@@ -582,7 +586,25 @@ function questionnaire_get_incomplete_users($cm, $sid,
     }
     $allusers = array_keys($allusers);
 
-    // Nnow get all completed questionnaires.
+    if(!empty($allusers)) {
+        $sql = "
+            SELECT u.*
+            FROM {user} u
+            JOIN {user_enrolments} ue ON ue.userid = u.id
+            JOIN {enrol} e ON e.id = ue.enrolid
+            WHERE u.id IN (" . implode(',', $allusers) . ") AND u.suspended = 0 AND ue.status = 0 
+            AND ( 
+                    (ue.timestart = '0' AND ue.timeend = '0') OR 
+                    (ue.timestart = '0' AND ue.timeend > UNIX_TIMESTAMP()) OR 
+                    (ue.timeend = '0' AND ue.timestart < UNIX_TIMESTAMP()) OR
+                    (ue.timeend > UNIX_TIMESTAMP() AND ue.timestart < UNIX_TIMESTAMP())
+                )    
+        ";
+
+        $allusers = array_keys($DB->get_records_sql($sql));
+    }
+
+    // Now get all completed questionnaires.
     $params = array('questionnaireid' => $cm->instance, 'complete' => 'y');
     $sql = "SELECT userid FROM {questionnaire_response} " .
            "WHERE questionnaireid = :questionnaireid AND complete = :complete " .

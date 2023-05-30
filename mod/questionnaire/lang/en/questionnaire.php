@@ -365,6 +365,8 @@ $string['of'] = 'of';
 $string['openafterclose'] = 'You have specified an open date after the close date';
 $string['opendate'] = 'Allow responses from';
 $string['option'] = 'option {$a}';
+$string['opendate_help'] = 'You can specify a date to open the questionnaire here. Check the check box, and select the date and time you want.
+ Users will not be able to fill out the questionnaire before that date. If this is not selected, it will be open immediately.';
 $string['optional'] = 'Optional - At least one of this dependencies has to be fulfilled.';
 $string['optionalname'] = 'Question Name';
 $string['optionalname_help'] = 'The Question Name is only used when you export responses to CSV/Excel format.
@@ -414,6 +416,8 @@ $string['print'] = 'Print this Response';
 $string['printblank'] = 'Print Blank';
 $string['printblanktooltip'] = 'Opens printer-friendly window with blank Questionnaire';
 $string['printtooltip'] = 'Opens printer-friendly window with current Response';
+$string['choice'] = 'Choice {$a->col} for row {$a->row}';
+$string['skipchoice'] = 'Skip answer for row {$a}';
 
 $string['privacy:metadata:questionnaire_response'] = 'A response in progress or submitted';
 $string['privacy:metadata:questionnaire_response:userid'] = 'The ID of the user for this response.';
@@ -672,3 +676,37 @@ $string['yesno_help'] = 'Simple Yes/No question.';
 $string['yourresponse'] = 'View your response(s)';
 $string['yourresponses'] = 'View your response(s)';
 $string['crontask'] = 'Questionnaire cleanup job';
+
+
+$string['viewallresponses_2'] = 'תצוגת תגובות';
+$string['responses_2'] = 'תגובות';
+$string['preview_task'] = 'Preview';
+$string['display_not_responded'] = 'Display those who have not yet responded';
+$string['answer_to_question'] = 'Answer to question';
+$string['edit_question'] = 'Edit question';
+$string['summary_new'] = 'Summary';
+$string['downloadexcel'] = 'Save file Excel';
+$string['grades'] = 'Result';
+$string['responseview_form'] = 'Students can view ALL responses';
+$string['summary_anonymous'] = 'Show summary in class';
+$string['order_settings'] = 'Order settings';
+$string['check_min_box'] = 'תשובות לפחות {$a}';
+$string['check_max_box'] = 'לא יותר מ- {$a} תשובות';
+$string['check_message_min_max'] = 'בשאלה זו עליכם לבחור ';
+$string['check_min_max'] = 'בין {$a->min} ל- {$a->max} תשובות';
+
+$string['allusers'] = 'All users';
+
+$string['file'] = 'file';
+$string['file_help'] = 'This question will display a file box. You can select and define which file format we would like to receive.';
+$string['format'] = 'Accepted file format';
+$string['max_file'] = 'Maximum files';
+$string['text_format'] = 'Text file';
+$string['pic_format'] = 'Image file';
+$string['pdf_format'] = 'PDF file';
+
+$string['configmaxgrade'] = 'Default max grade';
+$string['configrespview'] = 'Default if Students can view ALL responses';
+
+$string['choice'] = 'Choice {$a->col} for row {$a->row}';
+$string['choosedate'] = 'Choose date';

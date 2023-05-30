@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_questionnaire\question;
-
+use \html_writer;
 /**
  * This file contains the parent class for check question types.
  *
@@ -127,6 +127,7 @@ class check extends question {
         }
 
         $choicetags = new \stdClass();
+        $choicetags->message = $this->get_min_max_message();
         $choicetags->qelements = [];
         foreach ($this->choices as $id => $choice) {
             $checkbox = new \stdClass();
@@ -376,5 +377,43 @@ class check extends question {
             }
         }
         return $resultdata;
+    }
+
+    protected function get_min_max_message() {
+        $min = $this->length;
+        $max = $this->precise;
+
+        $msg = '';
+
+        if(!is_numeric($min)) $min = 0;
+        if(!is_numeric($max)) $max = 0;
+
+        //Only Min
+        if($min != 0 && $max == 0){
+            $msg = get_string('check_min_box', 'questionnaire', $min);
+        }
+
+        //Only Max
+        if($max != 0 && $min == 0){
+            $msg = get_string('check_max_box', 'questionnaire', $max);
+        }
+
+        //Min && Max
+        if($max != 0 && $min != 0){
+            $a = new \stdClass;
+            $a->min = $min;
+            $a->max = $max;
+            $msg = get_string('check_min_max', 'questionnaire', $a);
+        }
+
+        if(!empty($msg)){
+            $msg = get_string('check_message_min_max', 'questionnaire').$msg;
+        }
+
+        $result = array();
+        $result['ifpresent'] = !empty($msg)?1:0;
+        $result['message'] = $msg;
+
+        return $result;
     }
 }

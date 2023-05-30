@@ -390,6 +390,9 @@ class mod_questionnaire_generator extends testing_module_generator {
             case QUESSECTIONTEXT:
                 $qtype = 'sectiontext';
                 break;
+            case QUESFILE:
+                $qtype = 'file';
+                break;
             case QUESPAGEBREAK:
                 $qtype = 'sectionbreak';
                 break;
@@ -436,6 +439,9 @@ class mod_questionnaire_generator extends testing_module_generator {
                 break;
             case QUESSECTIONTEXT:
                 $qtype = 'Section Text';
+                break;
+            case QUESFILE:
+                $qtype = 'File';
                 break;
             case QUESPAGEBREAK:
                 $qtype = 'Section Break';

@@ -109,6 +109,10 @@ class backup_questionnaire_activity_structure_step extends backup_activity_struc
 
         $responsetext = new backup_nested_element('response_text', array('id'), array('response_id', 'question_id', 'response'));
 
+        $responsefiles = new backup_nested_element('response_files');
+
+        $responsefile = new backup_nested_element('response_file', array('id'), array('response_id', 'question_id', 'response'));
+
         // Build the tree.
         $questionnaire->add_child($surveys);
         $surveys->add_child($survey);
@@ -152,6 +156,9 @@ class backup_questionnaire_activity_structure_step extends backup_activity_struc
         $response->add_child($responsetexts);
         $responsetexts->add_child($responsetext);
 
+        $response->add_child($responsefiles);
+        $responsetexts->add_child($responsefile);
+
         // Define sources.
         $questionnaire->set_source_table('questionnaire', array('id' => backup::VAR_ACTIVITYID));
 
@@ -183,6 +190,7 @@ class backup_questionnaire_activity_structure_step extends backup_activity_struc
                 $responserank->set_source_table('questionnaire_response_rank', array('response_id' => backup::VAR_PARENTID));
                 $responsesingle->set_source_table('questionnaire_resp_single', array('response_id' => backup::VAR_PARENTID));
                 $responsetext->set_source_table('questionnaire_response_text', array('response_id' => backup::VAR_PARENTID));
+                $responsetext->set_source_table('questionnaire_response_file', array('response_id' => backup::VAR_PARENTID));
             }
 
             // Define id annotations.

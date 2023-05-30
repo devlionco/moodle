@@ -149,7 +149,12 @@ class date extends responsetype {
      * @return string - Display output.
      */
     public function display_results($rids=false, $sort='', $anonymous=false) {
-        $numresps = count($rids);
+        global $COURSE;
+
+        // All users.
+        $context = \context_course::instance($COURSE->id);
+        $numresps = count_enrolled_users($context, 'local/petel:studentview', 0, true);
+        
         if ($rows = $this->get_results($rids, $anonymous)) {
             $numrespondents = count($rows);
             $counts = [];

@@ -84,6 +84,8 @@ class restore_questionnaire_activity_structure_step extends restore_activity_str
                     '/activity/questionnaire/attempts/attempt/responses/response/response_singles/response_single');
                 $paths[] = new restore_path_element('questionnaire_response_text',
                     '/activity/questionnaire/attempts/attempt/responses/response/response_texts/response_text');
+                $paths[] = new restore_path_element('questionnaire_response_file',
+                        '/activity/questionnaire/attempts/attempt/responses/response/response_files/response_file');
 
             } else {
                 // New system.
@@ -102,6 +104,8 @@ class restore_questionnaire_activity_structure_step extends restore_activity_str
                     '/activity/questionnaire/responses/response/response_singles/response_single');
                 $paths[] = new restore_path_element('questionnaire_response_text',
                     '/activity/questionnaire/responses/response/response_texts/response_text');
+                $paths[] = new restore_path_element('questionnaire_response_file',
+                        '/activity/questionnaire/responses/response/response_files/response_file');
             }
         }
 
@@ -425,6 +429,42 @@ class restore_questionnaire_activity_structure_step extends restore_activity_str
     /**
      * Stuff to do after execution.
      */
+    protected function process_questionnaire_response_file($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->response_id = $this->get_new_parentid('questionnaire_response');
+        $data->question_id = $this->get_mappingid('questionnaire_question', $data->question_id);
+
+        // Copy file.
+        $file = $DB->get_record('files', array('id' => $data->response));
+        if(!empty($file)){
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($file->contextid, $file->component, $file->filearea, $file->itemid);
+
+            foreach ($files as $f) {
+                if($f->get_filesize() != 0 || $f->get_filename() != '.') {
+                    $fileinfo = array(
+                            'contextid' => $file->contextid,
+                            'component' => $f->get_component(),
+                            'filearea' => $f->get_filearea(),
+                            'itemid' => $data->question_id.time(),
+                            'filepath' => $f->get_filepath(),
+                            'filename' => $f->get_filename()
+                    );
+
+                    // Save file.
+                    $newrecord = $fs->create_file_from_string($fileinfo, $f->get_content());
+                }
+            }
+
+            $data->response = $newrecord->get_id();
+        }
+
+        // Insert the questionnaire_response_file record.
+        $DB->insert_record('questionnaire_response_file', $data);
+    }
+
     protected function after_execute() {
         global $DB;
 

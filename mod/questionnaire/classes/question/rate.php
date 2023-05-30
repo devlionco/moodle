@@ -229,7 +229,18 @@ class rate extends question {
 
         // The 0.1% right margin is needed to avoid the horizontal scrollbar in Chrome!
         // A one-line rate question (no content) does not need to span more than 50%.
-        $width = $nocontent ? "50%" : "99.9%";
+
+        if($nocontent){
+            $width = "50%";
+        }else{
+            if($this->length != 0){
+                //$width = 5*$this->length."%";
+                $width = '100%';
+            }else{
+                $width = "99%";
+            }
+        }
+
         $choicetags->qelements['twidth'] = $width;
         $choicetags->qelements['headerrow'] = [];
         // If Osgood, adjust central columns to width of named degrees if any.
@@ -250,9 +261,9 @@ class rate extends question {
             $colwidth = (100 / $this->length).'%';
             $textalign = 'right';
         } else {
-            $width = '59%';
+            $width = '25%';//'0.01%';  //59%
             $colwidth = (40 / $this->length).'%';
-            $textalign = 'left';
+            $textalign = 'right';
         }
 
         $choicetags->qelements['headerrow']['col1width'] = $width;
@@ -343,7 +354,12 @@ class rate extends question {
                         $title = get_string('pleasecomplete', 'questionnaire');
                     }
                     // Set value of notanswered button to -999 in order to eliminate it from form submit later on.
-                    $colinput = ['name' => $str, 'value' => -999];
+                    $colinput = [
+                        'name' => $str,
+                        'value' => -999,
+                        'id' => $str.'_0',
+                        'label' => get_string('skipchoice', 'questionnaire', $content),
+                    ];
                     if (!empty($checked)) {
                         $colinput['checked'] = true;
                     }
@@ -375,7 +391,6 @@ class rate extends question {
                     }
                     $col['colstyle'] = 'text-align:center';
                     $col['colclass'] = $bg;
-                    $col['colhiddentext'] = get_string('option', 'questionnaire', $j);
                     $col['colinput']['name'] = $str;
                     $col['colinput']['value'] = $value;
                     $col['colinput']['id'] = $str.'_'.$value;
@@ -388,7 +403,12 @@ class rate extends question {
                     if (!empty($order)) {
                         $col['colinput']['onclick'] = $order;
                     }
-                    $col['colinput']['label'] = 'Choice '.$collabel[$j].' for row '.format_text($content, FORMAT_PLAIN);
+                    $colinputs = [
+                        'col' => $collabel[$j],
+                        'row' => format_text($content, FORMAT_PLAIN)
+                    ];
+                    $col['colinput']['label'] = get_string('choice', 'questionnaire', (object)$colinputs);
+
                     if ($bg == 'c0 raterow') {
                         $bg = 'c1 raterow';
                     } else {

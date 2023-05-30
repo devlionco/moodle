@@ -143,7 +143,8 @@ class renderer extends \plugin_renderer_base {
      */
     public function complete_formstart($action, $hiddeninputs=[]) {
         $output = '';
-        $output .= \html_writer::start_tag('form', ['id' => 'phpesp_response', 'method' => 'post', 'action' => $action]) . "\n";
+        // add 'enctype' =>"multipart/form-data" to output array for file upload
+        $output .= \html_writer::start_tag('form', ['id' => 'phpesp_response', 'method' => 'post', 'action' => $action, 'enctype' =>"multipart/form-data"]) . "\n";
         foreach ($hiddeninputs as $name => $value) {
             $output .= \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $name, 'value' => $value]) . "\n";
         }
@@ -253,6 +254,22 @@ class renderer extends \plugin_renderer_base {
      * @throws \moodle_exception
      */
     public function response_output($question, $response, $qnum=null, $pdf=false) {
+        global $PAGE, $questionnaire;
+
+        // PTL-6414 Do not display dependent questions the student did no answer.
+        // For now, check what the response type is until we've got it all refactored.
+        if ($response instanceof \mod_questionnaire\responsetype\response\response) {
+            $skippedquestion = !isset($response->answers[$question->id]);
+        } else {
+            $skippedquestion = !empty($response) && !array_key_exists('q'.$question->id, $response);
+        }
+        if (($PAGE->pagetype === 'mod-questionnaire-myreport'
+            || $PAGE->pagetype === 'mod-questionnaire-report') &&
+             !empty($question->dependencies) && $skippedquestion) {
+            return;
+        }
+        // End skip un answered questions.
+
         $pagetags = $question->response_output($response, $qnum);
 
         // If the response has a template, then render it from the 'qformelement' context. If no template, then 'qformelement'
@@ -324,6 +341,15 @@ class renderer extends \plugin_renderer_base {
 
         // If the response has a template, then render it from $pagetags. If no template, then $pagetags already contains HTML.
         if (($template = $question->results_template($pdf))) {
+            if (get_string('thisdirection', 'langconfig') === 'rtl') {
+                $right = 'left';
+                $left = 'right';
+            } else {
+                $right = 'right';
+                $left = 'left';
+            }
+            $pagetags->align_right = $right;
+            $pagetags->align_left = $left;
             return $this->render_from_template($template, $pagetags);
         } else {
             return $pagetags;
