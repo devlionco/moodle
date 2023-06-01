@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template format_cards/local/content/completion
+    @template format_flexsections/local/content/completion
 
     Displays the completion badge for a card
 
@@ -34,6 +34,8 @@
     }
 }}
 {{#completion}}
+
+{{#modecircle}}
     <div class="bg-secondary small {{#iscomplete}}text-success icon-no-margin{{/iscomplete}}{{^iscomplete}}text-body{{/iscomplete}} section-completion">
         <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
             <circle class="outer"
@@ -53,10 +55,48 @@
             <span class="sr-only">{{#str}} completed, core {{/str}}</span>
         {{/iscomplete}}
         {{#showpercentage}}
-            {{#str}} section:completion:percentage, format_cards, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
+            {{#str}} section:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
         {{/showpercentage}}
         {{#showcount}}
-            {{#str}} section:completion:count, format_cards, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
+            {{#str}} section:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
         {{/showcount}}
     </div>
+{{/modecircle}}
+{{^modecircle}}
+
+    {{!-- TODO: --}}
+    <style>
+        .outer {
+    fill: #ddd;
+    }
+
+    .inner {
+    fill: #007bff;
+    }
+
+    .complete {
+    fill: #28a745;
+    }
+    </style>
+
+    <div class=" small {{#iscomplete}}text-success icon-no-margin{{/iscomplete}}{{^iscomplete}}text-body{{/iscomplete}} section-completion">
+        <svg viewBox="0 0 10 100" xmlns="http://www.w3.org/2000/svg">
+        <rect class="outer" x="0" y="0" width="10" height="100"></rect>
+        {{#hasprogress}}
+            <rect class="inner{{#iscomplete}} complete{{/iscomplete}}" x="0" y="0" width="10" height="{{percentage}}"></rect>
+        {{/hasprogress}}
+        </svg>
+        {{#iscomplete}}
+            {{#pix}} i/checked, core, done {{/pix}}
+            <span class="sr-only">{{#str}} completed, core {{/str}}</span>
+        {{/iscomplete}}
+        {{#showpercentage}}
+            {{#str}} section:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
+        {{/showpercentage}}
+        {{#showcount}}
+            {{#str}} section:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
+        {{/showcount}}
+    </div>
+{{/modecircle}}
+
 {{/completion}}

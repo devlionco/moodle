@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template format_cards/local/content/section-card
+    @template format_flexsections/local/content/section-card
 
     Displays a section as a card. Does not display activities, just the section header
 
@@ -52,7 +52,7 @@
             </div>
             <div class="card-overlay">
                 <div class="card-header-fade">
-                    {{> format_cards/local/content/availability }}
+                    {{> core_courseformat/local/content/section/availability }}
                     {{$ format_flexsections/local/content/completion }}
                         {{> format_flexsections/local/content/completion }}
                     {{/ format_flexsections/local/content/completion }}
@@ -76,5 +76,9 @@
             </div>
         </a>
     {{/header}}
+
+    {{#lastseen}}
+    {{#str}} lastseen, format_flexsections {{/str}}
+    {{/lastseen}}
 
 </div>

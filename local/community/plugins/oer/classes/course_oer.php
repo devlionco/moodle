@@ -136,43 +136,21 @@ class course_oer {
             return false;
         }
 
-        $query = "
-            SELECT
-                cm.id AS cmid,
-                cm.course AS courseid,
-                c.category AS catid,
-                cm.instance AS instance,
-                cm.added AS cm_created,  	
-                cm.visible AS visible,
-                cm.module AS modid,
-                m.name AS mod_type,
-                
-                cs.id AS sectionid,  
-                cs.name AS section_name,  
-                cs.summary AS section_summary,  
-                cs.sequence AS section_sequence,  
-                cs.section AS section_order,
-                
-                GROUP_CONCAT(DISTINCT t.rawname SEPARATOR ',') AS tags,
-                compm.competencyid AS compmcompetencyid,
-                compq.competencyid AS compqcompetencyid            
-                
-            FROM {course_modules} cm
-            LEFT JOIN {course} c ON(cm.course = c.id)
-            LEFT JOIN {modules} m ON(cm.module = m.id)
-            LEFT JOIN {course_sections} cs ON cm.section = cs.id
-            LEFT JOIN {tag_instance} ti ON (ti.itemid = cm.id)
-            LEFT JOIN {tag} t ON (ti.tagid = t.id)
-                
-            LEFT JOIN {competency_modulecomp} compm ON (cm.id = compm.cmid)
-            LEFT JOIN {quiz_slots} quizslots ON cm.instance = (quizslots.quizid)
-            LEFT JOIN {question_references} qr ON qr.itemid = quizslots.id
-            LEFT JOIN {competency_questioncomp} compq ON (qr.questionbankentryid = compq.qid)
-            
-            WHERE cm.deletioninprogress != 1 AND cm.id IN (" . implode(',', $cmids) . ")
-            GROUP BY cm.id
-            ;
-        ";
+        $query = "SELECT cm.id AS cmid, cm.course AS courseid, c.category AS catid, cm.instance AS instance,
+                         cm.added AS cm_created, cm.visible AS visible, cm.module AS modid, m.name AS mod_type,
+                         cs.id AS sectionid, cs.name AS section_name, cs.summary AS section_summary,
+                         cs.sequence AS section_sequence, cs.section AS section_order,
+                         GROUP_CONCAT(DISTINCT t.rawname SEPARATOR ',') AS tags
+                    FROM {course_modules} cm
+               LEFT JOIN {course} c ON (cm.course = c.id)
+               LEFT JOIN {modules} m ON (cm.module = m.id)
+               LEFT JOIN {course_sections} cs ON cm.section = cs.id
+               LEFT JOIN {tag_instance} ti ON (ti.itemid = cm.id)
+               LEFT JOIN {tag} t ON (ti.tagid = t.id)
+               LEFT JOIN {competency_modulecomp} compm ON (cm.id = compm.cmid)
+                   WHERE cm.deletioninprogress != 1
+                         AND cm.id IN (" . implode(',', $cmids) . ")
+                GROUP BY cm.id";
 
         $objs = $DB->get_records_sql($query, []);
 

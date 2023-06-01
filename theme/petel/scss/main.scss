@@ -10,15 +10,15 @@ $carousel-control-color: $petel-primary !default;
 @import "../../boost/scss/moodle";
 // Uncomment the following, to debug SCSS using CLI sassc compiler
 // $ sassc theme/petel/scss/main.scss petel_preview.css
-//@import 'globals/variables_physics';
-//@import 'globals/variables_chemistry';
 
-/*
-@import "globals/petel-common";
-@import 'plugins/sharequestion';
-@import 'plugins/oer';
-@import 'plugins/diagnostic';
-@import 'plugins/sharesequence';
-@import 'plugins/redmine-messages';
-@import 'plugins/local_quizpresets';
-*/
+@import 'globals/fonts';
+@import 'globals/text';
+
+@import "components/header";
+
+// @import 'plugins/sharequestion';
+// @import 'plugins/oer';
+// @import 'plugins/diagnostic';
+// @import 'plugins/sharesequence';
+// @import 'plugins/redmine-messages';
+// @import 'plugins/local_quizpresets';

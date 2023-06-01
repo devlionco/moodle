@@ -83,4 +83,14 @@ if ($hassiteconfig) {
             FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE => get_string('form:course:progressformat:percentage', 'format_flexsections')
         ]
     ));
+
+    $settings->add(new admin_setting_configselect('format_flexsections/progressmode',
+        get_string('form:course:progressmode', 'format_flexsections'),
+        '',
+        FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE,
+        [
+            FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE => get_string('form:course:progressmode:circle', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE => get_string('form:course:progressmode:line', 'format_flexsections')
+        ]
+    ));
 }

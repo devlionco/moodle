@@ -551,8 +551,11 @@ class utility {
      * @return obj
      */
     public static function get_course_image($course, $islist = false) {
+        global $CFG, $OUTPUT, $PAGE;
 
-        global $CFG, $OUTPUT;
+        $coursecontext = context_course::instance($course->id);
+        // require_login($course);
+        $PAGE->set_context($coursecontext);
 
         if (!$islist) {
             $course = new core_course_list_element($course);

@@ -36,6 +36,8 @@ define('FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW', 1);
 define('FORMAT_FLEXSECTIONS_SHOWPROGRESS_HIDE', 2);
 define('FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT', 1);
 define('FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE', 2);
+define('FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE', 1);
+define('FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE', 2);
 define('FORMAT_FLEXSECTIONS_HIDDENSECTION_COLLAPSED', 0);
 define('FORMAT_FLEXSECTIONS_HIDDENSECTION_VISIBLE', 1);
 define('FORMAT_FLEXSECTIONS_ORIENTATION_VERTICAL', 1);
@@ -1429,7 +1431,7 @@ class format_flexsections extends core_courseformat\base {
                         [
                             FORMAT_FLEXSECTIONS_USEDEFAULT => new lang_string(
                                 'form:course:usedefault',
-                                'format_cards',
+                                'format_flexsections',
                                 $options[$default])
                         ],
                         $options
@@ -1505,6 +1507,13 @@ class format_flexsections extends core_courseformat\base {
         ];
 
         $options['progressformat'] = $createselect('progressformat', $progressformatoptions, $defaults->progressformat);
+
+        $progressmodeoptions = [
+            FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE => new lang_string('form:course:progressmode:circle', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE => new lang_string('form:course:progressmode:line', 'format_flexsections')
+        ];
+
+        $options['progressmode'] = $createselect('progressmode', $progressmodeoptions, $defaults->progressmode);
 
         return $options;
     }
@@ -1621,4 +1630,68 @@ function format_flexsections_pluginfile(stdClass $course,
     $filestorage = get_file_storage();
     $file = $filestorage->get_file($context->id, 'format_flexsections', $filearea, $itemid, $filepath, $filename);
     send_stored_file($file, 86400, 0, $forcedownload, $options);
+}
+
+function format_flexsections_lastseen($courseid, $sectionid, $userid) {
+    global $DB;
+
+    $lastsection = false;
+
+    $params   = [];
+    $params[] = $courseid;
+    $params[] = $userid;
+    $params[] = '\\core\\event\\course_viewed';
+    $params[] = '%coursesectionnumber%';
+
+    $sql = "SELECT *
+        FROM {logstore_standard_log} lsl
+        WHERE lsl.courseid = ?
+            AND lsl.userid = ?
+            AND lsl.eventname = ?
+            AND lsl.component = 'core'
+            AND lsl.action = 'viewed'
+            AND lsl.target = 'course'
+            AND lsl.other LIKE ?
+        ORDER BY lsl.timecreated DESC";
+
+    if ($events = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
+        $other       = json_decode($events->other);
+        $lastsection = $other->coursesectionnumber == $sectionid ?? false;
+    }
+
+    return $lastsection;
+}
+
+/**
+ * Get course summary image
+ * @param core_course_list_element $courseid
+ * @param bool $islist
+ * @return obj
+ */
+function format_flexsections_get_course_image($course, $islist = false) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    $coursecontext = context_course::instance($course->id);
+    // require_login($course);
+    $PAGE->set_context($coursecontext);
+
+    if (!$islist) {
+        $course = new core_course_list_element($course);
+    }
+
+    // Course image.
+    foreach ($course->get_course_overviewfiles() as $file) {
+        $isimage     = $file->is_valid_image();
+        $courseimage = file_encode_url("$CFG->wwwroot/pluginfile.php",
+            '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+            $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+        if ($isimage) {
+            break;
+        }
+    }
+    if (!empty($courseimage)) {
+        return $courseimage;
+    } else {
+        return $OUTPUT->image_url($CFG->instancename . '_placeholder', 'theme');
+    }
 }

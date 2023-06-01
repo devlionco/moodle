@@ -113,7 +113,42 @@
         </a>
     </div>
 {{/collapsemenu}}
-<div class = "course-image border rounded" style = "background-image: url({{courseimageurl}});"></div>
+<div id="courseheaderimage" class="course-image border rounded" style="background-image: url({{courseimageurl}});">
+    {{#showuploadcourseimage}}
+    <div class="uploadcourseimage col-12 mb-1 mr-md-0 mb-md-0">
+        <form id="uploadcourseimageform">
+            <input type="hidden" id="courseid" name="courseid" value="{{courseid}}" />
+            <label data-toggle="tooltip" data-placement="bottom" title="{{#str}}resolution_must, theme_petel{{/str}}"
+                for="uploadcourseimage" id="uploadcourseimagelabel" class="btn btn-secondary mb-0"><i
+                    class="fa fa-picture-o" aria-hidden="true"></i></label>
+            <input type="file" class="form-control-file" id="uploadcourseimage"
+                style="visibility:hidden; width: 0; height: 0">
+        </form>
+    </div>
+    {{/showuploadcourseimage}}
+
+    {{#coursecompletion}}
+        <div class="coursecompletion">
+            {{#iscomplete}}
+                {{#pix}} i/checked, core, done {{/pix}}
+                <span class="sr-only">{{#str}} completed, core {{/str}}</span>
+            {{/iscomplete}}
+            {{#showpercentage}}
+                {{#str}} course:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
+            {{/showpercentage}}
+            {{#showcount}}
+                {{#str}} course:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
+            {{/showcount}}
+        </div>
+    {{/coursecompletion}}
+
+</div>
+<div class="col-12 col-xl-3 col-lg-3 d-flex align-items-center justify-content-start">
+    {{{enrolkeybtn}}}
+</div>
+<div class="col-12 col-xl-3 col-lg-3 d-flex align-items-center justify-content-start">
+    {{{courselinks}}}
+</div>
 <div id="{{uniqid}}-course-format">
     <h2 class="accesshide">{{{title}}}</h2>
     {{{completionhelp}}}
@@ -123,7 +158,7 @@
         {{/initialsection}}
         {{^showascard}}
             {{#sections}}
-                {{> format_flexsrc/local/content/section }}
+                {{> format_flexsections/local/content/section }}
             {{/sections}}
         {{/showascard}}
     </ul>

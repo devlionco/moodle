@@ -51,6 +51,8 @@ class section extends \core_courseformat\output\local\content\section {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        global $USER;
+
         $data = parent::export_for_template($output);
 
         // For sections that are displayed as a link do not print list of cms or controls.
@@ -106,6 +108,10 @@ class section extends \core_courseformat\output\local\content\section {
                 $data->summary->summarytext = '';
             }
         }
+
+        // Lastseen
+        $lastseen = format_flexsections_lastseen($this->format->get_course()->id, $this->section->section, $USER->id);
+        $data->lastseen = $lastseen;
 
         return $data;
     }
@@ -213,6 +219,7 @@ class section extends \core_courseformat\output\local\content\section {
 
         $iscomplete = $total == $completed;
         $progressformat = $this->format->get_format_option('progressformat', $this->section);
+        $progressmode = $this->format->get_format_option('progressmode', $this->section);
         $percentage = round(($completed / $total) * 100);
 
         return [
@@ -223,6 +230,7 @@ class section extends \core_courseformat\output\local\content\section {
             'iscomplete' => $iscomplete,
             'hasprogress' => $completed > 0,
             'showpercentage' => !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE,
+            'modecircle' => !$iscomplete && $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE,
             'showcount' => !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT
         ];
     }

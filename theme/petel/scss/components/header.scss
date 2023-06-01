@@ -1,0 +1,133 @@
+nav.navbar {
+    .navbar-brand {
+        //TODO: add logo styles
+    }
+
+    .navigation {
+        font-family: $primary-font;
+        .nav-link {
+            color: $white;
+            border: none;
+            font-weight: 300;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            color: $white;
+            padding: .5rem 1rem;
+            transition: all ease .25s;
+
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                text-shadow: 0 0 .0625rem #fff;
+                text-decoration: underline;
+                transition: all ease .25s;
+            }
+        }
+    }
+    #usernavigation {
+        .nav-link {
+            font-size: 2rem;
+            color: $white;
+            min-width: 3rem;
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                text-shadow: 0 0 .125rem #fff;
+                transition: all ease .25s;
+            }
+        }
+        [data-region="popover-region-messages"],
+        .usermenu-container {
+            margin-left: .5rem;
+        }
+/*         .usermenu-container {
+            margin-right: ;
+        } */
+        .usermenu {
+            #user-menu-toggle {
+                padding: 0;
+                color: $white;
+            }
+        }
+    }
+    .editmode-switch-divider {
+        height: 2.5rem;
+    }
+    .editmode-switch-form {
+        .input-group {
+            align-items: center;
+
+            label {
+                color: $white;
+                font-family: $primary-font;
+                font-style: normal;
+                font-weight: 400;
+                font-size: .75rem;
+                line-height: 1.125rem;
+            }
+        }
+
+        .custom-switch {
+            width: 2.125rem;
+            height: 1.125rem;
+            min-height: unset;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            input {
+                width: 100%;
+                height: 100%;
+            }
+
+            .custom-control-label {
+                position: absolute;
+                z-index: 0;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+
+                &::before {
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: none;
+                    background-color: $white;
+                    border: .0625rem solid $secondary;
+                    border-radius: 1.125rem;
+                }
+
+                &::after {
+                    position: absolute;
+                    width: .875rem;
+                    height: .875rem;
+                    left: .125rem;
+                    top: .125rem;
+                    border-radius: 100%;
+                    background-color: $secondary;
+                }
+            }
+        }
+
+        &.editmode-active {
+            .custom-switch {
+                .custom-control-label {
+                    &::before {
+                        background: none;
+                        background-color: $warning;
+                    }
+
+                    &::after {
+                        left: unset;
+                        right: .875rem;
+                    }
+                }
+            }
+        }
+    }
+
+}
