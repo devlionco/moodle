@@ -53,7 +53,8 @@
     {{/togglelabel}}
 
     {{$togglecontent}}
-        {{#pix}} i/notifications, core, {{/pix}}
+        <!-- {{#pix}} i/notifications, core, {{/pix}} -->
+        <i class="fa-light fa-bell"></i>
         <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container"
         aria-label="{{#str}} unreadnotifications, core_message, {{unreadcount}} {{/str}}">{{unreadcount}}</div>
     {{/togglecontent}}

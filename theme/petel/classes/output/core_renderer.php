@@ -378,19 +378,11 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         $header->hasnavbar = empty($PAGE->layout_options['nonavbar']);
         $header->pageheadingbutton = $this->page_heading_button();
         $header->courseheader = $this->course_header();
-        $header->courselinks = $iscoursepage ? $this->course_links() : '';
+        // $header->courselinks = $iscoursepage ? $this->course_links() : '';
         $header->coursesearch = $iscoursepage ? $this->course_search() : '';
         $header->iscoursepage = $iscoursepage;
         $header->courseid = $COURSE->id;
-
-        // Uploadcourseimage.
-        $showuploadcourseimage = false;
-        if ($this->page->user_is_editing() && $COURSE->id > 1 && (substr($PAGE->pagetype, 0, strlen('course-view')) === 'course-view')) {
-            $showuploadcourseimage = true;
-            $PAGE->requires->js_call_amd('theme_petel/courseimage', 'init');
-            $header->sesskey = sesskey();
-        }
-        $header->showuploadcourseimage = $showuploadcourseimage;
+        $header->headeractions = $this->page->get_header_actions();
 
         if (getbacktocourse()) {
             $url = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $PAGE->course->id));
@@ -404,22 +396,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         $petelutility = new utility();
         $courseimage = $petelutility->get_course_image($COURSE);
         $header->courseimage = $courseimage;
-
-        // Enrolkey.
-        $enrolkeybtn = false;
-        if ($PAGE->user_allowed_editing() && $PAGE->pagelayout === 'course') {
-            $instances = $DB->get_records('enrol', array('courseid' => $PAGE->course->id, 'enrol' => 'self'));
-            foreach ($instances as $instance) {
-                if (!empty($instance->password)) {
-                    $title = get_string('studentsenrolkey', 'theme_petel', $instance->password);
-                    $icon = $OUTPUT->pix_icon('i/info', '', 'moodle', array('class' => 'm-0'));
-                    $enrolkeybtn = html_writer::tag('button', $icon . $title, array('id' => 'enrolkeybtn', 'class' => 'btn btn-sm btn-secondary', 'aria-label' => $title));
-                    $PAGE->requires->js_call_amd('core_course/enrolkey', 'init_dialog', array($this->context_header(), $instance->password));
-                    $PAGE->requires->strings_for_js(array('getcoursekeytitle', 'getkey', 'cancel'), 'theme_petel');
-                }
-            }
-        }
-        $header->enrolkeybtn = $enrolkeybtn;
 
         // Button disable shared course.
         if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id), $USER->id)){
@@ -461,7 +437,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $this->render_from_template('core/full_header', $header);
     }
 
-    public function course_links() {
+    public static function course_links() {
         global $CFG, $COURSE, $OUTPUT, $USER, $DB, $PAGE;
         $html = '';
         $enablereviews = get_config('community_oer', 'enablereviews');
@@ -471,28 +447,28 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         }
         $btnclass = 'mr-1 ml-1 btn btn-default quicklinks ';
         if ($COURSE->id > 1) {
-            if ($reviewrequests) {
-                $title = get_string('give_feedback', 'community_oer');
-                $text = html_writer::tag('span', $reviewrequests, array('id' => 'reviewOnCourseCounter', 'class' => ''));
-                $icon = $OUTPUT->pix_icon('t/message', $title, 'moodle', array('class' => 'm-1'));
-                $attr = array(
-                    'id' => 'reviewOnCourse',
-                    'class' => $btnclass,
-                    'title' => $title,
-                    'role'=>'button',
-                    'data-handler' => 'askForReviewOnCourse',
-                    'data-courseid' => $COURSE->id
-                );
-                $html .= html_writer::tag('button', $icon.' '.$text, $attr);
-            }
+            // if ($reviewrequests) {
+            //     $title = get_string('give_feedback', 'community_oer');
+            //     $text = html_writer::tag('span', $reviewrequests, array('id' => 'reviewOnCourseCounter', 'class' => ''));
+            //     $icon = $OUTPUT->pix_icon('t/message', $title, 'moodle', array('class' => 'm-1'));
+            //     $attr = array(
+            //         'id' => 'reviewOnCourse',
+            //         'class' => $btnclass,
+            //         'title' => $title,
+            //         'role'=>'button',
+            //         'data-handler' => 'askForReviewOnCourse',
+            //         'data-courseid' => $COURSE->id
+            //     );
+            //     $html .= html_writer::tag('button', $icon.' '.$text, $attr);
+            // }
 
-            if ($COURSE->showgrades && has_capability('gradereport/grader:view', \context_course::instance($COURSE->id))) {
-                $url = new moodle_url('/grade/report/index.php', array('id' => $COURSE->id));
-                $title = get_string('grades', 'core');
-                $icon = $OUTPUT->pix_icon('t/grades', '', 'moodle', array('class' => 'm-1'));
-                $html .= html_writer::link($url, $icon, array('class' => $btnclass,
-                    'role'=>'button', 'title' => $title));
-            }
+            // if ($COURSE->showgrades && has_capability('gradereport/grader:view', \context_course::instance($COURSE->id))) {
+            //     $url = new moodle_url('/grade/report/index.php', array('id' => $COURSE->id));
+            //     $title = get_string('grades', 'core');
+            //     $icon = $OUTPUT->pix_icon('t/grades', '', 'moodle', array('class' => 'm-1'));
+            //     $html .= html_writer::link($url, $icon, array('class' => $btnclass,
+            //         'role'=>'button', 'title' => $title));
+            // }
 
             if (has_capability('community/sharesequence:sequencecopy', \context_course::instance($COURSE->id))){
                 $availabletocohort = get_config('community_sharesequence', 'availabletocohort');
@@ -546,31 +522,31 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 }
             }
 
-            if (has_capability('moodle/course:viewparticipants', \context_course::instance($COURSE->id))) {
-                $url = new moodle_url('/user/index.php', array('id' => $COURSE->id));
-                $title = get_string('participants', 'core');
-                $icon = $OUTPUT->pix_icon('i/cohort', '', 'moodle', array('class' => 'm-1'));
-                $html .= html_writer::link($url, $icon, array('class' => $btnclass.' participants ',
-                    'role' => 'button', 'title' => $title));
-            }
+            // if (has_capability('moodle/course:viewparticipants', \context_course::instance($COURSE->id))) {
+            //     $url = new moodle_url('/user/index.php', array('id' => $COURSE->id));
+            //     $title = get_string('participants', 'core');
+            //     $icon = $OUTPUT->pix_icon('i/cohort', '', 'moodle', array('class' => 'm-1'));
+            //     $html .= html_writer::link($url, $icon, array('class' => $btnclass.' participants ',
+            //         'role' => 'button', 'title' => $title));
+            // }
 
-            $ccs = \core_competency\api::count_competencies_in_course($COURSE->id);
-            if ($ccs > 0) {
-                $url = new moodle_url('/admin/tool/lp/coursecompetencies.php', array('courseid' => $COURSE->id));
-                $title = get_string('competencies', 'core_competency');
-                $icon = $OUTPUT->pix_icon('t/approve', '', 'moodle', array('class' => 'm-1'));
-                $html .= html_writer::link($url, $icon, array('class' => $btnclass,
-                    'role'=>'button', 'title' => $title));
-            }
+            // $ccs = \core_competency\api::count_competencies_in_course($COURSE->id);
+            // if ($ccs > 0) {
+            //     $url = new moodle_url('/admin/tool/lp/coursecompetencies.php', array('courseid' => $COURSE->id));
+            //     $title = get_string('competencies', 'core_competency');
+            //     $icon = $OUTPUT->pix_icon('t/approve', '', 'moodle', array('class' => 'm-1'));
+            //     $html .= html_writer::link($url, $icon, array('class' => $btnclass,
+            //         'role'=>'button', 'title' => $title));
+            // }
 
-            $coursebadges = count(badges_get_badges(BADGE_TYPE_COURSE, $COURSE->id, '', '' , 0, 0));
-            if ($coursebadges > 0) {
-                $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $COURSE->id));
-                $title = get_string('badges', 'core');
-                $icon = $OUTPUT->pix_icon('i/badge', '', 'moodle', array('class' => 'm-1'));
-                $html .= html_writer::link($url, $icon, array('class' => $btnclass,
-                    'role'=>'button', 'title' => $title));
-            }
+            // $coursebadges = count(badges_get_badges(BADGE_TYPE_COURSE, $COURSE->id, '', '' , 0, 0));
+            // if ($coursebadges > 0) {
+            //     $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $COURSE->id));
+            //     $title = get_string('badges', 'core');
+            //     $icon = $OUTPUT->pix_icon('i/badge', '', 'moodle', array('class' => 'm-1'));
+            //     $html .= html_writer::link($url, $icon, array('class' => $btnclass,
+            //         'role'=>'button', 'title' => $title));
+            // }
 
             //Diagnostic
             $pluginmanager = \core_plugin_manager::instance();

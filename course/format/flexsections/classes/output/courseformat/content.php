@@ -16,8 +16,8 @@
 
 namespace format_flexsections\output\courseformat;
 
-use core_courseformat\external\get_state;
 use course_modinfo;
+use html_writer;
 use stdClass;
 
 /**
@@ -52,7 +52,7 @@ class content extends \core_courseformat\output\local\content {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        global $PAGE, $OUTPUT;
+        global $PAGE, $OUTPUT, $COURSE, $DB;
         $data = parent::export_for_template($output);
 
         // If we are on course view page for particular section.
@@ -65,18 +65,18 @@ class content extends \core_courseformat\output\local\content {
             // Add 'back to parent' control.
             $section = $this->format->get_section($this->format->get_viewed_section());
             if ($section->parent) {
-                $sr = $this->format->find_collapsed_parent($section->parent);
-                $url = $this->format->get_view_url($section->section, array('sr' => $sr));
+                $sr                  = $this->format->find_collapsed_parent($section->parent);
+                $url                 = $this->format->get_view_url($section->section, array('sr' => $sr));
                 $data->backtosection = [
-                    'url' => $url->out(false),
-                    'sectionname' => $this->format->get_section_name($section->parent)
+                    'url'         => $url->out(false),
+                    'sectionname' => $this->format->get_section_name($section->parent),
                 ];
             } else {
-                $sr = 0;
-                $url = $this->format->get_view_url($section->section, array('sr' => $sr));
-                $context = \context_course::instance($this->format->get_courseid());
+                $sr                 = 0;
+                $url                = $this->format->get_view_url($section->section, array('sr' => $sr));
+                $context            = \context_course::instance($this->format->get_courseid());
                 $data->backtocourse = [
-                    'url' => $url->out(false),
+                    'url'        => $url->out(false),
                     'coursename' => format_string($this->format->get_course()->fullname, true, ['context' => $context]),
                 ];
             }
@@ -89,7 +89,7 @@ class content extends \core_courseformat\output\local\content {
         // user is currently editing the page. Section #0 should never be
         // displayed as a card.
         //$issinglesectionpage = $this->format->get_section_number() != 0;
-        $data->showascard  = !$PAGE->user_is_editing();
+        $data->showascard = !$PAGE->user_is_editing();
 
         $courseimage = \core_course\external\course_summary_exporter::get_course_image($this->format->get_course());
         if (!$courseimage) {
@@ -97,8 +97,87 @@ class content extends \core_courseformat\output\local\content {
         }
         $data->courseimageurl = $courseimage;
 
+        // Uploadcourseimage.
+        $showuploadcourseimage = false;
+        if ($PAGE->user_is_editing() && $COURSE->id > 1 && (substr($PAGE->pagetype, 0, strlen('course-view')) === 'course-view')) {
+            $showuploadcourseimage = true;
+            $PAGE->requires->js_call_amd('format_flexsections/courseimage', 'init');
+            $data->sesskey  = sesskey();
+            $data->courseid = $COURSE->id;
+        }
+        $data->showuploadcourseimage = $showuploadcourseimage;
+
+        // Enrolkey.
+        $enrolkeybtn = false;
+        if ($PAGE->user_allowed_editing() && $PAGE->pagelayout === 'course') {
+            $instances = $DB->get_records('enrol', array('courseid' => $PAGE->course->id, 'enrol' => 'self'));
+            foreach ($instances as $instance) {
+                if (!empty($instance->password)) {
+                    $title          = get_string('studentsenrolkey', 'theme_petel', $instance->password);
+                    $icon           = $OUTPUT->pix_icon('i/info', '', 'moodle', array('class' => 'm-0'));
+                    $enrolkeybtn    = html_writer::tag('button', $icon . $title, array('id' => 'enrolkeybtn', 'class' => 'btn btn-sm btn-secondary', 'aria-label' => $title));
+                    $context_header = null;
+                    $PAGE->requires->js_call_amd('format_flexsections/enrolkey', 'init_dialog', array($context_header, $instance->password));
+                    $PAGE->requires->strings_for_js(array('getcoursekeytitle', 'getkey', 'cancel'), 'theme_petel');
+                }
+            }
+        }
+        $data->enrolkeybtn = $enrolkeybtn;
+
+        // Course completion.
+        $defaults = get_config('format_flexsections');
+        if ($defaults->showprogress == FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW) {
+            $coursecompletion       = $this->get_course_completion($this->format->get_course()->id);
+            $data->coursecompletion = $coursecompletion;
+            $progressformat         = $defaults->progressformat;
+            $progressmode           = $defaults->progressmode;
+            $iscomplete             = $coursecompletion['total'] == $coursecompletion['completed'];
+            $data->showpercentage   = !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE;
+            $data->modecircle       = !$iscomplete && $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE;
+            $data->showcount        = !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT;
+        }
+
+        // courselinks
+        $iscoursepage = preg_match("/course-view/", $PAGE->pagetype);
+        $data->courselinks = $iscoursepage ? \theme_petel\output\core_renderer::course_links() : '';
+
         return $data;
     }
+
+    function get_course_completion($courseid) {
+        global $DB, $USER;
+    
+        // Get the course modules in the course.
+        $courseModules = $DB->get_records('course_modules', ['course' => $courseid]);
+    
+        if (empty($courseModules)) {
+            // No modules found in the course.
+            return [
+                'total' => 0,
+                'completed' => 0,
+                'percentage' => 0,
+                'iscomplete' => false
+            ];
+        }
+    
+        $courseModuleIds = array_keys($courseModules);
+        $completedModules = $DB->count_records_select('course_modules_completion',
+            'coursemoduleid IN (' . implode(',', $courseModuleIds) . ') AND userid = :userid',
+            ['userid' => $USER->id]
+        );
+    
+        $totalModules = count($courseModules);
+        $percentage = round(($completedModules / $totalModules) * 100);
+        $isComplete = ($completedModules == $totalModules);
+    
+        return [
+            'total' => $totalModules,
+            'completed' => $completedModules,
+            'percentage' => $percentage,
+            'iscomplete' => $isComplete
+        ];
+    }
+    
 
     /**
      * Export sections array data.
@@ -108,16 +187,16 @@ class content extends \core_courseformat\output\local\content {
      * @param \renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
-    protected function export_sections(\renderer_base $output): array {
+    protected function export_sections(\renderer_base $output): array{
 
-        $format = $this->format;
-        $course = $format->get_course();
+        $format  = $this->format;
+        $course  = $format->get_course();
         $modinfo = $this->format->get_modinfo();
 
         // Generate section list.
-        $sections = [];
+        $sections        = [];
         $stealthsections = [];
-        $numsections = $format->get_last_section_number();
+        $numsections     = $format->get_last_section_number();
         foreach ($this->get_sections_to_display($modinfo) as $sectionnum => $thissection) {
             // The course/view.php check the section existence but the output can be called
             // from other parts so we need to check it.
@@ -157,9 +236,9 @@ class content extends \core_courseformat\output\local\content {
      * @param course_modinfo $modinfo the current course modinfo object
      * @return \section_info[] an array of section_info to display
      */
-    private function get_sections_to_display(course_modinfo $modinfo): array {
+    private function get_sections_to_display(course_modinfo $modinfo): array{
         $viewedsection = $this->format->get_viewed_section();
-        return array_values(array_filter($modinfo->get_section_info_all(), function($s) use ($viewedsection) {
+        return array_values(array_filter($modinfo->get_section_info_all(), function ($s) use ($viewedsection) {
             return (!$s->section) ||
                 (!$viewedsection && !$s->parent && $this->format->is_section_visible($s)) ||
                 ($viewedsection && $s->section == $viewedsection);

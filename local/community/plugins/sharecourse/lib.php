@@ -221,7 +221,8 @@ function community_sharecourse_output_fragment_upload_course_to_catalog($args) {
 
     $uploadhtml = str_replace('col-md-3', '', $uploadhtml);
     $uploadhtml = str_replace('col-md-9', 'col-md-12', $uploadhtml);
-    $uploadhtml = str_replace('</form>', '', $uploadhtml);
+    $uploadhtml = str_replace('<form ', '<div ', $uploadhtml);
+    $uploadhtml = str_replace('</form>', '</div>', $uploadhtml);
 
     $data = array(
             'uploadhtml' => $uploadhtml,

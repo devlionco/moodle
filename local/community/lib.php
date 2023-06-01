@@ -36,5 +36,5 @@ function local_community_render_navbar_output() {
 
     $CFG->maagar_category = local_community_get_oercatalog_categoryid();
 
-    return true;
+    return;
 }

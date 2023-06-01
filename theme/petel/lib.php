@@ -39,11 +39,13 @@ function theme_petel_get_main_scss_content($theme) {
     global $CFG;
 
     $scss = '';
+    
     if (isset($CFG->instancename)){
         $scss .= file_get_contents($CFG->dirroot . '/theme/petel/scss/globals/variables_'.$CFG->instancename.'.scss');
     }else {
         $scss .= file_get_contents($CFG->dirroot . '/theme/petel/scss/globals/variables_default.scss');
     }
+    $scss .= file_get_contents($CFG->dirroot . '/theme/petel/scss/globals/variables.scss');
     $scss .= file_get_contents($CFG->dirroot . '/theme/petel/scss/main.scss');
     return $scss;
 }
@@ -96,7 +98,7 @@ function theme_petel_page_init($page) {
         $qaid = isset($quickaccesses[$COURSE->id]) ? $quickaccesses[$COURSE->id] : '';
         $PAGE->requires->js_call_amd('theme_petel/quick_access', 'init', array('quickaccess' => $qaid));
     }
-    $PAGE->requires->css('/lib/jquery/ui-1.13.0/jquery-ui.css');
+    $PAGE->requires->css('/lib/jquery/ui-1.13.2/jquery-ui.css');
 }
 
 /**

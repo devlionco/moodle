@@ -113,7 +113,8 @@ function community_sharesequence_output_fragment_upload_sequence_catalog_page_1(
 
     $uploadhtml = str_replace('col-md-3', '', $uploadhtml);
     $uploadhtml = str_replace('col-md-9', 'col-md-12', $uploadhtml);
-    $uploadhtml = str_replace('</form>', '', $uploadhtml);
+    $uploadhtml = str_replace('<form ', '<div ', $uploadhtml);
+    $uploadhtml = str_replace('</form>', '</div>', $uploadhtml);
 
     // Number of sections.
     $numberofsections = get_config('community_sharesequence', 'numberofsections');
