@@ -248,7 +248,7 @@ class renderer extends \plugin_renderer_base {
             $uselocalcachecol = get_string('no');
             if ($definition['mode'] != cache_store::MODE_REQUEST) {
                 if (isset($definition['canuselocalstore']) && $definition['canuselocalstore']) {
-                    $uselocalcachecol = get_string('yes');
+                    $uselocalcachecol = html_writer::tag('span', get_string('yes'), ['class' => 'yes']);
                 }
             }
 

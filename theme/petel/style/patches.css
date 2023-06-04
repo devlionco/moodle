@@ -1,0 +1,7 @@
+/* Highlight can use local store MUC (admin settings) */
+.canuselocalstore span.yes {
+    background-color: yellow;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
