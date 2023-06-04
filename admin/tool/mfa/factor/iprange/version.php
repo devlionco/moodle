@@ -17,8 +17,7 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     factor_range
- * @subpackage  tool_mfa
+ * @package     factor_iprange
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2018051708.05;   // Requires MDL-60470 improvement.
+$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component    = 'factor_iprange';
 $plugin->release      = 'v0.1';
 $plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = array('tool_mfa' => 2019102400);
+$plugin->dependencies = ['tool_mfa' => 2019102400];

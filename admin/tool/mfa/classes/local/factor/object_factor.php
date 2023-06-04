@@ -25,9 +25,8 @@
 
 namespace tool_mfa\local\factor;
 
-defined('MOODLE_INTERNAL') || die();
-
 interface object_factor {
+
     /**
      * Returns true if factor is enabled, otherwise false.
      *
@@ -63,7 +62,7 @@ interface object_factor {
     /**
      * Defines setup_factor form definition page for particular factor.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -72,7 +71,7 @@ interface object_factor {
     /**
      * Defines setup_factor form definition page after form data has been set.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -90,7 +89,7 @@ interface object_factor {
     /**
      * Defines login form definition page for particular factor.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -99,7 +98,7 @@ interface object_factor {
     /**
      * Defines login form definition page after form data has been set.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -126,17 +125,19 @@ interface object_factor {
     /**
      * Returns an array of all user factors of given type (both active and revoked).
      *
+     * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors();
+    public function get_all_user_factors($user);
 
     /**
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
+     * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_active_user_factors();
+    public function get_active_user_factors($user);
 
     /**
      * Returns true if factor class has factor records that might be revoked.
@@ -147,11 +148,44 @@ interface object_factor {
     public function has_revoke();
 
     /**
+     * Marks factor record as revoked.
+     * If factorid is not provided, revoke all instances of factor.
+     *
+     * @param int $factorid
+     * @return bool
+     */
+    public function revoke_user_factor($factorid);
+
+    /**
+     * When validation code is correct - update lastverified field for given factor.
+     * If factor id is not provided, update all factor entries for user.
+     *
+     * @param int $factorid
+     * @return bool
+     */
+    public function update_lastverified($factorid);
+
+    /**
+     * Gets lastverified timestamp.
+     *
+     * @param int $factorid
+     * @return int
+     */
+    public function get_lastverified($factorid);
+
+    /**
      * Returns true if factor needs to be setup by user and has setup_form.
      *
      * @return bool
      */
     public function has_setup();
+
+    /**
+     * If has_setup returns true, decides if the setup buttons should be shown on the preferences page.
+     *
+     * @return bool
+     */
+    public function show_setup_buttons();
 
     /**
      * Returns true if factor requires user input for success or failure during login.
@@ -186,6 +220,7 @@ interface object_factor {
     /**
      * Retrieves label for a factorid.
      *
+     * @param int $factorid
      * @return string
      */
     public function get_label($factorid);
@@ -200,7 +235,7 @@ interface object_factor {
     /**
      * Returns all possible states for a user.
      *
-     * @return array
+     * @param \stdClass $user
      */
     public function possible_states($user);
 
@@ -216,15 +251,61 @@ interface object_factor {
      * E.g. a combination with nosetup and another factor is not valid,
      * as you cannot pass nosetup with another factor.
      *
-     * @param array array of factors that make up the combination
+     * @param array $combination array of factors that make up the combination
      * @return bool
      */
     public function check_combination($combination);
 
-    /*
+    /**
      * Gets the string for setup button on preferences page.
      *
      * @return string the string to display on the button.
      */
     public function get_setup_string();
+
+    /**
+     * Deletes all instances of a factor for user.
+     *
+     * @param stdClass $user the user to delete for.
+     */
+    public function delete_factor_for_user($user);
+
+    /**
+     * Process a cancel action from a user.
+     *
+     * @return void
+     */
+    public function process_cancel_action();
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return void
+     */
+    public function global_definition($mform);
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return void
+     */
+    public function global_definition_after_data($mform);
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param array $data Data from the form.
+     * @param array $files Files form the form.
+     * @return array of errors from validation.
+     */
+    public function global_validation($data, $files): array;
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param object $data Data from the form.
+     */
+    public function global_submit($data);
 }

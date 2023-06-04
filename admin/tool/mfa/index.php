@@ -40,16 +40,16 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 
 if (empty($factor) || !\tool_mfa\plugininfo\factor::factor_exists($factor)) {
-    print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
+    throw new moodle_exception('factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
 if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
-    print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
+    throw new moodle_exception('actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
 require_sesskey();
 
-$enabledfactors = array();
+$enabledfactors = [];
 foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
     $enabledfactors[] = $enabledfactor->name;
 }
@@ -58,7 +58,7 @@ foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(array('enabled' => 0), 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' => 0], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
@@ -68,7 +68,7 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(array('enabled' => 1), 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' => 1], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.

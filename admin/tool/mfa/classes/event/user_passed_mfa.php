@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Event for successful MFA authorization.
- *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_mfa\event;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Event for when user successfully passed all MFA factor checks.
@@ -39,8 +28,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class user_passed_mfa extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -52,13 +41,21 @@ class user_passed_mfa extends \core\event\base {
      */
     public static function user_passed_mfa_event($user) {
 
-        $data = array(
+        // Build debug info string.
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $debug = '';
+        foreach ($factors as $factor) {
+            $debug .= "<br> Factor {$factor->name} status: {$factor->get_state()}";
+        }
+
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
-                'userid' => $user->id
-            )
-        );
+            'other' => [
+                'userid' => $user->id,
+                'debug' => $debug,
+            ],
+        ];
 
         return self::create($data);
     }
@@ -79,7 +76,7 @@ class user_passed_mfa extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' successfully passed all MFA Factors";
+        return "The user with id '{$this->other['userid']}' successfully passed MFA. <br> Information: {$this->other['debug']}";
     }
 
     /**
