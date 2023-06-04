@@ -13,6 +13,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace factor_iprange\privacy;
+
+use core_privacy\local\metadata\null_provider;
+use core_privacy\local\legacy_polyfill;
+
 /**
  * Privacy provider.
  *
@@ -20,18 +26,6 @@
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace factor_iprange\privacy;
-
-defined('MOODLE_INTERNAL') || die;
-
-use core_privacy\local\metadata\null_provider;
-use core_privacy\local\legacy_polyfill;
-
-/**
- * Class provider
- * @package factor_iprange\privacy
  */
 class provider implements null_provider {
     use legacy_polyfill;

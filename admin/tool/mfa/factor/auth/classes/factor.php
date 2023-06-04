@@ -14,46 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_auth;
+
+use tool_mfa\local\factor\object_factor_base;
+
 /**
  * Auth factor class.
  *
- * @package     tool_mfa
+ * @package     factor_auth
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_auth;
-
-defined('MOODLE_INTERNAL') || die();
-
-use tool_mfa\local\factor\object_factor_base;
-
 class factor extends object_factor_base {
 
     /**
      * Auth Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
-    public function get_all_user_factors() {
-        global $DB, $USER;
-        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
+    public function get_all_user_factors($user) {
+        global $DB;
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
-            'userid' => $USER->id,
+        $record = [
+            'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
-            'createdfromip' => $USER->lastip,
+            'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -80,13 +78,10 @@ class factor extends object_factor_base {
         $safetypes = get_config('factor_auth', 'goodauth');
         if (strlen($safetypes) != 0) {
             $safetypes = explode(',', $safetypes);
-            $authtypes = get_enabled_auth_plugins(true);
 
             // Check all safetypes against user auth.
-            foreach ($safetypes as $type) {
-                if ($authtypes[$type] == $USER->auth) {
-                    return \tool_mfa\plugininfo\factor::STATE_PASS;
-                }
+            if (in_array($USER->auth, $safetypes, true)) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
             }
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         } else {
@@ -98,7 +93,8 @@ class factor extends object_factor_base {
      * Auth Factor implementation.
      * The state can never be set. Always return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -112,16 +108,7 @@ class factor extends object_factor_base {
      */
     public function get_summary_condition() {
         $safetypes = get_config('factor_auth', 'goodauth');
-        $authtypes = get_enabled_auth_plugins(true);
-        $string = '';
 
-        if (strlen($safetypes) > 0) {
-            $safetypes = explode(',', $safetypes);
-            foreach ($safetypes as $type) {
-                $string .= $authtypes[$type];
-            }
-        }
-
-        return get_string('summarycondition', 'factor_'.$this->name, $string);
+        return get_string('summarycondition', 'factor_'.$this->name, $safetypes);
     }
 }

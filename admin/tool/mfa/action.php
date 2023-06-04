@@ -36,25 +36,25 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 $factorid = optional_param('factorid', '', PARAM_INT);
 
-$params = array('action' => $action, 'factor' => $factor, 'factorid' => $factorid);
+$params = ['action' => $action, 'factor' => $factor, 'factorid' => $factorid];
 $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
 
 if (empty($factor) || empty($action)) {
-    print_error('error:directaccess', 'tool_mfa', $returnurl);
+    throw new moodle_exception('error:directaccess', 'tool_mfa', $returnurl);
 }
 
 if (!\tool_mfa\plugininfo\factor::factor_exists($factor)) {
-    print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
+    throw new moodle_exception('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
 if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
-    print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
+    throw new moodle_exception('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
 if (!empty($factorid) && !\tool_mfa\manager::is_factorid_valid($factorid, $USER)) {
-    print_error('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
+    throw new moodle_exception('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
 }
 
 $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
@@ -73,16 +73,13 @@ $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url
 
 switch ($action) {
     case 'setup':
-        // Ensure sesskey is valid.
-        require_sesskey();
-
         if (!$factorobject || !$factorobject->has_setup()) {
             redirect($returnurl);
         }
 
         $PAGE->navbar->add(get_string('setupfactor', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
-        $form = new setup_factor_form($currenturl, array('factorname' => $factor));
+        $form = new setup_factor_form($currenturl, ['factorname' => $factor]);
 
         if ($form->is_submitted()) {
             $form->is_validated();
@@ -95,11 +92,11 @@ switch ($action) {
                 $record = $factorobject->setup_user_factor($data);
                 if (!empty($record)) {
                     $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-                    $finalurl = new moodle_url($returnurl, array('action' => 'setup', 'factorid' => $record->id));
+                    $finalurl = new moodle_url($returnurl, ['action' => 'setup', 'factorid' => $record->id]);
                     redirect($finalurl);
                 }
 
-                print_error('error:setupfactor', 'tool_mfa', $returnurl);
+                throw new moodle_exception('error:setupfactor', 'tool_mfa', $returnurl);
             }
         }
 
@@ -113,16 +110,16 @@ switch ($action) {
         require_sesskey();
 
         if (!$factorobject || !$factorobject->has_revoke()) {
-            print_error('error:revoke', 'tool_mfa', $returnurl);
+            throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
         }
 
         $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
-        $revokeparams = array(
+        $revokeparams = [
             'factorname' => $factorobject->get_display_name(),
-            'devicename' => $factorobject->get_label($factorid)
-        );
+            'devicename' => $factorobject->get_label($factorid),
+        ];
         $form = new revoke_factor_form($currenturl, $revokeparams);
 
         if ($form->is_submitted()) {
@@ -134,11 +131,11 @@ switch ($action) {
 
             if ($form->get_data()) {
                 if ($factorobject->revoke_user_factor($factorid)) {
-                    $finalurl = new moodle_url($returnurl, array('action' => 'revoked', 'factorid' => $factorid));
+                    $finalurl = new moodle_url($returnurl, ['action' => 'revoked', 'factorid' => $factorid]);
                     redirect($finalurl);
                 }
 
-                print_error('error:revoke', 'tool_mfa', $returnurl);
+                throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
             }
         }
 
