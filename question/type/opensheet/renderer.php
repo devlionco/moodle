@@ -82,7 +82,7 @@ class qtype_opensheet_renderer extends qtype_renderer {
             $step = new question_attempt_step(array('answer'=>$question->responsetemplate));
         }
 
-        $response = !empty($step->get_qt_var('answer')) ? $step->get_qt_var('answer')->__toString() : '';
+        $response = !empty($step->get_qt_var('answer')) ? $step->get_qt_var('answer') : '';
         $idinput = 'id_'.str_replace(':', '_', $qa->get_qt_field_name('answer'));
         $idtable = 'id_table_'.str_replace(':', '_', $qa->get_qt_field_name('answer'));
 
