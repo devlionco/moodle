@@ -309,15 +309,44 @@ M.core_comment = {
                 }, true);
             },
             register_actions: function() {
-                // add new comment
-                var action_btn = Y.one('#comment-action-post-'+this.client_id);
-                if (action_btn) {
-                    action_btn.on('click', function(e) {
+
+                // Add new comment.
+                var self = this;
+                require(['jquery', 'core/str'], function($, Str) {
+
+                    $('#comment-action-post-'+self.client_id).on('click', function(e) {
                         e.preventDefault();
-                        this.post();
-                        return false;
-                    }, this);
-                }
+
+                        var button = $(e.target);
+                        var infoAlertMessage = button.parent().parent().find('.comment-info');
+                        var textarea = button.parent().parent().find('textarea');
+                        var value = textarea.val();
+
+                        $(textarea).keypress(function() {
+                            infoAlertMessage.removeClass('alert-danger');
+                            infoAlertMessage.html('');
+                            infoAlertMessage.attr('style','display: none');
+                            infoAlertMessage.removeAttr('aria-label');
+                        });
+
+                        if(value.trim().length > 0 && value.trim() !== M.util.get_string('addcomment', 'moodle')) {
+                            self.post();
+
+                            infoAlertMessage.attr('style','display: block');
+                            setTimeout(function(){
+                                infoAlertMessage.attr('aria-label', M.util.get_string('changessaved', 'moodle'));
+                            },1000);
+                        }else{
+                            Str.get_string('blankcannotbesaved', 'local_petel')
+                                .then(function(string) {
+                                    infoAlertMessage.addClass('alert-danger');
+                                    infoAlertMessage.html(string);
+                                    infoAlertMessage.attr('style','display: block');
+                            });
+                        }
+                    });
+                });
+
                 // cancel comment box
                 var cancel = Y.one('#comment-action-cancel-'+this.client_id);
                 if (cancel) {
