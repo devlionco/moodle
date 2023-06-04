@@ -263,7 +263,9 @@ class comment {
                 'comments',
                 'commentscount',
                 'commentsrequirelogin',
-                'deletecommentbyon'
+                'deletecommentbyon',
+                'addpagehere',
+                'changessaved'
             ),
             'moodle'
         );
@@ -506,7 +508,7 @@ class comment {
                 $html .= html_writer::start_tag('div', array('class' => 'db'));
                 $html .= html_writer::tag('textarea', '', $textareaattrs);
                 $html .= html_writer::end_tag('div'); // .db
-
+                $html .= html_writer::tag('p', '', array('class' => 'comment-info', 'aria-live' => 'assertive', 'style' => 'display: none;'));
                 $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
                 $html .= html_writer::link('#', get_string('savecomment'), array('id' => 'comment-action-post-'.$this->cid));
 
