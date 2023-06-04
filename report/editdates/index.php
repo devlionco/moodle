@@ -29,6 +29,7 @@ use core\report_helper;
 
 $id = required_param('id', PARAM_INT);
 $activitytype = optional_param('activitytype', '', PARAM_PLUGIN);
+$sectionid = optional_param('sectionid', 0, PARAM_INT);
 
 // Should be a valid course id.
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
@@ -40,6 +41,11 @@ $urlparams = array('id' => $id);
 if ($activitytype) {
     $urlparams['activitytype'] = $activitytype;
 }
+
+if ($sectionid) {
+    $urlparams['sectionid'] = $sectionid;
+}
+
 $PAGE->set_url('/report/editdates/index.php', $urlparams);
 $PAGE->set_pagelayout('admin');
 
@@ -48,6 +54,37 @@ $coursecontext = context_course::instance($course->id);
 require_capability('report/editdates:view', $coursecontext);
 
 raise_memory_limit(MEMORY_EXTRA);
+
+// Page select sections.
+if(!$sectionid) {
+    // Set page title and page heading.
+    $PAGE->set_title($course->shortname . ': ' . get_string('editdates', 'report_editdates'));
+    $PAGE->set_heading($course->fullname);
+
+    // Displaying the page.
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(format_string($course->fullname));
+
+    echo $OUTPUT->heading(get_string('activityfilter', 'report_editdates'));
+
+    $modinfo = get_fast_modinfo($course);
+
+    foreach($modinfo->get_section_info_all() as $section){
+        $sectionname = get_section_name($course, $section);
+
+        $params = ['id' => $id, 'sectionid' => $section->id];
+        if ($activitytype) {
+            $params['activitytype'] = $activitytype;
+        }
+
+        $url = new moodle_url($PAGE->url, $params);
+
+        echo '<h4><a href="'.$url.'">'.$sectionname.'</a></h4>';
+    }
+
+    echo $OUTPUT->footer();
+    exit;
+}
 
 // Fetching all modules in the course.
 $modinfo = get_fast_modinfo($course);
@@ -77,14 +114,19 @@ foreach ($modinfo->get_sections() as $sectionnum => $section) {
 core_collator::asort($activitytypes);
 
 // Creating the form.
-$baseurl = new moodle_url('/report/editdates/index.php', array('id' => $id));
+$baseurl = new moodle_url('/report/editdates/index.php', array('id' => $id, 'sectionid' => $sectionid));
 $mform = new report_editdates_form($baseurl, array('modinfo' => $modinfo,
-        'course' => $course, 'activitytype' => $activitytype));
+        'course' => $course, 'activitytype' => $activitytype, 'sectionid' => $sectionid));
 
 $returnurl = new moodle_url('/course/view.php', array('id' => $id));
 if ($mform->is_cancelled()) {
-    // Redirect to course view page if form is cancelled.
-    redirect($returnurl);
+
+    if($sectionid){
+        redirect(new moodle_url('/report/editdates/index.php', array('id' => $id)));
+    }else {
+        // Redirect to course view page if form is cancelled.
+        redirect($returnurl);
+    }
 
 } else if ($data = $mform->get_data()) {
     // Process submitted data.

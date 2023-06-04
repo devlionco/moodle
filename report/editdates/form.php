@@ -46,6 +46,7 @@ class report_editdates_form extends moodleform {
         $modinfo       = $this->_customdata['modinfo'];
         $course        = $this->_customdata['course'];
         $activitytype  = $this->_customdata['activitytype'];
+        $sectionid  = $this->_customdata['sectionid'];
         $config = get_config('report_editdates');
 
         $coursehasavailability = !empty($CFG->enableavailability);
@@ -100,6 +101,10 @@ class report_editdates_form extends moodleform {
             $ismodadded = false;
             $sectionname = '';
 
+            if($sectionid && $section->id != $sectionid){
+                continue;
+            }
+
             // Skip if section isn't visible to the user.
             if (!$section->uservisible) {
                 continue;
@@ -110,7 +115,13 @@ class report_editdates_form extends moodleform {
                 $sectionname = get_section_name($course, $section);
                 $headername = 'section' . $sectionnum . 'header';
                 $mform->addElement('header', $headername, $sectionname);
-                $mform->setExpanded($headername, false);
+
+                if($sectionid){
+                    $mform->setExpanded($headername, true);
+                }else{
+                    $mform->setExpanded($headername, false);
+                }
+
                 $prevsectionnum = $sectionnum;
             }
 
