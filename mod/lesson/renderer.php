@@ -498,7 +498,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         // catch teachers
         if (has_capability('mod/lesson:manage', $context)) {
-            return $this->output->notification(get_string('progressbarteacherwarning2', 'lesson'));
+            return $this->output->notification(get_string('progressbarteacherwarning2', 'lesson'), 'info');
         }
 
         if ($progress === null) {
