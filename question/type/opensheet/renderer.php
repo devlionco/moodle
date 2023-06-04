@@ -91,6 +91,14 @@ class qtype_opensheet_renderer extends qtype_renderer {
             $resp = new \StdClass();
         }
 
+        if(!isset($resp->titleChart)){
+            $resp->titleChart = '';
+        }
+
+        if(!isset($resp->dataSheet)){
+            $resp->dataSheet = [];
+        }
+
         // Check if empty table.
         if(!empty($response)) {
             $data = $resp->dataSheet;
@@ -105,7 +113,7 @@ class qtype_opensheet_renderer extends qtype_renderer {
             $response = !empty($data) ? json_encode($data) : '';
         }
 
-        // Size fo table.
+        // Size for table.
         $maxcountcolumns = 6;
         $maxcountrows = 12;
 
