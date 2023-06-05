@@ -117,11 +117,7 @@ class block_multiblock extends block_base {
         $context = $DB->get_record('context', ['contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id]);
 
         $this->load_multiblocks($context->id);
-        // Make sure user is in "teachers" cohort.
-        $isuserrealteacher = $this->is_user_real_teacher();
 
-        $multiblock = [];
-        $isodd = true;
         $blockid = $this->instance->id;
         if (empty($this->blocks)) {
 
@@ -169,6 +165,10 @@ class block_multiblock extends block_base {
             $content = $block->blockinstance->get_content_for_output($this->output);
 
             $available_to_cohort_teachers = false;
+
+            // Make sure user is in "teachers" cohort.
+            $isuserrealteacher = $this->is_user_real_teacher();
+
             // Some blocks are available only to realteachers (cohort=teachers),
             // and they have a special method to control it.
             if (method_exists($block->blockinstance, 'available_to_cohort_teachers')) {

@@ -124,6 +124,7 @@ $string['cache'] = 'Cache';
 $string['excludetags'] = 'Excluded tags';
 $string['excludetagsdesc'] = 'Excluded tags via comma';
 $string['grademelabel'] = 'Grade for activity {$a->itemname}';
+$string['hide'] = 'Hide';
 
 // Deprecated since Moodle 4.0.
 $string['clearsearch'] = "Clear search";
