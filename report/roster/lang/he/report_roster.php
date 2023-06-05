@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * report_roster version information.
+ * Strings for component 'report_roster', language 'he'
  *
  * @package   report_roster
  * @copyright 2013 Lafayette College ITS
@@ -24,8 +24,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2022041201;
-$plugin->requires  = 2022041200.00;
-$plugin->component = 'report_roster';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v4.0.1';
+$string['allusers'] = 'כל המשתמשים';
+$string['displaymode'] = 'מצב תצוגה';
+$string['learningmodeoff'] = 'מצב למידה - כבוי';
+$string['learningmodeon'] = 'מצב למידה - פעיל';
+$string['pluginname'] = 'אתחול סיסמאות';
+$string['printmode'] = 'הדפסה';
+$string['roster'] = 'אתחול סיסמאות';
+$string['roster:view'] = 'View roster course report';
+$string['webmode'] = 'תצוגה מקוונת';
+$string['resetpassword'] = 'אתחול סיסמה';
+$string['passwordwasreset'] = 'סיסמת המשתמש {$a->username} אותחלה ל: {$a->password}';
+$string['confirmmessage'] = 'אתם עומדים לאתחל את הסיסמה של משתמש {$a} האם להמשיך?';
+$string['resetstudentpassword'] = 'אתחול סיסמת תלמיד';
+

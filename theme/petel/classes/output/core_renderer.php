@@ -878,9 +878,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return parent::standard_head_html();
     }
 
-    protected function render_user_picture_oldversion(user_picture $userpicture)
-    {
-        global $CFG, $DB, $USER, $PAGE;
+    protected function render_user_picture(user_picture $userpicture) {
+        global $USER, $PAGE;
 
         $climode = defined('CLI_SCRIPT') && CLI_SCRIPT;
         if ($climode) {
@@ -924,7 +923,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $attributes['title'] = $alt;
             }
 
-            // get the image html output fisrt
+            // Get the image html output first.
             $output = html_writer::empty_tag('img', $attributes);
 
             // Show fullname together with the picture when desired.
@@ -932,7 +931,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $output .= fullname($userpicture->user, $canviewfullnames);
             }
 
-            // then wrap it in link if needed
+            // Then wrap it in link if needed.
             if (!$userpicture->link) {
                 return $output;
             }
@@ -1005,7 +1004,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $attributes['title'] = $alt;
             }
 
-            // get the image html output fisrt
+            // Get the image html output first.
             $output = html_writer::empty_tag('img', $attributes);
 
             // Show fullname together with the picture when desired.
@@ -1013,7 +1012,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $output .= fullname($userpicture->user, $canviewfullnames);
             }
 
-            // then wrap it in link if needed
+            // Then wrap it in link if needed.
             if (!$userpicture->link) {
                 return $output;
             }
@@ -1067,7 +1066,11 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $returnstr
             );
             $am->set_action_label(get_string('usermenu').' '.fullname($user, $canviewfullnames));
-            $am->set_alignment(action_menu::TR, action_menu::BR);
+
+            // Deprecated.
+            //$am->set_alignment(action_menu::TR, action_menu::BR);
+            $am->set_menu_left();
+
             $am->set_nowrap_on_items();
             $navitemcount = count($actions);
             $idx = 0;
@@ -1109,9 +1112,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         }
     }
 
-    private function user_action_menu_actions($userid, $courseid = SITEID, $attributes)
-    {
-
+    private function user_action_menu_actions($userid, $courseid, $attributes) {
         global $USER, $DB, $COURSE;
 
         $edit = '';
