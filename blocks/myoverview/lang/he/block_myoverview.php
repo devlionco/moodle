@@ -95,3 +95,4 @@ $string['excludetags'] = 'הסתרת קורסים בעלי תיוג';
 $string['excludetagsdesc'] = 'ניתן להסתיר קורסים אשר מכילים את אחד מהתגים ברשימה, אשר מופרדים באמצעות סימן פסיק';
 $string['grademelabel'] = 'מתן ציון לפעילות {$a->itemname}';
 $string['aria:groupingdropdownnew'] = 'סינון קורסים';
+$string['hide'] = 'מוסתר';
