@@ -2611,7 +2611,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 'includeenrolments' => new external_value(PARAM_BOOL, 'Do return courses where the user is enrolled',
                                                           VALUE_DEFAULT, true),
                 'tablesort' => new external_value(PARAM_BOOL, 'Apply current user table sorting preferences.',
-                                                          VALUE_DEFAULT, false)
+                                                          VALUE_DEFAULT, false),
+                'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2632,8 +2633,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
      * @throws moodle_exception
      */
     public static function list_participants($assignid, $groupid, $filter, $skip,
-            $limit, $onlyids, $includeenrolments, $tablesort) {
-        global $DB, $CFG;
+            $limit, $onlyids, $includeenrolments, $tablesort, $userid) {
+        global $DB, $CFG, $USER;
         require_once($CFG->dirroot . "/mod/assign/locallib.php");
         require_once($CFG->dirroot . "/user/lib.php");
         require_once($CFG->libdir . '/grouplib.php');
@@ -2647,7 +2648,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
                                                 'limit' => $limit,
                                                 'onlyids' => $onlyids,
                                                 'includeenrolments' => $includeenrolments,
-                                                'tablesort' => $tablesort
+                                                'tablesort' => $tablesort,
+                                                'userid' => $userid
                                             ));
         $warnings = array();
 
@@ -2660,8 +2662,40 @@ class mod_assign_external extends \mod_assign\external\external_api {
         $participants = array();
         $coursegroups = [];
         if (groups_group_visible($params['groupid'], $course, $cm)) {
+
+            // PTL-4960 PTL-6698.
+            $tmp = [];
+            foreach(get_user_preferences(null, null, $USER->id) as $key => $item){
+                if(strpos($key, 'flextable_mod_assign_grading-') !== false){
+                    $tmp[$key] = $item;
+                    unset_user_preference($key, $USER->id);
+                }
+            }
+
             $participants = $assign->list_participants_with_filter_status_and_group($params['groupid'], $params['tablesort']);
             $coursegroups = groups_get_all_groups($course->id);
+
+            // Return previous settings.
+            foreach($tmp as $key => $value) {
+                set_user_preference($key, $value, $USER->id);
+            }
+
+            // PTL-4951.
+            $groups = [];
+            $teamworkusers = [];
+            foreach(\local_teamwork\common::get_all_users_in_cm($cm->id) as $obj){
+
+                $teamworkusers[] = $obj->userid;
+                if(!isset($groups[$obj->groupid]) || $obj->userid == $params['userid']) {
+                    $groups[$obj->groupid] = $obj->userid;
+                }
+            }
+
+            foreach($participants as $key => $user){
+                if(in_array($user->id, $teamworkusers) && !in_array($user->id, $groups)) {
+                    unset($participants[$key]);
+                }
+            }
         }
 
         $userfields = user_get_default_fields();
@@ -2859,6 +2893,35 @@ class mod_assign_external extends \mod_assign\external\external_api {
             throw new moodle_exception('userisfilteredout');
         }
 
+        // PTL-2989.
+        // Team users.
+        require_once($CFG->dirroot . '/local/teamwork/locallib.php');
+
+        $members = [];
+        $teamwork = $DB->get_record('local_teamwork', array('moduleid' => $assign->get_context()->instanceid, 'type' => 'assign', 'active' => 1));
+        if (!empty($teamwork)) {
+            $teamname = '';
+            $teamgroups = $DB->get_records('local_teamwork_groups', array('teamworkid' => $teamwork->id));
+            foreach($teamgroups as $teamgroup){
+                $obj = $DB->get_record('local_teamwork_members', array('teamworkgroupid' => $teamgroup->id));
+                if(!empty($obj)){
+                    $teamname = $teamgroup->name;
+                }
+            }
+
+            $members = get_mod_events_members($assign->get_context()->instanceid, $userid, 'assign');
+        }
+
+        $html = get_string('teammembers', 'theme_petel').': ';
+        $names = [];
+        foreach($members as $member){
+            $names[] = $member->name;
+        }
+        $html .= implode(', ', $names);
+
+        $teamusersenable = !empty($members) ? true : false;
+        $teamusershtml = $html;
+
         $return = array(
             'id' => $participant->id,
             'fullname' => $participant->fullname,
@@ -2871,6 +2934,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
             'duedate' => $assign->get_instance($userid)->duedate,
             'cutoffdate' => $assign->get_instance($userid)->cutoffdate,
             'duedatestr' => userdate($assign->get_instance($userid)->duedate, get_string('strftimedatetime', 'langconfig')),
+            'teamusersenable' => $teamusersenable,
+            'teamusershtml' => $teamusershtml,
         );
 
         if (!empty($participant->groupid)) {
@@ -2920,6 +2985,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
             'submissionstatus' => new external_value(PARAM_ALPHA, 'The submission status (new, draft, reopened or submitted).
                 Empty when not submitted.', VALUE_OPTIONAL),
             'user' => $userdescription,
+            'teamusersenable' => new external_value(PARAM_BOOL, 'team users enable'),
+            'teamusershtml' => new external_value(PARAM_RAW, 'team users html'),
         ));
     }
 

@@ -42,8 +42,39 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE, $DB, $PAGE;
+        global $CFG, $COURSE, $DB, $PAGE, $USER;
         $mform = $this->_form;
+
+        // PTL-4458 TeamHorizon - Test for simplified UI for a module settings form.
+        // only availbale to cohort members of "teamhorizon"
+        $sql = 'SELECT c.*
+              FROM {cohort} c
+              JOIN {cohort_members} cm ON c.id = cm.cohortid
+             WHERE cm.userid = ? AND c.idnumber = ?';
+        $ismemeberofqacohort = $DB->get_records_sql($sql, array($USER->id, 'teamhorizon'));
+
+        if ($ismemeberofqacohort) {
+            $tabs = '<ul class="nav nav-tabs" role="tablist">
+                      <li class="nav-item p-1 "><a class="nav-link active" data-toggle="tab" href="#tab_basic">'.get_string('general', 'form').'</a></li>
+                      <li class="nav-item p-1 "><a class="nav-link" data-toggle="tab" href="#tab_advanced">'.get_string('advanced').'</a></li>
+                 </ul>
+                <div class="tab-content">
+                  <div id="tab_basic" class="tab-pane fade in active">
+                    <!-- place holder for basic required fields -->
+                  </div>
+                  <div id="tab_advanced" class="tab-pane fade">
+                    <!-- place holder for advanced fields -->
+                  </div>
+                </div>';
+            $mform->addElement('static', 'tabsdemo', $tabs);
+            $PAGE->requires->js_amd_inline("require(['jquery'], function($) {
+                $('.mform > fieldset').each(function() {
+                    $(this).detach().appendTo('#tab_advanced')
+                });
+                $('#id_general').detach().appendTo('#tab_basic');
+                $('#fitem_id_tabsdemo > .col-md-3').removeClass('col-md-3').addClass('col-md-12');
+            });");
+        }
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 

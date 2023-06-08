@@ -30,6 +30,7 @@ $string['activityeditor'] = 'Activity instructions';
 $string['activityeditor_help'] = 'The actions you would like the student to complete for this assignment. This is only shown on the submission page where a student edits and submits their assignment.';
 $string['activityoverview'] = 'You have assignments that need attention';
 $string['addattempt'] = 'Allow another attempt';
+$string['addattempt_custom'] = 'Allow another attempt';
 $string['addnewattempt'] = 'Add a new attempt';
 $string['addnewattempt_help'] = 'This will create a new blank submission for you to work on.';
 $string['addnewattemptfromprevious'] = 'Add a new attempt based on previous submission';
@@ -495,6 +496,7 @@ $string['save'] = 'Save';
 $string['saveallquickgradingchanges'] = 'Save all quick grading changes';
 $string['saveandcontinue'] = 'Save and continue';
 $string['savechanges'] = 'Save changes';
+$string['savegradefeedback'] = 'Save grade feedback';
 $string['savegradingresult'] = 'Grade';
 $string['savenext'] = 'Save and show next';
 $string['savingchanges'] = 'Saving changes...';
@@ -662,6 +664,8 @@ $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
+$string['sendmessage'] = 'Send email';
+$string['attachmentlist'] = 'Attachment list:';
 
 // Deprecated since Moodle 3.11.
 $string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';

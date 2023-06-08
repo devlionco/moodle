@@ -63,7 +63,8 @@ class renderer extends \plugin_renderer_base {
     public function render_assign_files(\assign_files $tree) {
         $this->htmlid = \html_writer::random_id('assign_files_tree');
         $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $this->htmlid));
-        $html = '<div id="'.$this->htmlid.'">';
+        $html = '<p class="sr-only" tabindex="0">' . get_string('attachmentlist', 'assign') . '</p>';
+        $html .= '<div id="'.$this->htmlid.'">';
         $html .= $this->htmllize_tree($tree, $tree->dir);
         $html .= '</div>';
 
@@ -283,7 +284,7 @@ class renderer extends \plugin_renderer_base {
      * @param \assign_grading_summary $summary
      * @return string
      */
-    public function render_assign_grading_summary(\assign_grading_summary $summary) {
+    public function render_assign_grading_summary_old(\assign_grading_summary $summary) {
         // Create a table for the data.
         $o = '';
         $o .= $this->output->container_start('gradingsummary');
@@ -388,6 +389,110 @@ class renderer extends \plugin_renderer_base {
         $o .= \html_writer::end_tag('center');
 
         return $o;
+    }
+
+    public function render_assign_grading_summary(\assign_grading_summary $summary) {
+        // Create a table for the data.
+        $data = new \stdClass;
+
+        //Visibility Status row.
+        $row['cell1content'] = get_string('hiddenfromstudents');
+        $row['cell2content'] = (!$summary->isvisible) ? get_string('yes') : get_string('no');
+        $rows[] = $row;
+
+        //Status row.
+        if ($summary->teamsubmission) {
+            if ($summary->warnofungroupedusers === \assign_grading_summary::WARN_GROUPS_REQUIRED) {
+                $data->notification = $this->output->notification(get_string('ungroupedusers', 'assign'));
+            } else if ($summary->warnofungroupedusers === \assign_grading_summary::WARN_GROUPS_OPTIONAL) {
+                $data->notification = $this->output->notification(get_string('ungroupedusersoptional', 'assign'));
+            }
+            $row['cell1content'] = get_string('numberofteams', 'assign');
+        } else {
+            $row['cell1content'] = get_string('numberofparticipants', 'assign');
+        }
+        $row['cell2content'] = $summary->participantcount;
+        $rows[] = $row;
+
+        // Drafts count and dont show drafts count when using offline assignment row.
+        if ($summary->submissiondraftsenabled && $summary->submissionsenabled) {
+            $row['cell1content'] = get_string('numberofdraftsubmissions', 'assign');
+            $row['cell2content'] = $summary->submissiondraftscount;
+            $rows[] = $row;
+        }
+
+        // Submitted for grading.
+        if ($summary->submissionsenabled) {
+            $row['cell1content'] = get_string('numberofsubmittedassignments', 'assign');
+            $row['cell2content'] = $summary->submissionssubmittedcount;
+            $rows[] = $row;
+            if (!$summary->teamsubmission) {
+                $row['cell1content'] = get_string('numberofsubmissionsneedgrading', 'assign');
+                $row['cell2content'] = $summary->submissionsneedgradingcount;
+                $rows[] = $row;
+            }
+        }
+
+        $time = time();
+        if ($summary->duedate) {
+
+            // Due date.
+            $row['cell1content'] = get_string('duedate', 'assign');
+            $duedate = $summary->duedate;
+            if ($summary->courserelativedatesmode) {
+                // Returns a formatted string, in the format '10d 10h 45m'.
+                $diffstr = get_time_interval_string($duedate, $summary->coursestartdate);
+                if ($duedate >= $summary->coursestartdate) {
+                    $row['cell2content'] = get_string('relativedatessubmissionduedateafter', 'mod_assign',
+                        ['datediffstr' => $diffstr]);
+                } else {
+                    $row['cell2content'] = get_string('relativedatessubmissionduedatebefore', 'mod_assign',
+                        ['datediffstr' => $diffstr]);
+                }
+            } else {
+                $row['cell2content'] = userdate($duedate, '%d %B %Y, %H:%M');
+            }
+            $rows[] = $row;
+
+            // Time remaining.
+            $row['cell1content'] = get_string('timeremaining', 'assign');
+            if ($summary->courserelativedatesmode) {
+                $row['cell2content'] = get_string('relativedatessubmissiontimeleft', 'mod_assign');
+            } else {
+                if ($duedate - $time <= 0) {
+                    $row['cell2content'] = get_string('assignmentisdue', 'assign');
+                } else {
+                    $row['cell2content'] = format_time($duedate - $time);
+                }
+            }
+            $rows[] = $row;
+
+            if ($duedate < $time) {
+                $row['cell1content'] = get_string('latesubmissions', 'assign');
+                $cutoffdate = $summary->cutoffdate;
+                if ($cutoffdate) {
+                    if ($cutoffdate > $time) {
+                        $row['cell2content'] = get_string('latesubmissionsaccepted', 'assign', userdate($summary->cutoffdate));
+                    } else {
+                        $row['cell2content'] = get_string('nomoresubmissionsaccepted', 'assign');
+                    }
+                    $rows[] = $row;
+                }
+            }
+        }
+
+        // Link to the grading page.
+        $data->submissionlink = [
+            'url' => new \moodle_url('/mod/assign/view.php', array('id' => $summary->coursemoduleid, 'action' => 'grading')),
+        ];
+        if ($summary->cangrade) {
+            $data->cangradelink = [
+                'url' => new \moodle_url('/mod/assign/view.php', array('id' => $summary->coursemoduleid, 'action' => 'grader')),
+            ];
+        }
+        $data->rows = $rows;
+
+        return $this->render_from_template('mod_assign/gradingsummarytable', $data);
     }
 
     /**
@@ -1390,6 +1495,8 @@ class renderer extends \plugin_renderer_base {
             } else {
                 $plagiarismlinks = '';
             }
+            $date = \DateTime::createFromFormat('d/m/Y, H:i', $file->timemodified);
+            $datetimetag = $date ? $date->format('c') : date('c', strtotime($file->timemodified));
             $image = $this->output->pix_icon(file_file_icon($file),
                                              $filename,
                                              'moodle',
@@ -1401,7 +1508,7 @@ class renderer extends \plugin_renderer_base {
                     $plagiarismlinks . ' ' .
                     $file->portfoliobutton . ' ' .
                     '</div>' .
-                    '<div class="fileuploadsubmissiontime">' . $file->timemodified . '</div>' .
+                '<time class="fileuploadsubmissiontime" datetime="'. $datetimetag .'">' . $file->timemodified . '</time>' .
                 '</div>' .
             '</li>';
         }

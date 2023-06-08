@@ -57,7 +57,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         this._region.find('[data-action="previous-user"]').on('click', this._handlePreviousUser.bind(this));
         this._region.find('[data-action="next-user"]').on('click', this._handleNextUser.bind(this));
         this._region.find('[data-action="change-user"]').on('change', this._handleChangeUser.bind(this));
-        this._region.find('[data-region="user-filters"]').on('click', this._toggleExpandFilters.bind(this));
+        /* this._region.find('[data-region="user-filters"]').on('click', this._toggleExpandFilters.bind(this)); */
         this._region.find('[data-region="user-resettable"]').on('click', this._toggleResetTable.bind());
 
         $(document).on('user-changed', this._refreshSelector.bind(this));
@@ -133,9 +133,11 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         }
         this._lastFilters = filter;
 
+        var userid = $('[data-region="grading-navigation-panel"]').data('first-userid');
+
         ajax.call([{
             methodname: 'mod_assign_list_participants',
-            args: {assignid: assignmentid, groupid: groupid, filter: '', onlyids: true, tablesort: true},
+            args: {assignid: assignmentid, groupid: groupid, filter: '', onlyids: true, tablesort: true, userid: userid},
             done: this._usersLoaded.bind(this),
             fail: notification.exception
         }]);

@@ -2472,6 +2472,55 @@ class assign {
         return $DB->count_records_sql($sql, $params);
     }
 
+    public function count_teams_submissions_need_grading($currentgroup = null) {
+        global $DB;
+
+        if ($currentgroup === null) {
+            $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        }
+        list($esql, $params) = get_enrolled_sql($this->get_context(), '', $currentgroup, true);
+
+        $params['assignid'] = $this->get_instance()->id;
+        $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $sqlscalegrade = $this->get_instance()->grade < 0 ? ' OR g.grade = -1' : '';
+
+        $sql = 'SELECT s.userid
+                   FROM {assign_submission} s
+                   LEFT JOIN {assign_grades} g ON
+                        s.assignment = g.assignment AND
+                        s.userid = g.userid AND
+                        g.attemptnumber = s.attemptnumber
+                   JOIN(' . $esql . ') e ON e.id = s.userid
+                   WHERE
+                        s.latest = 1 AND
+                        s.assignment = :assignid AND
+                        s.timemodified IS NOT NULL AND
+                        s.status = :submitted AND
+                        (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL '
+            . $sqlscalegrade . ')';
+
+        $users = [];
+        foreach($DB->get_records_sql($sql, $params) as $item){
+            $users[] = $item->userid;
+        }
+
+        if(empty($users)){
+            return 0;
+        }
+
+        $sql = ' SELECT g.id as groupid                   
+                    FROM {groups_members} gm 
+                    LEFT JOIN {groups} g ON gm.groupid = g.id                    
+                    WHERE g.courseid = :courseid AND gm.userid IN ('.implode(',', $users).')
+                    GROUP BY g.id
+        ';
+
+        $params = [];
+        $params['courseid'] = $this->get_instance()->course;
+
+        return count($DB->get_records_sql($sql, $params));
+    }
+
     /**
      * Load a count of grades.
      *
@@ -2952,7 +3001,7 @@ class assign {
         }
 
         if ($this->gradebook_item_update(null, $grade)) {
-            \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
+            \mod_assign\event\submission_graded::create_from_grade($this, $grade, $reopenattempt)->trigger();
         }
 
         // If the conditions are met, allow another attempt.
@@ -5931,6 +5980,8 @@ class assign {
 
             $summary = $this->get_assign_grading_summary_renderable();
             $o .= $this->get_renderer()->render($summary);
+            //PTL_5030 add rubric status in assign view page
+            $o .= $this->print_rubric_status($this->context->id);
         }
 
         if ($this->can_view_submission($USER->id)) {
@@ -7882,6 +7933,37 @@ class assign {
         $gradinginstance = $this->get_grading_instance($userid, $grade, $gradingdisabled);
 
         $mform->addElement('header', 'gradeheader', get_string('gradenoun'));
+
+        // Display final gradebook grade above the rubric table.
+        // The code is duplicated from pieces of code that follows,
+        // And is probably redundant (nadavkav)
+        $gradinginfo = grade_get_grades($this->get_course()->id,
+            'mod',
+            'assign',
+            $this->get_instance()->id,
+            $userid);
+        $capabilitylist = array('gradereport/grader:view', 'moodle/grade:viewall');
+        if (has_all_capabilities($capabilitylist, $this->get_course_context())) {
+            $urlparams = array('id'=>$this->get_course()->id);
+            $url = new moodle_url('/grade/report/grader/index.php', $urlparams);
+            $usergrade = '-';
+            if (isset($gradinginfo->items[0]->grades[$userid]->str_grade)) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            }
+            $gradestring = $this->get_renderer()->action_link($url, $usergrade);
+        } else {
+            $usergrade = '-';
+            if (isset($gradinginfo->items[0]->grades[$userid]) &&
+                !$gradinginfo->items[0]->grades[$userid]->hidden) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
+            }
+            $gradestring = $usergrade;
+        }
+
+        $gradestring = '<span class="currentgrade">' . $gradestring . '</span>';
+        $mform->addElement('static', 'currentgrade', get_string('currentgrade', 'assign').': '. $gradestring);
+        /// End of duplicated code
+
         if ($gradinginstance) {
             $gradingelement = $mform->addElement('grading',
                                                  'advancedgrading',
@@ -8066,7 +8148,7 @@ class assign {
             $islessthanmaxattempts = $issubmission && ($submission->attemptnumber < ($this->get_instance()->maxattempts-1));
 
             if ($ismanual && (!$issubmission || $isunlimited || $islessthanmaxattempts)) {
-                $mform->addElement('selectyesno', 'addattempt', get_string('addattempt', 'assign'));
+                $mform->addElement('selectyesno', 'addattempt', get_string('addattempt_custom', 'assign'));
                 $mform->setDefault('addattempt', 0);
             }
         }
@@ -9733,6 +9815,34 @@ class assign {
         }
 
         return !empty($submission) && $submission->status !== ASSIGN_SUBMISSION_STATUS_SUBMITTED && $timedattemptstarted;
+    }
+
+    private function print_rubric_status ($contextid) {
+        global $DB, $PAGE ;
+
+        $sql = "
+            SELECT id, activemethod
+            FROM {grading_areas}
+            WHERE component = 'mod_assign'
+            AND activemethod IN ('rubric','guide','checklist')
+            AND contextid = ?";
+
+        if(!$areaid = $DB->get_record_sql($sql,[$contextid])){
+            return '';
+        }
+
+        $manager = get_grading_manager($areaid->id);
+        $controller = $manager->get_controller($areaid->activemethod);
+        $options = $controller->get_options();
+
+        if ($controller->is_form_defined()) {
+            $o = html_writer::start_tag('h3');
+            $o .=  get_string('rubricstatus', 'gradingform_rubric');
+            $o .= html_writer::end_tag('h3');
+            $o .= $controller->render_preview($PAGE);
+        }
+
+        return $o;
     }
 }
 

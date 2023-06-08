@@ -379,8 +379,7 @@ class assign_grading_table extends table_sql implements renderable {
         // Select.
         if (!$this->is_downloading() && $this->hasgrade) {
             $columns[] = 'select';
-            $headers[] = get_string('select') .
-                    '<div class="selectall"><label class="accesshide" for="selectall">' . get_string('selectall') . '</label>
+            $headers[] = '<div class="selectall"><label class="" for="selectall">' . get_string('selectall') . '</label>
                     <input type="checkbox" id="selectall" name="selectall" title="' . get_string('selectall') . '"/></div>';
         }
 
@@ -487,16 +486,28 @@ class assign_grading_table extends table_sql implements renderable {
                         foreach ($plugin->get_editor_fields() as $field => $description) {
                             $index = 'plugin' . count($this->plugincache);
                             $this->plugincache[$index] = array($plugin, $field);
-                            $columns[] = $index;
-                            $headers[] = $plugin->get_name();
+
+                            if($plugin->get_type() == 'teamwork'){
+                                array_splice( $columns, 4, 0, array($index));
+                                array_splice( $headers, 4, 0, array($plugin->get_name()));
+                            }else {
+                                $columns[] = $index;
+                                $headers[] = $plugin->get_name();
+                            }
                         }
                     }
                 } else {
                     if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->has_user_summary()) {
                         $index = 'plugin' . count($this->plugincache);
                         $this->plugincache[$index] = array($plugin);
-                        $columns[] = $index;
-                        $headers[] = $plugin->get_name();
+
+                        if($plugin->get_type() == 'teamwork'){
+                            array_splice( $columns, 4, 0, array($index));
+                            array_splice( $headers, 4, 0, array($plugin->get_name()));
+                        }else {
+                            $columns[] = $index;
+                            $headers[] = $plugin->get_name();
+                        }
                     }
                 }
             }
@@ -1497,6 +1508,11 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($plugin->is_visible() && $plugin->is_enabled()) {
             if ($plugin->get_subtype() == 'assignsubmission') {
+                if ($plugin->get_type() == 'teamwork' && !$row->submissionid) {
+                    $submission = $this->assignment->get_user_submission($row->userid, 1);
+                    $row->submissionid = $submission->id;
+                }
+
                 if ($this->assignment->get_instance()->teamsubmission) {
                     $group = false;
                     $submission = false;
@@ -1684,5 +1700,67 @@ class assign_grading_table extends table_sql implements renderable {
             return;
         }
         parent::setup();
+    }
+
+    public function get_columns_custom() {
+        $columns = [];
+        foreach($this->columns as $colname => $key){
+            if(!in_array($colname, $this->column_nosort)){
+                $columns[] = $colname;
+            }
+        }
+
+        $columns[] = 'firstname';
+        $columns[] = 'lastname';
+
+        return $columns;
+    }
+
+    public function get_sql_sort() {
+        $tsort = optional_param('tsort', '', PARAM_TEXT);
+        $tdir = optional_param('tdir', 0, PARAM_INT);
+
+        if(!empty($tsort) && in_array($tsort, $this->get_columns_custom())){
+            if ($tdir == SORT_ASC) {
+                $orderby = $tsort . ' ASC';
+            } else {
+                $orderby = $tsort . ' DESC';
+            }
+
+            return $orderby;
+        }else{
+            return parent::get_sql_sort();
+        }
+    }
+
+    protected function sort_link($text, $column, $isprimary, $order) {
+        $tsort = optional_param('tsort', '', PARAM_TEXT);
+        $tdir = optional_param('tdir', 0, PARAM_INT);
+
+        $sortable = [];
+        if(!empty($tsort) && in_array($tsort, $this->get_columns_custom())){
+            $sortable[] = $tsort;
+        }
+
+        // If we are already sorting by this column, switch direction.
+        if (in_array($column, $sortable)) {
+            $sortorder = $tdir == SORT_ASC ? SORT_DESC : SORT_ASC;
+        } else {
+            $sortorder = SORT_ASC;
+        }
+
+        $params = [
+            $this->request[TABLE_VAR_SORT] => $column,
+            $this->request[TABLE_VAR_DIR] => $sortorder,
+        ];
+
+        return html_writer::link($this->baseurl->out(false, $params),
+                $text . get_accesshide(get_string('sortby') . ' ' .
+                    $text . ' ' . $this->sort_order_name($isprimary, $sortorder)),
+                [
+                    'data-sortable' => $this->is_sortable($column),
+                    'data-sortby' => $column,
+                    'data-sortorder' => $sortorder,
+                ]) . ' ' . $this->sort_icon($isprimary, $sortorder);
     }
 }

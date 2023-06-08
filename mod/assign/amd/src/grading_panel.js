@@ -34,6 +34,7 @@ define([
     'core_form/events',
     'core/toast',
     'core_form/changechecker',
+    'local_teamwork/rubric_export',
 ], function(
     $,
     Y,
@@ -46,7 +47,8 @@ define([
     GradingEvents,
     FormEvents,
     Toast,
-    FormChangeChecker
+    FormChangeChecker,
+    RubricExport
 ) {
 
     /**
@@ -343,6 +345,11 @@ define([
                         }.bind(this))
                         .fail(notification.exception);
                     }.bind(this)).fail(notification.exception);
+                    // Export rubric to pdf.
+                    RubricExport.init(userid, function(){
+                        var url = $(location).attr('href');
+                        $(location).attr('href', url);
+                    });
                     $('[data-region="review-panel"]').show();
                 } else {
                     this._region.hide();
