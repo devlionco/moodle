@@ -24,3 +24,20 @@
 
 $string['pluginname'] = 'Cloze editor';
 $string['privacy:metadata'] = 'The Atto Cloze editor plugin does not store any personal data.';
+
+
+$string['MULTICHOICE'] = 'One answer from a drop-down list without mixing answers';
+$string['MULTICHOICE_H'] = 'One answer from a horizontal list without mixing answers';
+$string['MULTICHOICE_V'] = 'One answer from a vertical list without mixing answers';
+$string['MULTICHOICE_S'] = 'One answer from a drop-down list and mixing answers';
+$string['MULTICHOICE_HS'] = 'One answer from a vertical list and mixing answers';
+$string['MULTICHOICE_VS'] = 'One answer from a horizontal list and mixing answers';
+$string['MULTIRESPONSE'] = 'Number of correct answers Vertical list without mixing answers';
+$string['MULTIRESPONSE_H'] = 'Number of correct answers horizontal list without mixing answers';
+$string['MULTIRESPONSE_S'] = 'Number of correct answers Vertical list and mixing of answers';
+$string['MULTIRESPONSE_HS'] = 'Number of correct answers horizontal list and mixing of answers';
+$string['NUMERICAL'] = 'Numerical answer';
+$string['SHORTANSWER'] = 'Short answer';
+$string['SHORTANSWER_MATH'] = 'Short answer mathematical';
+$string['SHORTANSWER_C'] = 'A short answer that requires a capital letter in English';
+

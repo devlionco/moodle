@@ -44,7 +44,9 @@ function atto_cloze_strings_for_js() {
  * @return array
  */
 function atto_cloze_params_for_js() {
-    global $CFG;
+    global $CFG, $PAGE;
+
+    $PAGE->requires->js_call_amd('core_form/mathlive');
 
     $singleno = array('option' => get_string('answersingleno', 'qtype_multichoice'));
     $singleyes = array('option' => get_string('answersingleyes', 'qtype_multichoice'));
@@ -52,15 +54,15 @@ function atto_cloze_params_for_js() {
     $horizontal = array('option' => get_string('layouthorizontal', 'qtype_multianswer'));
     $vertical = array('option' => get_string('layoutvertical', 'qtype_multianswer'));
     $qtypes = array(
-        array('type' => 'MULTICHOICE', 'name' => get_string('multichoice', 'mod_quiz'),
+        array('type' => 'MULTICHOICE', 'name' => get_string('MULTICHOICE', 'atto_cloze'),
             'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
             'options' => array($selectinline, $singleyes)
         ),
-        array('type' => 'MULTICHOICE_H', 'name' => get_string('multichoice', 'mod_quiz'),
+        array('type' => 'MULTICHOICE_H', 'name' => get_string('MULTICHOICE_H', 'atto_cloze'),
             'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
             'options' => array($horizontal, $singleyes)
         ),
-        array('type' => 'MULTICHOICE_V', 'name' => get_string('multichoice', 'mod_quiz'),
+        array('type' => 'MULTICHOICE_V', 'name' => get_string('MULTICHOICE_V', 'atto_cloze'),
             'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
             'options' => array($vertical, $singleyes)
         ),
@@ -70,15 +72,15 @@ function atto_cloze_params_for_js() {
         $shuffle = array('option' => get_string('shufflewithin', 'mod_quiz'));
         $qtypes = array_merge($qtypes, array(
 
-            array('type' => 'MULTICHOICE_S', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTICHOICE_S', 'name' => get_string('MULTICHOICE_S', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($selectinline, $shuffle, $singleyes)
             ),
-            array('type' => 'MULTICHOICE_HS', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTICHOICE_HS', 'name' => get_string('MULTICHOICE_HS', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($horizontal, $shuffle, $singleyes)
             ),
-            array('type' => 'MULTICHOICE_VS', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTICHOICE_VS', 'name' => get_string('MULTICHOICE_VS', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($vertical, $shuffle, $singleyes)
             ),
@@ -90,31 +92,34 @@ function atto_cloze_params_for_js() {
         $multihorizontal = array('option' => get_string('layoutmultiple_horizontal', 'qtype_multianswer'));
         $multivertical = array('option' => get_string('layoutmultiple_vertical', 'qtype_multianswer'));
         $qtypes = array_merge($qtypes, array(
-            array('type' => 'MULTIRESPONSE', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTIRESPONSE', 'name' => get_string('MULTIRESPONSE', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($multivertical, $singleno)
             ),
-            array('type' => 'MULTIRESPONSE_H', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTIRESPONSE_H', 'name' => get_string('MULTIRESPONSE_H', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($multihorizontal, $singleno)
             ),
-            array('type' => 'MULTIRESPONSE_S', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTIRESPONSE_S', 'name' => get_string('MULTIRESPONSE_S', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($multivertical, $shuffle, $singleno)
             ),
-            array('type' => 'MULTIRESPONSE_HS', 'name' => get_string('multichoice', 'mod_quiz'),
+            array('type' => 'MULTIRESPONSE_HS', 'name' => get_string('MULTIRESPONSE_HS', 'atto_cloze'),
                 'summary' => get_string('pluginnamesummary', 'qtype_multichoice'),
                 'options' => array($multihorizontal, $shuffle, $singleno)
             ),
         ));
     }
     $qtypes = array_merge($qtypes, array(
-        array('type' => 'NUMERICAL', 'name' => get_string('numerical', 'mod_quiz'),
+        array('type' => 'NUMERICAL', 'name' => get_string('NUMERICAL', 'atto_cloze'),
         'summary' => get_string('pluginnamesummary', 'qtype_numerical')),
-        array('type' => 'SHORTANSWER', 'name' => get_string('shortanswer', 'mod_quiz'),
+        array('type' => 'SHORTANSWER', 'name' => get_string('SHORTANSWER', 'atto_cloze'),
         'summary' => get_string('pluginnamesummary', 'qtype_shortanswer'),
         'options' => array('option' => get_string('caseno', 'mod_quiz'))),
-        array('type' => 'SHORTANSWER_C', 'name' => get_string('shortanswer', 'mod_quiz'),
+        array('type' => 'SHORTANSWER_MATH', 'name' => get_string('SHORTANSWER_MATH', 'atto_cloze'),
+            'summary' => get_string('pluginnamesummary', 'qtype_shortanswer'),
+            'options' => array('option' => get_string('caseno', 'mod_quiz'))),
+        array('type' => 'SHORTANSWER_C', 'name' => get_string('SHORTANSWER_C', 'atto_cloze'),
         'summary' => get_string('pluginnamesummary', 'qtype_shortanswer'),
         'options' => array('option' => get_string('caseyes', 'mod_quiz'))),
     ));
