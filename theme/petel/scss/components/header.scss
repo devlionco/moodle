@@ -14,27 +14,58 @@ nav.navbar {
             color: $white;
             padding: .5rem 1rem;
             transition: all ease .25s;
-
+            &:active {
+                text-shadow: 0 0 .0344rem currentColor,
+                            0 0 .0344rem currentColor,
+                            0 0 .0344rem currentColor,
+                            0 0 .0344rem currentColor;
+                transition: all ease .25s;
+            }
             &:hover,
             &:focus {
                 background-color: transparent;
-                text-shadow: 0 0 .0625rem #fff;
+                text-shadow: 0 0 .0344rem currentColor, 0 0 .0344rem currentColor;
                 text-decoration: underline;
                 transition: all ease .25s;
+                &:active {
+                    text-shadow: 0 0 .0344rem currentColor,
+                                 0 0 .0344rem currentColor,
+                                 0 0 .0344rem currentColor,
+                                 0 0 .0344rem currentColor;
+
+                }
             }
+
         }
     }
     #usernavigation {
         .nav-link {
             font-size: 2rem;
             color: $white;
-            min-width: 3rem;
-            &:hover,
-            &:focus {
+            width: 3rem;
+            height: 3rem;
+            border: .0625rem solid transparent;
+            transition: all ease .25s;
+
+            &:hover {
                 background-color: transparent;
-                text-shadow: 0 0 .125rem #fff;
+                text-shadow: 0 0 .0344rem currentColor,
+                             0 0 .0344rem currentColor,
+                             0 0 .0344rem currentColor;
                 transition: all ease .25s;
             }
+            &:active {
+                border-color: $petel-secondarylight;
+                color: $petel-secondarylight;
+                transition: all ease .25s;
+
+            }
+        }
+        [data-region="popover-region-messages"],
+        #nav-notification-popover-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         [data-region="popover-region-messages"],
         .usermenu-container {

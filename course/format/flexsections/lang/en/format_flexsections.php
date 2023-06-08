@@ -111,3 +111,5 @@ $string['assignnotsubmitted'] = 'Not submitted';
 $string['questionnairesubmitted'] = 'Submitted';
 $string['questionnairenotsubmitted'] = 'Not started';
 $string['failed'] = 'Failed {$a} students';
+
+$string['editimage'] = 'Edit image';

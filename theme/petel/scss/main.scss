@@ -13,8 +13,10 @@ $carousel-control-color: $petel-primary !default;
 
 @import 'globals/fonts';
 @import 'globals/text';
-
+@import "components/btns";
+@import "components/aside";
 @import "components/header";
+@import "pages/course_page";
 
 // @import 'plugins/sharequestion';
 // @import 'plugins/oer';

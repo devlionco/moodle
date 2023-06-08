@@ -45,6 +45,9 @@
      data-number="{{num}}">
 
     {{#header}}
+    <h3 id="section-{{num}}-title" class="card-title mb-2">
+        {{{name}}}
+    </h3>
         <a class="card-main-content" href="{{{url}}}" title="{{{name}}}">
             <div class="card-img-top"
                  role="presentation"
@@ -61,10 +64,6 @@
                     {{$ core_courseformat/local/content/section/badges }}
                         {{> core_courseformat/local/content/section/badges }}
                     {{/ core_courseformat/local/content/section/badges }}
-                    <h3 id="section-{{num}}-title"
-                        class="card-title">
-                        {{{name}}}
-                    </h3>
                     {{#summary}}
                         {{#summarytext}}
                             <div class="summary">

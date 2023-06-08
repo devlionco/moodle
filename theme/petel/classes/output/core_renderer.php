@@ -445,7 +445,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         if ($enablereviews == 1) {
             $reviewrequests = \community_oer\reviews_oer::count_review_oncourse($COURSE->id);
         }
-        $btnclass = 'mr-1 ml-1 btn btn-default quicklinks ';
+        $btnclass = 'mx-1 btn btn-sm btn-secondary quicklinks ';
         if ($COURSE->id > 1) {
             // if ($reviewrequests) {
             //     $title = get_string('give_feedback', 'community_oer');
@@ -488,8 +488,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 if($flagsequence || $isadmin) {
                     $url = 'javascript:void(0)';
                     $title = get_string('buttonshare', 'community_sharesequence');
-
-                    $icon = $OUTPUT->pix_icon('e/share_square', '', 'moodle', array('class' => 'm-1'));
+                    $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-share-all'));
                     $html .= html_writer::link($url, $icon, array('class' => $btnclass . ' btn-share-sequence',
                         'role' => 'button', 'title' => $title));
 
@@ -516,7 +515,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                     // Button share course.
                     $url = 'javascript:void(0)';
                     $title = get_string('buttonshare', 'community_sharecourse');
-                    $icon = $OUTPUT->pix_icon('i/share-all', '', 'moodle', array('class' => 'm-1'));
+                    $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-arrow-up-right-from-square'));
                     $html .= html_writer::link($url, $icon, array('class' => $btnclass . ' btn-share-course',
                         'role' => 'button', 'title' => $title));
                 }

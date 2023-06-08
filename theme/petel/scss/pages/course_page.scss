@@ -1,0 +1,157 @@
+// Format flex-sections.
+
+.path-course {
+    #page-header {
+
+        // FIXME: should be changed by .php. add class .h1 instead of .h2
+        .page-header-headings h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            line-height: 3.75rem;
+        }
+    }
+
+    .secondary-navigation {
+        padding: 0 .9375rem;
+        margin-bottom: 1rem;
+
+        .moremenu.navigation {
+            padding: 0;
+            margin: 0;
+            border-bottom-color: $gray-300;
+
+            .nav-link {
+                color: $secondary;
+                position: relative;
+                font-size: 1rem;
+                font-weight: 400;
+
+                &.active {
+                    color: $petel-body-text;
+                    border: none;
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        display: block;
+                        width: 100%;
+                        height: .1875rem;
+                        background-color: $secondary;
+                        border-radius: .1875rem .1875rem 0 0;
+                        left: 0;
+                        bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .course-content {
+        .course-image {
+            border-radius: 1rem;
+            min-height: 12.5rem;
+            padding: .625rem;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        #enrolkeybtn {
+            display: flex;
+            align-items: center;
+            font-size: .75rem;
+
+            i {
+                font-size: 1.125rem;
+            }
+        }
+
+        .coursecompletion {
+            width: 48%;
+
+            .progress-wrapper {
+                border-radius: .5rem;
+                background-color: rgba(255, 255, 255, .7);
+
+                .progress {
+                    height: .5rem;
+                    border: .0625rem solid $primary;
+                    border-radius: .25rem;
+                    background-color: $gray-100;
+                    overflow: hidden;
+                }
+
+                p {
+                    font-size: .75rem;
+                    line-height: 1;
+                }
+            }
+        }
+
+        .quicklinks {
+            min-height: 2rem;
+            font-size: 1rem;
+            width: 2rem;
+            height: 2rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #uploadcourseimagelabelб #enrolkeybtn {
+            i {
+                font-size: 1.125rem;
+            }
+        }
+    }
+
+    #coursecontentcollapse0 {
+        .course-description-item.summarytext {
+            padding: 0 .5rem;
+        }
+    }
+    .course-content .card-deck .card {
+        aspect-ratio: 4/4;
+    }
+    .dashboard-card-deck {
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
+
+        //TODO: fix it via all media queries.
+        &:not(.fixed-width-cards) .dashboard-card {
+            width: calc(33.33% - 1.5rem);
+            margin-right: .75rem;
+            margin-left: .75rem;
+        }
+        .card-main-content {
+            min-height: 10rem;
+        }
+    }
+
+    .activity-info {
+
+        .gradestatus {
+            .progress {
+                width: 7.5rem;
+                height: 1rem;
+                border-radius: .25rem;
+            }
+            .progress-bar {
+                font-size: .875rem;
+            }
+            .grades {
+                text-decoration: underline;
+                font-size: 1rem;
+                line-height: 1.5rem;
+                color: $black;
+            }
+        }
+       button:not(.close) {
+        font-size: .75rem;
+       }
+    }
+    .submissionstatus {
+        font-size: .75rem;
+    }
+}

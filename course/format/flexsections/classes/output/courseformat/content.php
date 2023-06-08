@@ -114,8 +114,8 @@ class content extends \core_courseformat\output\local\content {
             foreach ($instances as $instance) {
                 if (!empty($instance->password)) {
                     $title          = get_string('studentsenrolkey', 'theme_petel', $instance->password);
-                    $icon           = $OUTPUT->pix_icon('i/info', '', 'moodle', array('class' => 'm-0'));
-                    $enrolkeybtn    = html_writer::tag('button', $icon . $title, array('id' => 'enrolkeybtn', 'class' => 'btn btn-sm btn-secondary', 'aria-label' => $title));
+                    $icon           = html_writer::tag('i', '', array('class' =>'fa-solid fa-circle-info mr-2'));
+                    $enrolkeybtn    = html_writer::tag('button', $icon . $title, array('id' => 'enrolkeybtn', 'class' => 'btn btn-sm btn-outline-secondary px-3', 'aria-label' => $title));
                     $context_header = null;
                     $PAGE->requires->js_call_amd('format_flexsections/enrolkey', 'init_dialog', array($context_header, $instance->password));
                     $PAGE->requires->strings_for_js(array('getcoursekeytitle', 'getkey', 'cancel'), 'theme_petel');

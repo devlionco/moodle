@@ -1,0 +1,29 @@
+// Aside drawer togglers btns.
+.drawer-toggles {
+    .drawer-toggler {
+      button.btn {
+        box-shadow: 0 .125rem .1875rem 0 rgba(0, 0, 0, .18);
+        background-color: $secondarymedium;
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+      }
+      button[data-target="theme_boost-drawers-blocks"] {
+        color: #fff;
+      }
+    }
+  }
+  
+// 
+  #theme_boost-drawers-courseindex {
+    .completioninfo {
+        i.icon {
+            color: $gray-400;
+            font-size: .5rem;
+        }
+        &.completion_complete {
+            i.icon {
+                color: $green;
+            }
+        }
+    }
+  }
