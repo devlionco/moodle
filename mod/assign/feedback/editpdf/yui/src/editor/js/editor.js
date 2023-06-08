@@ -195,6 +195,13 @@ EDITOR.prototype = {
      */
     searchcommentswindow: null,
 
+    /**
+     * The search comments window.
+     * @property searchcommentswindow
+     * @type M.core.dialogue
+     * @protected
+     */
+    htmleditorwindow: null,
 
     /**
      * The selected stamp picture.
@@ -223,6 +230,16 @@ EDITOR.prototype = {
     editingcomment: false,
 
     /**
+     * Prevent new comments from appearing
+     * immediately after clicking off a current
+     * comment
+     * @property editinghtmlcomment
+     * @type Boolean
+     * @public
+     */
+    editinghtmlcomment: false,
+
+    /**
      * Should inactive comments be collapsed?
      *
      * @property collapsecomments
@@ -230,6 +247,24 @@ EDITOR.prototype = {
      * @public
      */
     collapsecomments: true,
+
+    /**
+     * Removed annotations - for redo
+     *
+     * @property removedannotations
+     * @type ArrayAssert
+     * @protected
+     */
+    removedannotations: [],
+
+    /**
+     * The current zoom scale
+     *
+     * @property zoomscale
+     * @type float
+     * @public
+     */
+    zoomscale: 1.0,
 
     /**
      * Called during the initialisation process of the object.
@@ -270,7 +305,7 @@ EDITOR.prototype = {
      * @method refresh_button_state
      */
     refresh_button_state: function() {
-        var button, currenttoolnode, imgurl, drawingregion, stampimgurl, drawingcanvas;
+        var button, currenttoolnode, imgurl, drawingregion, stampimgurl, drawingcanvas, thicknessbtn, thicknessbtnimgurl;
 
         // Initalise the colour buttons.
         button = this.get_dialogue_element(SELECTOR.COMMENTCOLOURBUTTON);
@@ -287,6 +322,10 @@ EDITOR.prototype = {
         button = this.get_dialogue_element(SELECTOR.ANNOTATIONCOLOURBUTTON);
         imgurl = M.util.image_url('colour_' + this.currentedit.annotationcolour, 'assignfeedback_editpdf');
         button.one('img').setAttribute('src', imgurl);
+
+        thicknessbtn = this.get_dialogue_element(SELECTOR.ANNOTATIONPENTHICKNESSBUTTON);
+        thicknessbtnimgurl = M.util.image_url('thicknesspicker', 'assignfeedback_editpdf');
+        thicknessbtn.one('img').setAttribute('src', thicknessbtnimgurl);
 
         currenttoolnode = this.get_dialogue_element(TOOLSELECTOR[this.currentedit.tool]);
         currenttoolnode.addClass('assignfeedback_editpdf_selectedbutton');
@@ -341,7 +380,7 @@ EDITOR.prototype = {
      */
     get_canvas_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x - bounds.x, point.y - bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point((point.x - bounds.x)/this.zoomscale, (point.y - bounds.y)/this.zoomscale);
 
         bounds.x = bounds.y = 0;
 
@@ -356,7 +395,7 @@ EDITOR.prototype = {
      */
     get_window_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point(point.x*this.zoomscale + bounds.x, point.y*this.zoomscale + bounds.y);
 
         return newpoint;
     },
@@ -625,7 +664,7 @@ EDITOR.prototype = {
      * @method prepare_pages_for_display
      */
     prepare_pages_for_display: function(data) {
-        var i, j, comment, error, annotation, readonly;
+        var i, j, comment, htmlcomment, error, annotation, readonly;
 
         if (!data.pagecount) {
             if (this.dialogue) {
@@ -651,10 +690,22 @@ EDITOR.prototype = {
                                                                                  comment.colour,
                                                                                  comment.rawtext);
             }
+            for (j = 0; j < this.pages[i].htmlcomments.length; j++) {
+                htmlcomment = this.pages[i].htmlcomments[j];
+                this.pages[i].htmlcomments[j] = new M.assignfeedback_editpdf.htmlcomment(this,
+                    htmlcomment.gradeid,
+                    htmlcomment.pageno,
+                    htmlcomment.x,
+                    htmlcomment.y,
+                    htmlcomment.width,
+                    htmlcomment.colour,
+                    htmlcomment.rawtext);
+            }
             for (j = 0; j < this.pages[i].annotations.length; j++) {
                 annotation = this.pages[i].annotations[j];
                 this.pages[i].annotations[j] = this.create_annotation(annotation.type, annotation);
             }
+            this.removedannotations[i] = [];
         }
 
         readonly = this.get('readonly');
@@ -811,15 +862,30 @@ EDITOR.prototype = {
         var toolnode,
             commentcolourbutton,
             annotationcolourbutton,
+
+            annotationpenthickness,
+
+
+
             searchcommentsbutton,
             expcolcommentsbutton,
             rotateleftbutton,
             rotaterightbutton,
+            undobutton,
+            redobutton,
+            zoominbutton,
+            zoomoutbutton,
             currentstampbutton,
             stampfiles,
             picker,
-            filename;
+            filename,
+            htmleditorbutton;
 
+        htmleditorbutton = this.get_dialogue_element(SELECTOR.HTMLEDITORBUTTON);
+        if(htmleditorbutton !== null &&  htmleditorbutton !== 'unknown') {
+            htmleditorbutton.on('click', this.open_htmleditor, this);
+            htmleditorbutton.on('key', this.open_htmleditor, 'down:13', this);
+        }
         searchcommentsbutton = this.get_dialogue_element(SELECTOR.SEARCHCOMMENTSBUTTON);
         searchcommentsbutton.on('click', this.open_search_comments, this);
         searchcommentsbutton.on('key', this.open_search_comments, 'down:13', this);
@@ -828,6 +894,16 @@ EDITOR.prototype = {
         expcolcommentsbutton.on('click', this.expandCollapseComments, this);
         expcolcommentsbutton.on('key', this.expandCollapseComments, 'down:13', this);
 
+        // Zoom in
+        zoominbutton = this.get_dialogue_element(SELECTOR.ZOOMINBUTTON);
+        zoominbutton.on('click', this.set_zoom, this, true);
+        zoominbutton.on('key', this.set_zoom, 'down:13', this, true);
+
+        // Zoom out
+        zoomoutbutton = this.get_dialogue_element(SELECTOR.ZOOMOUTBUTTON);
+        zoomoutbutton.on('click', this.set_zoom, this, false);
+        zoomoutbutton.on('key', this.set_zoom, 'down:13', this, false);
+        
         if (this.get('readonly')) {
             return;
         }
@@ -841,6 +917,15 @@ EDITOR.prototype = {
         rotaterightbutton = this.get_dialogue_element(SELECTOR.ROTATERIGHTBUTTON);
         rotaterightbutton.on('click', this.rotatePDF, this, false);
         rotaterightbutton.on('key', this.rotatePDF, 'down:13', this, false);
+
+        // Undo and redo buttons
+        undobutton = this.get_dialogue_element(SELECTOR.UNDOBUTTON);
+        undobutton.on('click', this.undoAnnotation, this);
+        undobutton.on('key', this.undoAnnotation, 'down:13', this);
+
+        redobutton = this.get_dialogue_element(SELECTOR.REDOBUTTON);
+        redobutton.on('click', this.redoAnnotation, this);
+        redobutton.on('key', this.redoAnnotation, 'down:13', this);
 
         this.disable_touch_scroll();
 
@@ -890,6 +975,25 @@ EDITOR.prototype = {
             context: this
         });
 
+
+        annotationpenthicknessbutton = this.get_dialogue_element(SELECTOR.ANNOTATIONPENTHICKNESSBUTTON);
+        picker = new M.assignfeedback_editpdf.thicknesspicker({
+            buttonNode: annotationpenthicknessbutton,
+            iconprefix: 'thikness_',
+            thickness: PENTHICKNESS,
+            callback: function(e) {
+                var thickness = e.target.getAttribute('data-value');
+                if (!thickness) {
+                    thickness = e.target.ancestor().getAttribute('data-value');
+                }
+
+                STROKEWEIGHT = +thickness;
+                sessionStorage.setItem('penLineThickness', +thickness);
+                this.redraw();
+            },
+            context: this
+        });
+
         stampfiles = this.get('stampfiles');
         if (stampfiles.length <= 0) {
             this.get_dialogue_element(TOOLSELECTOR.stamp).ancestor().hide();
@@ -934,7 +1038,7 @@ EDITOR.prototype = {
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
 
-        if (tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
+        if (tool !== "htmleditor" && tool !== "comment" && tool !== "select" && tool !== "drag" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }
 
@@ -949,10 +1053,13 @@ EDITOR.prototype = {
      */
     stringify_current_page: function() {
         var comments = [],
+            htmlcomments = [],
             annotations = [],
             page,
             i = 0;
-
+        for (i = 0; i < this.pages[this.currentpage].htmlcomments.length; i++) {
+            htmlcomments[i] = this.pages[this.currentpage].htmlcomments[i].clean();
+        }
         for (i = 0; i < this.pages[this.currentpage].comments.length; i++) {
             comments[i] = this.pages[this.currentpage].comments[i].clean();
         }
@@ -960,7 +1067,7 @@ EDITOR.prototype = {
             annotations[i] = this.pages[this.currentpage].annotations[i].clean();
         }
 
-        page = {comments: comments, annotations: annotations};
+        page = {comments: comments, annotations: annotations, htmlcomments: htmlcomments};
 
         return Y.JSON.stringify(page);
     },
@@ -972,6 +1079,7 @@ EDITOR.prototype = {
      */
     get_current_drawable: function() {
         var comment,
+            htmlcomment,
             annotation,
             drawable = false;
 
@@ -982,6 +1090,9 @@ EDITOR.prototype = {
         if (this.currentedit.tool === 'comment') {
             comment = new M.assignfeedback_editpdf.comment(this);
             drawable = comment.draw_current_edit(this.currentedit);
+        } else if (this.currentedit.tool === 'htmleditor') {
+                htmlcomment = new M.assignfeedback_editpdf.htmlcomment(this);
+                drawable = htmlcomment.draw_current_edit(this.currentedit);
         } else {
             annotation = this.create_annotation(this.currentedit.tool, {});
             if (annotation) {
@@ -1042,6 +1153,9 @@ EDITOR.prototype = {
         }
 
         if (this.editingcomment) {
+            return;
+        }
+        if (this.editinghtmlcomment) {
             return;
         }
 
@@ -1155,17 +1269,32 @@ EDITOR.prototype = {
     edit_end: function() {
         var duration,
             comment,
-            annotation;
+            htmlcomment,
+            annotation,
+            needsaved;
 
         duration = new Date().getTime() - this.currentedit.start;
+        needsaved = false;
 
         if (duration < CLICKTIMEOUT || this.currentedit.start === false) {
             return;
         }
-
-        if (this.currentedit.tool === 'comment') {
+        if (this.currentedit.tool === 'htmleditor') {
             if (this.currentdrawable) {
                 this.currentdrawable.erase();
+                needsaved = true;
+            }
+            this.currentdrawable = false;
+            htmlcomment = new M.assignfeedback_editpdf.htmlcomment(this);
+            if (htmlcomment.init_from_edit(this.currentedit)) {
+                this.pages[this.currentpage].htmlcomments.push(htmlcomment);
+                this.drawables.push(htmlcomment.draw());
+                needsaved = true;
+            }
+        } else if (this.currentedit.tool === 'comment') {
+            if (this.currentdrawable) {
+                this.currentdrawable.erase();
+                needsaved = true;
             }
             this.currentdrawable = false;
             comment = new M.assignfeedback_editpdf.comment(this);
@@ -1173,23 +1302,28 @@ EDITOR.prototype = {
                 this.pages[this.currentpage].comments.push(comment);
                 this.drawables.push(comment.draw(true));
                 this.editingcomment = true;
+                needsaved = true;
             }
         } else {
             annotation = this.create_annotation(this.currentedit.tool, {});
             if (annotation) {
                 if (this.currentdrawable) {
                     this.currentdrawable.erase();
+                    needsaved = true;
                 }
                 this.currentdrawable = false;
                 if (annotation.init_from_edit(this.currentedit)) {
                     this.pages[this.currentpage].annotations.push(annotation);
                     this.drawables.push(annotation.draw());
+                    needsaved = true;
                 }
             }
         }
 
         // Save the changes.
+        if (needsaved) {
         this.save_current_page();
+        }
 
         // Reset the current edit.
         this.currentedit.starttime = 0;
@@ -1246,6 +1380,8 @@ EDITOR.prototype = {
             return new M.assignfeedback_editpdf.annotationhighlight(data);
         } else if (type === "stamp") {
             return new M.assignfeedback_editpdf.annotationstamp(data);
+        } else if (type === "htmleditor") {
+            return new M.assignfeedback_editpdf.htmlcomment(data);
         }
         return false;
     },
@@ -1314,7 +1450,24 @@ EDITOR.prototype = {
         this.searchcommentswindow.show();
         e.preventDefault();
     },
+    /**
+     * Event handler to open the comment search interface.
+     *
+     * @param Event e
+     * @protected
+     * @method open_htmleditor
+     */
+    open_htmleditor: function(e) {
+        if (!this.htmleditorwindow) {
+            this.htmleditorwindow = new M.assignfeedback_editpdf.htmleditor({
+                editor: this
+            });
+        }
 
+        this.htmleditorwindow.show();
+
+        e.preventDefault();
+    },
     /**
      * Toggle function to expand/collapse all comments on page.
      *
@@ -1355,6 +1508,9 @@ EDITOR.prototype = {
         }
         for (i = 0; i < page.comments.length; i++) {
             this.drawables.push(page.comments[i].draw(false));
+        }
+        for (i = 0; i < page.htmlcomments.length; i++) {
+            this.drawables.push(page.htmlcomments[i].draw());
         }
     },
 
@@ -1504,6 +1660,85 @@ EDITOR.prototype = {
     },
 
     /**
+     * Zoom editingcanvas
+     * @protected
+     * @param {Object} e javascript event
+     * @param {boolean} zoomin  true if zooming in, false if zooming out
+     * @method set_zoom
+     */
+    set_zoom: function(e, zoomin) {
+        e.preventDefault();
+
+        if (this.get('destroyed')) {
+            return;
+        }
+
+        if (zoomin) {
+            this.zoomscale *= 1.4142136;
+        }
+        else {
+            this.zoomscale *= 1.0/1.4142136;
+        }
+
+        // Adapt style
+        var zoom_stylesheet = document.getElementById('assignfeedback_editpdf_scalestyle');
+        zoom_stylesheet.innerHTML =
+		'.assignfeedback_editpdf_widget .scalecanvas {\n' +
+		'    transform-origin : top left;\n' +
+		'    transform        : scale(' + this.zoomscale + ');\n' +
+		'}\n' +
+		'.assignfeedback_editpdf_widget .undoscale {\n' +
+		'    transform-origin : top left;\n' +
+		'    transform        : scale(' + 1.0 / this.zoomscale + ');\n' +
+		'}';
+        var elDrawregion = document.querySelector('.assignfeedback_editpdf_widget .scalecanvas');
+        var computedStyle = window.getComputedStyle(elDrawregion);
+        var current_width = parseInt(computedStyle.width, 10);
+        if (zoomin) {
+            current_width *= 1.4142136;
+        } else {
+            current_width *= 1.0/1.4142136;
+        }
+        elDrawregion.style.width = Math.round(current_width);
+    },
+
+    /**
+     * Undo the last annotation and remove from the page.
+     * @protected
+     * @method undoAnnotation
+     */
+    undoAnnotation: function() {
+        // Remove the last annotation
+        var annotations = this.pages[this.currentpage].annotations;
+        if( annotations.length > 0) {
+            var lastannotation = annotations.pop();
+            // ...saving incase we need to redo
+            this.removedannotations[this.currentpage].push(lastannotation);
+        }
+
+        // Redraw the page
+        this.redraw();
+    },
+
+    /**
+     * Redo an annotation previously removed from the page
+     * @protected
+     * @method redoAnnotation
+     */
+    redoAnnotation: function() {
+        var annotations = this.pages[this.currentpage].annotations;
+
+        // If we have any undo history...
+        if( this.removedannotations[this.currentpage].length > 0 ) {
+            // Retrieve most recent item and add back into current annotations
+            annotations.push( this.removedannotations[this.currentpage].pop() );
+
+            // Redraw the page
+            this.redraw();
+        }
+    },
+
+    /**
      * Calculate degree to rotate.
      * @protected
      * @param {Object} e javascript event
@@ -1585,6 +1820,15 @@ EDITOR.prototype = {
                         var oldcomments = page.comments;
                         for (i = 0; i < oldcomments.length; i++) {
                             oldcomments[i].updatePosition();
+                        }
+
+                        /**
+                         * Update Position of htmlcomments with relation to canvas coordinates.
+                         * Without this code, the htmlcomments will stay at their positions in windows/document coordinates.
+                         */
+                        var oldhtmlcomments = page.htmlcomments;
+                        for (i = 0; i < oldhtmlcomments.length; i++) {
+                            oldhtmlcomments[i].updatePosition();
                         }
                         // Save Annotations.
                         return self.save_current_page();

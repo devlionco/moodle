@@ -215,8 +215,8 @@ Y.extend(ANNOTATION, Y.Base, {
             deletelink.on('click', this.remove, this);
             deletelink.on('key', this.remove, 'space,enter', this);
 
-            deletelink.setX(offsetcanvas[0] + bounds.x + bounds.width - 18);
-            deletelink.setY(offsetcanvas[1] + bounds.y + 6);
+            deletelink.setX(offsetcanvas[0] + (bounds.x + bounds.width)*this.editor.zoomscale - 18);
+            deletelink.setY(offsetcanvas[1] + bounds.y*this.editor.zoomscale + 6);
             this.drawable.nodes.push(deletelink);
         }
         return this.drawable;
@@ -249,6 +249,9 @@ Y.extend(ANNOTATION, Y.Base, {
         annotations = this.editor.pages[this.editor.currentpage].annotations;
         for (i = 0; i < annotations.length; i++) {
             if (annotations[i] === this) {
+                // Add this annotation to the list used for 'redo'
+                this.editor.removedannotations[this.editor.currentpage].push(annotations[i]);
+                // Remove from existing annotations
                 annotations.splice(i, 1);
                 if (this.drawable) {
                     this.drawable.erase();

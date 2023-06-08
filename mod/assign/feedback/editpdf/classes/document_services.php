@@ -707,6 +707,7 @@ EOD;
         page_editor::release_drafts($grade->id);
 
         $allcomments = array();
+        $allhtmlcomments = array();
 
         for ($i = 0; $i < $pagecount; $i++) {
             $pagerotation = page_editor::get_page_rotation($grade->id, $i);
@@ -724,10 +725,15 @@ EOD;
             }
 
             $comments = page_editor::get_comments($grade->id, $i, false);
+            $htmlcomments = page_editor::get_htmlcomments($grade->id, $i, false);
             $annotations = page_editor::get_annotations($grade->id, $i, false);
 
             if (!empty($comments)) {
                 $allcomments[$i] = $comments;
+            }
+
+            if (!empty($htmlcomments)) {
+                $allhtmlcomments[$i] = $htmlcomments;
             }
 
             foreach ($annotations as $annotation) {
@@ -755,6 +761,17 @@ EOD;
                 }
             }
         }
+
+        if (!empty($allhtmlcomments)) {
+            // Add the comment markers with links.
+            foreach ($allhtmlcomments as $pageno => $htmlcomments) {
+                foreach ($htmlcomments as $index => $htmlcomment) {
+                    $pdf->add_htmlcomment($htmlcomment->pageno, $htmlcomment->width , $htmlcomment->x, $htmlcomment->y,
+                            $htmlcomment->rawtext);
+                }
+            }
+        }
+
 
         fulldelete($stamptmpdir);
 

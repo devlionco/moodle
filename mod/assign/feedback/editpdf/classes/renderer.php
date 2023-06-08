@@ -44,20 +44,26 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $shortcuts = array('navigate-previous-button' => 'j',
             'rotateleft' => 'q',
             'rotateright' => 'w',
+            'undo' => '',
+            'redo' => '',
+            'zoomin' => '+',
+            'zoomout' => '-',
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
             'expcolcomments' => 'g',
+            'expcolhtmlcomments' => 'g',
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
-            'drag' => 'd',
+	        'drag' => 'd',
             'pen' => 'y',
             'line' => 'u',
             'rectangle' => 'i',
             'oval' => 'o',
             'highlight' => 'p',
             'annotationcolour' => 'r',
+            'annotationpenthickness' => 't',
             'stamp' => 'n',
             'currentstamp' => 'm');
 
@@ -121,6 +127,21 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $html .= html_writer::div($links, 'visibleifjs');
         $header = get_string('pluginname', 'assignfeedback_editpdf');
+
+        // add a style to be changed dynamically
+        $html .= '
+		<style id="assignfeedback_editpdf_scalestyle">
+			.assignfeedback_editpdf_widget .scalecanvas {
+			    transform-origin: left top;
+			    transform: scale(1);
+			}
+
+			.assignfeedback_editpdf_widget .undoscale {
+			    transform-origin: left top;
+			    transform: scale(1);
+			}
+		</style>';
+
         $body = '';
         // Create the page navigation.
         $navigation1 = '';
@@ -165,6 +186,21 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
         }
 
+        $zoomtools = '';
+        if (!$widget->readonly) {
+            $zoomtools .= $this->render_toolbar_button('zoomin', 'zoomin', $this->get_shortcut('zoomin'));
+            $zoomtools .= $this->render_toolbar_button('zoomout', 'zoomout', $this->get_shortcut('zoomout'));
+            $zoomtools = html_writer::div($zoomtools, 'toolbar', array('role' => 'toolbar'));
+        }
+
+        $undotools = '';
+        if (!$widget->readonly) {
+            $undotools .= $this->render_toolbar_button('undo', 'undo', $this->get_shortcut('undo'));
+            $undotools .= $this->render_toolbar_button('redo', 'redo', $this->get_shortcut('redo'));
+            $undotools = html_writer::div($undotools, 'toolbar', array('role' => 'toolbar'));
+        }
+
+
         $toolbargroup = '';
         $clearfix = html_writer::div('', 'clearfix');
         if (!$widget->readonly) {
@@ -188,6 +224,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar3 .= $this->render_toolbar_button('oval', 'oval', $this->get_shortcut('oval'));
             $toolbar3 .= $this->render_toolbar_button('highlight', 'highlight', $this->get_shortcut('highlight'));
             $toolbar3 .= $this->render_toolbar_button('background_colour_clear', 'annotationcolour', $this->get_shortcut('annotationcolour'));
+            $toolbar3 .= $this->render_toolbar_button('background_colour_clear', 'annotationpenthickness', $this->get_shortcut('annotationpenthickness'));
             $toolbar3 = html_writer::div($toolbar3, 'toolbar', array('role' => 'toolbar'));
 
             // Stamps.
@@ -196,8 +233,13 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar4 .= $this->render_toolbar_button('background_colour_clear', 'currentstamp', $this->get_shortcut('currentstamp'));
             $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role'=>'toolbar'));
 
+            // Html
+            $toolbar5 = '';
+            $toolbar5 .= $this->render_toolbar_button('math', 'htmleditor');
+            $toolbar5 = html_writer::div($toolbar5, 'toolbar', array('role' => 'toolbar'));
+
             // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
-            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
+            $toolbars = $rotationtools . $zoomtools . $undotools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4 . $toolbar5;
             $toolbargroup = html_writer::div($toolbars, 'toolbar_group', ['role' => 'toolbar']);
         }
 
@@ -219,7 +261,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'progressbarlabel');
         $loading = html_writer::div($progressbar . $progressbarlabel, 'loading');
 
-        $canvas = html_writer::div($loading, 'drawingcanvas');
+        $canvas = html_writer::div($loading, 'drawingcanvas scalecanvas');
         $canvas = html_writer::div($canvas, 'drawingregion');
         // Place for messages, but no warnings displayed yet.
         $changesmessage = html_writer::div('', 'warningmessages');
@@ -230,7 +272,10 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $canvas .= $infomessage;
 
         $body .= $canvas;
-
+        $textarea = html_writer::tag('textarea', '', ["id" => "html_editor",
+                "class" => "htmleditor", "rows" => "20", "cols" => "50"]);
+        $textcontainer = html_writer::tag('div', $textarea);
+        $body .= html_writer::tag('div', $textcontainer, ["id" => "editorcontainer", "class" => "hidden"]);
         $footer = '';
 
         $editorparams = array(
@@ -260,6 +305,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'black',
             'clear',
             'colourpicker',
+            'thicknesspicker',
             'loadingeditor',
             'pagexofy',
             'deletecomment',
@@ -273,9 +319,128 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'cannotopenpdf',
             'pagenumber',
             'partialwarning',
-            'draftchangessaved'
+            'draftchangessaved',
+            'add',
+            'htmleditor',
+            'edithtml'
         ), 'assignfeedback_editpdf');
 
+        $textareaid = 'html_editor';
+        $options = array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0, 'changeformat' => 0,
+                'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED, 'context' => $this->page->context, 'noclean' => 0,
+                'trusttext' => 0, 'return_types' => 15, 'enable_filemanagement' => true, 'removeorphaneddrafts' => true,
+                'autosave' => false, 'trusted');
+        $configstr = "collapse = collapse
+                    style1 = title, bold, italic, fontcolor, backcolor
+                    list = unorderedlist, orderedlist, indent
+                    links = link, fontsize
+                    style2 = underline, strike, subscript, superscript
+                    align = align,rtl
+                    insert = equation, charmap, table, clear
+                    undo = undo
+                    accessibility = accessibilitychecker, accessibilityhelper
+                    math = wiris
+                    other = html";
+
+        $grouplines = explode("\n", $configstr);
+
+        $groups = array();
+
+        foreach ($grouplines as $groupline) {
+            $line = explode('=', $groupline);
+            if (count($line) > 1) {
+                $group = trim(array_shift($line));
+                $plugins = array_map('trim', explode(',', array_shift($line)));
+                $groups[$group] = $plugins;
+            }
+        }
+
+        $modules = array('moodle-editor_atto-editor');
+
+        $jsplugins = array();
+        foreach ($groups as $group => $plugins) {
+            $groupplugins = array();
+            foreach ($plugins as $plugin) {
+                // Do not die on missing plugin.
+                if (!\core_component::get_component_directory('atto_' . $plugin)) {
+                    continue;
+                }
+
+                // Remove manage files if requested.
+                if ($plugin == 'managefiles' && isset($options['enable_filemanagement']) &&
+                        !$options['enable_filemanagement']) {
+                    continue;
+                }
+
+                $jsplugin = array();
+                $jsplugin['name'] = $plugin;
+                $jsplugin['params'] = array();
+                $modules[] = 'moodle-atto_' . $plugin . '-button';
+
+                component_callback('atto_' . $plugin, 'strings_for_js');
+                $extra = component_callback('atto_' . $plugin, 'params_for_js',
+                        array($textareaid, $options, null));
+
+                if ($extra) {
+                    $jsplugin = array_merge($jsplugin, $extra);
+                }
+                // We always need the plugin name.
+                $this->page->requires->string_for_js('pluginname', 'atto_' . $plugin);
+                $groupplugins[] = $jsplugin;
+            }
+            $jsplugins[] = array('group' => $group, 'plugins' => $groupplugins);
+        }
+
+        $this->page->requires->strings_for_js(array(
+                'editor_command_keycode',
+                'editor_control_keycode',
+                'plugin_title_shortcut',
+                'textrecovered',
+                'autosavefailed',
+                'autosavesucceeded',
+                'errortextrecovery'
+        ), 'editor_atto');
+        $this->page->requires->strings_for_js(array(
+                'warning',
+                'info'
+        ), 'moodle');
+        $this->page->requires->yui_module($modules,
+                'Y.M.editor_atto.Editor.init',
+                array($this->get_init_params_atto($textareaid, $options, null, $jsplugins)), '', true);
+
         return $html;
+    }
+
+    public function get_init_params_atto($elementid, array $options = null, array $fpoptions = null, $plugins = null) {
+        global $PAGE;
+
+        $directionality = get_string('thisdirection', 'langconfig');
+        $lang = current_language();
+        $autosave = true;
+        $autosavefrequency = get_config('editor_atto', 'autosavefrequency');
+        if (isset($options['autosave'])) {
+            $autosave = $options['autosave'];
+        }
+        $contentcss = $PAGE->theme->editor_css_url()->out(false);
+
+        // Autosave disabled for guests and not logged in users.
+        if (isguestuser() or !isloggedin()) {
+            $autosave = false;
+        }
+        // Note <> is a safe separator, because it will not appear in the output of s().
+        $pagehash = sha1($PAGE->url . '<>');
+        $params = array(
+                'elementid' => $elementid,
+                'content_css' => $contentcss,
+                'contextid' => $options['context']->id,
+                'autosaveEnabled' => $autosave,
+                'autosaveFrequency' => $autosavefrequency,
+                'language' => $lang,
+                'directionality' => $directionality,
+                'filepickeroptions' => array(),
+                'plugins' => $plugins,
+                'pageHash' => $pagehash,
+        );
+        return $params;
     }
 }

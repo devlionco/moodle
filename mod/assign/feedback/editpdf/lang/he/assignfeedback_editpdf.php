@@ -15,20 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the version information for the comments feedback plugin
+ * Strings for component 'assignfeedback_editpdf', language 'en'
  *
- * @package assignfeedback_editpdf
- * @copyright  2012 Davo Smith
+ * @package   assignfeedback_editpdf
+ * @copyright 2012 Davo Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022112802;
-$plugin->requires  = 2022111800;
-$plugin->component = 'assignfeedback_editpdf';
-$plugin->dependencies = [
-        'editor_atto' => ANY_VERSION,
-        'filter_mathjaxloader' => '2020061500',
-        'filter_tex' => '2020061500',
-];
+$string['htmleditor'] = 'עורך מתמטי';
+$string['add'] = 'הוסף';
+$string['edithtml'] = 'Edit html';

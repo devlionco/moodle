@@ -72,7 +72,10 @@
 
 .yui3-colourpicker-hidden,
 .yui3-commentsearch-hidden,
-.yui3-commentmenu-hidden {
+.yui3-commentmenu-hidden,
+.yui3-htmlcommentmenu-hidden,
+.yui3-htmleditor-hidden,
+.yui3-thicknesspicker-hidden {
     display: none;
 }
 
@@ -190,6 +193,14 @@
 .assignfeedback_editpdf_widget .toolbar > button.rotaterightbutton {
     /*rtl:ignore*/
     float: right;
+}
+
+.assignfeedback_editpdf_widget .toolbar > button.zoominbutton {
+    float: left;
+}
+
+.assignfeedback_editpdf_widget .toolbar > button.zoomoutbutton {
+    float: left;
 }
 
 .assignfeedback_editpdf_widget .toolbar {
@@ -401,7 +412,15 @@ ul.assignfeedback_editpdf_menu {
     position: relative;
 }
 
-@media (max-width: 960px) {
+.assignfeedback_editpdf_widget #editorcontainer {
+    position: relative;
+}
+
+.assignfeedback_editpdf_widget #editorcontainer #html_editor_tbl {
+    margin: auto;
+}
+
+@media (max-width: 1400px) {
     .assignfeedback_editpdf_widget .pageheader {
         height: 104px;
     }
@@ -429,4 +448,9 @@ ul.assignfeedback_editpdf_menu {
         padding-left: 5px;
         padding-right: 5px;
     }
+}
+
+/* Smaller PDF editor toolbar buttons */
+.assignfeedback_editpdf_widget .pageheader button img {
+    margin: 0;
 }

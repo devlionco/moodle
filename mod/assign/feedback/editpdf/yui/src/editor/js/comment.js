@@ -169,7 +169,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
         // Lets add a contenteditable div.
         node = Y.Node.create('<textarea/>');
-        container = Y.Node.create('<div class="commentdrawable"/>');
+        container = Y.Node.create('<div class="commentdrawable undoscale"/>');
         label = Y.Node.create('<label/>');
         marker = Y.Node.create('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 13 13" ' +
                 'preserveAspectRatio="xMinYMin meet">' +

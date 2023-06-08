@@ -39,7 +39,9 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         SAVE: '.savebutton',
         COMMENTCOLOURBUTTON: '.commentcolourbutton',
         COMMENTMENU: '.commentdrawable a',
+        HTMLCOMMENTMENU: '.htmlcommentdrawable a',
         ANNOTATIONCOLOURBUTTON:  '.annotationcolourbutton',
+        ANNOTATIONPENTHICKNESSBUTTON:  '.annotationpenthicknessbutton',
         DELETEANNOTATIONBUTTON: '.deleteannotationbutton',
         WARNINGMESSAGECONTAINER: '.warningmessages',
         ICONMESSAGECONTAINER: '.infoicon',
@@ -49,6 +51,11 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         USERINFOREGION: '[data-region="user-info"]',
         ROTATELEFTBUTTON: '.rotateleftbutton',
         ROTATERIGHTBUTTON: '.rotaterightbutton',
+        HTMLEDITORBUTTON: '.htmleditorbutton',
+        ZOOMINBUTTON: '.zoominbutton',
+        ZOOMOUTBUTTON: '.zoomoutbutton',
+        UNDOBUTTON: '.undobutton',
+        REDOBUTTON: '.redobutton',
         DIALOGUE: '.' + CSS.DIALOGUE
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
@@ -80,6 +87,14 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'stamp': '.stampbutton',
         'select': '.selectbutton',
         'drag': '.dragbutton',
-        'highlight': '.highlightbutton'
+        'highlight': '.highlightbutton',
+        'htmleditor': '.htmleditorbutton'
     },
-    STROKEWEIGHT = 4;
+    STROKEWEIGHT = +sessionStorage.getItem('penLineThickness') || 2,
+    PENTHICKNESS = {
+        '2px': 2,
+        '4px': 4,
+        '6px': 6,
+        '8px': 8,
+        '10px': 10
+    };
