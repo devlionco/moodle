@@ -249,9 +249,13 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         $params           = [];
         $params['quizid'] = $quizid;
 
-        $sql = "SELECT questionid
-                FROM mdl_quiz_slots qs
-                WHERE qs.`quizid` = ?";
+        $sql = "SELECT q.id, q.id AS questionid
+                FROM {quiz_slots} slot
+                JOIN {question_references} qre ON qre.itemid = slot.id
+                JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
+                JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id
+                JOIN {question} q ON q.id = qve.questionid
+                WHERE slot.quizid = ?";
 
         if ($questions = $DB->get_records_sql($sql, $params)) {
             foreach ($questions as $key => $question) {
