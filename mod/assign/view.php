@@ -50,6 +50,15 @@ $assign->set_module_viewed();
 // Apply overrides.
 $assign->update_effective_access($USER->id);
 
+if ($urlparams['action'] === 'grading') {
+    $PAGE->requires->css('/local/datatables/style/dataTables.bootstrap.css');
+    $PAGE->requires->css('/local/datatables/style/fixedHeader.dataTables.min.css');
+    $PAGE->requires->css('/local/datatables/style/scroller.dataTables.min.css');
+    $PAGE->requires->css('/local/datatables/style/select.bootstrap.css');
+
+    $PAGE->requires->js_call_amd('mod_assign/grading_table', 'init', []);
+}
+
 // Get the assign class to
 // render the page.
 echo $assign->view(optional_param('action', '', PARAM_ALPHA));

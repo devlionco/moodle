@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Strings for component 'assign', language 'he'
  *
- * @package    mod_assign
+ * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$string['listview'] = 'ברשימה יוצגו:';
+$string['savegradefeedback'] = 'שמירת משוב וציונים';
+$string['addattempt_custom'] = 'האם לאפשר הגשה חוזרת לכל הצוות?';
+$string['sendmessage'] = 'שליחת הודעה';
 
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2022112802;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2022111800;    // Requires this Moodle version.
+$string['attachmentlist'] = 'רשימת קבצים מצורפים:';

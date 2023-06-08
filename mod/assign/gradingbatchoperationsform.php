@@ -75,6 +75,9 @@ class mod_assign_grading_batch_operations_form extends moodleform {
             $options['setmarkingallocation'] = get_string('setmarkingallocation', 'assign');
         }
 
+        // PTL-6739.
+        $options['sendmessage'] = get_string('sendmessage', 'assign');
+
         $mform->addElement('hidden', 'action', 'gradingbatchoperation');
         $mform->setType('action', PARAM_ALPHA);
         $mform->addElement('hidden', 'id', $instance['cm']);

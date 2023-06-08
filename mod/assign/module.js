@@ -93,18 +93,25 @@ M.mod_assign.init_grading_table = function(Y) {
                     e.preventDefault();
                 } else {
                     action = operation.get('value');
-                    prefix = 'plugingradingbatchoperation_';
-                    if (action.indexOf(prefix) == 0) {
-                        pluginaction = action.substr(prefix.length);
-                        plugin = pluginaction.split('_')[0];
-                        action = pluginaction.substr(plugin.length + 1);
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
-                    } else {
-                        confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
-                    }
-                    if (!confirm(confirmmessage)) {
+
+                    // PTL-6739.
+                    if(action === 'sendmessage') {
                         M.util.js_complete('mod_assign/module.js:batch:submit');
                         e.preventDefault();
+                        M.assign_participants.init(selectedusers);
+                    }else {
+                        prefix = 'plugingradingbatchoperation_';
+                        if (action.indexOf(prefix) == 0) {
+                            pluginaction = action.substr(prefix.length);
+                            plugin = pluginaction.split('_')[0];
+                            action = pluginaction.substr(plugin.length + 1);
+                            confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
+                        } else {
+                            confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
+                        }
+                        if (!confirm(confirmmessage)) {
+                            e.preventDefault();
+                        }
                     }
                     // Note: Do not js_complete. The page being reloaded will empty it.
                 }

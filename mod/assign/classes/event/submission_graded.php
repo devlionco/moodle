@@ -50,11 +50,12 @@ class submission_graded extends base {
      * @param \stdClass $grade
      * @return submission_graded
      */
-    public static function create_from_grade(\assign $assign, \stdClass $grade) {
+    public static function create_from_grade(\assign $assign, \stdClass $grade, $reopenattempt = false) {
         $data = array(
             'context' => $assign->get_context(),
             'objectid' => $grade->id,
-            'relateduserid' => $grade->userid
+            'relateduserid' => $grade->userid,
+            'other' => ['reopenattempt' => $reopenattempt]
         );
         self::$preventcreatecall = false;
         /** @var submission_graded $event */
