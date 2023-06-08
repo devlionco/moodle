@@ -48,6 +48,8 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subpluginelementannotation = new backup_nested_element('annotation', null, array('gradeid', 'pageno', 'type', 'x', 'y', 'endx', 'endy', 'colour', 'path', 'draft'));
         $subpluginelementcomments = new backup_nested_element('feedback_editpdf_comments');
         $subpluginelementcomment = new backup_nested_element('comment', null, array('gradeid', 'pageno', 'x', 'y', 'width', 'rawtext', 'colour', 'draft'));
+        $subpluginelementhtmlcomments = new backup_nested_element('feedback_editpdf_htmlcomments');
+        $subpluginelementhtmlcomment = new backup_nested_element('htmlcomment', null, array('gradeid', 'pageno', 'x', 'y', 'width', 'rawtext', 'draft'));
         $subpluginelementrotation = new backup_nested_element('feedback_editpdf_rotation');
         $subpluginelementpagerotation = new backup_nested_element('pagerotation', null,
             array('gradeid', 'pageno', 'pathnamehash', 'isrotated', 'degree'));
@@ -56,16 +58,19 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subplugin->add_child($subpluginwrapper);
         $subpluginelementannotations->add_child($subpluginelementannotation);
         $subpluginelementcomments->add_child($subpluginelementcomment);
+        $subpluginelementhtmlcomments->add_child($subpluginelementhtmlcomment);
         $subpluginelementrotation->add_child($subpluginelementpagerotation);
         $subpluginwrapper->add_child($subpluginelementfiles);
         $subpluginwrapper->add_child($subpluginelementannotations);
         $subpluginwrapper->add_child($subpluginelementcomments);
+        $subpluginwrapper->add_child($subpluginelementhtmlcomments);
         $subpluginwrapper->add_child($subpluginelementrotation);
 
         // Set source to populate the data.
         $subpluginelementfiles->set_source_sql('SELECT id AS gradeid from {assign_grades} where id = :gradeid', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementannotation->set_source_table('assignfeedback_editpdf_annot', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementcomment->set_source_table('assignfeedback_editpdf_cmnt', array('gradeid' => backup::VAR_PARENTID));
+        $subpluginelementhtmlcomment->set_source_table('assignfeedback_editpdf_htcm', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementpagerotation->set_source_table('assignfeedback_editpdf_rot', array('gradeid' => backup::VAR_PARENTID));
         // We only need to backup the files in the final pdf area, and the readonly page images - the others can be regenerated.
         $subpluginelementfiles->annotate_files('assignfeedback_editpdf',
