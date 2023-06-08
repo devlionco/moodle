@@ -40,10 +40,10 @@
         ]
     }
 }}
-<div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
+<div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information d-flex">
 
-    <span class="pl-2 pr-2 d-flex align-items-center inviewgrade" data-cmid="{{cmid}}" data-courseid="{{courseid}}" id="activity-row-grade-{{cmid}}">
-    </span>
+    <div class="pl-2 pr-2 d-flex flex-column align-items-center inviewgrade" data-cmid="{{cmid}}" data-courseid="{{courseid}}" id="activity-row-grade-{{cmid}}">
+    </div>
 
     {{#hascompletion}}
         {{#uservisible}}
