@@ -160,7 +160,7 @@ if ($attemptobj->has_capability('mod/quiz:viewreports')) {
 // Timing information.
 $summarydata['startedon'] = array(
     'title'   => get_string('startedon', 'quiz'),
-    'content' => userdate($attempt->timestart),
+    'content' => userdate($attempt->timestart, '%d %b %Y, %H:%M'),
 );
 
 $summarydata['state'] = array(
@@ -171,7 +171,7 @@ $summarydata['state'] = array(
 if ($attempt->state == quiz_attempt::FINISHED) {
     $summarydata['completedon'] = array(
         'title'   => get_string('completedon', 'quiz'),
-        'content' => userdate($attempt->timefinish),
+        'content' => userdate($attempt->timefinish, '%d %b %Y, %H:%M'),
     );
     $summarydata['timetaken'] = array(
         'title'   => get_string('timetaken', 'quiz'),

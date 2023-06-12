@@ -405,6 +405,28 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
 }
 
 /**
+ * Close a quiz attempt.
+ * @param mixed $attempt an integer attempt id or an attempt object
+ *      (row of the quiz_attempts table).
+ * @param object $quiz the quiz object.
+ */
+function quiz_close_attempt($attempt, $quiz) {
+    global $DB;
+    if (is_numeric($attempt)) {
+        if (!$attempt = $DB->get_record('quiz_attempts', array('id' => $attempt))) {
+            return;
+        }
+    }
+
+    if ($attempt->quiz != $quiz->id) {
+        debugging("Trying to close attempt $attempt->id which belongs to quiz $quiz->id, " .
+            "but was passed and not submitted by students, probably.");
+        return;
+    }
+    $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED, array('id' => $attempt->id));
+}
+
+/**
  * Delete a quiz attempt.
  * @param mixed $attempt an integer attempt id or an attempt object
  *      (row of the quiz_attempts table).
@@ -1934,7 +1956,7 @@ function quiz_attempt_submitted_handler($event) {
     // Update completion state.
     $completion = new completion_info($course);
     if ($completion->is_enabled($cm) &&
-        ($quiz->completionattemptsexhausted || $quiz->completionminattempts)) {
+        ($quiz->completionattemptsexhausted || $quiz->completionpass || $quiz->completionminattempts)) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $event->userid);
     }
     return quiz_send_notification_messages($course, $quiz, $attempt,
@@ -2269,6 +2291,9 @@ function quiz_question_tostring($question, $showicon = false, $showquestiontext 
 
     // Question text.
     if ($showquestiontext) {
+        // TODO: JSXGraph + formulas question type, generate JS error on quiz edit page
+        // https://github.com/jsxgraph/moodle-filter_jsxgraph/issues/14
+        // 'noclean' => false
         $questiontext = question_utils::to_plain_text($question->questiontext,
                 $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
         $questiontext = shorten_text($questiontext, 50);

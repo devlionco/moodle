@@ -1072,3 +1072,17 @@ $string['completionpass_help'] = 'If enabled, this activity is considered comple
 $string['completiondetail:passgrade'] = 'Receive a pass grade';
 $string['gradetopassnotset'] = 'This quiz does not yet have a grade to pass set. It may be set in the Grade section of the quiz settings.';
 $string['basicideasofquiz'] = 'The basic ideas of quiz-making';
+
+$string['deleteselectedcustom'] = 'Delete';
+$string['addquestionfrommycourses'] = 'Questions from my courses';
+$string['addquestionfromoer'] = 'Questions from oer catalog';
+$string['recommendation'] = 'Recommend';
+$string['favorites'] = 'Favorites';
+
+// Deprecated since Moodle 3.8.
+$string['numattemptsmade'] = '{$a} attempts made on this quiz';
+$string['reviewofattempt'] = 'Review of attempt {$a}';
+$string['reviewofpreview'] = 'Review of preview';
+//PTL-5321
+$string['printquestions'] = 'Print questions';
+$string['correctanswersandhints'] = 'Presenting the correct answer and hints';

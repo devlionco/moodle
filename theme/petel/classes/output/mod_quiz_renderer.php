@@ -731,4 +731,107 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         return $output;
     }
 
+    /**
+     * Render a button which allows students to redo a question in the attempt.
+     *
+     * @param int $slot the number of the slot to generate the button for.
+     * @param bool $disabled if true, output the button disabled.
+     * @return string HTML fragment.
+     */
+    public function redo_question_button($slot, $disabled) {
+        global $PAGE;
+        $attributes = array('type' => 'submit', 'name' => 'redoslot' . $slot, 'id' => 'redoslot' . $slot,
+                'value' => get_string('redoquestion', 'quiz'),
+                'class' => 'mod_quiz-redo_question_button btn btn-secondary');
+        if ($disabled) {
+            $attributes['disabled'] = 'disabled';
+        } else {
+            $PAGE->requires->js_init_call('M.core_question_engine.init_submit_button',
+                    array($attributes['id'], $slot));
+        }
+        return html_writer::div(html_writer::empty_tag('input', $attributes));
+    }
+
+    /**
+     * Generates the table of summarydata
+     *
+     * @param quiz_attempt $attemptobj
+     * @param mod_quiz_display_options $displayoptions
+     */
+    public function summary_table($attemptobj, $displayoptions) {
+        // Prepare the summary table header.
+        $data = [];
+
+        $markscolumn = $displayoptions->marks >= \mod_quiz_display_options::MARK_AND_MAX;
+        $data['markscolumn'] = (bool) $markscolumn;
+
+        // Get the summary info for each question.
+        $slots = $attemptobj->get_slots();
+        foreach ($slots as $slot) {
+            // Add a section headings if we need one here.
+            $row['heading'] = $attemptobj->get_heading_before_slot($slot);
+
+            // Don't display information items.
+            if (!$attemptobj->is_real_question($slot)) {
+                continue;
+            }
+
+            // Real question, show it.
+            $flag = '';
+            if ($attemptobj->is_question_flagged($slot)) {
+                // Quiz has custom JS manipulating these image tags - so we can't use the pix_icon method here.
+                $flag = html_writer::empty_tag('img', array('src' => $this->image_url('i/flagged'),
+                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon-post'));
+            }
+            if ($attemptobj->can_navigate_to($slot)) {
+                $row['question'] = html_writer::link($attemptobj->attempt_url($slot),
+                        get_string('question', 'quiz') . ' ' . $attemptobj->get_question_number($slot) . $flag);
+                $row['status'] = $attemptobj->get_question_status($slot, $displayoptions->correctness);
+            } else {
+                $row['question'] = $attemptobj->get_question_number($slot) . $flag;
+                $row['status'] = $attemptobj->get_question_status($slot, $displayoptions->correctness);
+            }
+            if ($markscolumn) {
+                $row['markscolumn'] = $attemptobj->get_question_mark($slot);
+            }
+            $row['class'] =
+                    'quizsummary' . $slot . ' ' . $attemptobj->get_question_state_class($slot, $displayoptions->correctness);
+
+            $data['rows'][] = $row;
+        }
+
+        return $this->render_from_template('theme_petel/mod_quiz/summary_table', $data);
+    }
+
+
+    /**
+     * Outputs the table containing data from summary data array
+     *
+     * @param array $summarydata contains row data for table
+     * @param int $page contains the current page number
+     */
+    public function review_summary_table($summarydata, $page) {
+        $summarydata = $this->filter_review_summary_table($summarydata, $page);
+        if (empty($summarydata)) {
+            return '';
+        }
+
+        foreach ($summarydata as $rowdata) {
+            $row = new stdClass;
+            if ($rowdata['title'] instanceof renderable) {
+                $row->title = $this->render($rowdata['title']);
+            } else {
+                $row->title = $rowdata['title'];
+            }
+            if ($rowdata['content'] instanceof renderable) {
+                $row->content = $this->render($rowdata['content']);
+            } else {
+                $row->content = $rowdata['content'];
+            }
+            $rows[] = $row;
+        }
+
+        return $this->render_from_template('theme_petel/mod_quiz/review_summary_table', ['rows' => $rows]);
+    }
+
 }

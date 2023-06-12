@@ -1338,7 +1338,8 @@ class quiz_attempt {
      */
     public function can_question_be_redone_now($slot) {
         return $this->get_quiz()->canredoquestions && !$this->is_finished() &&
-                $this->get_question_state($slot)->is_finished();
+                $this->get_question_state($slot)->is_finished() &&
+                !$this->get_question_state($slot)->is_correct(); // #PTL-7944
     }
 
     /**
@@ -2027,7 +2028,7 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
-                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
+                $this->process_finish($timestamp, false);
                 return;
 
             case 'graceperiod':
@@ -2400,8 +2401,6 @@ class quiz_attempt {
         if ($this->is_preview()) {
             $timeclose = false;
         }
-
-        // Check where we are in relation to the end time, if there is one.
         $toolate = false;
         if ($timeclose !== false) {
             if ($timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
@@ -2822,16 +2821,66 @@ abstract class quiz_nav_panel_base {
      */
     public function get_question_buttons() {
         $buttons = array();
-        foreach ($this->attemptobj->get_slots() as $slot) {
-            $heading = $this->attemptobj->get_heading_before_slot($slot);
-            if (!is_null($heading)) {
-                $sections = $this->attemptobj->get_quizobj()->get_sections();
-                if (!(empty($heading) && count($sections) == 1)) {
-                    $buttons[] = new quiz_nav_section_heading(format_string($heading));
+
+        // PTL-6970
+        $pagenums = [];
+        $pages = [];
+        for ($i=0; $i < $this->attemptobj->get_num_pages(); $i++) {
+            $pageslots = $this->attemptobj->get_slots($i);
+            $totalcomplinpage = 0;
+            $totalpointsinpage = 0;
+            $totalquestions = 0;
+            foreach ($pageslots as $key => $pageslot) {
+                $qa = $this->attemptobj->get_question_attempt($pageslot);
+                if ($qa->get_question(false)->get_type_name() != 'description' && $qa->get_max_mark() != 0) {
+                    $questionpoints = $qa->get_max_mark() ?: '';
+                    $totalpointsinpage += $questionpoints;
+                }
+                if ($this->attemptobj->is_real_question($pageslot)) {
+                    $totalquestions++;
+                }
+                if (!($this->attemptobj->get_question_state($pageslot) instanceof question_state_todo) && $this->attemptobj->is_real_question($pageslot)) {
+                    $totalcomplinpage++;
                 }
             }
 
+            $pages[$i]['totalcomplinpage'] = $totalcomplinpage;
+            $pages[$i]['totalquestions'] = $totalquestions;
+            $pages[$i]['totalpointsinpage'] = $totalpointsinpage;
+        }
+
+        foreach ($this->attemptobj->get_slots() as $slot) {
             $qa = $this->attemptobj->get_question_attempt($slot);
+
+            // PTL-6970
+            $heading = $this->attemptobj->get_heading_before_slot($slot);
+            $pagenum = $this->attemptobj->get_question_page($slot);
+
+            if (!in_array($pagenum, $pagenums)) {
+                $pagenums[] = $pagenum;
+                if ($heading == "" || is_null($heading)) {
+                    $a = new stdClass();
+                    $a->pagenum = $pagenum + 1;
+                    $heading = get_string('chapter', 'theme_petel', $a);
+                }
+
+                $lqsoptions = local_quiz_summary_option_get_quiz_config();
+
+                if ($pages[$pagenum]['totalpointsinpage'] > 0 && !empty($lqsoptions->summary_grade)) {
+                    $a = new stdClass();
+                    $a->questionpoints = $pages[$pagenum]['totalpointsinpage'];
+                    $heading .= ' , '. get_string('questionpointstext', 'theme_petel', $a);
+                }
+
+                // TODO: FE Insert section progerss.
+                $a = new stdClass();
+                $a->totalcomplinpage = $pages[$pagenum]['totalcomplinpage'];
+                $a->totalquestions = $pages[$pagenum]['totalquestions'];
+                $progresspage = '<span>'. get_string('progresspage', 'theme_petel', $a) . '</span>';
+
+                $buttons[] = new quiz_nav_section_heading(format_string($heading) . $progresspage);
+            }
+
             $showcorrectness = $this->options->correctness && $qa->has_marks();
 
             $button = new quiz_nav_question_button();
@@ -2852,6 +2901,11 @@ abstract class quiz_nav_panel_base {
                 $button->stateclass = 'blocked';
                 $button->statestring = get_string('questiondependsonprevious', 'quiz');
             }
+
+            // PTL-6970
+            $questionname = $qa->get_question()->name;
+            $button->questionname = $questionname;
+
             $buttons[] = $button;
         }
 

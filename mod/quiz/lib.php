@@ -1301,6 +1301,8 @@ function quiz_update_events($quiz, $override = null) {
             $params = new stdClass();
             $params->quiz = $quiz->name;
             $eventname = get_string('overrideusereventname', 'quiz', $params);
+            // Only set userid for override events.
+            $event->userid = $userid;
             // Set user override priority.
             $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
@@ -1703,7 +1705,7 @@ function quiz_get_extra_capabilities() {
  * @return void
  */
 function quiz_extend_settings_navigation(settings_navigation $settings, navigation_node $quiznode) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     // Require {@link questionlib.php}
     // Included here as we only ever want to include this file if we really need to.
@@ -1742,6 +1744,24 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
                 new pix_icon('i/preview', ''));
         $previewnode = $quiznode->add_node($node, $beforekey);
         $previewnode->set_show_in_secondary_navigation(false);
+    }
+    //PTL-5321 View printable questions
+    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/quiz/report.php',
+            array('id'=>$PAGE->cm->id, 'mode'=>'correctanswer', 'answers'=>'no'));
+        $node = navigation_node::create(get_string('printquestions', 'quiz'), $url,
+            navigation_node::TYPE_SETTING, null, 'mod-quiz-report-mode-correctanswer-answers-no',
+            new pix_icon('t/print', ''));
+        $quiznode->add_node($node, $beforekey);
+    }
+
+    // PTL-817.
+    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/quiz/report.php',
+                array('id'=>$PAGE->cm->id, 'mode'=>'correctanswer', 'hint'=>'1'));
+        $node = navigation_node::create(get_string('correctanswersandhints', 'quiz'), $url,
+                navigation_node::TYPE_SETTING, null, 'mod-quiz-report-mode-correctanswer-answers-hints');
+        $quiznode->add_node($node, $beforekey);
     }
 
     question_extend_settings_navigation($quiznode, $settings->get_page()->cm->context)->trim_if_empty();
