@@ -218,8 +218,8 @@ class section extends \core_courseformat\output\local\content\section {
         }
 
         $iscomplete = $total == $completed;
-        $progressformat = $this->format->get_format_option('progressformat', $this->section);
-        $progressmode = $this->format->get_format_option('progressmode', $this->section);
+        $progressformat = $this->format->get_format_option('progressformat');
+        $progressmode = $this->format->get_format_option('progressmode');
         $percentage = round(($completed / $total) * 100);
 
         return [

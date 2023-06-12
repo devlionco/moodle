@@ -125,12 +125,11 @@ class content extends \core_courseformat\output\local\content {
         $data->enrolkeybtn = $enrolkeybtn;
 
         // Course completion.
-        $defaults = get_config('format_flexsections');
-        if ($defaults->showprogress == FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW) {
+        if ($this->format->get_format_option('showprogress') == FORMAT_FLEXSECTIONS_SHOWPROGRESS_SHOW) {
             $coursecompletion       = $this->get_course_completion($this->format->get_course()->id);
             $data->coursecompletion = $coursecompletion;
-            $progressformat         = $defaults->progressformat;
-            $progressmode           = $defaults->progressmode;
+            $progressformat         = $this->format->get_format_option('progressformat');
+            $progressmode           = $this->format->get_format_option('progressmode');
             $iscomplete             = $coursecompletion['total'] == $coursecompletion['completed'];
             $data->showpercentage   = !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE;
             $data->modecircle       = !$iscomplete && $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE;

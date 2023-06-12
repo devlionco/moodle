@@ -550,7 +550,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             //Diagnostic
             $pluginmanager = \core_plugin_manager::instance();
             $plugininfo = $pluginmanager->get_plugin_info('local_diagnostic');
-            if ($plugininfo->is_installed_and_upgraded()) {
+            if (isset($plugininfo) && $plugininfo->is_installed_and_upgraded()) {
                 require_once($CFG->dirroot . '/cohort/lib.php');
                 $cohorts = cohort_get_user_cohorts($USER->id);
                 $allowedcohorts = get_config('local_diagnostic', 'cohorts')
