@@ -61,6 +61,7 @@ if ($page == -1) {
 } else {
     $nexturl = $attemptobj->attempt_url(null, $page);
     if ($scrollpos !== '') {
+        $scrollpos = intval($scrollpos);
         $nexturl->param('scrollpos', $scrollpos);
     }
 }

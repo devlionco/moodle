@@ -602,15 +602,21 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform = $this->_form;
         $items = array();
 
-        $mform->addElement('advcheckbox', 'completionattemptsexhausted', null,
-            get_string('completionattemptsexhausted', 'quiz'),
-            array('group' => 'cattempts'));
-        $mform->disabledIf('completionattemptsexhausted', 'completionpassgrade', 'notchecked');
-        $items[] = 'completionattemptsexhausted';
+        $group = array();
+        $group[] = $mform->createElement('advcheckbox', 'completionpass', null, get_string('completionpass', 'quiz'),
+                array('group' => 'cpass'));
+        $mform->disabledIf('completionpass', 'completionusegrade', 'notchecked');
+        $group[] = $mform->createElement('advcheckbox', 'completionattemptsexhausted', null,
+                get_string('completionattemptsexhausted', 'quiz'),
+                array('group' => 'cattempts'));
+        $mform->disabledIf('completionattemptsexhausted', 'completionpass', 'notchecked');
+        $mform->addGroup($group, 'completionpassgroup', get_string('completionpass', 'quiz'), ' &nbsp; ', false);
+        $mform->addHelpButton('completionpassgroup', 'completionpass', 'quiz');
+        $items[] = 'completionpassgroup';
 
         $group = array();
         $group[] = $mform->createElement('checkbox', 'completionminattemptsenabled', '',
-            get_string('completionminattempts', 'quiz'));
+                get_string('completionminattempts', 'quiz'));
         $group[] = $mform->createElement('text', 'completionminattempts', '', array('size' => 3));
         $mform->setType('completionminattempts', PARAM_INT);
         $mform->addGroup($group, 'completionminattemptsgroup', get_string('completionminattemptsgroup', 'quiz'), array(' '), false);
@@ -629,6 +635,7 @@ class mod_quiz_mod_form extends moodleform_mod {
      */
     public function completion_rule_enabled($data) {
         return  !empty($data['completionattemptsexhausted']) ||
+                !empty($data['completionpass']) ||
                 !empty($data['completionminattemptsenabled']);
     }
 
