@@ -131,6 +131,10 @@
     {{/showuploadcourseimage}}
 
     {{#coursecompletion}}
+        {{#modecircle}}
+            TODO add circle view for count and percentage
+        {{/modecircle}}
+        {{^modecircle}}
         <div class="coursecompletion">
             {{#iscomplete}}
                 {{#pix}} i/checked, core, done {{/pix}}
@@ -147,12 +151,12 @@
                     {{#str}} course:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
                 </p>
             </div>
-
             {{/showpercentage}}
             {{#showcount}}
                 {{#str}} course:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
             {{/showcount}}
         </div>
+        {{/modecircle}}
     {{/coursecompletion}}
 
 </div>

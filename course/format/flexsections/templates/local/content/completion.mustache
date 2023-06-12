@@ -62,40 +62,22 @@
         {{/showcount}}
     </div>
 {{/modecircle}}
+<!--Show line progress-->
 {{^modecircle}}
-
-    {{!-- TODO: --}}
-    <style>
-        .outer {
-    fill: #ddd;
-    }
-
-    .inner {
-    fill: #007bff;
-    }
-
-    .complete {
-    fill: #28a745;
-    }
-    </style>
-
-    <div class=" small {{#iscomplete}}text-success icon-no-margin{{/iscomplete}}{{^iscomplete}}text-body{{/iscomplete}} section-completion">
-        <svg viewBox="0 0 10 100" xmlns="http://www.w3.org/2000/svg">
-        <rect class="outer" x="0" y="0" width="10" height="100"></rect>
-        {{#hasprogress}}
-            <rect class="inner{{#iscomplete}} complete{{/iscomplete}}" x="0" y="0" width="10" height="{{percentage}}"></rect>
-        {{/hasprogress}}
-        </svg>
-        {{#iscomplete}}
-            {{#pix}} i/checked, core, done {{/pix}}
-            <span class="sr-only">{{#str}} completed, core {{/str}}</span>
-        {{/iscomplete}}
-        {{#showpercentage}}
-            {{#str}} section:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
-        {{/showpercentage}}
-        {{#showcount}}
-            {{#str}} section:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
-        {{/showcount}}
+    <div class="progress-wrapper p-2">
+        <div class="progress mb-2">
+            <div class="progress-bar bg-linkhover" role="progressbar" style="width: {{percentage}}%"
+                 aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+        <p class="text-primary mb-0">
+            {{#showpercentage}}
+                {{#str}} section:completion:percentage, format_flexsections, { "percentage": {{#quote}}{{percentage}}{{/quote}} } {{/str}}
+            {{/showpercentage}}
+            {{#showcount}}
+                {{#str}} section:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}}, "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
+            {{/showcount}}
+        </p>
     </div>
 {{/modecircle}}
 
