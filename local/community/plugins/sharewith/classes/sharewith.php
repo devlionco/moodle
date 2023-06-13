@@ -394,25 +394,22 @@ class sharewith {
         global $DB;
 
         $activityid = $cmid ? $cmid : $this->activityid;
+
         // Get mod activity.
         $query = '
-            SELECT m.name AS module FROM {modules} AS m
-            LEFT JOIN {course_modules} AS cm ON (m.id=cm.module)
+            SELECT m.name AS module_name, cm.* 
+            FROM {modules} m
+            LEFT JOIN {course_modules} cm ON (m.id=cm.module)
             WHERE cm.id=?';
-        $objactivity = $DB->get_record_sql($query, [$activityid]);
+        $obj = $DB->get_record_sql($query, [$activityid]);
 
         // If mod quiz.
-        if ($objactivity->module == 'quiz') {
-            // Get questions by activity.
-            $sql = "
-                SELECT * FROM {course_modules} cm
-                WHERE cm.id=?";
-            $tmpquery = $DB->get_record_sql($sql, [$activityid]);
+        if ($obj->module_name == 'quiz') {
 
-            $arrquestions = question_preload_questions(null,
-                    'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
-                    '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
-                    array('quizid' => $tmpquery->instance), 'slot.slot');
+            // Get questions by activity.
+            $quiz = \quiz::create($obj->instance);
+            $quiz->preload_questions();
+            $quiz->load_questions();
 
             $contextraw = $DB->get_record('context', array('contextlevel' => $this->modulemetadata, 'instanceid' => $activityid));
             if (!empty($contextraw)) {
@@ -421,7 +418,7 @@ class sharewith {
                 $categorydefault = $DB->get_records('question_categories', array('contextid' => $path), 'sortorder DESC');
                 if (!empty($categorydefault)) {
                     $result = true;
-                    foreach ($arrquestions as $question) {
+                    foreach ($quiz->get_questions() as $question) {
                         if (!key_exists($question->category, $categorydefault)) {
                             $result = false;
                         }

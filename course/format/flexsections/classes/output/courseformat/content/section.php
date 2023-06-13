@@ -51,7 +51,7 @@ class section extends \core_courseformat\output\local\content\section {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output): stdClass {
-        global $USER;
+        global $USER, $PAGE;
 
         $data = parent::export_for_template($output);
 
@@ -112,6 +112,9 @@ class section extends \core_courseformat\output\local\content\section {
         // Lastseen
         $lastseen = format_flexsections_lastseen($this->format->get_course()->id, $this->section->section, $USER->id);
         $data->lastseen = $lastseen;
+
+        // Has share button.
+        $data->hassharebutton = $PAGE->user_is_editing() ? true : false;
 
         return $data;
     }
