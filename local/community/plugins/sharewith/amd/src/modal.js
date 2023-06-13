@@ -17,7 +17,7 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     community_sharewith/modal
- * @package    community_sharewith
+ * @package
  * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -35,13 +35,10 @@ define([
         modalWrapper: '#modalSharewith',
         modalContent: '#modalContentSharewith',
         triggerBtn: '#triggerModalSharewith',
-        // Modindent: '.course-content li.activity .mod-indent-outer',
-        modindent: 'li.activity .mod-indent-outer',
         menuSection: '.course-content .section_action_menu [role="menu"]',
         sectionTitleTiles: '.tile-clickable h3',
-        sectionTitleGrid: 'h3.sectionname',
-        sectionTitleTopic: 'h3.sectionname',
-        sectionTitleFlexsections: 'h3.sectionname',
+        shareActivityButton: 'share-button-activity-area',
+        shareSectionButton: 'share-button-section-area'
     };
 
     return /** @alias module:community_sharewith/modal */ {
@@ -65,7 +62,6 @@ define([
         triggerBtn: '',
         modalContent: '',
         modalWrapper: '',
-        isEditing: false,
         courseFormat: 'topic',
 
         /**
@@ -75,16 +71,14 @@ define([
          * @param {Object} attr additional attr for node.
          */
         addShareActivityButton: function(attr = null) {
-            var modindent = $(document).find(SELECTORS.modindent),
-                self = this;
+
+            let modindent = $('*[data-region="'+SELECTORS.shareActivityButton+'"]');
+            let self = this;
 
             modindent.each(function() {
-                if ($(this).parents('.activity').find('[data-sharebtn]').length) {
-                    return;
-                }
-                var shareBtn = self.addSharedBtn(),
-                    str = $(this).parents('.activity').attr('id'),
-                    cmid = str.match(/module-\d+/gi)[0].replace(/\D+/, '');
+
+                let shareBtn = self.addSharedBtn();
+                let cmid = $(this).data("cmid");
 
                 shareBtn
                     .attr('data-handler', 'openDialog')
@@ -93,61 +87,11 @@ define([
                 for (const prop in attr) {
                     shareBtn.attr(`data-${prop}`, attr[prop]);
                 }
-                if ($(this).parents('.activity').find('.actions').length) {
-                    $(this).parents('.activity').find('.actions').append(shareBtn);
-                } else {
-                    shareBtn.css({'position': 'absolute', 'left': 0});
-                    $(this).append(shareBtn);
-                }
+
+                shareBtn.attr(`style`, 'width: 5rem;');
+
+                $(this).append(shareBtn);
             });
-        },
-
-        /**
-         * Clone and add the button for copying section.
-         *
-         * @method addCopyActivityButton
-         * @param {jquery} root The root element.
-         */
-        addCopySectionButton: function() {
-            var string = M.util.get_string('eventsectioncopy', 'community_sharewith'),
-                self = this;
-
-            if (this.courseFormat === 'topic' || this.courseFormat === 'tiles') {
-                var menu = $(document).find(SELECTORS.menuSection);
-
-                menu.each(function() {
-                    var clone = $(this).children().last().clone(),
-                        sectionid = $(this).parents('.section_action_menu').data('sectionid');
-
-                    clone
-                        .attr('href', '#')
-                        .attr('data-handler', 'selectCourseForSection')
-                        .attr('data-sectionid', sectionid);
-                    clone
-                        .find('.menu-action-text')
-                        .text(string);
-                    clone
-                        .find('.icon')
-                        .removeAttr('class')
-                        .attr('title', string)
-                        .attr('aria-label', string)
-                        .addClass('icon fa fa-copy fa-fw');
-
-                    $(this).append(clone);
-                });
-            }
-            if (this.courseFormat === 'grid') {
-                var sectionTitle = $(document).find('.gtopics .sectionname');
-
-                sectionTitle.each(function() {
-                    var shareBtn = self.addSharedBtn(string),
-                        sectionid = $(this).find('[data-itemid]').data('itemid');
-                    shareBtn
-                        .attr('data-handler', 'selectCourseForSection')
-                        .attr('data-sectionid', sectionid);
-                    shareBtn.insertAfter($(this));
-                });
-            }
         },
 
         /**
@@ -157,37 +101,22 @@ define([
          * @param {jquery} root The root element.
          */
         addCopySectionButtonInline: function() {
-            var string = M.util.get_string('eventsectioncopy', 'community_sharewith'),
+            let string = M.util.get_string('eventsectioncopy', 'community_sharewith'),
                 sectionTitle = $('.right.side'),
                 self = this;
 
-            if (this.courseFormat === 'flexsections') {
-                sectionTitle = $('.section.main .controls');
-                sectionTitle.each(function() {
-                    var shareBtn = self.addSharedBtn(string),
-                        sectionid = $(this).parent().find("[data-component='format_flexsections']").data('itemid');
+            let sections = $('*[data-region="'+SELECTORS.shareSectionButton+'"]');
 
-                    shareBtn
-                        .addClass('mr-2 ml-2')
-                        .attr('data-handler', 'selectCourseForSection')
-                        .attr('data-sectionid', sectionid);
-                    $(this).append(shareBtn);
-                });
-            }
-
-
-            sectionTitle.each(function() {
-                var shareBtn = self.addSharedBtn(string),
-                    sectionactionmenu = $(this).find('.section_action_menu'),
-                    sectionid = sectionactionmenu.data('sectionid');
+            sections.each(function() {
+                let shareBtn = self.addSharedBtn(string);
+                let sectionid = $(this).data("sectionid");
 
                 shareBtn
-                    .addClass('ml-2')
+                    .addClass('mr-2 ml-2')
                     .attr('data-handler', 'selectCourseForSection')
                     .attr('data-sectionid', sectionid);
-                sectionactionmenu.append(shareBtn);
+                $(this).append(shareBtn);
             });
-
         },
 
         /**
@@ -200,20 +129,21 @@ define([
             var string = M.util.get_string('eventsectioncopy', 'community_sharewith'),
                 sectionTitle,
                 self = this;
-                        if (this.courseFormat === 'tiles') {
-                    sectionTitle = $(document).find(SELECTORS.sectionTitleTiles);
-                    sectionTitle.each(function() {
-                        var shareBtn = self.addSharedBtn(string),
-                            str = $(this).parents('li.tile-clickable').data('section'),
-                            sectionid = $(this).parents('.tile').data('sectionidshare');
-                        if (sectionid) {
-                            shareBtn
-                                .attr('data-handler', 'selectCourseForSection')
-                                .attr('data-firstcmid', str)
-                                .attr('data-sectionid', sectionid);
-                            shareBtn.insertAfter($(this));
-                        }
-                    });
+
+            if (this.courseFormat === 'tiles') {
+                sectionTitle = $(document).find(SELECTORS.sectionTitleTiles);
+                sectionTitle.each(function() {
+                    var shareBtn = self.addSharedBtn(string),
+                        str = $(this).parents('li.tile-clickable').data('section'),
+                        sectionid = $(this).parents('.tile').data('sectionidshare');
+                    if (sectionid) {
+                        shareBtn
+                            .attr('data-handler', 'selectCourseForSection')
+                            .attr('data-firstcmid', str)
+                            .attr('data-sectionid', sectionid);
+                        shareBtn.insertAfter($(this));
+                    }
+                });
             }
 
         },
@@ -230,7 +160,6 @@ define([
                 self = this;
 
             if (this.courseFormat === "tiles") {
-
                 setInterval(function() {
                     $('.tiles_section_inview').each(function() {
 
@@ -321,16 +250,16 @@ define([
 
 
                             shareBtn.addClass('ml-auto mr-2');
-                        if ($(sectiontitle).children('ul.section').find('li').length > 0) {
-                            sectiontitle.closest('.content').find("h2.sectionname").parent().addClass('w-100 d-flex align-items-center');
-                            shareBtn.appendTo(sectiontitle.closest('.content').find("h2.sectionname").parent());
-                        } else if ($(sectiontitle).siblings('.flexsections-level-1').length > 0) {
-                            $(sectiontitle).addClass('w-100 d-flex align-items-center');
-                            shareBtn.appendTo(sectiontitle);
-                        } else {
-                            // $(sectiontitle).siblings('.d-flex.align-items-center.justify-content-between').find('h2.sectionname').addClass('w-100 d-flex align-items-center');
-                            shareBtn.appendTo($(sectiontitle).siblings('.d-flex.align-items-center.justify-content-between'));
-                        }
+                            if ($(sectiontitle).children('ul.section').find('li').length > 0) {
+                                sectiontitle.closest('.content').find("h2.sectionname").parent().addClass('w-100 d-flex align-items-center');
+                                shareBtn.appendTo(sectiontitle.closest('.content').find("h2.sectionname").parent());
+                            } else if ($(sectiontitle).siblings('.flexsections-level-1').length > 0) {
+                                $(sectiontitle).addClass('w-100 d-flex align-items-center');
+                                shareBtn.appendTo(sectiontitle);
+                            } else {
+                                // $(sectiontitle).siblings('.d-flex.align-items-center.justify-content-between').find('h2.sectionname').addClass('w-100 d-flex align-items-center');
+                                shareBtn.appendTo($(sectiontitle).siblings('.d-flex.align-items-center.justify-content-between'));
+                            }
 
                             sectiontitle.addClass("inview-selectCourseForSection-done");
 
@@ -390,18 +319,16 @@ define([
          * @return {boolean}
          */
         addActionNode: function(actions) {
-            this.isEditing = $('body').hasClass('editing');
             this.checkCourseFormat();
 
             // TODO show buttons depending on all conditions
             var result = 0;
-            if (actions.sectioncopyenable && this.isEditing) {
-                // This.addCopySectionButton();
+            if (actions.sectioncopyenable) {
                 this.addCopySectionButtonInline();
                 result++;
             }
-            if (actions.activitycopyenable && this.isEditing) {
-                /* Adding share btn to the each activity on the page */
+            if (actions.activitycopyenable && !actions.teachercolleague) {
+                /* Adding share btn for each activity on the page */
                 this.addShareActivityButton();
                 result++;
             }
@@ -437,9 +364,9 @@ define([
          * @method addSpinner
          */
         addBtnSpinner: function() {
-            $('#modalspinner').removeClass('d-none');
-            $('#modalspinner').addClass('loading');
-            $('#modalspinner').parent().prop('disabled', true);
+            let obj = $('#modalspinner');
+            obj.removeClass('d-none').addClass('loading');
+            obj.parent().prop('disabled', true);
         },
 
         /**
@@ -448,9 +375,9 @@ define([
          * @method addSpinner
          */
         removeBtnSpinner: function() {
-            $('#modalspinner').removeClass('loading');
-            $('#modalspinner').addClass('d-none');
-            $('#modalspinner').parent().prop('disabled', false);
+            let obj = $('#modalspinner');
+            obj.removeClass('loading').addClass('d-none');
+            obj.parent().prop('disabled', false);
         },
 
         /**

@@ -83,7 +83,6 @@ if ($COURSE->id > 1) {
 */
 
 $CFG->list_navbar_plugin_output_custom = [
-        'sharewith',
         'oer',
         'social',
 ];

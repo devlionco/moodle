@@ -126,12 +126,14 @@ class community_sharewith_external extends external_api {
         $result['modname'] = '';
         $result['coursename'] = '';
 
-        try {
-            list($course, $cm) = get_course_and_cm_from_cmid($sourceactivityid);
-            $result['modname'] = $cm->name;
-            $result['coursename'] = $course->fullname;
-        } catch (Exception $e) {
-            throw new \moodle_exception('error');
+        if(!empty($sourceactivityid)) {
+            try {
+                list($course, $cm) = get_course_and_cm_from_cmid($sourceactivityid);
+                $result['modname'] = $cm->name;
+                $result['coursename'] = $course->fullname;
+            } catch (Exception $e) {
+                throw new \moodle_exception('error');
+            }
         }
 
         // Get user name from messageid.

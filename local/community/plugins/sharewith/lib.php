@@ -25,6 +25,7 @@
 use core_competency\course_module_competency;
 
 defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__ . '/locallib.php');
 require_once($CFG->dirroot . '/local/community/locallib.php');
 require_once($CFG->dirroot . "/local/community/plugins/sharewith/locallib.php");
@@ -43,7 +44,6 @@ function community_sharewith_render_navbar_output() {
     $output = '';
 
     $activitycopyenable = get_config('community_sharewith', 'activitycopy');
-    $sendactivity = get_config('community_sharewith', 'activitysending');
 
     $context = \context_course::instance($COURSE->id);
     $roles = get_user_roles($context, $USER->id, false);
@@ -64,7 +64,12 @@ function community_sharewith_render_navbar_output() {
     // Check permission.
     if (!has_capability('community/sharewith:copyactivity', $context, $USER->id)) {
         $activitycopyenable = false;
-        $sendactivity = false;
+    }
+
+    // If page editing.
+    if(!$PAGE->user_is_editing()){
+        $activitycopyenable = false;
+        $sectioncopyenable = false;
     }
 
     $teachercolleague = false;
@@ -81,25 +86,12 @@ function community_sharewith_render_navbar_output() {
     $params = array(
             'sectioncopyenable' => $sectioncopyenable,
             'activitycopyenable' => $activitycopyenable,
-            'sendactivity' => $sendactivity,
             'teachercolleague' => $teachercolleague
     );
 
     $PAGE->requires->js_call_amd('community_sharewith/init', 'init', array($params, $context->id));
 
     return $output;
-}
-
-function community_sharewith_checkprogress($course, $userid) {
-    global $DB;
-
-    $duplicationinporgress = $DB->get_records('community_sharewith_task',
-            array('status' => 0, 'type' => 'course', 'courseid' => $course->id, 'userid' => $userid));
-    if (count($duplicationinporgress) != 0) {
-        return true;
-    }
-
-    return false;
 }
 
 function community_sharewith_output_fragment_upload_activity_maagar($args) {
