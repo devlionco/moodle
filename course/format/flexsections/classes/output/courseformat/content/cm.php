@@ -74,15 +74,12 @@ class cm extends \core_courseformat\output\local\content\cm {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
-
+        
         $data = parent::export_for_template($output);
 
         // Has share button.
-        $data->activityinfo->hassharebutton = true;
-        $data->activityinfo->cmid = $this->mod->id;
+        $data->hassharebutton = true;
 
         return $data;
     }
-
-
 }
