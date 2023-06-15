@@ -67,10 +67,10 @@ $string['hideforstudentavailable'] = 'זמין לסטודנטים, אך אינו
 $string['eventcoursecopy'] = 'העתקת קורס';
 $string['eventsectioncopy'] = 'העתקה';
 $string['eventsectioncopy_tooltip'] = 'העתקת יחידת הוראה לקורס אחר שלי';
-$string['eventactivitycopy'] = 'העתקה לקורס אחר שלי';
-$string['eventactivityupload'] = 'שיתוף למאגר המשותף';
-$string['eventactivityshare'] = 'שליחה למורה';
-$string['eventcommunityshare'] = 'שיתוף לקהילה';
+$string['eventactivitycopy'] = 'לקורס אחר שלי';
+$string['eventactivityupload'] = 'למאגר המשותף';
+$string['eventactivitysharetoteacher'] = 'למורה';
+$string['eventcommunityshare'] = 'לקהילה';
 
 // Modals.
 $string['sectionselection'] = 'בחירת יחידת־הוראה';
@@ -261,7 +261,7 @@ $string['succesfullyrecieved'] = 'התקבל בהצלחה';
 
 // Sharewithbutton.
 $string['use_activity'] = 'שיתוף פעילות';
-$string['select_desired_action'] = 'בחירת פעולה רצויה';
+$string['sharewithpopuptitle'] = 'בחירת אופן השיתוף';
 
 $string['ask_question_before_copying'] = 'היי! קיבלתי קישור להעתקת הפעילות {$a->modname}, ויש לי שאלה לגבי הפריט. רציתי לשאול...';
 $string['word_copy'] = 'העתקה';
@@ -301,3 +301,10 @@ $string['select_competencies'] =
         ' נושאים לימוד מיומנויות. יש להתחיל להקליד את המושג ולבחור אותו מהרשימה. ניתן לבחור כמה מיומנויות מהרשימה:';
 $string['write_competencies_here'] = 'תיווג נושאי לימוד ומיומנויות';
 $string['rights_management'] = 'אודות זכויות יוצרים';
+
+$string['towhatsapp'] = 'לוואטסאפ';
+$string['petelmessage'] = 'מסרים בפטל';
+$string['copytoclipboard'] = 'העתקת קישור';
+
+// Alert.
+$string['thelinkhasbeencopied'] = 'הקישור הועתק';

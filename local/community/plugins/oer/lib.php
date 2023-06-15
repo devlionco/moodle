@@ -51,8 +51,7 @@ function community_oer_render_navbar_output() {
         }
     }
 
-    $editing = (isset($USER->editing) && $USER->editing) ? true : false;
-    $data['user_editing'] = $editing && $isadmin;
+    $data['user_editing'] = $PAGE->user_is_editing() && $isadmin;
 
     $menu = \community_oer\main_oer::structure_main_catalog();
 
@@ -170,7 +169,7 @@ function community_oer_render_info_single_page() {
             $activity = new \community_oer\activity_oer;
             if ($activity->single_cmid_render_data($cm->id, 'view')) {
 
-                if (strpos($PAGE->url->get_path(), 'quiz/attempt.php') === false &&
+                if (strpos($PAGE->url->get_path(), 'quiz/edit.php') === false &&
                         strpos($PAGE->url->get_path(), 'questionnaire/preview.php') === false &&
                         strpos($PAGE->url->get_path(), 'mod/hvp/view.php') === false
                 ) {
@@ -211,7 +210,7 @@ function community_oer_add_activity_menu_item() {
         return false;
     }
 
-    if (strpos($PAGE->pagetype, "course-view") === 0 && $USER->editing === 1) {
+    if (strpos($PAGE->pagetype, "course-view") === 0 && $PAGE->user_is_editing()) {
         $linkitem =
                 '<button class="dropdown-item menu-action cm-edit-action activityRemind" data-action="activityRemind" title="" data-handler="activityRemind" data-cmid="123ZYX321">'
                 . '<i class="icon fal fa-comment fa-fw" aria-hidden="true"></i>'

@@ -16,8 +16,8 @@
 /**
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
- * @module     community_sharewith/buildtree
- * @package    community_sharewith
+ * @module     community_sharewith/sharewithteacher
+ * @package
  * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -219,7 +219,7 @@ define([
             // Close result block.
             this.resultBlock.classList.add('d-none');
 
-            // if (!this.resultBlock.childElementCount && !inputValue) {
+            // If (!this.resultBlock.childElementCount && !inputValue) {
             //     this.resultBlock.classList.add('d-none');
             // }
 

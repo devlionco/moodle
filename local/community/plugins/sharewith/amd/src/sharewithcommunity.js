@@ -16,8 +16,8 @@
 /**
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
- * @module     community_sharewith/buildtree
- * @package    community_sharewith
+ * @module     community_sharewith/sharewithcommunity
+ * @package
  * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -90,8 +90,8 @@ define([
             var teachersId = [];
             var coursesId = [];
 
-            $.each($('#teachers_courses').select2('data'), function( index, obj ) {
-                if(obj.id.length !== 0){
+            $.each($('#teachers_courses').select2('data'), function(index, obj) {
+                if (obj.id.length !== 0) {
                     coursesId.push(obj.id);
                 }
             });

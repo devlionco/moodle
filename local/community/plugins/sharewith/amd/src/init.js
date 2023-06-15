@@ -17,7 +17,7 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     community_sharewith/init
- * @package    community_sharewith
+ * @package
  * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -31,14 +31,14 @@ define([
     'community_sharewith/sendtocatalog',
     'community_sharewith/copyactivity',
     'community_sharewith/message',
-], function ($, modal, shareWithTeacher, shareWithCommunity, sendToCatalog, copyActivity, message) {
+    'community_sharewith/custombuttons',
+], function ($, modal, shareWithTeacher, shareWithCommunity, sendToCatalog, copyActivity, message, customButtons) {
 
     var root = document.querySelector('body');
 
     return {
 
         init: function (actions, contextid) {
-
 
             if (actions.teachercolleague) {
                 modal.checkCourseFormat();
@@ -52,6 +52,7 @@ define([
                 shareWithCommunity.init();
                 sendToCatalog.init(contextid);
                 copyActivity.init();
+                customButtons.init();
                 message.type();
 
                 root.addEventListener('click', function (e) {
@@ -65,7 +66,7 @@ define([
                         target = target.parentNode;
                     }
                 });
-            })
+            });
         }
     };
 });

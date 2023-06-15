@@ -124,15 +124,17 @@
     </a>
     </div>
 {{/collapsemenu}}
+
+{{#hassharebutton}}
+    <div class="ml-auto" data-region="share-button-section-area" data-sectionid="{{id}}"></div>
+{{/hassharebutton}}
+
 {{#controlmenu}}
     {{$ core_courseformat/local/content/section/controlmenu }}
         {{> core_courseformat/local/content/section/controlmenu }}
     {{/ core_courseformat/local/content/section/controlmenu }}
 {{/controlmenu}}
 
-{{#hassharebutton}}
-    <div data-region="share-button-section-area" data-sectionid="{{id}}"></div>
-{{/hassharebutton}}
 
 </div>
 <div id="coursecontentcollapse{{num}}"

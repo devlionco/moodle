@@ -68,10 +68,10 @@ $string['hideforstudentavailable'] = 'זמין לסטודנטים, אך אינו
 // Events.
 $string['eventcoursecopy'] = 'Copy course';
 $string['eventsectioncopy'] = 'Copy topic';
-$string['eventactivitycopy'] = 'Copy activity';
-$string['eventactivityupload'] = 'Upload activity';
-$string['eventactivityshare'] = 'Share activity';
-$string['eventcommunityshare'] = 'Share to community';
+$string['eventactivitycopy'] = 'To my course';
+$string['eventactivityupload'] = 'To oercatalog';
+$string['eventactivitysharetoteacher'] = 'To teacher';
+$string['eventcommunityshare'] = 'To community';
 
 // Modals.
 $string['sectionselection'] = 'Select topic';
@@ -106,7 +106,7 @@ $string['eventcoursemodulevisibilitychanged'] = "Course module visibility change
 $string['menu_popup_title'] = "Choose how you want to share";
 $string['menu_popup_maagar'] = "Post in the Shared Database";
 $string['menu_popup_send_teacher'] = "Send to Teacher";
-$string['back'] = "back";
+$string['back'] = "Back";
 $string['send'] = "Send";
 $string['share_with_teacher'] = "Share with a teacher";
 $string['share_with_course'] = "Share with course";
@@ -270,7 +270,7 @@ $string['succesfullyrecieved'] = 'Succesfully recieved';
 
 // Sharewithbutton.
 $string['use_activity'] = 'Use activity';
-$string['select_desired_action'] = 'Select the desired action';
+$string['sharewithpopuptitle'] = 'Choosing the sharing method';
 $string['messageprovider:sharewith_notification'] = 'Share with';
 $string['messageprovider:shared_notification'] = 'Shared';
 
@@ -311,8 +311,15 @@ $string['select_competencies'] = 'Competencies';
 $string['write_competencies_here'] = 'Selected competencies';
 $string['rights_management'] = 'More info about rights management';
 
+$string['towhatsapp'] = 'To whatsapp';
+$string['petelmessage'] = 'Petel message';
+$string['copytoclipboard'] = 'Copy to clipboard';
+
 // Role capabilities.
 $string['sharewith:copyactivity'] = 'Copy activity';
 $string['sharewith:copycourse'] = 'Copy course';
 $string['sharewith:copysection'] = 'Copy section';
 $string['sharewith:shareactivity'] = 'Share activity';
+
+// Alert.
+$string['thelinkhasbeencopied'] = 'The link has been copied';

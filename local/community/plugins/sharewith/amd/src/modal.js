@@ -72,25 +72,50 @@ define([
          */
         addShareActivityButton: function(attr = null) {
 
-            let modindent = $('*[data-region="'+SELECTORS.shareActivityButton+'"]');
             let self = this;
 
-            modindent.each(function() {
-
+            const renderButton = target => {
                 let shareBtn = self.addSharedBtn();
-                let cmid = $(this).data("cmid");
+                let cmid = target.data("cmid");
+                let cmlink = target.data("cmlink");
 
                 shareBtn
                     .attr('data-handler', 'openDialog')
-                    .attr('data-cmid', cmid);
+                    .attr('data-cmid', cmid)
+                    .attr('data-cmlink', cmlink)
+                    .attr('data-inview', 'done');
 
                 for (const prop in attr) {
                     shareBtn.attr(`data-${prop}`, attr[prop]);
                 }
 
-                shareBtn.attr(`style`, 'width: 5rem;');
+                target.append(shareBtn);
+            };
 
-                $(this).append(shareBtn);
+            // On load.
+            $('*[data-region="' + SELECTORS.shareActivityButton + '"]').each(function() {
+                renderButton($(this));
+            });
+
+            // Inview.
+            inView('*[data-region="' + SELECTORS.shareActivityButton + '"]').on("enter", function(e) {
+                if ($(e).find('button').data('inview') !== 'done') {
+                    renderButton($(e));
+                }
+            });
+
+            // Observer on action.
+            let observerNodeTargets = document.querySelectorAll('.section'),
+                observerConfig = {attributes: false, childList: true, subtree: false};
+
+            observerNodeTargets.forEach(function(target) {
+                new MutationObserver(function(type) {
+                    var nodes = type[0].addedNodes;
+                    nodes.forEach((node) => {
+                        let elem = $(node).find('*[data-region="' + SELECTORS.shareActivityButton + '"]');
+                        renderButton(elem);
+                    });
+                }).observe(target, observerConfig);
             });
         },
 
@@ -102,20 +127,44 @@ define([
          */
         addCopySectionButtonInline: function() {
             let string = M.util.get_string('eventsectioncopy', 'community_sharewith'),
-                sectionTitle = $('.right.side'),
                 self = this;
 
-            let sections = $('*[data-region="'+SELECTORS.shareSectionButton+'"]');
-
-            sections.each(function() {
+            const renderButton = target => {
                 let shareBtn = self.addSharedBtn(string);
-                let sectionid = $(this).data("sectionid");
+                let sectionid = target.data("sectionid");
 
                 shareBtn
                     .addClass('mr-2 ml-2')
                     .attr('data-handler', 'selectCourseForSection')
-                    .attr('data-sectionid', sectionid);
-                $(this).append(shareBtn);
+                    .attr('data-sectionid', sectionid)
+                    .attr('data-inview', 'done');
+                target.append(shareBtn);
+            };
+
+            // On load.
+            $('*[data-region="' + SELECTORS.shareSectionButton + '"]').each(function() {
+                renderButton($(this));
+            });
+
+            // Inview.
+            inView('*[data-region="' + SELECTORS.shareSectionButton + '"]').on("enter", function(e) {
+                if ($(e).find('button').data('inview') !== 'done') {
+                    renderButton($(e));
+                }
+            });
+
+            // Observer on action.
+            let observerNodeTargets = document.querySelectorAll('.flexsections'),
+                observerConfig = {attributes: false, childList: true, subtree: false};
+
+            observerNodeTargets.forEach(function(target) {
+                new MutationObserver(function(type) {
+                    var nodes = type[0].addedNodes;
+                    nodes.forEach((node) => {
+                        let elem = $(node).find('*[data-region="' + SELECTORS.shareSectionButton + '"]');
+                        renderButton(elem);
+                    });
+                }).observe(target, observerConfig);
             });
         },
 
@@ -389,15 +438,14 @@ define([
          */
         addSharedBtn: function(string = null) {
             var text = string || M.util.get_string('share', 'community_sharewith'),
-                shareBtn = $(`<button><i class = "icon"></i>${text}</button>`);
+                shareBtn = $(`<button><i class="fa-light fa-share-nodes"></i></button>`);
             shareBtn
-                .addClass('btn btn-outline-primary btn-sm')
+                .addClass('sharebtn')
                 .attr('data-sharebtn', true);
             shareBtn
                 .find('.icon')
                 .attr('title', text)
-                .attr('aria-label', text)
-                .addClass('fa fa-copy fa-fw');
+                .attr('aria-label', text);
             return shareBtn;
         },
 

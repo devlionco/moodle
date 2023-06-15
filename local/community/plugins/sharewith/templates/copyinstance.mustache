@@ -1,11 +1,11 @@
-<div class="modal-header">
+<div class="modal-header bg-secondary p-1 text-white">
     <h5 class="modal-title">
         {{#copySection}}{{#str}}eventsectioncopy, community_sharewith{{/str}}{{/copySection}}
         {{#copyActivity}}{{#str}}eventactivitycopy, community_sharewith{{/str}}{{/copyActivity}}
         {{#copyCourse}}{{#str}}eventcoursecopy, community_sharewith{{/str}}{{/copyCourse}}
     </h5>
-    <button type="button" data-ref="close" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">×</span>
+    <button type="button" data-ref="close" class="close text-white d-flex align-items-center justify-content-center m-0" data-dismiss="modal" aria-label="Close">
+        <i class="fa-light fa-circle-xmark"></i>
     </button>
 </div>
 
@@ -43,7 +43,7 @@
         </select>
 
         {{#js}}
-            $(".smartselect2").select2({dropdownAutoWidth: true});
+            $(".smartselect2").select2({dropdownAutoWidth: true, dropdownParent: $('#modalSharewith')});
 
             $('.smartselect2').on('select2:select', function (e) {
                 var data = e.params.data;
@@ -55,7 +55,7 @@
         {{/js}}
 
         {{#copyActivity}}
-            <p>{{#str}}sectionselection, community_sharewith{{/str}}</p>
+            <p class="mt-4">{{#str}}sectionselection, community_sharewith{{/str}}</p>
             <select class="sections form-control">
                 <option data-sectionid="12"></option>
             </select>

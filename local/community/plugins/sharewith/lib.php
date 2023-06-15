@@ -68,7 +68,7 @@ function community_sharewith_render_navbar_output() {
 
     // If page editing.
     if(!$PAGE->user_is_editing()){
-        $activitycopyenable = false;
+        //$activitycopyenable = false;
         $sectioncopyenable = false;
     }
 

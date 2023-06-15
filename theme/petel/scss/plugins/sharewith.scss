@@ -1,0 +1,72 @@
+#modalSharewith {
+
+
+    .modal-header {
+        h5 {
+            font-family: $primary-font;
+        }
+    }
+
+    .sharewith-btn {
+
+        .circle {
+            outline: .0625rem solid $secondary;
+            color: $secondary;
+        }
+
+        .text {
+            font-family: $primary-font;
+            color: $petel-body-text;
+        }
+
+        &:hover {
+            .circle {
+                background-color: $light;
+            }
+        }
+
+        &:active {
+            background-color: $light;
+            color: $primary;
+            outline-color: $primary;
+        }
+    }
+}
+
+.sharebtn {
+    i {
+        color: $secondary;
+    }
+
+    &:focus,
+    &:hover {
+        border-color: $primary;
+
+        i {
+            color: $primary;
+        }
+    }
+}
+
+.copytoclipboard_alert {
+    background-color: $petel-green-light;
+
+    .line {
+        background-color: $green;
+    }
+
+    .fa-circle-info {
+        color: $green;
+    }
+
+    .text {
+        font-family: $primary-font;
+        color: $petel-body-text;
+    }
+
+    .close {
+        i {
+            color: $green;
+        }
+    }
+}

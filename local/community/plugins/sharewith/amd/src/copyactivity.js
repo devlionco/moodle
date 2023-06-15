@@ -17,7 +17,7 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     community_sharewith/copyactivity
- * @package    community_sharewith
+ * @package
  * @copyright  2018 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -30,7 +30,7 @@ define([
     'community_sharewith/modal',
     'community_sharewith/storage'
 
-], function ($, Ajax, Notification, modal, St) {
+], function($, Ajax, Notification, modal, St) {
 
     return /** @alias module:community_sharewith/copyActivity */ {
 
@@ -41,10 +41,10 @@ define([
         flagCopyFromMessage: 0,
         messageId: 0,
 
-        init: function () {
+        init: function() {
             var root = document.querySelector('body');
 
-            root.addEventListener('click', function (e) {
+            root.addEventListener('click', function(e) {
                 var target = e.target;
                 while (root.contains(target)) {
                     switch (target.dataset.handler) {
@@ -99,17 +99,17 @@ define([
             }.bind(this));
         },
 
-        selectCourseForSection: function (target) {
+        selectCourseForSection: function(target) {
             St.initState();
             St.sectionid = $(target).data('sectionid');
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var context = {
-                    copySection: true,
-                    courses: JSON.parse(response.courses),
-                    hidebtn: true,
-                    copysub: St.copysub,
-                },
+                        copySection: true,
+                        courses: JSON.parse(response.courses),
+                        hidebtn: true,
+                        copysub: St.copysub,
+                    },
                     template = modal.template.copyinstance;
 
                 if (!response.result) {
@@ -129,7 +129,7 @@ define([
                         courseid: Number(St.getCurrentCourse()),
                         firstcmid: $(target).data('firstcmid')
                     },
-                    done: function (response) {
+                    done: function(response) {
                         St.sectionid = response.sectionid ? response.sectionid : null;
                     },
                     fail: Notification.exception
@@ -149,13 +149,13 @@ define([
             St.sectionid = $(target).data('sectionid');
             St.copysub = $(target).data('copysub');
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var context = {
-                    copySection: true,
-                    courses: JSON.parse(response.courses),
-                    hidebtn: true,
-                    copysub: St.copysub,
-                },
+                        copySection: true,
+                        courses: JSON.parse(response.courses),
+                        hidebtn: true,
+                        copysub: St.copysub,
+                    },
                     template = modal.template.copyinstance;
 
                 if (!response.result) {
@@ -174,7 +174,7 @@ define([
                         courseid: Number(St.getCurrentCourse()),
                         firstcmid: $(target).data('firstcmid')
                     },
-                    done: function (response) {
+                    done: function(response) {
                         St.sectionid = response.sectionid ? response.sectionid : null;
                     },
                     fail: Notification.exception
@@ -189,12 +189,12 @@ define([
             }]);
         },
 
-        subOrNot: function (target) {
+        subOrNot: function(target) {
             var context = {
-                title: M.util.get_string('settingssectionscopy', 'community_sharewith'),
-                text: M.util.get_string('copy_all_sub', 'community_sharewith'),
-                sectionid: $(target).data('sectionid'),
-            },
+                    title: M.util.get_string('settingssectionscopy', 'community_sharewith'),
+                    text: M.util.get_string('copy_all_sub', 'community_sharewith'),
+                    sectionid: $(target).data('sectionid'),
+                },
                 template = modal.template.subornot;
 
             modal.render(template, context).done(modal.triggerBtn.click());
@@ -205,11 +205,11 @@ define([
          *
          * @method copySectionToCourse
          */
-        copySectionToCourse: function () {
+        copySectionToCourse: function() {
             var modalContent = $(modal.modalContent),
                 courseid = modalContent.find(':selected').data('courseid');
             modal.addBtnSpinner();
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var template = modal.template.error,
                     context = {
                         title: M.util.get_string('eventsectioncopy', 'community_sharewith'),
@@ -237,15 +237,16 @@ define([
             }]);
         },
 
-        openDialog: function (target) {
+        openDialog: function(target) {
             St.initState();
+            St.cmlink = $(target).data('cmlink');
             St.cmid = $(target).data('cmid');
             St.amit = $(target).data('amit') ? true : false;
             St.sequence = $(target).data('sequence') ? true : false;
 
             var methodname = 'community_sharewith_check_cm_status',
-                data = { cmid: St.cmid },
-                context = { amit: St.amit },
+                data = {cmid: St.cmid},
+                context = {amit: St.amit},
                 template = modal.template.selector;
 
             if (St.amit) {
@@ -256,7 +257,7 @@ define([
                 };
             }
 
-            var parseResponse = function (data) {
+            var parseResponse = function(data) {
                 if (data.cmstatus === 'chain') {
                     context = JSON.parse(data.data);
                     template = modal.template.chain;
@@ -279,8 +280,8 @@ define([
             }]);
         },
 
-        saveChain: function (target) {
-            $.each($("input[name='cmid[]']:checked"), function () {
+        saveChain: function(target) {
+            $.each($("input[name='cmid[]']:checked"), function() {
                 St.activityChain.push(Number($(this).val()));
             });
             if (St.sequence) {
@@ -296,10 +297,10 @@ define([
          * @method selectCourse
          * @param {Node} target element.
          */
-        selectCourse: function (target) {
+        selectCourse: function(target) {
             var self = this;
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var context = {
                     courses: JSON.parse(response.courses),
                     copyActivity: true
@@ -335,10 +336,10 @@ define([
          * @method selectCourse
          * @param {Node} target element.
          */
-        selectCourseForNotification: function (target) {
+        selectCourseForNotification: function(target) {
             var self = this;
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var context = {
                     courses: JSON.parse(response.courses),
                     copyActivity: true
@@ -369,7 +370,7 @@ define([
          *
          * @method selectSection
          */
-        selectSection: function () {
+        selectSection: function() {
             var modalContent = $(modal.modalContent),
                 courseid = modalContent.find(':selected').attr('data-courseid');
 
@@ -377,10 +378,10 @@ define([
                 courseid = St.getCurrentCourse();
             }
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var sections = JSON.parse(response.sections);
                 modalContent.find('.sections').html('');
-                sections.forEach(function (section) {
+                sections.forEach(function(section) {
                     modalContent.find('.sections')
                         .append($('<option data-sectionid =' + section.section_id + '>' + section.section_name + '</option>'));
                 });
@@ -402,7 +403,7 @@ define([
          * @method copyActivityToCourse
          */
 
-        copyActivityToCourse: function () {
+        copyActivityToCourse: function() {
             let self = this;
 
             var modalContent = $(modal.modalContent),
@@ -410,7 +411,7 @@ define([
                 sectionid = modalContent.find('.sections option:selected').attr('data-sectionid');
 
             modal.addBtnSpinner();
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var context = {
                     title: M.util.get_string('eventdublicatetoteacher', 'community_sharewith'),
                 };
@@ -433,11 +434,15 @@ define([
                         context.text = M.util.get_string('error_permission_allow_copy', 'community_sharewith');
                         break;
                     case 10:
-                        if(self.flagCopyFromMessage === 1){
+                        if (self.flagCopyFromMessage === 1) {
                             context.text = M.util.get_string('activity_copied_to_course', 'community_sharewith');
 
                             let link = M.cfg.wwwroot + '/user/profile.php?id=' + response.userid;
-                            let a = {'link': link, 'userfirstname': response.userfirstname, 'userlastname': response.userlastname};
+                            let a = {
+                                'link': link,
+                                'userfirstname': response.userfirstname,
+                                'userlastname': response.userlastname
+                            };
                             context.text2 = M.util.get_string('activity_copied_to_course_from_message', 'community_sharewith', a);
 
                             context.userid = response.userid;
@@ -445,7 +450,7 @@ define([
                             context.coursename = response.coursename;
 
                             template = modal.template.confirm2;
-                        }else{
+                        } else {
                             context.text = M.util.get_string('activity_copied_to_course', 'community_sharewith');
                             template = modal.template.confirm;
                         }

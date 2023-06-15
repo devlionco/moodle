@@ -17,7 +17,7 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     community_sharewith/storage
- * @package    community_sharewith
+ * @package
  * @copyright  2020 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
@@ -33,7 +33,8 @@ define(['jquery'], function($) {
         sequence: false,
         copysub: false,
         hassubsections: false,
-        
+        cmlink: false,
+
         /**
          * Init state for object.
          *
@@ -46,6 +47,7 @@ define(['jquery'], function($) {
             this.amit = false;
             this.sequence = false;
             this.copysub = false;
+            this.cmlink = false;
         },
 
         /**

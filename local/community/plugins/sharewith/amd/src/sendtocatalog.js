@@ -11,18 +11,18 @@ define([
     'core/fragment',
     'jqueryui',
 
-], function ($, Ajax, str, Notification, modal, St, ModalFactory, ModalEvents, Fragment) {
+], function($, Ajax, str, Notification, modal, St, ModalFactory, ModalEvents, Fragment) {
 
     var contextid = 0;
 
     return /** @alias module:community_sharewith/sendToCatalog */ {
 
-        init: function (contextid) {
+        init: function(contextid) {
             this.contextid = contextid;
 
             var root = modal.modalWrapper,
                 self = this;
-            root.addEventListener('click', function (e) {
+            root.addEventListener('click', function(e) {
                 var target = e.target;
                 while (root.contains(target)) {
 
@@ -45,7 +45,7 @@ define([
                 }
             }.bind(this));
 
-            root.addEventListener('change', function (e) {
+            root.addEventListener('change', function(e) {
                 var target = e.target;
                 while (root.contains(target)) {
                     if (target.dataset.handler === 'selectCourseOnCatalog') {
@@ -66,7 +66,7 @@ define([
          * @method selectUploadActivity
          * @param {Node} target element.
          */
-        selectUploadActivity: function () {
+        selectUploadActivity: function() {
             let self = this;
 
             const getBody = function() {
@@ -90,7 +90,7 @@ define([
                 fmodal.setLarge();
 
                 var root = fmodal.getRoot();
-                root.on(ModalEvents.bodyRendered, function () {
+                root.on(ModalEvents.bodyRendered, function() {
                     root.find('.modal-body').animate({
                         scrollTop: 0
                     }, 200);
@@ -104,7 +104,7 @@ define([
 
         },
 
-        selectCourse: function (target) {
+        selectCourse: function(target) {
             var courseid = $(target).val();
             var selectedItem = (th, e, value, courseid) => {
                 compid = competencies.indexOf(value);
@@ -113,24 +113,24 @@ define([
                         '<input type = "hidden" name = "choosedcompetencies-' + courseid + '" value = "' + compid + '"></div>');
                     competency.css("background-color", '#053468');
                     competency.appendTo(th.parent());
-                    competency.on('click', function () {
+                    competency.on('click', function() {
                         competency.remove();
                     });
                     th.val('');
                     e.preventDefault();
                 }
-            }
+            };
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 var section = response.sections;
                 var oldSection = $(target).next();
                 oldSection.replaceWith($(section));
                 var cc = JSON.parse(response.competencies);
                 var compcontainer = $(target).closest('.select-course').find('.coursecompetencies');
-                if (cc.length != 0) {
+                if (cc.length !== 0) {
                     compcontainer.html(response.competencieshtml);
                     competencies = [];
-                    Object.keys(cc).map(function (key) {
+                    Object.keys(cc).map(function(key) {
                         competencies[Number(key)] = cc[key];
                         return;
                     });
@@ -140,7 +140,7 @@ define([
                                 var results = $.ui.autocomplete.filter(Object.values(competencies), request.term);
                                 response(results.slice(0, 10));
                             },
-                            select: function (e, ui) {
+                            select: function(e, ui) {
                                 selectedItem($(this), e, ui.item.value, courseid);
                             },
                             minLength: 0,
@@ -150,11 +150,11 @@ define([
                                     ui.content.push(noResult);
                                 }
                             }
-                        }).click(function () {
-                            if (this.value == ""){
-                                $(this).autocomplete("search");
-                            }
-                        });
+                        }).click(function() {
+                        if (this.value === "") {
+                            $(this).autocomplete("search");
+                        }
+                    });
                     var root = modal.modalWrapper,
                         self = this;
                 } else {
@@ -164,13 +164,13 @@ define([
             };
             Ajax.call([{
                 methodname: 'community_sharewith_get_sections_html',
-                args: { courseid: courseid },
+                args: {courseid: courseid},
                 done: parseResponse,
                 fail: Notification.exeption
             }]);
         },
 
-        addAssociation: function (target) {
+        addAssociation: function(target) {
             var association = $(target).parent().clone();
             var catid = Number($(target).parent().attr('data-catid'));
 
@@ -187,7 +187,7 @@ define([
             association.insertAfter($(target).parent());
         },
 
-        selectCategory: function (target) {
+        selectCategory: function(target) {
             var catid = $(target).val();
             $('#selectCourse').find('.select-course').addClass('d-none');
             $('#selectCourse').find('select').attr('disabled', 'true');

@@ -84,6 +84,10 @@
         {{/activityinfo}}
     </div>
 
+    {{#hassharebutton}}
+        <div class="align-self-start" data-region="share-button-activity-area" data-cmid="{{cmid}}" data-cmlink="{{{url}}}"></div>
+    {{/hassharebutton}}
+
     {{#controlmenu}}
         <div class="activity-actions align-self-start">
             {{$ core_courseformat/local/content/cm/controlmenu }}
@@ -92,9 +96,6 @@
         </div>
     {{/controlmenu}}
 
-    {{#hassharebutton}}
-        <div class="align-self-start" data-region="share-button-activity-area" data-cmid="{{cmid}}"></div>
-    {{/hassharebutton}}
 </div>
 {{#hasname}}
     {{$ core_courseformat/local/content/cm/badges }}

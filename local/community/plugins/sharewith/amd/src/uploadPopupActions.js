@@ -8,32 +8,48 @@ define([
     'core/templates',
     'core/str',
     'core/notification',
-], function ($, Ajax, Templates, str, Notification,) {
+], function($, Ajax, Templates, str, Notification,) {
 
     var competencies = {};
     var maxNumberOfSection = 1;
 
+    /**
+     * @param el
+     */
     function clearDropdown(el) {
         el.html('');
 
     }
+
+    /**
+     * @param el
+     */
     function disableDropdownBtn(el) {
         if (!el.hasClass('disabled')) {
             el.addClass('disabled');
         }
     }
+
+    /**
+     * @param el
+     */
     function enableDropdownBtn(el) {
 
         if (el.hasClass('disabled')) {
             el.removeClass('disabled');
         }
     }
+
+    /**
+     * @param data
+     * @param dropdownMenu
+     */
     function getCompetencies(data, dropdownMenu) {
         var unique = Math.floor(Date.now() / 1000);
 
         var obj = $(dropdownMenu).parent().parent().parent().parent().find('.section-competency-block');
         var competenciesEnable = true;
-        if(obj.length > 1){
+        if (obj.length > 1) {
             competenciesEnable = false;
         }
 
@@ -56,6 +72,12 @@ define([
             });
         });
     }
+
+    /**
+     * @param target
+     * @param courseid
+     * @param sectionid
+     */
     function showCompetenciesBtn(target, courseid, sectionid) {
 
         var prop = 'course_id-' + courseid;
@@ -63,19 +85,19 @@ define([
             $('.select-competencies-dropdown-wrapper').removeClass('hidden').attr('data-section_id', sectionid);
             var dropdownMenu = target.find('.select-competency-dropdown-menu');
             let context;
-            if(competencies[prop].competencies.length > 0 ) {
+            if (competencies[prop].competencies.length > 0) {
                 context = competencies[prop];
-            } else if(competencies[prop].sections.length > 0) {
+            } else if (competencies[prop].sections.length > 0) {
                 context = {};
-                competencies[prop].sections.forEach(function(el){
-                    if(+el.section_id === sectionid) {
+                competencies[prop].sections.forEach(function(el) {
+                    if (+el.section_id === sectionid) {
                         context.competencies = el.section_competency;
                     }
                 });
-                
+
             }
             Templates.render('community_sharewith/elements/dropdown-competency-selector', context)
-                .done(function (html, js) {
+                .done(function(html, js) {
                     Templates.replaceNodeContents(dropdownMenu, html, js);
 
                     $(document).on('click', '.category-dropdown-item', (e) => {
@@ -94,9 +116,14 @@ define([
 
         }
     }
+
+    /**
+     * @param data
+     * @param dropdownMenu
+     */
     function showOercatalogHierarchy(data, dropdownMenu) {
         Templates.render('community_sharewith/elements/dropdown-category-selector', data)
-            .done(function (html, js) {
+            .done(function(html, js) {
                 Templates.replaceNodeContents(dropdownMenu, html, js);
 
                 $(document).on('click', 'a.category-dropdown-item, a.course-dropdown-item', (e) => {
@@ -108,13 +135,17 @@ define([
         getCompetencies(data, dropdownMenu);
     }
 
+    /**
+     * @param json
+     * @param dropdownMenu
+     */
     function getOercatalogHierarchy(json, dropdownMenu) {
         Ajax.call([{
             methodname: 'community_sharewith_get_oercatalog_hierarchy',
             args: {
                 selected: json
             },
-            done: function (response) {
+            done: function(response) {
                 let data = JSON.parse(response.hierarchy);
                 showOercatalogHierarchy(data, dropdownMenu);
             },
@@ -122,6 +153,10 @@ define([
         }]);
     }
 
+    /**
+     * @param data
+     * @param parent
+     */
     function addSelectedSection(data, parent) {
         var root = parent.closest('.section-competency-block');
         var newBlockId = root.find('.selected-sections-area-wrapper .selected-section-block').length;
@@ -153,6 +188,11 @@ define([
             root.addClass('selected');
         }
     }
+
+    /**
+     * @param data
+     * @param parent
+     */
     function addSelectedCompetency(data, parent) {
 
         var selectedPill = `
@@ -175,12 +215,20 @@ define([
         }
 
     }
+
+    /**
+     * @param target
+     */
     function removeSelectedCompetencies(target) {
         target.find('.selected-competency-block').remove();
         target.find('.select-competency-dropdown-menu').empty();
         target.addClass('hidden');
         target.siblings('.add-section-competency-block').hide();
     }
+
+    /**
+     * @param el
+     */
     function removeSelectedCompetencyBlock(el) {
         var comp_id = el.closest('.selected-competency-block').data('comp_id');
         if (el.closest('.section-competency-block').find('.selected-competency-block').length === 0) {
@@ -189,6 +237,10 @@ define([
         el.closest('.select-competencies-dropdown-wrapper')
             .find('.competency-dropdown-item[data-comp_id="' + comp_id + '"] input').trigger('click');
     }
+
+    /**
+     * @param el
+     */
     function removeSelectedSectionBlock(el) {
         var btn = el.siblings('.dropdown-toggle');
         var target = el.closest('.section-competency-block').find('.select-competencies-dropdown-wrapper');
@@ -209,12 +261,20 @@ define([
         enableDropdownBtn(btn);
         btn.closest('.section-competency-block').find('.add-section-competency-block').hide();
     }
+
+    /**
+     * @param parent
+     */
     function showAllCompetencies(parent) {
         parent.find('.competency-dropdown-item').show();
     }
 
+    /**
+     * @param symbol
+     * @param parent
+     */
     function competencyAutocomplete(symbol, parent) {
-        parent.find('.competency-dropdown-item').each(function () {
+        parent.find('.competency-dropdown-item').each(function() {
             var el = $(this);
             var string = el.find('label').text();
             var text = symbol.toLowerCase();
@@ -225,6 +285,10 @@ define([
             }
         });
     }
+
+    /**
+     * @param target
+     */
     function checkCompetenciesAreaHeight(target) {
         var btnHeight = +target.find('button.dropdown-toggle').outerHeight() + 10;
         var pillsHeight = +target.find('.selected-competencies-area-wrapper').outerHeight();
@@ -236,21 +300,29 @@ define([
         }
     }
 
+    /**
+     * @param prevElement
+     */
     function addSectionCompetencyBlock(prevElement) {
         var data = [];
         Templates.render('community_sharewith/elements/section-competency-block', data)
-            .done(function (html, js) {
+            .done(function(html, js) {
                 Templates.appendNodeContents(prevElement, html, js);
             })
             .fail(Notification.exception);
     }
 
+    /**
+     * @param form
+     * @param default_section
+     * @param default_competencies
+     */
     function setDefaultSection(form, default_section, default_competencies) {
 
         let data = JSON.parse(default_section);
         let competencies = JSON.parse(default_competencies);
 
-        if(Object.keys(data).length !== 6){
+        if (Object.keys(data).length !== 6) {
             return false;
         }
 
@@ -269,7 +341,7 @@ define([
         getOercatalogHierarchy(data_sections, target);
 
         // Set.
-        setTimeout(function(){
+        setTimeout(function() {
             var btn = target.closest('.dropdown-menu').siblings('.dropdown-toggle');
             const tmp = {
                 cat_id: data.cat_id,
@@ -285,10 +357,10 @@ define([
             $('.select-competencies-dropdown-btn').removeClass('disabled');
 
             // Set Competencies.
-            setTimeout(function(){
+            setTimeout(function() {
 
-                $.each(competencies, function( index, value ) {
-                    $('*[data-comp_id="'+value+'"]').find('input').click();
+                $.each(competencies, function(index, value) {
+                    $('*[data-comp_id="' + value + '"]').find('input').click();
                 });
 
             }, 500);
@@ -298,18 +370,18 @@ define([
 
     return {
 
-        init: function (uniqueid, number_sections, default_section, default_competencies) {
+        init: function(uniqueid, number_sections, default_section, default_competencies) {
 
             maxNumberOfSection = +number_sections;
             var form = $('#sharing_activities_form_' + uniqueid);
 
             setDefaultSection(form, default_section, default_competencies);
 
-            form.on('show.bs.dropdown', '.select-section-dropdown-wrapper', function (e) {
+            form.on('show.bs.dropdown', '.select-section-dropdown-wrapper', function(e) {
                 var target = $(e.target).find('.dropdown-menu');
                 clearDropdown(target);
                 let selected_sections = [];
-                $('.selected-section-block').each(function () {
+                $('.selected-section-block').each(function() {
                     if (!$(this).hasClass('hidden')) {
                         selected_sections.push($(this).data("section_id"));
                     }
@@ -318,16 +390,16 @@ define([
                 getOercatalogHierarchy(data, target);
             });
 
-            form.on('click', '.selected-section-block .close', function () {
+            form.on('click', '.selected-section-block .close', function() {
                 let parent = $(this).closest('.selected-section-block');
                 removeSelectedSectionBlock(parent);
             });
 
-            form.on('click', '.selected-competency-block .close', function () {
+            form.on('click', '.selected-competency-block .close', function() {
                 removeSelectedCompetencyBlock($(this));
             });
 
-            form.on('click', '.section-dropdown-item', function (e) {
+            form.on('click', '.section-dropdown-item', function(e) {
                 var btn = $(e.target).closest('.dropdown-menu').siblings('.dropdown-toggle');
                 const data = {
                     cat_id: $(this).data('cat_id'),
@@ -339,7 +411,7 @@ define([
                 };
                 addSelectedSection(data, btn);
             });
-            form.on('click', '.competency-dropdown-item input', function (e) {
+            form.on('click', '.competency-dropdown-item input', function(e) {
                 var compId = $(e.target).closest('.competency-dropdown-item').data('comp_id');
                 var target = $(e.target).closest('.section-competency-block').find('.select-competencies-dropdown-wrapper');
                 if (target.find('#selected-competency-block-' + compId).length > 0) {
@@ -359,27 +431,27 @@ define([
                 checkCompetenciesAreaHeight(target);
             });
 
-            form.on('shown.bs.dropdown', '.select-competencies-dropdown-wrapper', function (e) {
+            form.on('shown.bs.dropdown', '.select-competencies-dropdown-wrapper', function(e) {
                 var target = $(e.target).closest('.section-competency-block');
-                setTimeout(function () {
+                setTimeout(function() {
                     checkCompetenciesAreaHeight(target);
                 }, 10);
             });
 
-            form.on('click', '.select-competency-dropdown-menu', function (e) {
+            form.on('click', '.select-competency-dropdown-menu', function(e) {
                 e.stopPropagation();
             });
 
-            form.on('click', '.no_copyright', function (e) {
+            form.on('click', '.no_copyright', function(e) {
                 var parent = $(e.target).closest('.form-group');
                 parent.find('.question-activity-url-wrapper').slideUp();
             });
-            form.on('click', '.based_on_another_activity', function (e) {
+            form.on('click', '.based_on_another_activity', function(e) {
                 var parent = $(e.target).closest('.form-group');
                 parent.find('.question-activity-url-wrapper').slideDown();
             });
 
-            form.on('keyup', '#competency-auotocmplete', function (e) {
+            form.on('keyup', '#competency-auotocmplete', function(e) {
                 var timer;
                 if (timer) {
                     clearTimeout(timer);
@@ -388,7 +460,7 @@ define([
                 var parent = $(e.target).closest('.select-competency-dropdown-menu');
                 var symbol = $(e.target).val();
 
-                timer = setTimeout(function () {
+                timer = setTimeout(function() {
                     if (symbol === '') {
                         showAllCompetencies(parent);
                     } else {
@@ -396,7 +468,7 @@ define([
                     }
                 }, 500);
             });
-            form.on('click', '.add-section-competency-btn', function (e) {
+            form.on('click', '.add-section-competency-btn', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 var prevElement = $(e.target).closest('.section-competency-block-wrapper');
