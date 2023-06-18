@@ -88,8 +88,8 @@ function petel_clear_cache(){
 /**
  *
  */
-function theme_petel_page_init($page) {
-    global $PAGE, $COURSE;
+function theme_petel_page_init(\moodle_page $page) {
+    global $PAGE, $CFG;
 
     // PTL-7613 Hide quick access from module menu, when in course edit mode.
     if(false && strpos($page->pagetype, 'course-view-topics') !== false){
@@ -98,7 +98,14 @@ function theme_petel_page_init($page) {
         $qaid = isset($quickaccesses[$COURSE->id]) ? $quickaccesses[$COURSE->id] : '';
         $PAGE->requires->js_call_amd('theme_petel/quick_access', 'init', array('quickaccess' => $qaid));
     }
+
     $PAGE->requires->css('/lib/jquery/ui-1.13.2/jquery-ui.css');
+
+    // Add local_accessibilitytool.
+    if (file_exists($CFG->dirroot . "/local/accessibilitytool/lib.php")) {
+        require_once($CFG->dirroot . "/local/accessibilitytool/lib.php");
+        local_accessibilitytool_page_init($page);
+    }
 }
 
 /**
