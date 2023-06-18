@@ -169,11 +169,17 @@ class content extends \core_courseformat\output\local\content {
         $percentage = round(($completedModules / $totalModules) * 100);
         $isComplete = ($completedModules == $totalModules);
     
+        //TODO: add correct names
+        $rad1 =  round(100 - $percentage);
+        $rad2 =  round(100 -  $rad1);
+
         return [
             'total' => $totalModules,
             'completed' => $completedModules,
             'percentage' => $percentage,
-            'iscomplete' => $isComplete
+            'iscomplete' => $isComplete,
+            'rad1' => $rad1,
+            'rad2' => $rad2,
         ];
     }
     

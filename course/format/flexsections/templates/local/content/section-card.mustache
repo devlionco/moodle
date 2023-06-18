@@ -1,83 +1,81 @@
 {{!
-    This file is part of Moodle - http://moodle.org/
+This file is part of Moodle - http://moodle.org/
 
-    Moodle is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
 }}
 {{!
-    @template format_flexsections/local/content/section-card
+@template format_flexsections/local/content/section-card
 
-    Displays a section as a card. Does not display activities, just the section header
+Displays a section as a card. Does not display activities, just the section header
 
-    Example context (json):
-    {
-        "id": 1234,
-        "num": 1,
-        "sectionreturnid": 0,
-        "classes": [ "extra", "css", "classes" ],
-        "header": {
-            "url": "https://example.com/course/index.php",
-            "name": "Section name",
-            "image": "https://example.com/image.png",
-            "summary": {
-                "summarytext": "<p>Introductory text</p>"
-            }
-        }
-    }
+Example context (json):
+{
+"id": 1234,
+"num": 1,
+"sectionreturnid": 0,
+"classes": [ "extra", "css", "classes" ],
+"header": {
+"url": "https://example.com/course/index.php",
+"name": "Section name",
+"image": "https://example.com/image.png",
+"summary": {
+"summarytext": "<p>Introductory text</p>"
+}
+}
+}
 }}
-<div class="card dashboard-card{{#classes}} {{.}}{{/classes}}"
-     role="listitem"
-     aria-labelledby="section-{{num}}-title"
-     data-sectionid="{{num}}"
-     data-sectionreturnid="{{sectionreturnid}}"
-     data-for="section"
-     data-id="{{id}}"
-     data-number="{{num}}">
 
+<div class="card dashboard-card{{#classes}} {{.}}{{/classes}}" role="listitem" aria-labelledby="section-{{num}}-title"
+    data-sectionid="{{num}}" data-sectionreturnid="{{sectionreturnid}}" data-for="section" data-id="{{id}}"
+    data-number="{{num}}">
     {{#header}}
-    <h3 id="section-{{num}}-title" class="card-title mb-2">
-        {{{name}}}
-    </h3>
-        <a class="card-main-content" href="{{{url}}}" title="{{{name}}}">
-            <div class="card-img-top"
-                 role="presentation"
-                 {{#image}}style="background: url('{{{image}}}') center/cover"{{/image}}>
+    <a class="card-inner rounded p-2  {{#lastseen}}lastseen{{/lastseen}}" href="{{{url}}}" title="{{{name}}}">
+        <h3 id="section-{{num}}-title" class="card-title mb-2">
+            {{{name}}}
+        </h3>
+        <div class="card-main-content d-flex flex-column justify-content-between position-relative" >
+            <div class="card-img-top" role="presentation" {{#image}}style="background: url('{{{image}}}') center/cover"
+                {{/image}}>
             </div>
-            <div class="card-overlay">
-                <div class="card-header-fade">
-                    {{> core_courseformat/local/content/section/availability }}
-                    {{$ format_flexsections/local/content/completion }}
-                        {{> format_flexsections/local/content/completion }}
-                    {{/ format_flexsections/local/content/completion }}
+            <div class="card-header-fade p-1">
+                {{$ core_courseformat/local/content/section/badges }}
+                {{> core_courseformat/local/content/section/badges }}
+                {{/ core_courseformat/local/content/section/badges }}
+                {{#summary}}
+                {{#summarytext}}
+                <div class="summary">
+                    {{{summarytext}}}
                 </div>
-                <div class="card-header">
-                    {{$ core_courseformat/local/content/section/badges }}
-                        {{> core_courseformat/local/content/section/badges }}
-                    {{/ core_courseformat/local/content/section/badges }}
-                    {{#summary}}
-                        {{#summarytext}}
-                            <div class="summary">
-                                {{{summarytext}}}
-                            </div>
-                        {{/summarytext}}
-                    {{/summary}}
-                </div>
+                {{/summarytext}}
+                {{/summary}}
+
             </div>
-        </a>
+            <div class="card-header p-2">
+                {{> core_courseformat/local/content/section/availability }}
+                {{$ format_flexsections/local/content/completion }}
+                {{> format_flexsections/local/content/completion }}
+                {{/ format_flexsections/local/content/completion }}
+            </div>
+        </div>
+    </a>
     {{/header}}
 
     {{#lastseen}}
-    {{#str}} lastseen, format_flexsections {{/str}}
+    <p class="lastseen-text text-center mb-0 py-3 px-1">
+        {{#str}} lastseen, format_flexsections {{/str}}
+    </p>
     {{/lastseen}}
 
 </div>

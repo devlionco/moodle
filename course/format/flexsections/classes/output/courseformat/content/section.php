@@ -225,6 +225,9 @@ class section extends \core_courseformat\output\local\content\section {
         $progressmode = $this->format->get_format_option('progressmode');
         $percentage = round(($completed / $total) * 100);
 
+        //TODO: add correct names
+        $rad1 =  round(100 - $percentage);
+        $rad2 =  round(100 -  $rad1);
         return [
             'total' => $total,
             'completed' => $completed,
@@ -234,7 +237,9 @@ class section extends \core_courseformat\output\local\content\section {
             'hasprogress' => $completed > 0,
             'showpercentage' => !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE,
             'modecircle' => !$iscomplete && $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE,
-            'showcount' => !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT
+            'showcount' => !$iscomplete && $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT,
+            'rad1' => $rad1,
+            'rad2' => $rad2,
         ];
     }
 }
