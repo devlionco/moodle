@@ -1,5 +1,10 @@
-// Format flex-sections.
+@mixin card-background-opacity($color, $opacity: 0.35) {
+    background: $color;
+    /* The Fallback */
+    background: linear-gradient(0deg, rgba($color, $opacity), rgba($color, $opacity));
+}
 
+// Format flex-sections.
 .path-course {
     #page-header {
 
@@ -69,22 +74,54 @@
         .coursecompletion {
             width: 48%;
 
-            .progress-wrapper {
-                border-radius: .5rem;
-                background-color: rgba(255, 255, 255, .7);
+        }
 
-                .progress {
-                    height: .5rem;
-                    border: .0625rem solid $primary;
-                    border-radius: .25rem;
-                    background-color: $gray-100;
-                    overflow: hidden;
-                }
+        .progress-wrapper {
+            border-radius: .5rem;
+            background-color: rgba(255, 255, 255, .7);
 
-                p {
-                    font-size: .75rem;
-                    line-height: 1;
-                }
+            .progress {
+                height: .5rem;
+                border: .0625rem solid $primary;
+                border-radius: .25rem;
+                background-color: $gray-100;
+                overflow: hidden;
+            }
+
+            p {
+                font-size: .75rem;
+                line-height: 1;
+            }
+        }
+
+        .chart-wrapper {
+            min-width: 5rem;
+            min-height: 4.625rem;
+            background-color: rgba($color: #fff, $alpha: .70);
+            border-radius: .5rem;
+            display: inline-flex;
+            flex-direction: column;
+
+            .svg-wrapper {
+                width: 2.875rem;
+                height: 2.875rem;
+                margin: 0 auto;
+            }
+
+            .donut-ring {
+                stroke: $gray-500;
+            }
+
+            .donut-segment {
+                stroke: $primary;
+            }
+
+            .text {
+                font-family: $primary-font;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 18px;
             }
         }
 
@@ -111,9 +148,11 @@
             padding: 0 .5rem;
         }
     }
+
     .course-content .card-deck .card {
         aspect-ratio: 4/4;
     }
+
     .dashboard-card-deck {
         margin-left: -0.75rem;
         margin-right: -0.75rem;
@@ -124,22 +163,79 @@
             margin-right: .75rem;
             margin-left: .75rem;
         }
+
         .card-main-content {
             min-height: 10rem;
         }
     }
 
-    .activity-info {
+    .card {
 
+        .card-header-fade,
+        .card-header {
+            background: transparent !important;
+            position: relative;
+            z-index: 5;
+        }
+    }
+
+    .card-inner {
+        &.lastseen {
+            outline: .0625rem solid $primary;
+        }
+        &:hover {
+            text-decoration: none;
+            .card-main-content::after {
+                content: '';
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                border-radius: .5rem;
+                @include card-background-opacity($secondary)
+            }
+        }
+
+        &:focus {
+            outline: .125rem solid $primary;
+        }
+
+        &:active,
+        &:focus {
+            background-color: $secondarylight;
+
+            & + .lastseen-text {
+                color: $primary;
+            }
+        }
+
+    }
+
+    .lastseen-text {
+        font-size: .75rem;
+        font-weight: 500;
+        font-family: $primary-font;
+        color: $secondary;
+    }
+
+    .card-img-top {
+        z-index: 0;
+    }
+
+    .activity-info {
         .gradestatus {
             .progress {
                 width: 7.5rem;
                 height: 1rem;
                 border-radius: .25rem;
             }
+
             .progress-bar {
                 font-size: .875rem;
             }
+
             .grades {
                 text-decoration: underline;
                 font-size: 1rem;
@@ -147,11 +243,54 @@
                 color: $black;
             }
         }
-       button:not(.close) {
-        font-size: .75rem;
-       }
+
+        button:not(.close) {
+            font-size: .75rem;
+        }
     }
+
     .submissionstatus {
         font-size: .75rem;
     }
+
+    .activity-add,
+    .block-add {
+        background-color: $light;
+        border: .0625rem solid $secondarylight;
+        border-radius: .5rem;
+        transition: all ease .25s;
+
+        .pluscontainer {
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        i.fa.fa-plus {
+            width: 1.125rem;
+            height: 1.125rem;
+            font-size: 1.125rem;
+        }
+
+        &:hover {
+            background-color: $secondarylight;
+            border-color: $secondary;
+            transition: all ease .25s;
+            text-decoration: none;
+
+            .activity-add-text {
+                text-decoration: none;
+            }
+        }
+    }
+
+    .add_block_button {
+        .block-add {
+            line-height: 1;
+
+            span {
+                font-size: 1rem;
+                line-height: 1rem;
+            }
+        }
+    }
+
 }
