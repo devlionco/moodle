@@ -5,7 +5,7 @@
 }
 
 // Format flex-sections.
-.path-course {
+.path-course.format-flexsections {
     #page-header {
 
         // FIXME: should be changed by .php. add class .h1 instead of .h2
@@ -13,6 +13,16 @@
             font-weight: 700;
             font-size: 2.5rem;
             line-height: 3.75rem;
+        }
+    }
+
+    .btn-disable-share-course {
+        color: $primary;
+        font-size: .75rem;
+        i {
+            color: $linkcolor;
+            font-size: 1rem;
+            margin-left: .375rem;
         }
     }
 
@@ -153,6 +163,8 @@
         aspect-ratio: 4/4;
     }
 
+
+
     .dashboard-card-deck {
         margin-left: -0.75rem;
         margin-right: -0.75rem;
@@ -183,8 +195,10 @@
         &.lastseen {
             outline: .0625rem solid $primary;
         }
+
         &:hover {
             text-decoration: none;
+
             .card-main-content::after {
                 content: '';
                 display: block;
@@ -206,7 +220,7 @@
         &:focus {
             background-color: $secondarylight;
 
-            & + .lastseen-text {
+            &+.lastseen-text {
                 color: $primary;
             }
         }
@@ -224,33 +238,15 @@
         z-index: 0;
     }
 
-    .activity-info {
-        .gradestatus {
-            .progress {
-                width: 7.5rem;
-                height: 1rem;
-                border-radius: .25rem;
-            }
-
-            .progress-bar {
-                font-size: .875rem;
-            }
-
-            .grades {
-                text-decoration: underline;
-                font-size: 1rem;
-                line-height: 1.5rem;
-                color: $black;
-            }
-        }
-
-        button:not(.close) {
-            font-size: .75rem;
-        }
-    }
+   
 
     .submissionstatus {
         font-size: .75rem;
+        .modicon {
+            font-size: 1.5rem;
+            color: $petel-body-text;
+            margin-left: .75rem;
+        }
     }
 
     .activity-add,
@@ -290,6 +286,103 @@
                 font-size: 1rem;
                 line-height: 1rem;
             }
+        }
+    }
+
+    .completion-btn {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        box-shadow: none;
+        border: none;
+
+        i {
+            margin-left: .75rem;
+            font-size: 1.5rem;
+        }
+
+        &.overallcomplete {
+            color: $success;
+        }
+
+        &.overallincomplete {
+            color: $petel-body-text;
+        }
+    }
+    .activityname {
+        a {
+            color: $linkcolor;
+            font-size: 1.125rem;
+            line-height: 1.625rem;
+            font-weight: 700;
+        }
+    }
+    .activity-actions {
+        align-self: center;
+    }
+    .activity-info {
+        align-self: center;
+        min-width: unset;
+        .gradestatus {
+            .progress {
+                width: 7.5rem;
+                height: 1rem;
+                border-radius: .25rem;
+            }
+
+            .progress-bar {
+                font-size: .875rem;
+            }
+
+            .grades {
+                text-decoration: underline;
+                font-size: 1rem;
+                line-height: 1.5rem;
+                color: $black;
+            }
+        }
+
+        button:not(.close) {
+            font-size: .75rem;
+        }
+    }
+
+    .activity-wrapper {
+        .activity-item {
+            min-height: 6.625rem;
+            padding: 1.5rem;
+            background: $white;
+            border: .0625rem solid $gray-300;
+            border-radius: .5rem;
+            box-shadow: none;
+        }
+
+    }
+
+    .availabilityinfo {
+        .description-inner {
+            i {
+                font-size: 1.125rem;
+            }
+        }
+        .description-text {
+            font-size: .75rem;
+            font-weight: 500;
+            line-height: 1.125rem;
+        }
+    }
+    .gradestatus-wrapper {
+
+        .studentfailed {
+            font-size: .75rem;
+        }
+        .divider {
+            display: flex;
+            width: .0625rem;
+            background-color: $petel-body-text;
+            height: 1rem;
+            margin-left: 1rem;
+            margin-right: 1rem;
         }
     }
 

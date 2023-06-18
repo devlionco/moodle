@@ -76,7 +76,7 @@
         {{/afterlink}}
 
         {{#activityinfo}}
-            <div class="activity-info mt-1 mt-md-0">
+            <div class="activity-info mt-1 mt-md-0 mr-auto mr-md-0">
                 {{$ format_flexsections/local/content/cm/activity_info}}
                     {{> format_flexsections/local/content/cm/activity_info}}
                 {{/ format_flexsections/local/content/cm/activity_info}}
@@ -85,11 +85,11 @@
     </div>
 
     {{#hassharebutton}}
-        <div class="align-self-start" data-region="share-button-activity-area" data-cmid="{{cmid}}" data-cmlink="{{{url}}}"></div>
+        <div class="align-self-start pt-2" data-region="share-button-activity-area" data-cmid="{{cmid}}" data-cmlink="{{{url}}}"></div>
     {{/hassharebutton}}
 
     {{#controlmenu}}
-        <div class="activity-actions align-self-start">
+        <div class="activity-actions">
             {{$ core_courseformat/local/content/cm/controlmenu }}
                 {{> core_courseformat/local/content/cm/controlmenu }}
             {{/ core_courseformat/local/content/cm/controlmenu }}
@@ -125,8 +125,8 @@
         </div>
     {{/altcontent}}
     {{#modavailability}}
-        {{$ core_courseformat/local/content/cm/availability }}
-            {{> core_courseformat/local/content/cm/availability }}
-        {{/ core_courseformat/local/content/cm/availability }}
+        {{$ format_flexsections/local/content/cm/availability }}
+            {{> format_flexsections/local/content/cm/availability }}
+        {{/ format_flexsections/local/content/cm/availability }}
     {{/modavailability}}
 </div>

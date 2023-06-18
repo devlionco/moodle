@@ -397,36 +397,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         $courseimage = $petelutility->get_course_image($COURSE);
         $header->courseimage = $courseimage;
 
-        // Button disable shared course.
-        if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id), $USER->id)){
-
-            $availabletocohort = get_config('community_sharecourse', 'availabletocohort');
-            require_once($CFG->dirroot.'/cohort/lib.php');
-
-            $flagcourse = cohort_is_member($availabletocohort, $USER->id) ? true : false;
-
-            // Check if admin.
-            $isadmin = false;
-            foreach (get_admins() as $admin) {
-                if ($USER->id == $admin->id) {
-                    $isadmin = true;
-                    break;
-                }
-            }
-
-            // Button disable share course.
-            if(\community_oer\course_oer::funcs()::if_course_shared($COURSE->id) && ($flagcourse || $isadmin)) {
-                $url = 'javascript:void(0)';
-                $title = get_string('buttonshare', 'community_sharecourse');
-
-                $html = html_writer::link($url,
-                        '<span>' . get_string('buttonsharedcourse', 'community_sharecourse') . '</span>',
-                        array('class' => ' btn-disable-share-course btn btn-warning mx-1', 'role' => 'button', 'title' => $title));
-
-                $header->sharedbutton = $iscoursepage ? $html : '';
-            }
-        }
-
         // TODO: find better deccission
         $header->ismodquiz = false;
         if(($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') && is_siteadmin()){
@@ -469,7 +439,29 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             //     $html .= html_writer::link($url, $icon, array('class' => $btnclass,
             //         'role'=>'button', 'title' => $title));
             // }
+            if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id))){
 
+                $flagcourse = false;
+                $roles = get_user_roles(\context_course::instance($COURSE->id), $USER->id, false);
+                foreach ($roles as $role) {
+                    if ($role->shortname === 'editingteacher') {
+                        $flagcourse = true;
+                    }
+                }
+
+                // Check if admin.
+                $isadmin = is_siteadmin();
+
+                if($flagcourse || $isadmin) {
+                    // Button share course.
+                    $url = 'javascript:void(0)';
+                    $title = get_string('buttonshare', 'community_sharecourse');
+                    $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-arrow-up-right-from-square'));
+                    $html .= html_writer::link($url, $icon, array('class' => $btnclass . ' btn-share-course',
+                        'role' => 'button', 'title' => $title));
+                }
+            }
+            
             if (has_capability('community/sharesequence:sequencecopy', \context_course::instance($COURSE->id))){
                 $availabletocohort = get_config('community_sharesequence', 'availabletocohort');
 
@@ -495,29 +487,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                     $context = \context_course::instance($COURSE->id);
                     $data = ['courseid' => $COURSE->id, 'coursecontext' => $context->id];
                     $PAGE->requires->js_call_amd('community_sharesequence/main', 'init', [$data]);
-                }
-            }
-
-            if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id))){
-
-                $flagcourse = false;
-                $roles = get_user_roles(\context_course::instance($COURSE->id), $USER->id, false);
-                foreach ($roles as $role) {
-                    if ($role->shortname === 'editingteacher') {
-                        $flagcourse = true;
-                    }
-                }
-
-                // Check if admin.
-                $isadmin = is_siteadmin();
-
-                if($flagcourse || $isadmin) {
-                    // Button share course.
-                    $url = 'javascript:void(0)';
-                    $title = get_string('buttonshare', 'community_sharecourse');
-                    $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-arrow-up-right-from-square'));
-                    $html .= html_writer::link($url, $icon, array('class' => $btnclass . ' btn-share-course',
-                        'role' => 'button', 'title' => $title));
                 }
             }
 

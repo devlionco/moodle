@@ -21,4 +21,27 @@
  * @copyright 2023 Devlion.co
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+$string['quizinprogress'] = 'בתהליך';
+$string['quizwithgrades'] = 'הוגש וניתן ציון';
+$string['quizsubmittedwitgrades'] = 'הוגש וניתן ציון';
+$string['quizsubmitted'] = 'הוגש';
+$string['quizwithoutgrades'] = 'ממתין לבדיקה';
+$string['quiznosubmit'] = 'טרם הוגש';
+$string['quizwithoutstarted'] = 'טרם הגיש';
+$string['assignsubmitted'] = 'ממתין לבדיקה';
+$string['assignhavegrade'] = 'הוגש וניתן ציון';
+$string['assignnotsubmitted'] = 'טרם הוגש';
+$string['questionnairesubmitted'] = 'הגישו';
+$string['questionnairenotsubmitted'] = 'טרם התחילו';
+$string['hvphavegrade'] = 'הוגש וניתן ציון';
+$string['hvpnotsubmitted'] = 'טרם הוגש';
+$string['studentfailed'] = 'נכשלו {$a} תלמידים';
+$string['cut_of_date'] = 'לא הוגש';
+$string['cut_of_date_label'] = 'להגיש עד {$a->date}';
+$string['cut_of_date_less_days_label'] = '<span>להגיש תוך {$a} <i class="fa fa-exclamation-circle red" style="color: red" aria-hidden="true"></i> </span>';
+$string['no_submission_date'] = 'ללא תאריך הגשה';
+$string['complete'] = 'הושלם';
+$string['waitgrade'] = 'הוגש וטרם נבדק';
+
 $string['editimage'] = 'ערוך תמונה';

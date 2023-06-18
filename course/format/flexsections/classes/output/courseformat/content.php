@@ -52,7 +52,8 @@ class content extends \core_courseformat\output\local\content {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        global $PAGE, $OUTPUT, $COURSE, $DB;
+        global $PAGE, $OUTPUT, $COURSE, $DB, $USER, $CFG;
+
         $data = parent::export_for_template($output);
 
         // If we are on course view page for particular section.
@@ -139,6 +140,36 @@ class content extends \core_courseformat\output\local\content {
         // courselinks
         $iscoursepage = preg_match("/course-view/", $PAGE->pagetype);
         $data->courselinks = $iscoursepage ? \theme_petel\output\core_renderer::course_links() : '';
+
+        // Button disable shared course.
+        if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id), $USER->id)){
+
+            $availabletocohort = get_config('community_sharecourse', 'availabletocohort');
+            require_once($CFG->dirroot.'/cohort/lib.php');
+
+            $flagcourse = cohort_is_member($availabletocohort, $USER->id) ? true : false;
+
+            // Check if admin.
+            $isadmin = false;
+            foreach (get_admins() as $admin) {
+                if ($USER->id == $admin->id) {
+                    $isadmin = true;
+                    break;
+                }
+            }
+
+            // Button disable share course.
+            if(\community_oer\course_oer::funcs()::if_course_shared($COURSE->id) && ($flagcourse || $isadmin)) {
+                $url = 'javascript:void(0)';
+                $title = get_string('buttonshare', 'community_sharecourse');
+
+                $html = html_writer::link($url,
+                    '<span>' . get_string('buttonsharedcourse', 'community_sharecourse') . '<i class="fa-light fa-check"></i></span>',
+                    array('class' => 'btn-disable-share-course btn btn-warning ml-2 mr-auto', 'role' => 'button', 'title' => $title));
+
+                $data->coursesharedbutton = $iscoursepage ? $html : '';
+            }
+        }
 
         return $data;
     }

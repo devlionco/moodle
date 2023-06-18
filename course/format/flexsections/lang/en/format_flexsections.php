@@ -97,7 +97,7 @@ $string['section:completion:percentage'] = 'Completed {$a->percentage}%'; //'ה�
 $string['section:completion:count'] = '{$a->completed} from {$a->total}';
 $string['course:completion:percentage'] = '{$a->percentage}% of the course has been completed'; //'הושלמו {a->percentage}%';
 $string['course:completion:count'] = '{$a->completed} from {$a->total}';
-$string['no_submission_date'] = 'No submission date';
+
 $string['quizinprogress'] = 'In progress';
 $string['quizwithgrades'] = 'Graded';
 $string['quizsubmittedwitgrades'] = 'Submitted and graded';
@@ -110,6 +110,14 @@ $string['assignhavegrade'] = 'Graded';
 $string['assignnotsubmitted'] = 'Not submitted';
 $string['questionnairesubmitted'] = 'Submitted';
 $string['questionnairenotsubmitted'] = 'Not started';
-$string['failed'] = 'Failed {$a} students';
+$string['hvphavegrade'] = 'Graded';
+$string['hvpnotsubmitted'] = 'Not submitted';
+$string['studentfailed'] = 'Failed {$a} students';
+$string['no_submission_date'] = 'No submission date';
+$string['complete'] = 'Complete';
+$string['waitgrade'] = 'Submitted and not yet reviewed';
+$string['cut_of_date'] = 'Not submitted';
+$string['cut_of_date_label'] = 'Submit until {$a->date}';
+$string['cut_of_date_less_days_label'] = 'Submit within ';
 
 $string['editimage'] = 'Edit image';

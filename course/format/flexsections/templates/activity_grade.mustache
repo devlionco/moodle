@@ -19,55 +19,71 @@ along with Moodle. If not, see
 {{#submissionstatus}}
     {{#tooltip}}
     <div data-toggle="tooltip" data-placement="bottom" data-original-title="{{tooltip}}" title="{{tooltip}}"
-        class="d-flex align-items-center {{modstyle}}">{{{modstatus}}}</div>
+        class="d-flex align-items-center {{modstyle}}">
+        {{{modstatus}}}
+    </div>
     {{/tooltip}}
 
     {{^tooltip}}
-    <div tabindex="0" class="d-flex align-items-center submissionstatus {{modstyle}}">{{{modstatus}}}</div>
+    <div tabindex="0" class="d-flex align-items-center submissionstatus">
+        {{{modstatus}}}
+        {{{modicon}}}
+    </div>
     {{/tooltip}}
 {{/submissionstatus}}
 
 {{#gradestatus}}
+<div class="gradestatus-wrapper d-flex align-items-center">
 
-{{#str}}failed, format_flexsections, {{failed}}{{/str}}
+    <div class="studentfailed d-flex align-items-center">
+        {{#student_failed}}
+            <span class="circle bg-danger d-flex align-items-center justify-content-center rounded-circle p-1 mr-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            {{#str}}studentfailed, format_flexsections, {{student_failed}}{{/str}}
+        {{/student_failed}}
+    </div>
+    {{#student_failed}}
+    <div class="divider"></div>
+    {{/student_failed}}
+    <div tabindex="0" class="gradestatus d-flex align-items-center">
+        <a class="grades mr-2 " target="__blank" href="{{{url}}}">{{#str}}grades{{/str}}</a>
+        <div class="progress ml-1" style="min-width: 6rem;" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="{{tooltip}}" title = "">
+            {{#segment_gray}}
+                <div class="progress-bar bg-gray text-center" role="progressbar" style="width: {{segment_gray_percent}}%" aria-valuenow="{{segment_gray}}" aria-valuemin="0"
+                     aria-valuemax="{{countmaxusers}}">
+                    {{segment_gray}}
+                </div>
+            {{/segment_gray}}
+            {{! no blue, it will be displayed as gray }}
+            {{#segment_blue}}
+                <div class="progress-bar bg-blue text-center" role="progressbar" style="width: {{segment_blue_percent}}%" aria-valuenow="{{segment_blue}}" aria-valuemin="0"
+                     aria-valuemax="{{countmaxusers}}">
+                    {{segment_blue}}
+                </div>
+            {{/segment_blue}}
 
-<div tabindex="0" class="gradestatus pl-2 pr-2 d-flex align-items-center">
-    <a class="grades mr-2 " target="__blank" href="{{{url}}}">{{#str}}grades{{/str}}</a>
-    <div class="progress ml-1" style="min-width: 6rem;" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="{{tooltip}}" title = "">
-        {{#segment_gray}}
-            <div class="progress-bar bg-gray text-center" role="progressbar" style="width: {{segment_gray_percent}}%" aria-valuenow="{{segment_gray}}" aria-valuemin="0"
-                 aria-valuemax="{{countmaxusers}}">
-                {{segment_gray}}
-            </div>
-        {{/segment_gray}}
-        {{! no blue, it will be displayed as gray }}
-        {{#segment_blue}}
-            <div class="progress-bar bg-blue text-center" role="progressbar" style="width: {{segment_blue_percent}}%" aria-valuenow="{{segment_blue}}" aria-valuemin="0"
-                 aria-valuemax="{{countmaxusers}}">
-                {{segment_blue}}
-            </div>
-        {{/segment_blue}}
+            {{#segment_orange}}
+                <div class="progress-bar bg-orange text-center" role="progressbar" style="width: {{segment_orange_percent}}%" aria-valuenow="{{segment_orange}}" aria-valuemin="0"
+                     aria-valuemax="{{countmaxusers}}">
+                    {{segment_orange}}
+                </div>
+            {{/segment_orange}}
 
-        {{#segment_orange}}
-            <div class="progress-bar bg-orange text-center" role="progressbar" style="width: {{segment_orange_percent}}%" aria-valuenow="{{segment_orange}}" aria-valuemin="0"
-                 aria-valuemax="{{countmaxusers}}">
-                {{segment_orange}}
-            </div>
-        {{/segment_orange}}
+            {{#segment_red}}
+                <div class="progress-bar bg-danger text-center" role="progressbar" style="width: {{segment_red_percent}}%" aria-valuenow="{{segment_red}}" aria-valuemin="0"
+                     aria-valuemax="{{countmaxusers}}">
+                    {{segment_red}}
+                </div>
+            {{/segment_red}}
 
-        {{#segment_red}}
-            <div class="progress-bar bg-danger text-center" role="progressbar" style="width: {{segment_red_percent}}%" aria-valuenow="{{segment_red}}" aria-valuemin="0"
-                 aria-valuemax="{{countmaxusers}}">
-                {{segment_red}}
-            </div>
-        {{/segment_red}}
-
-        {{#segment_green}}
-            <div class="progress-bar bg-success text-center" role="progressbar" style="width: {{segment_green_percent}}%" aria-valuenow="{{segment_green}}" aria-valuemin="0"
-                 aria-valuemax="{{countmaxusers}}">
-                {{segment_green}}
-            </div>
-        {{/segment_green}}
+            {{#segment_green}}
+                <div class="progress-bar bg-success text-center" role="progressbar" style="width: {{segment_green_percent}}%" aria-valuenow="{{segment_green}}" aria-valuemin="0"
+                     aria-valuemax="{{countmaxusers}}">
+                    {{segment_green}}
+                </div>
+            {{/segment_green}}
+        </div>
     </div>
 </div>
 {{/gradestatus}}
