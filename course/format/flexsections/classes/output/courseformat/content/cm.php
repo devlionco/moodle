@@ -74,11 +74,27 @@ class cm extends \core_courseformat\output\local\content\cm {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
+        global $CFG;
+
+        require_once $CFG->dirroot . "/course/format/flexsections/locallib.php";
         
         $data = parent::export_for_template($output);
 
         // Has share button.
         $data->hassharebutton = true;
+
+        // Completion.
+        if (format_flexsections_has_teacher_capability($this->mod->id) &&
+            in_array($this->mod->modname, ['questionnaire', 'assign', 'quiz', 'hvp'])) {
+            $data->activityinfo->hascompletion = false;
+        }
+
+        if (!format_flexsections_has_teacher_capability($this->mod->id) &&
+            in_array($this->mod->modname, ['questionnaire', 'assign', 'quiz', 'hvp'])){
+
+            $data->activityinfo->istrackeduser = false;
+            $data->activityinfo->hascompletion = false;
+        }
 
         return $data;
     }

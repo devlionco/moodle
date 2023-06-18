@@ -56,15 +56,9 @@ define(
             }
         };
         let inview = function () {
-
-            console.log('INVIEW ===============');
-
             let stack = [];
             inView('.inviewgrade')
                 .on('enter', function (e) {
-                    
-                    console.log('enter ===============');
-
                     if(!$(e).hasClass('inview-done')){
                         $(e).addClass('inview-done');
                         let cmid = $(e).attr("data-cmid");

@@ -18,7 +18,6 @@ define(['jquery', 'core/modal_factory', 'core/templates'], function($, ModalFact
                 .done(function(modal) {
                     // Do what you want with your new modal.
                     modal.getRoot().addClass('enrolkeydialog');
-                    //console.log(params)
                 });
         }
     };

@@ -41,7 +41,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
         }
     }
 
-    if (is_siteadmin() || has_capability('moodle/course:update', $modcontext)) {
+    if (format_flexsections_has_teacher_capability($mod->id)) {
         if (in_array($mod->modname, ['assign', 'quiz', 'questionnaire', 'hvp'])) {
 
             $tooltip       = '';
@@ -52,41 +52,38 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                 case 'questionnaire':
                     require_once $CFG->dirroot . '/mod/questionnaire/questionnaire.class.php';
 
-                    $course = get_course($mod->course);
+                    list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($mod->id);
+                    $questionnaire = new \questionnaire($course, $cm, 0, $questionnaire);
 
-                    if ($questionnaire = $DB->get_record("questionnaire", array("id" => $mod->instance))) {
-                        $questionnaire = new \questionnaire($course, $mod, 0, $questionnaire);
+                    $incompleteusers      = questionnaire_get_incomplete_users($questionnaire->cm, $questionnaire->sid);
+                    $countincompleteusers = is_array($incompleteusers) ? count($incompleteusers) : 0;
 
-                        $incompleteusers      = questionnaire_get_incomplete_users($questionnaire->cm, $questionnaire->sid);
-                        $countincompleteusers = is_array($incompleteusers) ? count($incompleteusers) : 0;
+                    // Started users.
+                    $data = $DB->get_records_sql("
+                        SELECT *
+                        FROM {questionnaire_response}
+                        WHERE questionnaireid = ? AND complete = ?
+                        GROUP BY userid
+                    ", [$questionnaire->id, 'n']);
 
-                        // Started users.
-                        $data = $DB->get_records_sql("
-                            SELECT *
-                            FROM {questionnaire_response}
-                            WHERE questionnaireid = ? AND complete = ?
-                            GROUP BY userid
-                        ", [$questionnaire->id, 'n']);
+                    $countstartedusers = count($data);
 
-                        $countstartedusers = count($data);
+                    $data = $DB->get_records_sql("
+                        SELECT *
+                        FROM {questionnaire_response}
+                        WHERE questionnaireid = ? AND complete = ?
+                        GROUP BY userid
+                    ", [$questionnaire->id, 'y']);
 
-                        $data = $DB->get_records_sql("
-                            SELECT *
-                            FROM {questionnaire_response}
-                            WHERE questionnaireid = ? AND complete = ?
-                            GROUP BY userid
-                        ", [$questionnaire->id, 'y']);
+                    $countcompleteusers = count($data);
 
-                        $countcompleteusers = count($data);
+                    // Gray - טרם נענה.
+                    // Blue - בתהליך.
+                    // Green - נענה.
 
-                        // Gray - טרם נענה.
-                        // Blue - בתהליך.
-                        // Green - נענה.
-
-                        $segmentgray = $countincompleteusers;
-                        //$segmentblue = $countstartedusers;
-                        $segmentgreen = $countcompleteusers;
-                    }
+                    $segmentgray = $countincompleteusers;
+                    //$segmentblue = $countstartedusers;
+                    $segmentgreen = $countcompleteusers;
 
                     $url = new moodle_url('/mod/questionnaire/report.php', array('instance' => $mod->instance));
 
@@ -100,7 +97,9 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     if ($countcompleteusers) {
                         $tooltip .= '<div>' . $countcompleteusers . ' ' . get_string('questionnairesubmitted', 'format_flexsections') . ' </div>';
                     }
-                    $failed = $countincompleteusers;
+
+                    // Students failed.
+                    $studentfailed = 0;
 
                     break;
 
@@ -161,7 +160,9 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     if ($havegrade) {
                         $tooltip .= '<div>' . $havegrade . ' ' . get_string('assignhavegrade', 'format_flexsections') . ' </div>';
                     }
-                    $failed = $notsubmitted;
+
+                    // Students failed.
+                    $studentfailed = 0;
 
                     break;
 
@@ -193,13 +194,35 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     $querytmp        = $query . " AND qa.state = 'inprogress' ";
                     $countinprogress = count($DB->get_records_sql($querytmp, $params));
 
-                    $querytmp        = $query . " AND qa.state = 'finished' AND sumgrades IS NOT NULL ";
-                    $countwithgrades = count($DB->get_records_sql($querytmp, $params));
+                    $querytmp        = $query . " AND qa.state = 'finished' AND qa.sumgrades IS NOT NULL ";
+                    $rows = $DB->get_records_sql($querytmp, $params);
+                    $countwithgrades = count($rows);
 
-                    $querytmp           = $query . " AND qa.state = 'finished' AND sumgrades IS NULL ";
+                    // Students failed.
+                    $studentfailed = 0;
+                    $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
+                    switch ($quiz->grade) {
+                        case 10:
+                            foreach($rows as $item){
+                                if($item->sumgrades * $quiz->grade < 6){
+                                    $studentfailed++;
+                                }
+                            }
+                            break;
+
+                        case 100:
+                            foreach($rows as $item){
+                                if($item->sumgrades < 60){
+                                    $studentfailed++;
+                                }
+                            }
+                            break;
+                    }
+
+                    $querytmp           = $query . " AND qa.state = 'finished' AND qa.sumgrades IS NULL ";
                     $countwithoutgrades = count($DB->get_records_sql($querytmp, $params));
 
-                    $url = new moodle_url('/mod/quiz/report.php', array('id' => $mod->context->instanceid, 'mode' => 'teacheroverview'));
+                    $url = new moodle_url('/mod/quiz/report.php', array('id' => $mod->context->instanceid, 'mode' => 'advancedoverview'));
 
                     // Gray - טרם התחיל מענה.
                     // [Blue] Gray - בתהליך.
@@ -261,7 +284,6 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                                 ' </div>';
                         }
                     }
-                    $failed = $countnosubmit;
 
                     break;
 
@@ -319,7 +341,9 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     if ($havegrade) {
                         $tooltip .= '<div>' . $havegrade . ' ' . get_string('hvphavegrade', 'format_flexsections') . ' </div>';
                     }
-                    $failed = $notsubmitted;
+
+                    // Students failed.
+                    $studentfailed = 0;
 
                     break;
             }
@@ -345,7 +369,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
 
             $data['tooltip'] = $tooltip;
 
-            $data['failed'] = $failed;
+            $data['student_failed'] = $studentfailed;
         }
     }
 
@@ -372,6 +396,12 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
         return false;
     }
 
+    $icons = new \stdClass();
+    $icons->waiting = '<i class="fa-regular fa-circle modicon"></i>';
+    $icons->done = '<i class="fa-light fa-circle-check modicon text-success"></i>';
+    $icons->over_due = '<i class="fa-light fa-circle-xmark modicon text-danger"></i>';
+    $icons->waiting_for_grade = '<i class="fa-light fa-circle-check modicon"></i>';
+
     // Defailt result object.
     $tmod               = new \stdClass();
     $tmod->duedate      = 0;
@@ -382,7 +412,8 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
     $tmod->viewgrade    = false;
     $tmod->reopened     = false;
     $tmod->modstatus    = '';
-    $tmod->modstyle     = 'text-secondary';
+    $tmod->modstyle     = '';
+    $tmod->modicon      = '';
 
     // Prepare data.
     switch ($mod->modname) {
@@ -530,7 +561,7 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
 
     // Check teacher.
     $isteacher = false;
-    if (is_siteadmin() || has_capability('moodle/course:update', context_module::instance($mod->id))) {
+    if (format_flexsections_has_teacher_capability($mod->id)) {
         $isteacher = true;
     }
 
@@ -548,6 +579,7 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
                 $tmod->modstatus = get_string('complete', 'format_flexsections');
             }
 
+            $tmod->modicon = $icons->done;
             $tmod->modstyle = 'text-success';
         }
 
@@ -555,12 +587,14 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
         if ($tmod->submitted && !$tmod->requiregrade) {
             $tmod->modstatus = get_string('complete', 'format_flexsections');
             $tmod->modstyle  = 'text-success';
+            $tmod->modicon = $icons->done;
         }
 
         // Status הוגש וטרם נבדק.
         if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
             $tmod->modstatus = get_string('waitgrade', 'format_flexsections');
             $tmod->modstyle  = 'text-secondary';
+            $tmod->modicon = $icons->waiting_for_grade;
         }
 
         // Status טרם התחיל.
@@ -588,22 +622,25 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
             }
 
             $tmod->modstyle = 'text-secondary';
+            $tmod->modicon = $icons->waiting;
         }
 
         // Status ללא תאריך הגשה.
         if (!$tmod->submitted && $tmod->cutoffdate == 0) {
             $tmod->modstatus = get_string('no_submission_date', 'format_flexsections');
             $tmod->modstyle  = 'text-secondary';
+            $tmod->modicon = $icons->waiting;
         }
 
         // Status לאחר תאריך הגשה סופי.
         if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
             $tmod->modstatus = get_string('cut_of_date', 'format_flexsections');
             $tmod->modstyle  = 'text-danger';
+            $tmod->modicon = $icons->over_due;
         }
     }
 
-    return ['modstatus' => $tmod->modstatus, 'modstyle' => $tmod->modstyle];
+    return ['modstatus' => $tmod->modstatus, 'modstyle' => $tmod->modstyle, 'modicon' => $tmod->modicon];
 }
 
 /**
@@ -668,4 +705,14 @@ function format_flexsections_get_students_course($courseid) {
     $students = $DB->get_records_sql($sql, array($courseid, 'student', $courseid));
 
     return array_values($students);
+}
+
+function format_flexsections_has_teacher_capability($cmid) {
+    $context = \context_module::instance($cmid);
+
+    if (is_siteadmin() || has_capability('moodle/course:update', $context)) {
+        return true;
+    }
+
+    return false;
 }

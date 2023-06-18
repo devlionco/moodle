@@ -23,9 +23,6 @@ define(['jquery', 'core/ajax'],
                             },
                             done: (data) => {
                                 data = JSON.parse(data);
-
-                                console.log(data);
-
                                 $('#courseheaderimage').css('background-image', 'url(' + data.url + ')')
                             },
                         }]);
