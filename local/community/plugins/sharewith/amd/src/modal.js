@@ -372,10 +372,10 @@ define([
 
             // TODO show buttons depending on all conditions
             var result = 0;
-            if (actions.sectioncopyenable) {
-                this.addCopySectionButtonInline();
-                result++;
-            }
+            // if (actions.sectioncopyenable) {
+            //     this.addCopySectionButtonInline();
+            //     result++;
+            // }
             if (actions.activitycopyenable && !actions.teachercolleague) {
                 /* Adding share btn for each activity on the page */
                 this.addShareActivityButton();
@@ -385,7 +385,7 @@ define([
                 var attr = {amit: true},
                     self = this;
                 this.addShareActivityButton(attr);
-                this.addCopySectionButtonCollegueTeacher();
+                //this.addCopySectionButtonCollegueTeacher();
 
                 if (this.courseFormat === 'tiles') {
                     var observerNodeTargets = document.querySelectorAll('.section.moveablesection'),

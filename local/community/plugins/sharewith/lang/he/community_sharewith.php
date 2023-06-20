@@ -126,6 +126,7 @@ $string['subject_message_for_teacher'] = 'המורה {$a->teachername} שיתף/
 $string['info_message_for_teacher'] = 'הודעה מפעילות שיתוף';
 $string['enter_subject_name'] = 'נא להזין את שם הפריט';
 
+$string['copysection'] = 'העתקת היחידה';
 $string['share'] = 'שיתוף';
 $string['copy'] = 'העתק';
 $string['save'] = 'שיכפול';
