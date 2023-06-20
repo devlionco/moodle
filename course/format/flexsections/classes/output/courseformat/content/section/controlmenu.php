@@ -216,6 +216,35 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
 
         $controls = $this->section_control_items();
 
+        // Add copy section button.
+        $coursecontext = context_course::instance($this->section->course);
+        if (!empty($controls) && has_capability('moodle/course:update', $coursecontext)) {
+            $tmp = [];
+            foreach($controls as $key => $item){
+                if($key == 'edit'){
+                    $tmp[$key] = $item;
+
+                    $tmp['copysection'] = [
+                        'url' => 'javascript::void(0);',
+                        'icon' => 't/copy',
+                        'name' => get_string('copysection', 'community_sharewith'),
+                        'pixattr' => ['class' => ''],
+                        'attr' => [
+                            'class' => 'editing_addsubsection',
+                            'data-handler' => 'selectCourseForSection',
+                            'data-sectionid' => $section->id,
+                        ],
+                    ];
+
+                    continue;
+                }
+
+                $tmp[$key] = $item;
+            }
+
+            $controls = $tmp;
+        }
+
         if (empty($controls)) {
             return new stdClass();
         }

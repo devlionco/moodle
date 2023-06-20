@@ -137,6 +137,7 @@ $string['activityshare_fullmessage'] = 'Your activity was successfully saved to 
 $string['sectioncopy_fullmessage'] = 'Your topic was successfully copied to the <a href="{$a->link}">{$a->coursename}</a>';
 $string['coursecopy_fullmessage'] = 'Your course was successfully copied to the <a href="{$a->link}">{$a->coursename}</a>';
 
+$string['copysection'] = 'Copy section';
 $string['share'] = 'Share';
 $string['copy'] = 'Copy';
 $string['save'] = 'Save';
