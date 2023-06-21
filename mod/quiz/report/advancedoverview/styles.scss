@@ -5,24 +5,17 @@
 	display: flex;
 	height: 3rem;
 	width: 100%;
-	background-color: #fcf15c;
 	box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
 	z-index: 10;
 	position: fixed;
-	color: #2b2b2b;
+	top: 3.875rem;
+	i {
+		font-size: 2rem;
+	}
 
-}
-
-.sticky-stripe i {
-	font-size: 2rem;
-}
-
-.sticky-stripe .link-btn-text {
-	font-size: 1.5rem;
-}
-
-.sticky-stripe .advancedoverview_report-toggle input:checked+label {
-	background-color: #2b2b2b;
+	.link-btn-text {
+		font-size: 1.5rem;
+	}
 }
 
 .advancedoverview_report-toggle {
@@ -273,7 +266,7 @@
 		width: 13rem;
 
 		&::after {
-			font-size: 1.75rem;
+			font-size: 1rem;
 		}
 
 		&[aria-expanded="true"]::after {
@@ -562,29 +555,33 @@
 			.tabulator-col {
 				.tabulator-col-content {
 					height: 100%;
+
 					.tabulator-col-title {
 						display: inline-flex;
 						height: 100%;
 						align-items: center;
 					}
 				}
-				&:nth-of-type(5){
+
+				&:nth-of-type(5) {
 					.tabulator-col-title-holder {
 						border-right: none !important;
 					}
 				}
 			}
-			
+
 		}
 
 		.tabulator-row {
-			.tabulator-cell{
+			.tabulator-cell {
 				display: inline-flex;
 				align-items: center;
-				&:nth-of-type(5){
+
+				&:nth-of-type(5) {
 					border-right: none !important;
 				}
 			}
+
 			.tabulator-cell:first-of-type {
 				padding-left: .5rem;
 				padding-right: 0.5rem;
@@ -592,13 +589,16 @@
 				align-items: center;
 				justify-content: flex-end;
 			}
+
 			.row-menu-btn {
 				display: none !important;
+
 				&:focus,
 				&:hover {
 					display: block !important;
 				}
 			}
+
 			&:hover {
 				.row-menu-btn {
 					display: block !important;

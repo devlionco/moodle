@@ -51,7 +51,7 @@
         }
         .block-subtitle {
             font-family: inherit;
-            color: $petel-body-text !important;
+            color: $primary-text !important;
         }
         .custom-control-label::before {
             border-color: $petel-secondary !important;
@@ -60,7 +60,7 @@
         .sequence-item {
             box-shadow: 0 0.1875rem 0.1875rem 0 rgba($petel-primary, 0.25) !important;
             border: solid 0.0625rem $petel-secondarylight !important;;
-            color: $petel-body-text;
+            color: $primary-text;
 
         }
         .section-item {

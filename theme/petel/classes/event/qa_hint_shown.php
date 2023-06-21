@@ -15,21 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * The mod_book chapter viewed event.
  *
- * @package     theme_petel
- * @copyright   2023 Devlion <info@devlion.co>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    theme_petel
+ * @copyright  2013 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace theme_petel\event;
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_petel';
-$plugin->release = '0.1.0';
-$plugin->version = 2023051601;
-$plugin->requires = 2022112802;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->dependencies = [
-        'theme_boost' => 2022112800,
-        'theme_boost_union' => 2022112800,
-];
+class question_hint_shown extends \core\event\base {
+
+    protected function init() {
+        $this->data['objecttable'] = 'question_attempts';
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
+    }
+
+    public static function get_name() {
+        return get_string('eventquestionhintshown', 'core');
+    }
+
+    public function get_description() {
+        return get_string('eventquestionhintshowndescription', 'core', $this->objectid);
+    }
+}

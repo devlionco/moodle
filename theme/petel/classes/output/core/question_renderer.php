@@ -37,7 +37,7 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->dirroot . '/theme/petel/classes/question_flags.php';
+require_once ($CFG->dirroot . '/theme/petel/classes/question_flags.php');
 
 /**
  * This renderer controls the overall output of questions. It works with a
@@ -399,8 +399,7 @@ class question_renderer extends \core_question_renderer {
             array('class' => 'quiz-btn fullscreen-btn'));
     }
 
-    protected function send_message_teacher(question_attempt $qa,
-            question_display_options $options, $number) {
+    protected function send_message_teacher(question_attempt $qa, question_display_options $options, $number) {
         global $CFG, $PAGE, $DB, $USER;
 
         require_once($CFG->dirroot . '/theme/petel/lib_petel.php');
@@ -447,6 +446,7 @@ class question_renderer extends \core_question_renderer {
                             args: {
                                 fromuserid: '.$USER->id.',
                                 touserid: '.$user->id.',
+                                questionid: '.$qa->get_question_id().',
                             },
                             done: function (response) {
                             },

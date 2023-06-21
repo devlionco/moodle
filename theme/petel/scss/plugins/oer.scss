@@ -18,7 +18,7 @@
 
     .main-search-input {
         background-color: $petel-light;
-        color: $petel-body-text;
+        color: $primary-text;
         border-color: $petel-secondarymedium;
     }
     .nav-item {
@@ -27,7 +27,7 @@
             font-weight: $font-weight-normal;
             background-color: $petel-secondarylight;
             border-color: $petel-secondarylight;
-            color: $petel-body-text;
+            color: $primary-text;
             &:hover {
                 background-color: $petel-light;
                 border-color: $petel-secondarymedium;
@@ -63,18 +63,18 @@
     .menu-heading {
         font-size: $h4-font-size;
         font-family: $font-family-headers;
-        color: $petel-body-text;
+        color: $primary-text;
     }
     .submenu-heading,
     .sub-submenu-heading {
-        color: $petel-body-text;
+        color: $primary-text;
     }
     .sub-submenu-heading {
         font-weight: $font-weight-light;
     }
     .sub-menu-item,
     .sub-sub-menu-item {
-        color: $petel-body-text;
+        color: $primary-text;
         font-family: $font-family-text;
         font-weight: $font-weight-light;
         &:hover {
@@ -146,7 +146,7 @@
         }
     }
     .custom-control-label {
-        color: $petel-body-text;
+        color: $primary-text;
         font-weight: $font-weight-light;
     }
 }
@@ -196,7 +196,7 @@
         background-color: $petel-lightgray !important;
         box-shadow: none !important;
         border: none !important;
-        color: $petel-body-text !important;
+        color: $primary-text !important;
     }
 }
 .btn-secondary {
@@ -227,7 +227,7 @@
         background-color: $petel-lightgray !important;
         box-shadow: none !important;
         border: none !important;
-        color: $petel-body-text !important;
+        color: $primary-text !important;
     }
 }
 
@@ -237,7 +237,7 @@
     .tooltip-inner {
         background-color: $white;
         box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
-        color: $petel-body-text;
+        color: $primary-text;
         border: 0.0625rem solid $petel-secondary;
     }
     .arrow::before {
@@ -301,7 +301,7 @@
     .certificate_stamp {
         &[data-type="teachers_offer"] {
             background-color: $petel-yellowhighlight !important;
-            color: $petel-body-text !important;
+            color: $primary-text !important;
         }
         &[data-type="tested_by_petel"] {
             background-color: #6830c1 !important;
@@ -369,7 +369,7 @@
     border: 0.0625rem solid $petel-secondary !important;
     border-radius: 0.25rem;
     box-shadow: 0 0.1875rem 0.375rem 0 rgba($petel-body-text, 0.25);
-    color: $petel-body-text;
+    color: $primary-text;
     z-index: 10;
     &::after {
         position: absolute;
@@ -416,14 +416,14 @@
         border: solid 1px $petel-secondarylight !important;
         h2 {
             font-family: $font-family-headers, sans-serif;
-            color: $petel-body-text;
+            color: $primary-text;
         }
         &-info {
             i {
                 color: $petel-secondary;
             }
             span {
-                color: $petel-body-text;
+                color: $primary-text;
             }
         }
         &-content {

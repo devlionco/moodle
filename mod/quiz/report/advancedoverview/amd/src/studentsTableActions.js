@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 
 import $ from 'jquery';
 import * as Tables from 'quiz_advancedoverview/tables';
@@ -43,10 +44,10 @@ export const regenerateTable = function (callback = null) {
 
 export const init = function () {
     // Add anonymous mode sticky stripe.
-    $(document).ready(function () {
+    $(function () {
         let stripeContent = `
                 <div id="anonymousStripe"
-                    class="sticky-stripe align-items-center justify-content-center hidden">
+                    class="sticky-stripe align-items-center justify-content-center bg-warning hidden">
                     <div class="d-flex align-items-center advancedoverview_report-toggle anonymousmode">
                         <input type="checkbox" id="anonymousmodeToggler3" class="toggle-btn">
                         <label for="anonymousmodeToggler3" class="mb-0 anonymousmodeToggler"> </label>
@@ -54,7 +55,8 @@ export const init = function () {
                     </div>
                     <i class="fas fa-user-secret ml-4"></i>
                 </div>`;
-        $('nav.navbar-petel').after(stripeContent);
+
+        $('nav.navbar').after(stripeContent);
         $('#studentstableNavFilter').find('.nav.nav-tabs .nav-link').first().addClass('active').attr('aria-pressed', 'true');
     });
 

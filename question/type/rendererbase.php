@@ -114,6 +114,16 @@ abstract class qtype_renderer extends plugin_renderer_base {
 
         if ($hint) {
             $output .= $this->hint($qa, $hint);
+
+            // PTL-4217.
+            global $CFG;
+            require_once ($CFG->dirroot . '/theme/petel/classes/event/qa_hint_shown.php');
+
+            $event = \theme_petel\event\question_hint_shown::create(array(
+                'objectid' => $qa->get_question_id(),
+                'context'  => \context_system::instance(),
+            ));
+            $event->trigger();
         }
 
         if ($options->generalfeedback) {
