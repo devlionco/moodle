@@ -217,7 +217,7 @@ $string['about'] = 'About PeTeL';
 $string['abouturl'] = 'About url';
 $string['abouturldesc'] = 'About url';
 $string['initialize_tours'] = 'Restart page user tours';
-$string['all_rights_reserved'] = 'All rights reserved to the Department of Science Teaching, Weizmann Institute of Science';
+$string['all_rights_reserved'] = 'All rights reserved to the Department of Science Teaching, Weizmann Institute of Science©';
 $string['weizmann_logo'] = 'Department of Science Teaching';
 $string['tested'] = 'Tested';
 
@@ -241,6 +241,9 @@ $string['siteadminquicklink'] = 'Site Administration';
 
 // Course image.
 $string['resolution_must'] = 'Resolution must be 1042 x 167';
+
+$string['periodictable'] = 'Periodic table';
+$string['closedialog'] = 'Close window';
 
 $string['language_chooser'] = 'Change language';
 $string['navigationmenu'] = 'Navigation Menu';
@@ -304,5 +307,6 @@ $string['progresspage'] = '{$a->totalcomplinpage} of {$a->totalquestions} answer
 $string['stopwatchshowhide'] = 'Shown/Hidden Stopwatch';
 $string['notflagged'] = 'Not flagged';
 $string['timeisup'] = 'Time is up';
-
 $string['advancedoverviewlink'] = 'Grades and extended feedback';
+$string['ministry_statement_title'] = ' ';
+$string['ministry_statement_text'] = ' ';
