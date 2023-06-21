@@ -103,7 +103,7 @@ $theme-colors: map-merge(
 );
 
 // Fonts
-$primary-font: "Heebo";
+$primary-font: 'Heebo', sans-serif;
 
 // TODO: Check is it needed
 // Breadcrumbs
