@@ -83,7 +83,7 @@ $string['loginterms'] = 'תנאי שימוש';
 $string['logo_department_of_science_teaching'] = 'לוגו מחלקה הוראת למדעים מותאם אישית';
 
 // Support popup.
-$string['all_rights_reserved'] = 'כל הזכויות שמורות למכון ויצמן למדע, המחלקה להוראת המדעים';
+$string['all_rights_reserved'] = '©כל הזכויות שמורות למכון ויצמן למדע, המחלקה להוראת המדעים';
 $string['initialize_tours']='אתחול סיורים בעמוד זה';
 $string['about']='אודות מיזם פטל';
 $string['weizmann_logo'] = 'המחלקה הוראת המדעים';
@@ -233,6 +233,9 @@ $string['siteadminquicklink'] = 'ניהול המערכת';
 // Course image.
 $string['resolution_must'] = 'רוחב: 1042px גובה: 167px';
 
+$string['periodictable'] = 'הטבלה המחזורית';
+$string['closedialog'] = 'סגירת חלון';
+
 $string['language_chooser'] = 'החלפת שפת הממשק';
 $string['navigationmenu'] = 'תפריט ניווט';
 
@@ -287,5 +290,13 @@ $string['progresspage'] = '{$a->totalcomplinpage} מתוך {$a->totalquestions} 
 $string['stopwatchshowhide'] = 'הצגת/הסתרת שעון עצר';
 $string['notflagged'] = 'לא מסומן';
 $string['timeisup'] = 'זמן תם';
-
 $string['advancedoverviewlink'] = 'ציונים ומשוב מורחב';
+$string['ministry_statement_title'] = 'סביבת פטל {$a} מאושרת על-ידי משרד החינוך.';
+$string['ministry_statement_text'] = '
+סביבת פטל {$a}, שאושרה על ידי משרד החינוך, הוערכה מדגמית על ידי האגף לאישור ספרים וחומרי למידה.
+סביבת פטל {$a} מופעלת על ידי המחלקה להוראת המדעים במכון ויצמן למדע בהתאם ל<a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_policy.pdf">תנאי השימוש</a> הקבועים בה. התכנים פותחו על ידי מומחי המחלקה ("בדיקת צוות פטל") ועל ידי מורים ("בדיקת עמיתים"). 
+בנוסף, סביבת פטל {$a} כוללת הצעות של מורים לפעילויות שונות ("מורים מציעים") וקישורים לאתרים חיצוניים נבחרים. 
+האחריות על התכנים בסביבת פטל {$a} היא של המחלקה להוראת המדעים ו/או של כותבי התכנים, ו/או של האתר החיצוני, לפי העניין, כמפורט ב<a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_policy.pdf">תנאי השימוש</a>. 
+מומלץ להפעיל שיקול דעת בהחלטה כיצד לעשות שימוש בתכנים השונים ולקרוא בעיון את <a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_policy.pdf">תנאי השימוש</a> באתר.
+לצורך קידום הוראת המדעים בישראל, חוקרי המחלקה להוראת המדעים עושים שימוש מחקרי בנתונים המצטברים בסביבת פטל {$a} והכל בהתאם לכללי אתיקה רלוונטיים ו<a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_privacy_policy.pdf">מדיניות הפרטיות</a> של האתר.
+';

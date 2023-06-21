@@ -455,7 +455,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
      * @return string
      */
     public function render_login(\core_auth\output\login $form) {
-        global $CFG, $SITE, $PAGE;
+        global $CFG, $SITE, $PAGE, $OUTPUT;
 
         $context = $form->export_for_template($this);
 
@@ -494,6 +494,12 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 theme_get_revision(), $logo);
         }
         $context->petellogo = $petellogo;
+
+        if($CFG->instancename!= 'computerscience') {
+            $instancename = get_string('instancename_' . $CFG->instancename, 'theme_petel');
+            $context->ministry_statement_title = get_string('ministry_statement_title', 'theme_petel', $instancename);
+            $context->ministry_statement_text = get_string('ministry_statement_text', 'theme_petel', $instancename);
+        }
 
         return $this->render_from_template('core/loginform', $context);
     }
