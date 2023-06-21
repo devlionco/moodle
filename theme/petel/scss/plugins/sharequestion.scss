@@ -12,7 +12,7 @@
     font-family: $font-family-text, sans-serif;
     .modal-inner {
         .question-search-label {
-            color: $petel-body-text;
+            color: $primary-text;
             font-family: $font-family-headers;
         }
         .question-search-input {
@@ -64,19 +64,19 @@
     }
     .course-wrapper-name {
         font-family: $font-family-headers;
-        color: $petel-body-text;
+        color: $primary-text;
     }
     .bank-categories-wrapper-name,
     .all-bank-categories-wrapper-name,
     .all-course-categories-wrapper-name {
         font-family: $font-family-text;
-        color: $petel-body-text;
+        color: $primary-text;
         font-weight: 500;
     }
     .cat-wrapper-name,
     .categories-wrapper-name {
         font-family: $font-family-text;
-        color: $petel-body-text;
+        color: $primary-text;
         font-weight: 400;
     }
     .course-wrapper-name,

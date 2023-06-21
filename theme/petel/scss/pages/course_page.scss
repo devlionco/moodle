@@ -42,7 +42,7 @@
                 font-weight: 400;
 
                 &.active {
-                    color: $petel-body-text;
+                    color: $primary-text;
                     border: none;
 
                     &::after {
@@ -244,7 +244,7 @@
         font-size: .75rem;
         .modicon {
             font-size: 1.5rem;
-            color: $petel-body-text;
+            color: $primary-text;
             margin-left: .75rem;
         }
     }
@@ -306,7 +306,7 @@
         }
 
         &.overallincomplete {
-            color: $petel-body-text;
+            color: $primary-text;
         }
     }
     .activityname {
@@ -379,7 +379,7 @@
         .divider {
             display: flex;
             width: .0625rem;
-            background-color: $petel-body-text;
+            background-color: $primary-text;
             height: 1rem;
             margin-left: 1rem;
             margin-right: 1rem;

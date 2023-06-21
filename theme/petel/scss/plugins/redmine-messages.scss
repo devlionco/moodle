@@ -6,12 +6,12 @@
                 .main-search-input {
                     border: solid 0.0625rem $petel-secondarymedium;
                     background-color: $petel-light;
-                    color: $petel-body-text;
+                    color: $primary-text;
                     &::-webkit-input-placeholder,
                     &::-moz-placeholder,
                     &::placeholder {
                         font-family: $font-family-headers;
-                        color: $petel-body-text;
+                        color: $primary-text;
                     }
                 }
                 button {
@@ -24,7 +24,7 @@
                 }
             }
             h1 {
-                color: $petel-body-text;
+                color: $primary-text;
                 font-family: $font-family-headers;
             }
         }
@@ -35,10 +35,10 @@
         .active-appeals-title,
         .showed-rows-info {
             font-family: $font-family-headers;
-            color: $petel-body-text;
+            color: $primary-text;
         }
         .appeals-history-table {
-            color: $petel-body-text;
+            color: $primary-text;
             .appeals-history-table-header {
                 background-color: $petel-secondary;
                 [data-column-type="*"] {
@@ -78,7 +78,7 @@
         .block-title,
         .attention-info-text {
             font-family: $font-family-headers;
-            color: $petel-body-text;
+            color: $primary-text;
         }
         .back-btn {
             color: $petel-secondary;
@@ -103,7 +103,7 @@
 
             .date-divider {
                 .date {
-                    color: $petel-body-text;
+                    color: $primary-text;
                 }
                 .line {
                     background-color: $petel-secondarymedium;
@@ -116,7 +116,7 @@
                 .message-body  {
 
                     border: solid .0625rem $petel-secondarylight !important;
-                    color: $petel-body-text;
+                    color: $primary-text;
                 }
                
             }   

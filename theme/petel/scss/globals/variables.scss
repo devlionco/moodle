@@ -13,7 +13,7 @@ $petel-activity-green:    #11A676 !default;
 $petel-activity-pink:     #EB66A2 !default;
 $petel-activity-prurple:  #5D63F6 !default;
 $petel-activity-ltpurple: #7B61FF !default;
-$petel-body-text:         #2b2b2b !default;
+$primary-text:         #2b2b2b !default;
 
 // FIXME: bottom colors - used in ../plugins/***.scss. Delete if it will be needed!
 $petel-gray: #777777 !default;
@@ -131,5 +131,5 @@ $alert-bg-level:                    -10 !default;
 $alert-border-level:                -10 !default;
 $alert-color-level:                 0 !default;
 
-$yiq-text-dark:             $petel-body-text !default;
+$yiq-text-dark:             $primary-text !default;
 

@@ -6,23 +6,16 @@
   display: flex;
   height: 3rem;
   width: 100%;
-  background-color: #fcf15c;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
   z-index: 10;
   position: fixed;
-  color: #2b2b2b;
+  top: 3.875rem;
 }
-
 .sticky-stripe i {
   font-size: 2rem;
 }
-
 .sticky-stripe .link-btn-text {
   font-size: 1.5rem;
-}
-
-.sticky-stripe .advancedoverview_report-toggle input:checked + label {
-  background-color: #2b2b2b;
 }
 
 .advancedoverview_report-toggle input {
@@ -228,7 +221,7 @@
   width: 13rem;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn::after {
-  font-size: 1.75rem;
+  font-size: 1rem;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn[aria-expanded=true]::after {
   transform: scaleY(-1);

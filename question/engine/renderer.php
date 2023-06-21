@@ -144,6 +144,7 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= $this->status($qa, $behaviouroutput, $options);
         $output .= $this->mark_summary($qa, $behaviouroutput, $options);
         $output .= $this->question_flag($qa, $options->flags);
+        $output .= $this->send_message_teacher($qa, $options, $number);
         $output .= $this->edit_question_link($qa, $options);
         return $output;
     }
@@ -352,6 +353,79 @@ class core_question_renderer extends plugin_renderer_base {
         $img .= html_writer::span($label);
 
         return $img;
+    }
+
+    protected function send_message_teacher(question_attempt $qa, question_display_options $options, $number) {
+        global $CFG, $PAGE, $DB, $USER;
+
+        require_once($CFG->dirroot . '/theme/petel/lib_petel.php');
+        list($enable, $user) = petel_custom_messages();
+
+        if (!$enable) {
+            return '';
+        }
+
+        $attr = \core_message\helper::messageuser_link_params($user->id);
+        $attr['id'] .= '-'.$qa->get_question_id();
+        $attr['class'] .= 'qsendmessage'.$qa->get_question_id();
+
+        $coursename = '';
+        $cmname = '';
+        if($attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $qa->get_usage_id()))){
+            $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
+
+            $course = get_course($quiz->course);
+            $coursename = $course->fullname;
+            $cmname = $quiz->name;
+        }
+
+        $a = new \StdClass();
+        $a->number = $number;
+        $a->cmname = $cmname;
+        $a->coursename = $coursename;
+
+        $text = get_string('qmessageforteacher', 'theme_petel', $a);
+        // Remove " that can break JS
+        $text = str_replace('"', '', $text);
+
+        $PAGE->requires->js_amd_inline('
+            require(["jquery", "core/ajax", "core/notification"], function($, Ajax, Notification) {
+                $(".qsendmessage'.$qa->get_question_id().'").on("click", function(e) {                
+                    $("*[data-region='."'content-messages-footer-container'".']").find("textarea").val(`'.$text.'`);
+                    $("*[data-region='."'content-messages-footer-container'".']").find("textarea").text(`'.$text.'`);
+                                        
+                    let obj = $("*[data-region='."'message-drawer'".']").parent();
+                    
+                    if(obj.hasClass("hidden")){
+                        Ajax.call([{
+                            methodname: "theme_petel_quiz_student_question_message",
+                            args: {
+                                fromuserid: '.$USER->id.',
+                                touserid: '.$user->id.',
+                                questionid: '.$qa->get_question_id().',
+                            },
+                            done: function (response) {                            
+                            },
+                            fail: Notification.exception
+                        }]);  
+                    }
+
+                    setTimeout(function() {
+                        $(".showrouteback").hide();
+                        $("#conversation-actions-menu-button").hide();
+                    }, 1000);                    
+                })
+            });         
+        ');
+
+        $PAGE->requires->js_call_amd('core_message/message_user_button', 'send', array('#'.$attr['id']));
+
+        return html_writer::tag('div', html_writer::link(
+            $CFG->wwwroot. '/message/index.php?id='.$user->id,
+            '<i class="fa fa-envelope-o icon iconsmall" aria-hidden="true"></i>' .
+            get_string('qsendmessage', 'theme_petel'),
+            $attr),
+            array('class' => 'editquestion teacherdialog'));
     }
 
     /**

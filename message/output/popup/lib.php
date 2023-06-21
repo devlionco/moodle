@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return string The HTML
  */
 function message_popup_render_navbar_output(\renderer_base $renderer) {
-    global $USER, $CFG;
+    global $USER, $CFG, $PAGE;
 
     // Early bail out conditions.
     if (!isloggedin() || isguestuser() || \core_user::awaiting_action()) {
@@ -65,6 +65,51 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
             'userid' => $USER->id,
             'unreadcount' => $unreadcount + $requestcount
         ];
+
+        // PTL-7462.
+        require_once($CFG->dirroot . '/theme/petel/lib_petel.php');
+        list($enable, $user) = petel_custom_messages();
+
+        if ($enable) {
+            $attr = \core_message\helper::messageuser_link_params($user->id);
+            $attr['id'] = $attr['id'] . '-global-'.$user->id;
+
+            $context['data-id'] = $attr['id'];
+            $context['data-conversationid'] = $attr['data-conversationid'];
+            $context['data-userid'] = $attr['data-userid'];
+            $context['data-url'] = $CFG->wwwroot. '/message/index.php?id='.$user->id;
+            $context['enable_custom_messages'] = true;
+
+            $PAGE->requires->js_amd_inline('
+                require(["jquery", "core/ajax", "core/notification"], function($, Ajax, Notification) {
+                    $("#'.$attr['id'].'").on("click", function(e) {
+
+                        let obj = $("*[data-region='."'message-drawer'".']").parent();
+                        
+                        if(obj.hasClass("hidden")){
+                            Ajax.call([{
+                                methodname: "theme_petel_quiz_student_question_message",
+                                args: {
+                                    fromuserid: '.$USER->id.',
+                                    touserid: '.$user->id.',                            
+                                },
+                                done: function (response) {                            
+                                },
+                                fail: Notification.exception
+                            }]);  
+                        }
+                                           
+                        setTimeout(function() {
+                            $(".showrouteback").hide();
+                            $("#conversation-actions-menu-button").hide();
+                        }, 1000);                    
+                    })
+                });         
+            ');
+
+            $PAGE->requires->js_call_amd('core_message/message_user_button', 'send', array('#'.$attr['id']));
+        }
+
         $output .= $renderer->render_from_template('core_message/message_popover', $context);
     }
 

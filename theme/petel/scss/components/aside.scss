@@ -36,7 +36,7 @@
 
   .courseindex-link,
   .courseindex-chevron {
-    color: $petel-body-text;
+    color: $primary-text;
   }
 
   .courseindex-item.pageitem:hover .courseindex-link,
@@ -64,7 +64,7 @@
 
     i {
       font-size: 1.125rem;
-      color: $petel-body-text;
+      color: $primary-text;
       margin-right: 0 !important;
     }
   }

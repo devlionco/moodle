@@ -35,7 +35,7 @@
     }
 
 }}
-<div class="popover-region collapsed" data-region="popover-region-messages">
+<div class="popover-region collapsed" data-region="popover-region-messages"  {{#enable_custom_messages}}style="display: none;"{{/enable_custom_messages}}>
     <a id="message-drawer-toggle-{{uniqid}}" class="nav-link popover-region-toggle position-relative icon-no-margin" href="#"
             role="button" title="{{#str}} togglemessagemenu, message {{/str}}">
         <!-- {{#pix}} t/message, core, {{#str}} togglemessagemenu, message {{/str}} {{/pix}} -->
@@ -50,6 +50,13 @@
     </a>
     {{> core_message/message_jumpto }}
 </div>
+
+{{#enable_custom_messages}}
+    <a id="{{data-id}}" role="button" data-conversationid="{{data-conversationid}}" data-userid="{{data-userid}}"
+       class="nav-link message-icon " href="{{{data-url}}}">
+        <i class="fa fa-envelope-o icon iconsmall" aria-hidden="true"></i>
+    </a>
+{{/enable_custom_messages}}
 
 {{#js}}
 require(
