@@ -32,10 +32,14 @@ define(["jquery"], function ($) {
         },
 
         getIP: function (callback) {
-            $.getJSON("https://api.ipify.org?format=jsonp&callback=?", function (data) {
-                ip = JSON.stringify(data).slice(7, -2);
-                callback(ip)
+            $.getJSON("https://jsonip.com", function (data) {
+                callback(data.ip);
             });
+
+            // $.getJSON("https://api.ipify.org?format=jsonp&callback=?", function (data) {
+            //     ip = JSON.stringify(data).slice(7, -2);
+            //     callback(ip)
+            // });
         }
 
     }
