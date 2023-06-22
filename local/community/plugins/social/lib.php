@@ -48,7 +48,7 @@ function community_social_render_navbar_output() {
     $output = '
                 <li class="nav-item d-flex align-items-center">
                 <div class="social-nav float-right popover-region">
-                <a class="nav-headeritem ' . $active . ' nav-link" href="' . $CFG->wwwroot .
+                <a class="nav-headeritem ' . $active . ' nav-link text-white" href="' . $CFG->wwwroot .
             '/local/community/plugins/social/index.php" tabindex="0" role="button">
                     <i class="fal fa-users d-flex d-lg-none" aria-hidden="true" title="' . $name . '"></i>
                     <p class="d-none d-lg-flex mb-0">' . $name . '</p>

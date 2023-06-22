@@ -1,7 +1,7 @@
 {{#isloggedin}}
 <li
     class="nav-item my-learning-space-nav {{#button_my_active}} active {{/button_my_active}} d-flex align-items-center ">
-    <a href="{{config.wwwroot}}/my/" class="nav-headeritem nav-link" tabindex="0" role="button">
+    <a href="{{config.wwwroot}}/my/" class="nav-headeritem nav-link text-white" tabindex="0" role="button">
         <i class="fal fa-home d-flex d-lg-none" aria-hidden="true"
             title="{{#str}}mylearningspace, community_oer{{/str}}"></i>
         <p class="d-none d-lg-flex mb-0">
@@ -14,7 +14,7 @@
 <li class="nav-item d-flex align-items-center oer-nav {{#button_main_active}} active {{/button_main_active}}">
     {{#menu_enable}}
     {{#user_access}}
-    <a class="nav-headeritem nav-link" tabindex="0" role="button" onclick="return false;" href=""
+    <a class="nav-headeritem nav-link text-white" tabindex="0" role="button" onclick="return false;" href=""
         id="oer-popup-btn">
         <i class="fal fa-cart-arrow-down d-flex d-lg-none" aria-hidden="true"
             title="{{#str}}oerrepository, community_oer{{/str}}"></i>

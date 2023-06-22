@@ -85,16 +85,6 @@ $string['loginpolicy'] = 'Privacy & Policy';
 $string['loginterms'] = 'Terms & Conditions';
 $string['logo_department_of_science_teaching'] = 'Logo Department of Science teaching';
 
-// Support button.
-$string['support'] = 'Support';
-
-// Support menu.
-$string['support_menu_title'] = 'Support';
-$string['support_menu_newappeal'] = 'Open new issue';
-$string['support_menu_myappeals'] = 'My issues';
-$string['support_menu_petelguides'] = 'Manuals - how to work with PeTeL';
-$string['support_menu_activeissues'] = 'Inquiries are awaiting your consideration';
-
 // Support popup.
 $string['messageprovider:support_request'] = 'Support request';
 $string['messageprovider:shared_notification'] = 'Activity copied notification';
@@ -250,9 +240,6 @@ $string['logo_petel'] = 'Logo Petel';
 
 // Course image.
 $string['resolution_must'] = 'Resolution must be 1042 x 167';
-
-$string['periodictable'] = 'Periodic table';
-$string['closedialog'] = 'Close window';
 
 $string['language_chooser'] = 'Change language';
 $string['navigationmenu'] = 'Navigation Menu';

@@ -226,3 +226,7 @@ $string['beforecontent'] = 'לפני "{$a}"';
 $string['blankcannotbesaved'] = 'לא ניתן לשמור הערה ריקה, אנא הזן טקסט כאן';
 $string['currentview'] = 'תצוגה נוכחית :';
 $string['currentfolder'] = 'תיקיה נוכחית: ';
+
+$string['periodictable'] = 'הטבלה המחזורית';
+$string['closedialog'] = 'סגירת חלון';
+

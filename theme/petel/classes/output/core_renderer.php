@@ -551,144 +551,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $html;
     }
 
-    public  function periodic_table_button() {
-        global $CFG, $PAGE;
-
-        if (local_community_get_instancename() === 'chemistry' ||
-            local_community_get_instancename() === 'sciences') {
-            $html = '<li class="nav-item mr-3 mr-lg-4 d-flex align-items-center">';
-            $title = get_string('periodictable', 'theme_petel');
-            $html .= html_writer::start_tag('a', array(
-                'href' => '#',
-                'class' => 'periodic_table-btn ',
-                'title' => $title,
-                'id' => 'periodic_table-id',
-                'role' => 'button',
-                'data-toggle' => 'tooltip'));
-            $html .= html_writer::img($CFG->wwwroot.'/theme/petel/pix/chemistry_periodic_table.svg', $title,
-                ['style'=>'width: 32px;']);
-            $html .= html_writer::end_tag('a');
-            // Dialog (initially hidden)
-            $html .= html_writer::start_div('', ['id'=>'dialog_periodictable', 'title'=>$title,
-                'style'=>'display:none; border:1px solid blue;']);
-            $html .= html_writer::img($CFG->wwwroot.'/local/petel/pix/chemistry/Periodic_Table.png', $title,
-                ['style'=>'background: white; width: 100%']);
-            $html .= html_writer::end_div();
-            $html .= html_writer::tag('style', '
-                    .dir-rtl .ui-dialog-titlebar-close {
-                        left: 10px !important;
-                        right: auto !important;
-                        position: absolute !important;
-                        float: left;
-                        width: 100px !important;
-                        margin: -17px 0 0 0 !important;
-                        padding: 1px;
-                        height: 30px !important;
-                        text-indent: 0 !important;
-                        top: 50% !important;
-                    }
-                    .dir-rtl .ui-dialog .ui-dialog-title {
-                        float: right;
-                    }
-                ');
-            $str_closedialog = get_string('closedialog', 'theme_petel');
-            $PAGE->requires->js_amd_inline("
-                require(['jquery', 'jqueryui'], function($, jqui) {
-                    $('#periodic_table-id').click(function() {
-                       if($('[aria-describedby=\"dialog_periodictable\"]').css('display') != 'none') {
-                             $('[aria-describedby=\"dialog_periodictable\"]').css('display','none');
-                        }
-                        else {
-                        $('[aria-describedby=\"dialog_periodictable\"]').css('display','inline');    
-                        }
-                        $('#dialog_periodictable').dialog({ width: \"90%\", resizable: true, modal: false,
-                            classes: { \"ui-dialog\": \"periodictable\"  },
-                        });
-
-                        $('.ui-dialog-titlebar-close').html('$str_closedialog');
-                        var headerheight = $('nav.navbar-petel').outerHeight() + 'px';
-                        $('.periodictable').css('height', 'calc(100vh - '+ headerheight +')');
-                        $('.periodictable').css('top', headerheight);
-                        return false;
-                    });
-                    $(window).scroll(function() {
-                        var headerheight = $('nav.navbar-petel').outerHeight() + 'px';
-                        $('.periodictable').css('height', 'calc(100vh - '+ headerheight +')');
-                        $('.periodictable').css('top', headerheight);
-                    });
-                });
-            ");
-            $html .= '</li>';
-            return $html;
-        }
-        return '';
-    }
-
-    /**
-     * Return support button
-     *
-     * @return string
-     */
-    public function support_button() {
-        global $SITE, $PAGE, $USER, $CFG, $COURSE, $DB;
-
-        $html    = '';
-        $access  = 0;
-        $context = $PAGE->context;
-
-        if (get_config('local_redmine', 'redminestatus') && local_petel_user_admin_or_teacher()) {
-            $access = 2;
-        } else if ($PAGE->context->contextlevel == CONTEXT_COURSE || $PAGE->context->contextlevel == CONTEXT_MODULE) {
-            $access = 3;
-        }
-
-        switch ($access) {
-            case '1': // Admin.
-            case '2': // Teacher or editingteacher.
-                $title = get_string('support', 'theme_petel');
-
-                $html = '
-                    <div class="dropdown" data-toggle="tooltip" data-placement="bottom" title="'. $title .'" aria-label="'. $title .'">
-                        <a class="support-btn dropdown-toggle fal fa-headset" href="#" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <div id="issues_counter_user" style="display: none;" class="count-container " data-region="count-container">0</div> 
-                        </a>
-                        
-                        <div class="dropdown-menu support-dropdown-menu" aria-labelledby="dropdownMenuButton">                                                        
-                            <a class="dropdown-item" href="javascript:void(0)" id="support-btn"> ' . get_string('support_menu_newappeal', 'theme_petel') . ' </a>
-                            
-                            <a class="dropdown-item " id="issues-btn" href=" '. new moodle_url('/local/redmine/index.php') . ' "> <span class="d-block">'
-                            . get_string('support_menu_myappeals', 'theme_petel') .'</span>
-                                <div class="attention-info-block align-items-center" id="issues_counter_user_block" style="display: none;">
-                                    <p class="attention-info-text mb-0 mr-1">
-                                    <span id="issues_counter_user_span"></span>
-                                    '. get_string('support_menu_activeissues', 'theme_petel') .'
-                                    </p>
-                                    <i class="far fa-alarm-exclamation ml-auto"></i>
-                                </div>
-                            </a>
-                            
-                            
-                            <a class="dropdown-item " target="_blank" href="https://stwww1.weizmann.ac.il/petel/instructions" >' . get_string('support_menu_petelguides', 'theme_petel') . ' </a>
-                        </div>
-                    </div>
-                ';
-                break;
-            case '3': // Student on course.
-                $title = get_string('support', 'theme_petel');
-                $html .= html_writer::start_tag('a', array(
-                    'href'  => '#',
-                    'class' => 'support-btn-student fal fa-question',
-                    'title' => $title,
-                    'id'    => 'support-btn-student',
-                    'role'  => 'button'));
-                $html .= html_writer::end_tag('a');
-
-                break;
-        }
-
-        return $html;
-    }
-
     /**
      * Get the logo URL.
      *
@@ -709,7 +571,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
      *
      * @return string HTML for the navbar
      */
-    public function navbar_plugin_output() {
+    public function navbar_plugin_output_base() {
         global $CFG;
 
         $output = '';
@@ -722,11 +584,15 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             }
         }
 
+        $arrcustomplugins = ['oer', 'social'];
+
         if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
             foreach ($pluginsfunction as $plugintype => $plugins) {
                 foreach ($plugins as $name => $pluginfunction) {
                     if (!in_array($name, $CFG->list_navbar_plugin_output_custom)) {
-                        $output .= $pluginfunction($this);
+                        if(!in_array($name, $arrcustomplugins)){
+                            $output .= $pluginfunction($this);
+                        }
                     }
                 }
             }
@@ -735,31 +601,18 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $output;
     }
 
-    /**
-     * Allow plugins to provide some content to be rendered in the navbar.
-     * The plugin must define a PLUGIN_render_navbar_output function that returns
-     * the HTML they wish to add to the navbar.
-     *
-     * @return string HTML for the navbar
-     */
     public function navbar_plugin_output_custom() {
         global $CFG;
 
         $output = '';
 
-        // Give subsystems an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        // foreach (\core_component::get_core_subsystems() as $name => $path) {
-        //     if ($path) {
-        //         $output .= component_callback($name, 'render_navbar_output', [$this], '');
-        //     }
-        // }
+        $arrcustomplugins = ['oer', 'social'];
 
         if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
             foreach ($pluginsfunction as $plugintype => $plugins) {
-                foreach ($CFG->list_navbar_plugin_output_custom as $plugin) {
-                    foreach ($plugins as $name => $pluginfunction) {
-                        if ($plugin == $name) {
+                foreach ($plugins as $name => $pluginfunction) {
+                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom)) {
+                        if(in_array($name, $arrcustomplugins)){
                             $output .= $pluginfunction($this);
                         }
                     }

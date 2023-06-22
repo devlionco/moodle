@@ -75,3 +75,12 @@
     border-radius: .5rem;
   }
 }
+
+// Mobile. 
+@include media-breakpoint-down(md) {
+  #theme_boost-drawers-primary {
+    .drawerheader {
+      background-color: $primary;
+    }
+  }
+}

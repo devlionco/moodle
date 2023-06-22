@@ -76,13 +76,71 @@ function local_redmine_extend_navigation_menuuser($returnobject, $user, $context
 */
 
 function local_redmine_render_navbar_output() {
-    global $PAGE, $CFG;
+    global $PAGE;
+
+    $output    = '';
 
     if(isloggedin()) {
+        $access  = 0;
+
+        if (get_config('local_redmine', 'redminestatus') && local_petel_user_admin_or_teacher()) {
+            $access = 2;
+        } else if ($PAGE->context->contextlevel == CONTEXT_COURSE || $PAGE->context->contextlevel == CONTEXT_MODULE) {
+            $access = 3;
+        }
+
+        switch ($access) {
+            case '1': // Admin.
+            case '2': // Teacher or editingteacher.
+                $title = get_string('support', 'local_redmine');
+
+            $output = '
+                    <div class="dropdown d-flex align-items-center" data-toggle="tooltip" data-placement="bottom" title="'. $title .'" aria-label="'. $title .'">
+                        <a class="support-btn nav-link dropdown-toggle" href="#" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-light fa-headset"></i>
+                        <div id="issues_counter_user" style="display: none;" class="count-container " data-region="count-container">0</div> 
+                        </a>
+                        
+                        <div class="dropdown-menu support-dropdown-menu" aria-labelledby="dropdownMenuButton">                                                        
+                            <a class="dropdown-item" href="javascript:void(0)" id="support-btn"> ' . get_string('support_menu_newappeal', 'local_redmine') . ' </a>
+                            
+                            <a class="dropdown-item " id="issues-btn" href=" '. new moodle_url('/local/redmine/index.php') . ' "> <span class="d-block">'
+                        . get_string('support_menu_myappeals', 'local_redmine') .'</span>
+                                <div class="attention-info-block align-items-center" id="issues_counter_user_block" style="display: none;">
+                                    <p class="attention-info-text mb-0 mr-1">
+                                    <span id="issues_counter_user_span"></span>
+                                    '. get_string('support_menu_activeissues', 'local_redmine') .'
+                                    </p>
+                                    <i class="far fa-alarm-exclamation ml-auto"></i>
+                                </div>
+                            </a>
+                            
+                            
+                            <a class="dropdown-item " target="_blank" href="https://stwww1.weizmann.ac.il/petel/instructions" >' . get_string('support_menu_petelguides', 'local_redmine') . ' </a>
+                        </div>
+                    </div>
+                ';
+                break;
+            case '3': // Student on course.
+                $title = get_string('support', 'local_redmine');
+                $output .= html_writer::start_tag('div',array('class' => 'd-flex align-items-center'));
+                $output .= html_writer::start_tag('a', array(
+                        'href'  => '#',
+                        'class' => 'support-btn-student fa-light fa-question nav-link',
+                        'title' => $title,
+                        'id'    => 'support-btn-student',
+                        'role'  => 'button'));
+                $output .= html_writer::end_tag('a');
+                $output .= html_writer::end_tag('div');
+
+
+                break;
+        }
+
         $PAGE->requires->js_call_amd('local_redmine/support', 'init', []);
     }
 
-    return '';
+    return $output;
 }
 
 /**

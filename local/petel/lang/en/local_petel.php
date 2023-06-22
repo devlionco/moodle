@@ -238,3 +238,6 @@ $string['beforecontent'] = 'Before item "{$a}"';
 $string['blankcannotbesaved'] = 'A blank comment cannot be saved, please enter text here';
 $string['currentview'] = 'Current view:';
 $string['currentfolder'] = 'Current folder: ';
+
+$string['periodictable'] = 'Periodic table';
+$string['closedialog'] = 'Close window';

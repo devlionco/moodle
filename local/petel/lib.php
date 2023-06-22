@@ -142,6 +142,8 @@ function local_petel_before_footer() {
 function local_petel_render_navbar_output() {
     global $PAGE, $USER, $DB;
 
+    $output = '';
+
     if (has_capability('moodle/site:config', context_system::instance())) {
         if (strpos($PAGE->url->get_path(), 'user/index.php') !== false) {
 
@@ -206,6 +208,10 @@ function local_petel_render_navbar_output() {
 
     // PTL-4690.
     $PAGE->requires->js_call_amd('local_petel/events', 'init', []);
+
+    $output .= local_petel_periodic_table_button();
+
+    return $output;
 }
 
 /**
@@ -357,4 +363,81 @@ function local_petel_after_config() {
         && (time() - $USER->lastaccess) > $timerequred) {
         \core\session\manager::terminate_current();
     }
+}
+
+function local_petel_periodic_table_button() {
+    global $CFG, $PAGE;
+
+    $html = '';
+
+    if(in_array(local_community_get_instancename(), ['chemistry', 'sciences'])) {
+        $html .= '<li class="nav-item  d-flex align-items-center">';
+        $title = get_string('periodictable', 'local_petel');
+        $html .= html_writer::start_tag('a', array(
+                'href' => '#',
+                'class' => 'periodic_table-btn nav-link',
+                'title' => $title,
+                'id' => 'periodic_table-id',
+                'role' => 'button',
+                'data-toggle' => 'tooltip'));
+        $html .= html_writer::img($CFG->wwwroot.'/local/petel/pix/chemistry/chemistry_periodic_table_icon.svg', $title,
+                ['style'=>'width: 32px;']);
+                
+        $html .= html_writer::end_tag('a');
+
+        // Dialog (initially hidden)
+        $html .= html_writer::start_div('', ['id'=>'dialog_periodictable', 'title'=>$title,
+                'style'=>'display:none; border:1px solid blue;']);
+        $html .= html_writer::img($CFG->wwwroot.'/local/petel/pix/chemistry/periodic_table.png', $title,
+                ['style'=>'background: white; width: 100%']);
+        $html .= html_writer::end_div();
+        $html .= html_writer::tag('style', '
+                    .dir-rtl .ui-dialog-titlebar-close {
+                        left: 10px !important;
+                        right: auto !important;
+                        position: absolute !important;
+                        float: left;
+                        width: 100px !important;
+                        margin: -17px 0 0 0 !important;
+                        padding: 1px;
+                        height: 30px !important;
+                        text-indent: 0 !important;
+                        top: 50% !important;
+                    }
+                    .dir-rtl .ui-dialog .ui-dialog-title {
+                        float: right;
+                    }
+                ');
+
+        $strclosedialog = get_string('closedialog', 'local_petel');
+        $PAGE->requires->js_amd_inline("
+                require(['jquery', 'jqueryui'], function($, jqui) {
+                    $('#periodic_table-id').click(function() {
+                       if($('[aria-describedby=\"dialog_periodictable\"]').css('display') != 'none') {
+                             $('[aria-describedby=\"dialog_periodictable\"]').css('display','none');
+                        }
+                        else {
+                        $('[aria-describedby=\"dialog_periodictable\"]').css('display','inline');    
+                        }
+                        $('#dialog_periodictable').dialog({ width: \"90%\", resizable: true, modal: false,
+                            classes: { \"ui-dialog\": \"periodictable\"  },
+                        });
+
+                        $('.ui-dialog-titlebar-close').html('$strclosedialog');
+                        var headerheight = $('nav.navbar-petel').outerHeight() + 'px';
+                        $('.periodictable').css('height', 'calc(100vh - '+ headerheight +')');
+                        $('.periodictable').css('top', headerheight);
+                        return false;
+                    });
+                    $(window).scroll(function() {
+                        var headerheight = $('nav.navbar-petel').outerHeight() + 'px';
+                        $('.periodictable').css('height', 'calc(100vh - '+ headerheight +')');
+                        $('.periodictable').css('top', headerheight);
+                    });
+                });
+            ");
+        $html .= '</li>';
+    }
+
+    return $html;
 }
