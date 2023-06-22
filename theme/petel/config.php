@@ -38,7 +38,7 @@ $THEME->scss = function($theme) {
     return theme_petel_get_main_scss_content($theme);
 };
 
-global $COURSE;
+global $COURSE, $CFG;
 
 // TODO update layouts
 /*
@@ -82,9 +82,9 @@ if ($COURSE->id > 1) {
 }
 */
 
-$CFG->list_navbar_plugin_output_custom = [
-        'social',
-];
+ $CFG->list_navbar_plugin_output_custom = [
+
+ ];
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'theme_petel_process_css';

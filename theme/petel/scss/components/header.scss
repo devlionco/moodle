@@ -42,7 +42,8 @@ nav.navbar {
         .nav-link {
             font-size: 2rem;
             color: $white;
-            width: 3rem;
+            // FIXME:
+            // width: 3rem;
             height: 3rem;
             border: .0625rem solid transparent;
             transition: all ease .25s;
@@ -160,5 +161,9 @@ nav.navbar {
             }
         }
     }
-
+    .support-btn {
+        &::after {
+            display: none;
+        }
+    }
 }

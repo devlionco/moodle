@@ -178,3 +178,10 @@ $string['wrongfileformat'] = "פורמט קובץ שגוי. נא הוסף קוב
 $string['textneeded'] = "אנא שימו לב, ניתן לצרף רק תמונה אחת לכל תגובה. אנא הקפידו לצרף הסבר לתמונה";
 $string['teacherresponse'] = "תגובה למורה";
 $string['responsefrom'] = "תגובה של";
+
+// Support button and menu.
+$string['support'] = 'תמיכה';
+$string['support_menu_newappeal'] = 'פתיחת פנייה חדשה';
+$string['support_menu_myappeals'] = 'כל הפניות שלי';
+$string['support_menu_petelguides'] = 'תדריכים לעבודה עם פטל';
+$string['support_menu_activeissues'] = 'פניות ממתינות להתייחסותך';

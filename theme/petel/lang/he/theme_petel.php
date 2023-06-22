@@ -82,16 +82,6 @@ $string['loginpolicy'] = 'מדיניות פרטיות';
 $string['loginterms'] = 'תנאי שימוש';
 $string['logo_department_of_science_teaching'] = 'לוגו מחלקה הוראת למדעים מותאם אישית';
 
-// Support button.
-$string['support'] = 'תמיכה';
-
-// Support menu.
-$string['support_menu_title'] = 'תמיכה';
-$string['support_menu_newappeal'] = 'פתיחת פנייה חדשה';
-$string['support_menu_myappeals'] = 'כל הפניות שלי';
-$string['support_menu_petelguides'] = 'תדריכים לעבודה עם פטל';
-$string['support_menu_activeissues'] = 'פניות ממתינות להתייחסותך';
-
 // Support popup.
 $string['all_rights_reserved'] = '©כל הזכויות שמורות למכון ויצמן למדע, המחלקה להוראת המדעים';
 $string['initialize_tours']='אתחול סיורים בעמוד זה';
@@ -241,9 +231,6 @@ $string['logo_petel'] = 'לוגו פטל';
 
 // Course image.
 $string['resolution_must'] = 'רוחב: 1042px גובה: 167px';
-
-$string['periodictable'] = 'הטבלה המחזורית';
-$string['closedialog'] = 'סגירת חלון';
 
 $string['language_chooser'] = 'החלפת שפת הממשק';
 $string['navigationmenu'] = 'תפריט ניווט';

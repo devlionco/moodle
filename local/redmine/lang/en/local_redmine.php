@@ -179,3 +179,10 @@ $string['wrongfileformat'] = "Wrong file format. Please add '.jpg', '.jpeg' or '
 $string['textneeded'] = "Please note, only one image can be attached per comment. Please be sure to attach an explanation to the image.";
 $string['teacherresponse'] = "Teacher response";
 $string['responsefrom'] = "Answer by";
+
+// Support button and menu.
+$string['support'] = 'Support';
+$string['support_menu_newappeal'] = 'Open new issue';
+$string['support_menu_myappeals'] = 'My issues';
+$string['support_menu_petelguides'] = 'Manuals - how to work with PeTeL';
+$string['support_menu_activeissues'] = 'Inquiries are awaiting your consideration';
