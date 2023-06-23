@@ -87,10 +87,11 @@ class content extends \core_courseformat\output\local\content {
         }
 
         // On the course main page, display this section as a card unless the
+        // On the course main page, display this section as a card unless the
         // user is currently editing the page. Section #0 should never be
         // displayed as a card.
         //$issinglesectionpage = $this->format->get_section_number() != 0;
-        $data->showascard = !$PAGE->user_is_editing();
+        $data->showascard = !$PAGE->user_is_editing() && ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS);
 
         $courseimage = \core_course\external\course_summary_exporter::get_course_image($this->format->get_course());
         if (!$courseimage) {
@@ -169,6 +170,13 @@ class content extends \core_courseformat\output\local\content {
 
                 $data->coursesharedbutton = $iscoursepage ? $html : '';
             }
+        }
+
+        if (isset($data->singlesection)) {
+            $modinfo = $this->format->get_modinfo();
+            $headerclass = $this->format->get_output_classname('content\\section\\header');
+            $sectionheader = new $headerclass($this->format, $modinfo->get_section_info($data->singlesection->num));
+            $data->singlesection->header = $sectionheader->export_for_template($output);
         }
 
         return $data;
@@ -260,6 +268,7 @@ class content extends \core_courseformat\output\local\content {
         if (!empty($stealthsections)) {
             $sections = array_merge($sections, $stealthsections);
         }
+
         return $sections;
     }
 

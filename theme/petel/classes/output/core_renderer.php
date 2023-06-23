@@ -294,26 +294,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $html;
     }
 
-    /**
-     *
-     */
-    public function edit_button_oldversion(moodle_url $url) {
-        global $OUTPUT;
-        $url->param('sesskey', sesskey());
-        if ($this->page->user_is_editing()) {
-            $url->param('edit', 'off');
-            $class = 'btn-danger';
-            $title = get_string('editoff', 'theme_petel');
-            $text = html_writer::tag('span', get_string('editoff', 'theme_petel'), array ('class' => 'd-none d-md-inline'));
-        } else {
-            $url->param('edit', 'on');
-            $class = 'btn-success';
-            $title = get_string('editon', 'theme_petel');
-            $text = html_writer::tag('span', get_string('editon', 'theme_petel'), array ('class' => 'd-none d-md-inline'));
-        }
-        $icon = $OUTPUT->pix_icon('i/edit', $title, 'moodle', array('class' => 'm-0'));
-        return $html = html_writer::link($url, $icon.$text, array('class' => 'mr-1 ml-1 btn  ' . $class, 'role'=>'button'));
-    }
 
     /*
  * This renders the navbar.

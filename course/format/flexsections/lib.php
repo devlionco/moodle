@@ -46,6 +46,8 @@ define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW', 1);
 define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE', 2);
 define('FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE', 1);
 define('FORMAT_FLEXSECTIONS_SECTION0_ALLPAGES', 2);
+define('FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS', 1);
+define('FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST', 2);
 
 /**
  * Main class for the Flexible sections course format.
@@ -1514,6 +1516,13 @@ class format_flexsections extends core_courseformat\base {
         ];
 
         $options['progressmode'] = $createselect('progressmode', $progressmodeoptions, $defaults->progressmode);
+
+        $sectionviewoption = [
+            FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS => new lang_string('form:course:sectionview:cards', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST => new lang_string('form:course:sectionview:list', 'format_flexsections')
+        ];
+
+        $options['sectionviewoption'] = $createselect('sectionviewoption', $sectionviewoption, $defaults->sectionviewoption);
 
         return $options;
     }

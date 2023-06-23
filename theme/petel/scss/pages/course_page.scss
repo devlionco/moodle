@@ -386,4 +386,24 @@
         }
     }
 
+    .singlesection-card {
+        width: 40%;
+        min-height: 10rem;
+        .card-img {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: transform .4s;
+            z-index: 0;
+            height: auto;
+        }
+        .card-header-fade,
+        .card-header {
+            position: relative;
+            z-index: 5;
+        }
+    }
+
 }
