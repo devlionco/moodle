@@ -68,11 +68,6 @@ class header extends \core_courseformat\output\local\content\section\header {
             }
         }
 
-        if (!$this->section->section) {
-            // Do not make display header for the "General" section.
-            $data->title = '';
-        }
-
         $data->url = course_get_url(
            $this->section->course,
            $this->section,

@@ -91,4 +91,5 @@ $THEME->csspostprocess = 'theme_petel_process_css';
 $THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;
 // Remove redundant YUI styles.
 $THEME->yuicssmodules = array('cssnormalize');
+$THEME->haseditswitch = true;
 //$THEME->iconsystem = '\\theme_petel\\output\\icon_system_fontawesome';

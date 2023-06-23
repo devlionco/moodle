@@ -93,4 +93,14 @@ if ($hassiteconfig) {
             FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE => get_string('form:course:progressmode:line', 'format_flexsections')
         ]
     ));
+
+    $settings->add(new admin_setting_configselect('format_flexsections/sectionviewoption',
+        get_string('form:course:sectionviewoption', 'format_flexsections'),
+        '',
+        FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS,
+        [
+            FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS => get_string('form:course:sectionview:cards', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST => get_string('form:course:sectionview:list', 'format_flexsections')
+        ]
+    ));
 }

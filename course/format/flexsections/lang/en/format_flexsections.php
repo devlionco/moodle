@@ -92,12 +92,18 @@ $string['form:course:section0'] = 'General section';
 $string['form:course:section0_help'] = 'The general section is the first section in your course, which usually contains the course\'s announcements page. You can choose to have this visible either only on the course\'s main page, on top of the card deck, or visible on the main page and each individual section page.';
 $string['form:course:section0:coursepage'] = 'Only show on the main course page';
 $string['form:course:section0:allpages'] = 'Show on all pages, including individual sections';
+
+$string['form:course:sectionview:cards'] = 'Cards';
+$string['form:course:sectionview:list'] = 'List';
+$string['form:course:sectionviewoption'] = 'Show section as';
+
 $string['lastseen'] = 'You have recently viewed this unit'; // צפית ביחידה זו לאחרונה
 $string['section:completion:percentage'] = 'Completed {$a->percentage}%'; //'הושלמו {a->percentage}%';
 $string['section:completion:count'] = '{$a->completed} from {$a->total}';
 $string['course:completion:percentage'] = '{$a->percentage}% of the course has been completed'; //'הושלמו {a->percentage}%';
 $string['course:completion:count'] = '{$a->completed} from {$a->total}';
 
+// Progress bar
 $string['quizinprogress'] = 'In progress';
 $string['quizwithgrades'] = 'Graded';
 $string['quizsubmittedwitgrades'] = 'Submitted and graded';
