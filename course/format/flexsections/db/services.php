@@ -33,6 +33,14 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'format_flexsections_change_sectionimage' => array(
+        'classname'   => 'format_flexsections_external',
+        'methodname'  => 'change_sectionimage',
+        'classpath'   => 'course/format/flexsections/externallib.php',
+        'description' => 'Change section image',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
     'format_flexsections_get_activity_grade_status' => array(
         'classname' => 'format_flexsections_external',
         'methodname' => 'get_activity_grade_status',
@@ -48,6 +56,7 @@ $services = array(
     'Flex AJAX' => array(
         'functions'       => array(
             'format_flexsections_change_courseimage',
+            'format_flexsections_change_sectionimage',
             'format_flexsections_get_activity_grade_status',
         ),
         'restrictedusers' => 0,
