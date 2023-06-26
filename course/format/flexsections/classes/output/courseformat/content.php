@@ -95,7 +95,14 @@ class content extends \core_courseformat\output\local\content {
 
         $courseimage = \core_course\external\course_summary_exporter::get_course_image($this->format->get_course());
         if (!$courseimage) {
-            $courseimage = $OUTPUT->get_generated_image_for_id($this->format->get_course()->id);
+
+            // Default image by instance.
+            $imagename = 'course/' . $CFG->instancename;
+            $courseimage = $OUTPUT->image_url($imagename, 'format_flexsections')->out(false);
+
+            if (file_get_contents($courseimage) == false) {
+                $courseimage = $OUTPUT->get_generated_image_for_id($this->format->get_course()->id);
+            }
         }
         $data->courseimageurl = $courseimage;
 
