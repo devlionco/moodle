@@ -405,5 +405,10 @@
             z-index: 5;
         }
     }
-
+    // TODO: find correct place for this code!
+    h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
+        margin-top: -2rem;
+        padding: .5rem;
+        line-height: 1;
+    }
 }
