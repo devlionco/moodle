@@ -136,7 +136,7 @@
         color: $white;
     }
     .form-group.required .control-label {
-        color: $primary-text;
+        color: $body-color;
     }
     .form-group.required .control-label:before {
         color: $petel-raspberry;
@@ -160,7 +160,7 @@
     }
     .multiselect-group.dropdown-item,
     .multiselect-option.dropdown-item {
-        color: $primary-text;
+        color: $body-color;
     }
     .multiselect.dropdown-toggle.custom-select:before {
         color: $white;

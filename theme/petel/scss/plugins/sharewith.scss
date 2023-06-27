@@ -16,7 +16,7 @@
 
         .text {
             font-family: $primary-font;
-            color: $primary-text;
+            color: $body-color;
         }
 
         &:hover {
@@ -61,7 +61,7 @@
 
     .text {
         font-family: $primary-font;
-        color: $primary-text;
+        color: $body-color;
     }
 
     .close {

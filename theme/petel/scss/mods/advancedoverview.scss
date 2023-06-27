@@ -6,12 +6,12 @@
     }
 
     .course-group-wrapper {
-        color: $primary-text;
+        color: $body-color;
     }
 
     .advancedoverview_report-toggle {
         .link-btn-text {
-            color: $primary-text;
+            color: $body-color;
         }
 
         input:checked+label {
@@ -64,7 +64,7 @@
             background-color: $gray-300;
             // box-shadow: none;
             border: none;
-            color: $primary-text;
+            color: $body-color;
         }
     }
 
@@ -78,7 +78,7 @@
         }
 
         .text {
-            color: $primary-text;
+            color: $body-color;
         }
 
         .link-btn-text {
@@ -86,7 +86,7 @@
         }
 
         &:after {
-            color: $primary-text;
+            color: $body-color;
         }
 
         &:disabled,
@@ -95,7 +95,7 @@
         &.disabled:hover {
             background-color: $gray-300;
             border-color: $gray-600;
-            color: $primary-text;
+            color: $body-color;
 
             .openquestions-count {
                 background-color: $gray-700;
@@ -116,7 +116,7 @@
 
     .advancedoverview_report-search-input {
         background-color: $light;
-        color: $primary-text;
+        color: $body-color;
         border-color: $primary;
 
         i {
@@ -136,7 +136,7 @@
         // .card-text span {
         // }
         .card-text {
-            color: $primary-text;
+            color: $body-color;
         }
 
         .card-title,
@@ -153,7 +153,7 @@
         }
 
         .chart-tooltip-title {
-            color: $primary-text;
+            color: $body-color;
         }
 
         button i {
@@ -178,7 +178,7 @@
 
         .nav-item {
             .nav-link {
-                color: $primary-text;
+                color: $body-color;
                 background-color: $secondarylight;
 
                 &.active {
@@ -189,37 +189,37 @@
                     //      background-color: $petel-secondarylight;
                     //      border-color: $petel-secondarylight;
                     //      p{
-                    //          color: $primary-text;
+                    //          color: $body-color;
                     //      }
                     //  }
                     //  &:focus {
-                    //      color: $primary-text;
+                    //      color: $body-color;
                     //      background-color: $petel-secondarylight;
                     //      border-color: $petel-secondary;
                     //      box-shadow: none;
                     //      p{
-                    //          color: $primary-text;
+                    //          color: $body-color;
                     //      }
                     //  }
                 }
 
                 &:hover {
-                    color: $primary-text;
+                    color: $body-color;
                     background-color: $light;
                     border-color: $secondarymedium;
 
                     p {
-                        color: $primary-text;
+                        color: $body-color;
                     }
                 }
 
                 /*   &:focus {
-                    color: $primary-text;
+                    color: $body-color;
                     background-color: $petel-secondarylight;
                     border-color: $petel-secondary;
                     box-shadow: none;
                     p{
-                        color: $primary-text;
+                        color: $body-color;
                     }
                 } */
 
@@ -240,7 +240,7 @@
 
     #selectedstudents {
 
-        color: $primary-text;
+        color: $body-color;
     }
 
     #charts_state {
@@ -260,7 +260,7 @@
 
     #questions-table,
     #students-table {
-        color: $primary-text;
+        color: $body-color;
 
         &.tabulator {
             .tabulator-header {
@@ -281,10 +281,10 @@
 #page-mod-quiz-report {
 
     .sticky-stripe {
-        color: $primary-text;
+        color: $body-color;
 
         .advancedoverview_report-toggle input:checked+label {
-            background-color: $primary-text;
+            background-color: $body-color;
         }
     }
 }
