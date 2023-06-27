@@ -6,12 +6,12 @@
                 .main-search-input {
                     border: solid 0.0625rem $petel-secondarymedium;
                     background-color: $petel-light;
-                    color: $primary-text;
+                    color: $body-color;
                     &::-webkit-input-placeholder,
                     &::-moz-placeholder,
                     &::placeholder {
                         font-family: $font-family-headers;
-                        color: $primary-text;
+                        color: $body-color;
                     }
                 }
                 button {
@@ -24,7 +24,7 @@
                 }
             }
             h1 {
-                color: $primary-text;
+                color: $body-color;
                 font-family: $font-family-headers;
             }
         }
@@ -35,10 +35,10 @@
         .active-appeals-title,
         .showed-rows-info {
             font-family: $font-family-headers;
-            color: $primary-text;
+            color: $body-color;
         }
         .appeals-history-table {
-            color: $primary-text;
+            color: $body-color;
             .appeals-history-table-header {
                 background-color: $petel-secondary;
                 [data-column-type="*"] {
@@ -78,7 +78,7 @@
         .block-title,
         .attention-info-text {
             font-family: $font-family-headers;
-            color: $primary-text;
+            color: $body-color;
         }
         .back-btn {
             color: $petel-secondary;
@@ -103,7 +103,7 @@
 
             .date-divider {
                 .date {
-                    color: $primary-text;
+                    color: $body-color;
                 }
                 .line {
                     background-color: $petel-secondarymedium;
@@ -116,7 +116,7 @@
                 .message-body  {
 
                     border: solid .0625rem $petel-secondarylight !important;
-                    color: $primary-text;
+                    color: $body-color;
                 }
                
             }   

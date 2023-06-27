@@ -12,7 +12,7 @@
 .filemanager {
     .dndupload-message {
         font-size: 1rem;
-        color: $primary-text;
+        color: $body-color;
     }
     .dndupload-arrow {
         height: 2rem;
@@ -27,7 +27,7 @@
         padding: .5rem .75rem;
     }
     .fp-viewbar:not(.disabled) a {
-        color: $primary-text;
+        color: $body-color;
     }
     .fp-viewbar:not(.disabled) a.checked {
         background-color: $secondary;
