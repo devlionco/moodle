@@ -68,17 +68,21 @@ nav.navbar {
             align-items: center;
             justify-content: center;
         }
-        [data-region="popover-region-messages"],
-        .usermenu-container {
-            margin-left: .5rem;
-        }
-/*         .usermenu-container {
-            margin-right: ;
-        } */
+
         .usermenu {
             #user-menu-toggle {
                 padding: 0;
                 color: $white;
+            }
+            .userbutton {
+                width: 2.75rem;
+                height: 2.75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                i.defaultuserpic {
+                    font-size: 2.25rem;
+                }
             }
         }
     }
