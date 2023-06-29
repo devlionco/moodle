@@ -33,19 +33,8 @@
         data-forceopen="{{$forceopen}}0{{/forceopen}}"
         data-close-on-resize="{{$drawercloseonresize}}0{{/drawercloseonresize}}">
     <div class="drawerheader d-flex align-items-center justify-content-between">
-        <button
-            class="btn btn-icon drawertoggle icon-no-margin hidden"
-            data-toggler="drawers"
-            data-action="closedrawer"
-            data-target="{{$id}}{{/id}}"
-            data-toggle="tooltip"
-            data-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
-            title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
-        >
-            <i class="fa-light fa-circle-xmark text-secondary"></i>
-        </button>
         <div class="d-flex d-md-none px-3 px-md-0">
-            <svg width="58" height="21" viewBox="0 0 58 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="106" height="36" viewBox="0 0 58 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M23.7925 10.7601C23.5125 11.2663 23.0825 11.6751 22.5025 11.9863C21.9225 12.2976 21.2025 12.4526 20.3425 12.4526H18.7525V16.2438H16.1875V5.68384H20.3425C21.1825 5.68384 21.8925 5.82884 22.4725 6.12009C23.0525 6.41134 23.4875 6.81259 23.7775 7.32384C24.0675 7.83509 24.2125 8.42134 24.2125 9.08384C24.2125 9.69509 24.0725 10.2551 23.7925 10.7613V10.7601ZM21.2425 10.0601C21.4825 9.83009 21.6025 9.50384 21.6025 9.08259C21.6025 8.66134 21.4825 8.33509 21.2425 8.10509C21.0025 7.87384 20.6375 7.75884 20.1475 7.75884H18.7525V10.4063H20.1475C20.6375 10.4063 21.0025 10.2913 21.2425 10.0601Z" fill="#5CBB58"/>
                 <path d="M33.1746 12.6622H27.3684C27.4084 13.1835 27.5759 13.5822 27.8709 13.8585C28.1659 14.1347 28.5284 14.2722 28.9584 14.2722C29.5984 14.2722 30.0434 14.001 30.2934 13.4597H33.0234C32.8834 14.011 32.6309 14.5072 32.2659 14.9485C31.9009 15.3897 31.4434 15.736 30.8934 15.986C30.3434 16.2372 29.7284 16.3622 29.0484 16.3622C28.2284 16.3622 27.4984 16.1872 26.8584 15.836C26.2184 15.4847 25.7184 14.9835 25.3584 14.3322C24.9984 13.681 24.8184 12.9185 24.8184 12.046C24.8184 11.1735 24.9959 10.4122 25.3509 9.75974C25.7059 9.10849 26.2034 8.60599 26.8434 8.25599C27.4834 7.90474 28.2184 7.72974 29.0484 7.72974C29.8784 7.72974 30.5784 7.90099 31.2084 8.24099C31.8384 8.58224 32.3309 9.06849 32.6859 9.69974C33.0409 10.331 33.2184 11.0685 33.2184 11.911C33.2184 12.1522 33.2034 12.4022 33.1734 12.6635L33.1746 12.6622ZM30.5946 11.2335C30.5946 10.7922 30.4446 10.441 30.1446 10.181C29.8446 9.92099 29.4696 9.78974 29.0196 9.78974C28.5696 9.78974 28.2271 9.91474 27.9321 10.166C27.6371 10.4172 27.4546 10.7735 27.3846 11.2335H30.5946Z" fill="#5CBB58"/>
                 <path d="M40.6001 5.68384V7.74509H37.8101V16.2438H35.2451V7.74384H32.4551V5.68384H40.6013H40.6001Z" fill="#5CBB58"/>
@@ -60,6 +49,17 @@
                 </svg>
                 
         </div>
+        <button
+            class="btn btn-icon drawertoggle icon-no-margin hidden ml-auto mr-2"
+            data-toggler="drawers"
+            data-action="closedrawer"
+            data-target="{{$id}}{{/id}}"
+            data-toggle="tooltip"
+            data-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
+            title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
+            >
+            <i class="fa-light fa-circle-xmark"></i>
+        </button>
     </div>
     <div class="drawercontent drag-container" data-usertour="scroller">
         {{$drawercontent}}{{/drawercontent}}
