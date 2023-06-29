@@ -788,10 +788,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
 
             $class = $userpicture->class;
 
-            if ($user->picture == 0) {
-                $class .= ' defaultuserpic';
-            }
-
             $src = $userpicture->get_url($this->page, $this);
 
             $attributes = array('src' => $src, 'class' => $class, 'width' => $size, 'height' => $size);
@@ -806,7 +802,12 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             }
 
             // Get the image html output first.
-            $output = html_writer::empty_tag('img', $attributes);
+            if ($user->picture == 0) {
+                $icon = new pix_icon('i/groupv', 'alt', 'moodle', ['class' => ' defaultuserpic']);
+                $output = $this->render($icon);
+            }else {
+                $output = html_writer::empty_tag('img', $attributes);
+            }
 
             // Show fullname together with the picture when desired.
             if ($userpicture->includefullname) {
