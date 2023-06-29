@@ -803,8 +803,12 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
 
             // Get the image html output first.
             if ($user->picture == 0) {
-                $icon = new pix_icon('i/groupv', 'alt', 'moodle', ['class' => ' defaultuserpic']);
-                $output = $this->render($icon);
+
+                // $icon = new pix_icon('i/groupv', 'alt', 'moodle', ['class' => ' defaultuserpic']);
+                // $output = $this->render($icon);
+                $icon =  html_writer::tag('i', '', array('class' => 'fa-light fa-circle-user defaultuserpic '));
+                $output = $icon;
+
             }else {
                 $output = html_writer::empty_tag('img', $attributes);
             }
