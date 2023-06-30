@@ -237,6 +237,7 @@ $string['resetpassword'] = 'Reset password';
 //navbar
 $string['shownotificationwindownonew'] = 'Show notification window with no new notifications';
 $string['logo_petel'] = 'Logo Petel';
+$string['siteadminquicklink'] = 'Site Administration';
 
 // Course image.
 $string['resolution_must'] = 'Resolution must be 1042 x 167';

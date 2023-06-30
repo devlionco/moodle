@@ -27,33 +27,28 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/locallib.php');
 
 /**
- * Allow plugins to provide some content to be rendered in the navbar.
- * The plugin must define a PLUGIN_render_navbar_output function that returns
- * the HTML they wish to add to the navbar.
+ * Allow plugins to provide some content to be rendered in the primarynav.
+ * The plugin must define a PLUGIN_get_primarynav_output function that returns
+ * the array with params for rendering output.
  *
- * @return string HTML for the navbar
+ * @return array for primarynav navbar.
  */
-function community_social_render_navbar_output() {
-    global $CFG, $USER, $PAGE;
-
-    $output = '';
+function community_social_get_primarynav_output() {
+    global $USER, $PAGE;
 
     if (!social_has_permission($USER->id)) {
-        return $output;
+        return [];
     }
-    $active = ($PAGE->pagetype === 'local-community-plugins-social-teachers'
-            || $PAGE->pagetype === 'local-community-plugins-social-profile') ? 'active' : '';
 
-    $name = get_string('thesocialarea', 'community_social');
-    $output = '
-                <li class="nav-item d-flex align-items-center">
-                <div class="social-nav float-right popover-region">
-                <a class="nav-headeritem ' . $active . ' nav-link text-white" href="' . $CFG->wwwroot .
-            '/local/community/plugins/social/index.php" tabindex="0" role="button">
-                    <i class="fal fa-users d-flex d-lg-none" aria-hidden="true" title="' . $name . '"></i>
-                    <p class="d-none d-lg-flex mb-0">' . $name . '</p>
-                </a>
-               </div>
-               </li>';
-    return $output;
+    $isactive = $PAGE->pagetype === 'local-community-plugins-social-teachers'
+        || $PAGE->pagetype === 'local-community-plugins-social-profile';
+
+    return [
+        'title' => get_string('thesocialarea', 'community_social'),
+        'url' => new moodle_url('/local/community/plugins/social/index.php'),
+        'text' => get_string('thesocialarea', 'community_social'),
+        'icon' => '',
+        'isactive' => $isactive,
+        'key' => 'social',
+    ];
 }

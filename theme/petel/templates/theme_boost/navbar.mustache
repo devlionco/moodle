@@ -75,10 +75,6 @@
     {{#primarymoremenu}}
         <div class="primary-navigation d-flex">
             {{> core/moremenu}}
-            {{!-- TODO: fix me --}}
-            <ul id="moremenu-petel" role="menubar" class="nav more-nav navigation">
-            {{{ output.navbar_plugin_output_custom }}}
-            </ul>
         </div>
     {{/primarymoremenu}}
     
@@ -96,7 +92,7 @@
             {{> theme_boost/language_menu }}
             <div class="divider border-left h-75 align-self-center mx-1"></div>
         {{/langmenu}}
-        {{{ output.navbar_plugin_output_base }}}
+        {{{ output.navbar_plugin_output }}}
         <div class="d-flex align-items-stretch usermenu-container ml-3" data-region="usermenu">
             {{#usermenu}}
                 {{> core/user_menu }}

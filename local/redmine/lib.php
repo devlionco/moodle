@@ -133,7 +133,6 @@ function local_redmine_render_navbar_output() {
                 $output .= html_writer::end_tag('a');
                 $output .= html_writer::end_tag('div');
 
-
                 break;
         }
 

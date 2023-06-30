@@ -34,41 +34,24 @@ require_once(__DIR__ . '/locallib.php');
  * @return string HTML for the navbar
  */
 function community_oer_render_navbar_output() {
-    global $PAGE, $OUTPUT, $USER, $CFG, $COURSE;
-
-    // Build my area button.
-    $data['isloggedin'] = isloggedin();
-    $data['button_my_active'] = ($PAGE->pagetype === 'my-index') ? true : false;
-
-    // Build oer area button.
-    $data['button_main_active'] = ($PAGE->pagetype === 'local-community-plugins-oer-index') ? true : false;
-    $data['user_access'] = \community_oer\main_oer::check_if_user_admin_or_teacher();
-
-    $isadmin = false;
-    foreach (get_admins() as $admin) {
-        if ($admin->id == $USER->id) {
-            $isadmin = true;
-        }
-    }
-
-    $data['user_editing'] = $PAGE->user_is_editing() && $isadmin;
-
-    $menu = \community_oer\main_oer::structure_main_catalog();
-
-    $data['menu'] = $menu;
-    $data['menu_enable'] = (empty($menu)) ? 0 : count($menu);
+    global $PAGE, $OUTPUT, $USER, $COURSE;
 
     $output = '';
 
     // Not for forgot password.
     if ($_SERVER['REQUEST_URI'] !== '/login/forgot_password.php') {
+        $menu = \community_oer\main_oer::structure_main_catalog();
+
+        $data['user_access'] = \community_oer\main_oer::check_if_user_admin_or_teacher() && count($menu);
+        $data['user_editing'] = $PAGE->user_is_editing() && is_siteadmin();
+        $data['menu'] = $menu;
+
         $output .= $OUTPUT->render_from_template('community_oer/header', $data);
     }
 
     // Reviews.
     $popupdata = false;
     if (\community_oer\main_oer::get_oer_category() !== null) {
-        $showrequest = false;
         $enablereviews = get_config('community_oer', 'enablereviews');
         if ($enablereviews == 1) {
             // Lookup for all activities for review in a course.
@@ -79,20 +62,6 @@ function community_oer_render_navbar_output() {
                     'mod-quiz-view'])) { // Check if this activity is subject for review.
                 $popupdata = \community_oer\reviews_oer::popup_engine($COURSE->id, 'activity');
             }
-
-            /*Old version.
-            if ($popupdata and $popupdata->allowed) {
-                // Show review request popup only one time a day after user logged in.
-                $reviewspopupold = isset($_COOKIE['reviewspopup']) ? $_COOKIE['reviewspopup'] : 0;
-                $reviewspopup = $reviewspopupold ? ((date("d") == date("d", $reviewspopupold)) ? false : true) : true;
-                $popupdata->showrequest = ($PAGE->pagetype == 'my-index' and $reviewspopup) ? true : false;
-                if ($popupdata->showrequest) {
-                    if(isset($popupdata->requestid)) {
-                        \community_oer\reviews_oer::add_view_to_request($popupdata->requestid);
-                        setcookie("reviewspopup", time(), time() + 86400); // Set marker for 1 day.
-                    }
-                }
-            }*/
 
             if ($popupdata && $popupdata->allowed) {
                 $popupdata->username = fullname($USER);
@@ -114,15 +83,15 @@ function community_oer_render_navbar_output() {
             }
         }
     }
-    $PAGE->requires->js_call_amd('community_oer/review', 'init', array($popupdata));
 
     // PTL-6366.
     if ($PAGE->pagetype == 'mod-quiz-attempt' && \community_oer\main_oer::if_activity_in_research_mode($PAGE->cm->id)) {
         $PAGE->requires->js_amd_inline('$(".editquestion").attr("style","display: none !important");');
     }
 
-    // Simple bar.
+    // Simple bar TODO update
     $output .= '<script src="' . $CFG->wwwroot . '/local/community/plugins/oer/javascript/simplebar.js"></script>';
+    $PAGE->requires->js_call_amd('community_oer/review', 'init', array($popupdata));
 
     // View single page.
     community_oer_render_info_single_page();
@@ -140,6 +109,28 @@ function community_oer_render_navbar_output() {
     }
 
     return $output;
+}
+
+/**
+ * Allow plugins to provide some content to be rendered in the primarynav.
+ * The plugin must define a PLUGIN_get_primarynav_output function that returns
+ * the array with params for rendering output.
+ *
+ * @return array for primarynav navbar.
+ */
+
+function community_oer_get_primarynav_output() {
+    global $PAGE;
+
+    return [
+        'title' => get_string('oerrepository', 'community_oer'),
+        'url' => 'javascript:void(0)',
+        'text' => get_string('oerrepository', 'community_oer'),
+        'icon' => '',
+        'isactive' => $PAGE->pagetype === 'local-community-plugins-oer-index',
+        'key' => 'oer',
+        'classes' => ['oer-popup-btn'],
+    ];
 }
 
 function community_oer_render_info_single_page() {

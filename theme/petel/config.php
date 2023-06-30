@@ -27,9 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/lib.php');
 
 $THEME->name = 'petel';
-
 $THEME->doctype = '1';
-
 $THEME->parents = array('boost', 'boost_union');
 $THEME->sheets = array('patches', 'custom');
 $THEME->enable_dock = false;
@@ -81,10 +79,12 @@ if ($COURSE->id > 1) {
     ];
 }
 */
-
- $CFG->list_navbar_plugin_output_custom = [
-
- ];
+// TODO set on theme settings
+$CFG->list_navbar_plugin_output_custom = [
+    'sharewith',
+    'oer',
+    'social',
+];
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'theme_petel_process_css';
