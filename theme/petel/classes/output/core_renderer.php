@@ -125,176 +125,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $this->render_custom_menu($custommenu);
     }
 
-    private function add_siteadmin_to_menu($custommenuitems = '') {
-        global $CFG;
-
-        $content = '';
-
-        if (is_siteadmin()) {
-            $url = new moodle_url('/admin/search.php');
-            $title = get_string('siteadminquicklink', 'theme_petel');
-
-            $content .= '<li class="nav-item mr-2 mr-sm-3 mr-md-4 d-flex align-items-center">';
-
-            $content .= html_writer::tag('a', '',
-                    array('href' => $url, 'class' => 'fal fa-wrench nav-admin-search-icon', 'title' => $title, 'role' => 'button',
-                        'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'aria-label' => $title));
-
-            $content .= '</li>';
-        }
-
-        return $content;
-    }
-
-    /**
-     * Edit settings button
-     *
-     * @return string
-     */
-    public function edit_settings_button() {
-        global $PAGE, $USER, $COURSE, $OUTPUT;
-
-        $html = '';
-        $context = context_course::instance($COURSE->id);
-        $roles = get_user_roles($context, $USER->id);
-        $allroles = [];
-        $access = 0;
-        foreach ($roles as $role) {
-            if (in_array(trim($role->shortname), [
-                'teacher',
-                'editingteacher',
-                'coursecreator',
-                'manager',
-                'juniorteacher'
-            ])) {
-                $access = 1;
-            }
-        }
-        if (is_siteadmin()) {
-            $access = 1;
-        }
-        // Menu available only to "teacher" and above roles.
-        if (!$access) {
-            return $html;
-        }
-
-        $node = $PAGE->navigation->find_active_node();
-        if(isset($node->key)) { //&& !\community_oer\main_oer::if_activity_in_research_mode($node->key)
-            $mainbutton = new setting_menu();
-            if (!empty($mainbutton->get_linkskeys())) {
-                $html .= html_writer::start_tag('li', array('class' => "nav-item mr-2 mr-sm-3 mr-md-4 d-flex align-items-center"));
-                $html .= $this->render($mainbutton->get_menu());
-                $html .= html_writer::end_tag('li');
-            }
-        }
-
-        // Add siteadmin icon (link).
-        $html .= $this->add_siteadmin_to_menu();
-
-        // Add Editing icon.
-        if (!empty($this->context_header_settings_menu()) || strpos($PAGE->url, '/my')) {
-            if ($this->page->user_is_editing()) {
-                $url = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'edit' => 'off'));
-                $class = 'off';
-                $title = get_string('editoff', 'theme_petel');
-            } else {
-                $url = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'edit' => 'on'));
-                $class = 'on';
-                $title = get_string('editon', 'theme_petel');
-            }
-
-            $html .= html_writer::start_tag('li', array('class' => "nav-item mr-3 mr-md-4 d-flex align-items-center"));
-            $icon = $OUTPUT->pix_icon('i/edit', '', 'moodle', array('class' => 'm-0'));
-            $html .= html_writer::link($url, $icon,  array('class' => 'editingicon ' . $class, 'title' => $title, 'role' => 'button', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom'));
-            $html .= html_writer::end_tag('li');
-
-        }
-
-        return $html;
-    }
-
-    /**
-     * Renders the header bar.
-     *
-     * @param context_header $contextheader Header bar object.
-     * @return string HTML for the header bar.
-     */
-    protected function render_context_header_oldversion(\context_header $contextheader) {
-        global $PAGE, $CFG;
-
-        $showheader = empty($this->page->layout_options['nocontextheader']);
-        if (!$showheader) {
-            return '';
-        }
-
-        // All the html stuff goes here.
-        $html = html_writer::start_div('page-context-header');
-
-        // Image data.
-        if (isset($contextheader->imagedata)) {
-            // Header specific image.
-            $html .= html_writer::div($contextheader->imagedata, 'page-header-image');
-        }
-
-        // Headings.
-        // skip heading on course page
-        $url = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $PAGE->course->id));
-
-        if (!isset($contextheader->heading)) {
-            $headings_link = html_writer::link($url, $this->page->heading, array('class' => 'page-title_head-link'));
-            $headings = $this->heading($headings_link, $contextheader->headinglevel, 'page-title');
-        } else {
-            if ($PAGE->context->contextlevel === CONTEXT_COURSE && $PAGE->pagelayout === 'course') {
-                $headings_link = html_writer::tag('span', $contextheader->heading, array('class' => ''));
-            } else {
-                $headings_link = html_writer::link($url, $contextheader->heading, array('class' => ''));
-            }
-            $headings = $this->heading($headings_link, $contextheader->headinglevel, 'page-title');
-        }
-
-        $html .= $headings;
-
-        if (empty($PAGE->layout_options['nonavbar']) && $PAGE->pagelayout != 'course') {
-            $html .= $this->navbar();
-        }
-        // Buttons.
-        if (isset($contextheader->additionalbuttons)) {
-            $html .= html_writer::start_div('btn-group header-button-group');
-            foreach ($contextheader->additionalbuttons as $button) {
-                if (!isset($button->page)) {
-                    // Include js for messaging.
-                    if ($button['buttontype'] === 'togglecontact') {
-                        \core_message\helper::togglecontact_requirejs();
-                    }
-                    if ($button['buttontype'] === 'message') {
-                        \core_message\helper::messageuser_requirejs();
-                    }
-                    $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
-                            'class' => 'iconsmall',
-                            'role' => 'presentation'
-                    ));
-                    $image .= html_writer::span($button['title'], 'header-button-title');
-                } else {
-                    $image = html_writer::empty_tag('img', array(
-                            'src' => $button['formattedimage'],
-                            'role' => 'presentation'
-                    ));
-                }
-                $html .= html_writer::link($button['url'], html_writer::tag('span', $image), $button['linkattributes']);
-            }
-
-            $html .= html_writer::end_div();
-        }
-        //if ($PAGE->course->id > 1 && $PAGE->pagelayout == 'incourse') {
-        //    $text = get_string('back_to_course', 'theme_petel');
-        //    $html .= html_writer::tag('a', $text, array ('class' => 'btn btn-outline-secondary back-to-course-btn ml-auto bg-light', 'href' => $url));
-        //}
-        $html .= html_writer::end_div();
-
-        return $html;
-    }
-
-
     /*
  * This renders the navbar.
  * Uses bootstrap compatible html.
@@ -551,8 +381,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
      *
      * @return string HTML for the navbar
      */
-    public function navbar_plugin_output_base() {
-        global $CFG;
+    public function navbar_plugin_output() {
+        global $CFG, $OUTPUT;
 
         $output = '';
 
@@ -564,37 +394,31 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             }
         }
 
-        $arrcustomplugins = ['oer', 'social'];
-
-        if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
-            foreach ($pluginsfunction as $plugintype => $plugins) {
-                foreach ($plugins as $name => $pluginfunction) {
-                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom)) {
-                        if(!in_array($name, $arrcustomplugins)){
-                            $output .= $pluginfunction($this);
-                        }
-                    }
-                }
-            }
+        // Add site administration button.
+        if (is_siteadmin()) {
+            $url = new moodle_url('/admin/search.php');
+            $attr = [
+                'class' => 'nav-admin-search-icon',
+                'title' => get_string('siteadminquicklink', 'theme_petel'),
+                'role' => 'button',
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'bottom',
+                'aria-label' => get_string('siteadminquicklink', 'theme_petel')
+            ];
+            $icon = new pix_icon('t/preferences', '');
+            $output .= html_writer::link($url, $OUTPUT->render($icon), $attr);
         }
 
-        return $output;
-    }
-
-    public function navbar_plugin_output_custom() {
-        global $CFG;
-
-        $output = '';
-
-        $arrcustomplugins = ['oer', 'social'];
-
         if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
+//            if (isset($pluginsfunction['local'])) {
+//                $local = $pluginsfunction['local'];
+//                unset($pluginsfunction['local']);
+//                array_unshift($pluginsfunction, $local);
+//            }
             foreach ($pluginsfunction as $plugintype => $plugins) {
                 foreach ($plugins as $name => $pluginfunction) {
-                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom)) {
-                        if(in_array($name, $arrcustomplugins)){
-                            $output .= $pluginfunction($this);
-                        }
+                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom) || $name == 'oer') {
+                        $output .= $pluginfunction($this);
                     }
                 }
             }

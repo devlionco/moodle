@@ -228,6 +228,7 @@ $string['resetpassword'] = 'אתחול סיסמה';
 //navbar
 $string['shownotificationwindownonew'] = 'הצגת/הסתרת תפריט הודעות';
 $string['logo_petel'] = 'לוגו פטל';
+$string['siteadminquicklink'] = 'ניהול המערכת';
 
 // Course image.
 $string['resolution_must'] = 'רוחב: 1042px גובה: 167px';
