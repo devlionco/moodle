@@ -81,6 +81,9 @@
   #theme_boost-drawers-primary {
     .drawerheader {
       background-color: $primary;
+      .btn.btn-icon {
+        color: $white;
+      }
     }
   }
 }

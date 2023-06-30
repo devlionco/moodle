@@ -186,6 +186,18 @@ class content extends \core_courseformat\output\local\content {
             $data->singlesection->header = $sectionheader->export_for_template($output);
         }
 
+        // Show cards in editable mode and card.
+        $data->showsimplecards = $PAGE->user_is_editing() &&
+            ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS) && !isset($data->singlesection);
+        if($data->showsimplecards){
+            $PAGE->requires->js_call_amd('format_flexsections/sections', 'initCoursePage');
+        }
+
+        $data->showsingleuploadsection = $PAGE->user_is_editing() && isset($data->singlesection);
+        if($data->showsingleuploadsection){
+            $PAGE->requires->js_call_amd('format_flexsections/sections', 'initSectionPage');
+        }
+
         return $data;
     }
 

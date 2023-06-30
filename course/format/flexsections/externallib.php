@@ -121,6 +121,85 @@ class format_flexsections_external extends external_api {
      * Returns description of method parameters
      * @return external_function_parameters
      */
+    public static function change_sectionimage_parameters() {
+        return new external_function_parameters(
+            array(
+                'img'      => new external_value(PARAM_TEXT, 'image in base64'),
+                'sectionid' => new external_value(PARAM_INT, 'section id'),
+                'filename' => new external_value(PARAM_TEXT, 'filename'),
+            )
+        );
+    }
+
+    /**
+     * Returns welcome message
+     * @param str $moreinfo
+     * @param str $question
+     * @param str $uploadinfo
+     * @param str $userbrowser
+     * @param str $userip
+     * @param str $screenshot
+     * @param str $resolution
+     * @param str $pageurl
+     * @return string
+     */
+    public static function change_sectionimage($img, $sectionid, $filename) {
+        global $DB, $CFG;
+
+        $row = $DB->get_record('course_sections', ['id' => $sectionid]);
+
+        preg_match('/^data:image\/(\w+);base64,/', $img, $type);
+        $img  = substr($img, strpos($img, ',') + 1);
+        $type = strtolower($type[1]); // jpg, png, gif
+
+        if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+            throw new \Exception('invalid image type');
+        }
+
+        $img = str_replace(' ', '+', $img);
+        $img = base64_decode($img);
+
+        if ($img === false) {
+            return json_encode(['url' => '']);
+        }
+
+        $context = context_course::instance($row->course);
+
+        $fs = get_file_storage();
+
+        // Prepare file record object.
+        $fileinfo = array(
+            'contextid' => $context->id,
+            'component' => 'format_flexsections',
+            'filearea'  => 'image',
+            'itemid'    => $sectionid,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+
+        $fs->delete_area_files($context->id, 'format_flexsections', 'image', $sectionid);
+        $file = $fs->create_file_from_string($fileinfo, $img);
+
+        $url = $CFG->wwwroot . "/pluginfile.php/". $file->get_contextid() . '/' . $file->get_component() . '/' .
+            $file->get_filearea() . '/' . $file->get_itemid() . $file->get_filepath() . $file->get_filename();
+
+        $data['url'] = $url;
+
+        return json_encode($data);
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function change_sectionimage_returns() {
+        return new external_value(PARAM_RAW, 'Answer to the front');
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function get_activity_grade_status_parameters() {
         return new external_function_parameters(
             array(
