@@ -49,6 +49,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'format_flexsections_get_section_status' => array(
+        'classname' => 'format_flexsections_external',
+        'methodname' => 'get_section_status',
+        'classpath' => 'course/format/flexsections/externallib.php',
+        'description' => 'Get section status',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -58,6 +66,7 @@ $services = array(
             'format_flexsections_change_courseimage',
             'format_flexsections_change_sectionimage',
             'format_flexsections_get_activity_grade_status',
+            'format_flexsections_get_section_status',
         ),
         'restrictedusers' => 0,
         'enabled'         => 1,

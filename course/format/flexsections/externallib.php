@@ -25,6 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->libdir . "/externallib.php";
 require_once $CFG->dirroot . "/course/format/flexsections/lib.php";
+require_once $CFG->dirroot . "/course/format/flexsections/locallib.php";
 
 /**
  * External functions for theme petel.
@@ -51,20 +52,12 @@ class format_flexsections_external extends external_api {
 
     /**
      * Returns welcome message
-     * @param str $moreinfo
-     * @param str $question
-     * @param str $uploadinfo
-     * @param str $userbrowser
-     * @param str $userip
-     * @param str $screenshot
-     * @param str $resolution
-     * @param str $pageurl
+     * @param string $img
+     * @param int $sectionid
+     * @param string $filename
      * @return string
      */
     public static function change_courseimage($img, $courseid, $filename) {
-        global $USER, $DB, $COURSE, $CFG;
-
-        $courseid = $courseid;
 
         preg_match('/^data:image\/(\w+);base64,/', $img, $type);
         $img  = substr($img, strpos($img, ',') + 1);
@@ -133,14 +126,9 @@ class format_flexsections_external extends external_api {
 
     /**
      * Returns welcome message
-     * @param str $moreinfo
-     * @param str $question
-     * @param str $uploadinfo
-     * @param str $userbrowser
-     * @param str $userip
-     * @param str $screenshot
-     * @param str $resolution
-     * @param str $pageurl
+     * @param string $img
+     * @param int $sectionid
+     * @param string $filename
      * @return string
      */
     public static function change_sectionimage($img, $sectionid, $filename) {
@@ -216,8 +204,6 @@ class format_flexsections_external extends external_api {
     public static function get_activity_grade_status($cmids, $courseid) {
         global $CFG, $OUTPUT, $PAGE;
 
-        require_once($CFG->dirroot . '/course/format/flexsections/locallib.php');
-
         $context = context_system::instance();
         $PAGE->set_context($context);
 
@@ -258,6 +244,80 @@ class format_flexsections_external extends external_api {
      */
     public static function get_activity_grade_status_returns() {
         return new external_value(PARAM_RAW, 'Activity grade status');
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_section_status_parameters() {
+        return new external_function_parameters(
+            array(
+                'sectionid' => new external_value(PARAM_INT, 'section id'),
+            )
+        );
+    }
+
+    /**
+     * Returns welcome message
+     * @param int $sectionid
+     * @return string
+     */
+    public static function get_section_status($sectionid) {
+        global $DB;
+
+        $data = $cmids = [];
+        $waitingforsubmission = $failed = $notsubmitted = 0;
+
+        if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
+            $cmids = array_merge($cmids, explode(',', $obj->sequence));
+            $modinfo = get_fast_modinfo($obj->course);
+
+            // Subsections.
+            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+                if ($subsection->parent == $obj->section && $num != $obj->section) {
+                    $cmids = array_merge($cmids, explode(',', $subsection->sequence));
+                }
+            }
+
+            $cmids = array_filter($cmids);
+            $cmids = array_unique($cmids);
+
+            foreach ($cmids as $cmid){
+                $cm = $modinfo->get_cm($cmid);
+                if ($tmod = format_flexsections_cm_submission_data($cm)) {
+
+                    // Status הוגש וטרם נבדק.
+                    if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
+                        $waitingforsubmission++;
+                    }
+
+                    // Status failed.
+                    if ($tmod->failed) {
+                        $failed++;
+                    }
+
+                    // Status לאחר תאריך הגשה סופי.
+                    if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
+                        $notsubmitted++;
+                    }
+                }
+            }
+        }
+
+        $data['waitingforsubmission'] = ['value' => $waitingforsubmission];
+        $data['failed'] = ['value' => $failed];
+        $data['notsubmitted'] = ['value' => $notsubmitted];
+
+        return json_encode($data);
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_section_status_returns() {
+        return new external_value(PARAM_RAW, 'Answer to section status');
     }
 
 }

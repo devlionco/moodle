@@ -127,3 +127,8 @@ $string['cut_of_date_label'] = 'Submit until {$a->date}';
 $string['cut_of_date_less_days_label'] = 'Submit within ';
 
 $string['editimage'] = 'Edit image';
+
+// Student status.
+$string['statuswaitingforsubmission'] = 'Activities are waiting for your submission';
+$string['statusfailed'] = 'Activities in which you fail';
+$string['statusnotsubmittedintime'] = 'Activities were not submitted on time';

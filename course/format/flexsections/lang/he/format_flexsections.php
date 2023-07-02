@@ -126,3 +126,8 @@ $string['complete'] = 'הושלם';
 $string['waitgrade'] = 'הוגש וטרם נבדק';
 
 $string['editimage'] = 'ערוך תמונה';
+
+// Student status.
+$string['statuswaitingforsubmission'] = 'פעילויות ממתינות להגשה שלך';
+$string['statusfailed'] = 'פעילויות בהן נכשלת';
+$string['statusnotsubmittedintime'] = 'פעילויות לא הוגשו בזמן';
