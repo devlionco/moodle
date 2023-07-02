@@ -83,7 +83,7 @@ $string['loginterms'] = 'תנאי שימוש';
 $string['logo_department_of_science_teaching'] = 'לוגו מחלקה הוראת למדעים מותאם אישית';
 
 // Support popup.
-$string['all_rights_reserved'] = '©כל הזכויות שמורות למכון ויצמן למדע, המחלקה להוראת המדעים';
+$string['all_rights_reserved'] = 'כל הזכויות שמורות למכון ויצמן למדע, המחלקה להוראת המדעים';
 $string['initialize_tours']='אתחול סיורים בעמוד זה';
 $string['about']='אודות מיזם פטל';
 $string['weizmann_logo'] = 'המחלקה הוראת המדעים';
