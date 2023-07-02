@@ -27,29 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/local/community/locallib.php');
 
 if ($ADMIN->fulltree) {
-    // TODO update settings
-    /*
+
     $settings = new theme_boost_admin_settingspage_tabs('themesettingpetel', get_string('configtitle', 'theme_petel'));
 
     // Each page is a tab - the first is the "General" tab.
     $page = new admin_settingpage('theme_petel_general', get_string('generalsettings', 'theme_petel'));
-
-    // Image.
-    $name = 'theme_petel/backgroundimage';
-    $title = get_string('backgroundimage', 'theme_petel');
-    $description = get_string('backgroundimage_desc', 'theme_petel');
-    $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $page->add($setting);
-
-    // Custom CSS file.
-    $name = 'theme_petel/customcss';
-    $title = get_string('customcss', 'theme_petel');
-    $description = get_string('customcssdesc', 'theme_petel');
-    $default = '';
-    $setting = new admin_setting_configtextarea($name, $title, $description, $default);
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $page->add($setting);
 
     // About URL.
     $name = 'theme_petel/abouturl';
@@ -107,29 +89,4 @@ if ($ADMIN->fulltree) {
     $page->add($setting);
 
     $settings->add($page);
-
-    $page = new admin_settingpage('theme_petel_footer', get_string('footersettings', 'theme_petel'));
-
-    // left side footer
-    $name = 'theme_petel/middlefooter';
-    $title = get_string('middlefooter', 'theme_petel');
-    $description = get_string('middlefooter_descr', 'theme_petel');
-    $default = '';
-    $setting = new admin_setting_configtextarea($name, $title, $description, $default);
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $page->add($setting);
-
-    // right side footer
-    $name = 'theme_petel/rightfooter';
-    $title = get_string('rightfooter', 'theme_petel');
-    $description = get_string('rightfooter_descr', 'theme_petel');
-    $default = '';
-    $setting = new admin_setting_configtextarea($name, $title, $description, $default);
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $page->add($setting);
-
-
-    $settings->add($page);
-    */
-
 }

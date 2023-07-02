@@ -39,7 +39,7 @@ function theme_petel_get_main_scss_content($theme) {
     global $CFG;
 
     $scss = '';
-    
+
     if (isset($CFG->instancename)){
         $scss .= file_get_contents($CFG->dirroot . '/theme/petel/scss/globals/variables_'.$CFG->instancename.'.scss');
     }else {
@@ -204,6 +204,9 @@ function theme_petel_get_policies() {
             $pol->name = get_string('accessibility_policy', 'theme_petel');
             $policies[] = $pol;
         }
+    }
+    if (count($policies)>0){
+        $policies[count($policies)-1]->lastitem = 1;
     }
     return $policies;
 }

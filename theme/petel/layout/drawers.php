@@ -84,7 +84,8 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
-
+$abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
+$policies = theme_petel_get_policies();
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
@@ -104,7 +105,9 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'abouturl' => $abouturl,
+    'policies' => $policies,
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
