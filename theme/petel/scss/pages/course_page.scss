@@ -19,6 +19,7 @@
     .btn-disable-share-course {
         color: $primary;
         font-size: .75rem;
+
         i {
             color: $linkcolor;
             font-size: 1rem;
@@ -219,10 +220,11 @@
         z-index: 0;
     }
 
-   
+
 
     .submissionstatus {
         font-size: .75rem;
+
         .modicon {
             font-size: 1.5rem;
             color: $body-color;
@@ -290,6 +292,7 @@
             color: $body-color;
         }
     }
+
     .activityname {
         a {
             color: $linkcolor;
@@ -298,12 +301,15 @@
             font-weight: 700;
         }
     }
+
     .activity-actions {
         align-self: center;
     }
+
     .activity-info {
         align-self: center;
         min-width: unset;
+
         .gradestatus {
             .progress {
                 width: 7.5rem;
@@ -347,17 +353,20 @@
                 font-size: 1.125rem;
             }
         }
+
         .description-text {
             font-size: .75rem;
             font-weight: 500;
             line-height: 1.125rem;
         }
     }
+
     .gradestatus-wrapper {
 
         .studentfailed {
             font-size: .75rem;
         }
+
         .divider {
             display: flex;
             width: .0625rem;
@@ -371,6 +380,7 @@
     .singlesection-card {
         width: 40%;
         min-height: 10rem;
+
         .card-img {
             position: absolute;
             top: 0;
@@ -381,16 +391,50 @@
             z-index: 0;
             height: auto;
         }
+
         .card-header-fade,
         .card-header {
             position: relative;
             z-index: 5;
         }
     }
+
     // TODO: find correct place for this code!
     h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         margin-top: -2rem;
         padding: .5rem;
         line-height: 1;
+    }
+
+    .section-header {
+        .info-block {
+            font-family: $primary-font;
+            padding-left: 3.5rem;
+
+            .fa-hourglass-end {
+                font-size: 2.5rem;
+                width: 2.875rem;
+            }
+
+            .info-block-value {
+                font-size: 2rem;
+                font-weight: 700;
+            }
+
+            .info-block-text {
+                color: $black;
+                font-size: 1.5rem;
+            }
+
+            .rounded-circle {
+                width: 2.875rem;
+                height: 2.6875rem;
+
+                i {
+
+                    font-size: 1.875rem;
+                }
+            }
+        }
     }
 }

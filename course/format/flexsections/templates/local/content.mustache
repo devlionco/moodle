@@ -114,7 +114,9 @@ Example context (json):
 
     {{#singlesection}}
         {{#header}}
-            <div class="singlesection-card card-main-content mt-1 d-flex flex-column justify-content-between position-relative" >
+        <div class="section-header d-flex">
+            <div class="singlesection-card card-main-content mt-1 d-flex flex-column justify-content-between position-relative
+                {{^showsectionstatus}}w-100{{/showsectionstatus}}" >
                 <div class="card-img" role="presentation" {{#image}}style="background: url('{{{image}}}') center/cover"{{/image}}></div>
 
                 <div class="card-header-fade p-1">
@@ -137,6 +139,11 @@ Example context (json):
                     {{/ format_flexsections/local/content/completion }}
                 </div>
             </div>
+
+            {{#showsectionstatus}}
+                <div class="info-block" id="sectionStatus"></div>
+            {{/showsectionstatus}}
+        </div>
         {{/header}}
            {{#showsingleuploadsection}}
                     <div class="uploadsectionimage">
@@ -284,8 +291,9 @@ Example context (json):
         {{> core_courseformat/local/content/addsection}}
     {{/numsections}}
 </div>
+
 {{#js}}
 require(['format_flexsections/local/content'], function(component) {
-component.init('{{uniqid}}-course-format', {}, {{sectionreturn}});
+    component.init('{{uniqid}}-course-format', {}, {{sectionreturn}});
 });
 {{/js}}

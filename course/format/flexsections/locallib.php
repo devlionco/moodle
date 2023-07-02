@@ -26,24 +26,22 @@
 /**
  * Render block submission activity only for admin
  * @param cm_info $mod
- * @return array
+ * @return array|boolean
  */
 function format_flexsections_cm_grade_status(cm_info $mod) {
     global $CFG, $USER, $DB;
-    $data = false;
 
     // For a teacher colleagues don`t show activity status.
     $modcontext = context_module::instance($mod->id);
     $roles      = get_user_roles($modcontext, $USER->id, false);
     foreach ($roles as $role) {
         if ($role->shortname === 'teachercolleague') {
-            return $data;
+            return false;
         }
     }
 
     if (format_flexsections_has_teacher_capability($mod->id)) {
         if (in_array($mod->modname, ['assign', 'quiz', 'questionnaire', 'hvp'])) {
-
             $tooltip       = '';
             $segmentgray   = $segmentblue   = $segmentorange   = $segmentgreen   = $segmentred   = 0;
             $countmaxusers = count(format_flexsections_get_students_course($mod->course));
@@ -85,7 +83,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     //$segmentblue = $countstartedusers;
                     $segmentgreen = $countcompleteusers;
 
-                    $url = new moodle_url('/mod/questionnaire/report.php', array('instance' => $mod->instance));
+                    $url = new moodle_url('/mod/questionnaire/report.php', ['instance' => $mod->instance]);
 
                     // Tooltip.
                     // Status Y תלמידים טרם התחילו.
@@ -143,7 +141,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                         $segmentgreen  = $havegrade;
                     }
 
-                    $url = new moodle_url('/mod/assign/view.php', array('id' => $mod->context->instanceid, 'action' => 'grading'));
+                    $url = new moodle_url('/mod/assign/view.php', ['id' => $mod->context->instanceid, 'action' => 'grading']);
 
                     // Tooltip.
                     // Status Y תלמידים טרם הגישו.
@@ -222,7 +220,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     $querytmp           = $query . " AND qa.state = 'finished' AND qa.sumgrades IS NULL ";
                     $countwithoutgrades = count($DB->get_records_sql($querytmp, $params));
 
-                    $url = new moodle_url('/mod/quiz/report.php', array('id' => $mod->context->instanceid, 'mode' => 'advancedoverview'));
+                    $url = new moodle_url('/mod/quiz/report.php', ['id' => $mod->context->instanceid, 'mode' => 'advancedoverview']);
 
                     // Gray - טרם התחיל מענה.
                     // [Blue] Gray - בתהליך.
@@ -329,7 +327,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     $segmentgray  = $notsubmitted;
                     $segmentgreen = $havegrade;
 
-                    $url = new moodle_url('/mod/hvp/grade.php', array('id' => $mod->context->instanceid));
+                    $url = new moodle_url('/mod/hvp/grade.php', ['id' => $mod->context->instanceid]);
 
                     // Tooltip.
                     // Status Y תלמידים טרם הגישו.
@@ -348,7 +346,7 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     break;
             }
 
-            $data                  = array();
+            $data                  = [];
             $data['url']           = $url;
             $data['countmaxusers'] = $countmaxusers;
 
@@ -377,11 +375,11 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
 }
 
 /**
- * Get activity submission status
+ * Get activity submission data
  * @param cm_info $mod
- * @return array|boolean
+ * @return object|boolean
  */
-function format_flexsections_cm_submission_status(cm_info $mod) {
+function format_flexsections_cm_submission_data(cm_info $mod) {
     global $DB, $USER, $CFG;
 
     require_once $CFG->dirroot . '/mod/assign/locallib.php';
@@ -396,12 +394,6 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
         return false;
     }
 
-    $icons = new \stdClass();
-    $icons->waiting = '<i class="fa-regular fa-circle modicon"></i>';
-    $icons->done = '<i class="fa-light fa-circle-check modicon text-success"></i>';
-    $icons->over_due = '<i class="fa-light fa-circle-xmark modicon text-danger"></i>';
-    $icons->waiting_for_grade = '<i class="fa-light fa-circle-check modicon"></i>';
-
     // Defailt result object.
     $tmod               = new \stdClass();
     $tmod->duedate      = 0;
@@ -411,9 +403,7 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
     $tmod->grade        = false;
     $tmod->viewgrade    = false;
     $tmod->reopened     = false;
-    $tmod->modstatus    = '';
-    $tmod->modstyle     = '';
-    $tmod->modicon      = '';
+    $tmod->failed       = false;
 
     // Prepare data.
     switch ($mod->modname) {
@@ -469,6 +459,23 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
             if ($rowag = $DB->get_record_sql($sql, [$mod->course, $mod->instance, $USER->id])) {
                 $tmod->grade     = $rowag->grade;
                 $tmod->submitted = true;
+            }
+
+            if ($tmod->submitted && $tmod->requiregrade && $tmod->grade) {
+                $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
+                switch ($quiz->grade) {
+                    case 10:
+                        if($tmod->grade * $quiz->grade < 6){
+                            $tmod->failed = true;
+                        }
+                        break;
+
+                    case 100:
+                        if($tmod->grade < 60){
+                            $tmod->failed = true;
+                        }
+                        break;
+                }
             }
             break;
 
@@ -559,42 +566,62 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
             break;
     }
 
-    // Check teacher.
-    $isteacher = false;
-    if (format_flexsections_has_teacher_capability($mod->id)) {
-        $isteacher = true;
+    return $tmod;
+}
+
+/**
+ * Get activity submission status
+ * @param cm_info $mod
+ * @return array|boolean
+ */
+function format_flexsections_cm_submission_status(cm_info $mod) {
+
+    if (!$tmod = format_flexsections_cm_submission_data($mod)) {
+        return false;
     }
 
-    if ($isteacher) {
-        $tmod->modstatus = ($tmod->cutoffdate) ? date("d/m/Y H:i", $tmod->cutoffdate) : get_string('no_submission_date', 'format_flexsections');
-        //$tmod->modstyle = ($tmod->cutoffdate && $tmod->cutoffdate < time()) ? 'text-danger' : 'text-secondary';
+    $icons = new \stdClass();
+    $icons->waiting = '<i class="fa-regular fa-circle modicon"></i>';
+    $icons->done = '<i class="fa-light fa-circle-check modicon text-success"></i>';
+    $icons->over_due = '<i class="fa-light fa-circle-xmark modicon text-danger"></i>';
+    $icons->waiting_for_grade = '<i class="fa-light fa-circle-check modicon"></i>';
+
+    $res = new \stdClass();
+    $res->modstatus    = '';
+    $res->modstyle     = '';
+    $res->modicon      = '';
+
+    if (format_flexsections_has_teacher_capability($mod->id)) {
+        // Teacher.
+        $res->modstatus = ($tmod->cutoffdate) ? date("d/m/Y H:i", $tmod->cutoffdate) : get_string('no_submission_date', 'format_flexsections');
+        //$res->modstyle = ($tmod->cutoffdate && $tmod->cutoffdate < time()) ? 'text-danger' : 'text-secondary';
     } else {
         // Student.
         // Status הוגש וניתן ציון.
         if ($tmod->submitted && $tmod->requiregrade && $tmod->grade) {
 
             if ($tmod->viewgrade) {
-                $tmod->modstatus = get_string('complete', 'format_flexsections') . ' (' . ceil($tmod->grade) . ')';
+                $res->modstatus = get_string('complete', 'format_flexsections') . ' (' . ceil($tmod->grade) . ')';
             } else {
-                $tmod->modstatus = get_string('complete', 'format_flexsections');
+                $res->modstatus = get_string('complete', 'format_flexsections');
             }
 
-            $tmod->modicon = $icons->done;
-            $tmod->modstyle = 'text-success';
+            $res->modicon = $icons->done;
+            $res->modstyle = 'text-success';
         }
 
         // Status הוגש ואין הגדרת ציון.
         if ($tmod->submitted && !$tmod->requiregrade) {
-            $tmod->modstatus = get_string('complete', 'format_flexsections');
-            $tmod->modstyle  = 'text-success';
-            $tmod->modicon = $icons->done;
+            $res->modstatus = get_string('complete', 'format_flexsections');
+            $res->modstyle  = 'text-success';
+            $res->modicon = $icons->done;
         }
 
         // Status הוגש וטרם נבדק.
         if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
-            $tmod->modstatus = get_string('waitgrade', 'format_flexsections');
-            $tmod->modstyle  = 'text-secondary';
-            $tmod->modicon = $icons->waiting_for_grade;
+            $res->modstatus = get_string('waitgrade', 'format_flexsections');
+            $res->modstyle  = 'text-secondary';
+            $res->modicon = $icons->waiting_for_grade;
         }
 
         // Status טרם התחיל.
@@ -605,42 +632,42 @@ function format_flexsections_cm_submission_status(cm_info $mod) {
             if ($delta->days >= 4) {
                 $a               = new stdClass();
                 $a->date         = date("d/m/Y H:i", $tmod->cutoffdate);
-                $tmod->modstatus = get_string('cut_of_date_label', 'format_flexsections', $a);
+                $res->modstatus = get_string('cut_of_date_label', 'format_flexsections', $a);
             }
 
             // Date במהלך 3 הימים האחרונים.
             if ($delta->days > 0 && $delta->days < 4) {
                 $a = $delta->days . ' ' . get_string('days') . get_string('and', 'format_flexsections') .
                 $delta->hours . ' ' . get_string('hours');
-                $tmod->modstatus = get_string('cut_of_date_less_days_label', 'format_flexsections', $a);
+                $res->modstatus = get_string('cut_of_date_less_days_label', 'format_flexsections', $a);
             }
 
             // Date במהלך היום האחרון.
             if ($delta->days == 0) {
                 $a               = $delta->hours . ' ' . get_string('hours');
-                $tmod->modstatus = get_string('cut_of_date_less_days_label', 'format_flexsections', $a);
+                $res->modstatus = get_string('cut_of_date_less_days_label', 'format_flexsections', $a);
             }
 
-            $tmod->modstyle = 'text-secondary';
-            $tmod->modicon = $icons->waiting;
+            $res->modstyle = 'text-secondary';
+            $res->modicon = $icons->waiting;
         }
 
         // Status ללא תאריך הגשה.
         if (!$tmod->submitted && $tmod->cutoffdate == 0) {
-            $tmod->modstatus = get_string('no_submission_date', 'format_flexsections');
-            $tmod->modstyle  = 'text-secondary';
-            $tmod->modicon = $icons->waiting;
+            $res->modstatus = get_string('no_submission_date', 'format_flexsections');
+            $res->modstyle  = 'text-secondary';
+            $res->modicon = $icons->waiting;
         }
 
         // Status לאחר תאריך הגשה סופי.
         if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
-            $tmod->modstatus = get_string('cut_of_date', 'format_flexsections');
-            $tmod->modstyle  = 'text-danger';
-            $tmod->modicon = $icons->over_due;
+            $res->modstatus = get_string('cut_of_date', 'format_flexsections');
+            $res->modstyle  = 'text-danger';
+            $res->modicon = $icons->over_due;
         }
     }
 
-    return ['modstatus' => $tmod->modstatus, 'modstyle' => $tmod->modstyle, 'modicon' => $tmod->modicon];
+    return ['modstatus' => $res->modstatus, 'modstyle' => $res->modstyle, 'modicon' => $res->modicon];
 }
 
 /**
@@ -709,6 +736,16 @@ function format_flexsections_get_students_course($courseid) {
 
 function format_flexsections_has_teacher_capability($cmid) {
     $context = \context_module::instance($cmid);
+
+    if (is_siteadmin() || has_capability('moodle/course:update', $context)) {
+        return true;
+    }
+
+    return false;
+}
+
+function format_flexsections_has_teacher_course_capability($courseid) {
+    $context = \context_course::instance($courseid);
 
     if (is_siteadmin() || has_capability('moodle/course:update', $context)) {
         return true;

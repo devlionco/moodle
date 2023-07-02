@@ -198,6 +198,15 @@ class content extends \core_courseformat\output\local\content {
             $PAGE->requires->js_call_amd('format_flexsections/sections', 'initSectionPage');
         }
 
+        // Student status area.
+        $data->showsectionstatus = false;
+        if(isset($data->singlesection)){
+            if(!format_flexsections_has_teacher_course_capability($COURSE->id)){
+                $PAGE->requires->js_call_amd('format_flexsections/sectionstatus', 'init', [$data->singlesection->id]);
+                $data->showsectionstatus = true;
+            }
+        }
+
         return $data;
     }
 
