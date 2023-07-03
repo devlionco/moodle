@@ -95,7 +95,7 @@ function local_redmine_render_navbar_output() {
                 $title = get_string('support', 'local_redmine');
 
             $output = '
-                    <div class="dropdown d-flex align-items-center" data-toggle="tooltip" data-placement="bottom" title="'. $title .'" aria-label="'. $title .'">
+                    <div class="dropdown d-flex align-items-center pr-3" title="'. $title .'" aria-label="'. $title .'">
                         <a class="support-btn nav-link dropdown-toggle" href="#" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa-light fa-headset"></i>
                         <div id="issues_counter_user" style="display: none;" class="count-container " data-region="count-container">0</div> 

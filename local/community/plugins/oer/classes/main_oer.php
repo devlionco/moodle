@@ -195,7 +195,8 @@ class main_oer {
                     $tmp['cat_name'] = $cat->name;
 
                     // Get category image.
-                    $tmp['category_image_url'] = self::category_image_default($cat->id);
+                    $category_image = self::category_image_default($cat->id);
+                    $tmp['category_image_url'] =  '$category_image->out()';
 
                     $sql = "
                         SELECT c.id, c.fullname, c.shortname, COUNT(c.id) AS count_activities

@@ -1,16 +1,17 @@
 <div class="d-none" data-region="header-content-popover">
 
     {{#user_access}}
-    <div class="oer-popup bg-white text-body pt-1">
+    <div class="oer-popup bg-white">
         <div class="oer-popup-close-btn"></div>
-        <div class="row w-100">
+        <div class="row">
 
             {{#menu}}
-                <ul class="list-unstyled col-md-auto pt-3 pr-0 pb-2 pl-5">
-                    <li class="d-flex align-items-center text-bold  border-dark border-bottom py-2 pl-0 mb-3">
-                        <div class="rosources-popup-list-title-icon mr-2"
-                            style="background-image: url({{{category_image_url}}});"></div>
-                        <a class="text-body" href="{{config.wwwroot}}/local/community/plugins/oer/?categoryid={{cat_id}}">{{cat_name}}</a>
+                <ul class="list-unstyled col-md-auto px-1">
+                    <li class="d-flex align-items-center p-2 mb-0">
+                        <div class="oer-popup-list-title-icon mr-2" 
+                            style="background-image: url({{config.wwwroot}}/local/community/plugins/oer/pix/default-category);">
+                        </div>
+                        <a class="text-secondary oer-popup-list-title" href="{{config.wwwroot}}/local/community/plugins/oer/?categoryid={{cat_id}}">{{cat_name}}</a>
 
                         {{#user_editing}}
                             <a title="{{#str}}changeiconcategory, community_oer{{/str}}"
@@ -21,7 +22,7 @@
                     </li>
 
                     {{#courses}}
-                        <li class="oer-popup-list-item d-flex align-items-center">
+                        <li class="oer-popup-list-item d-flex align-items-center p-2">
                             <a class="text-body"
                                 href="{{config.wwwroot}}/local/community/plugins/oer/?courseid={{id}}">
                                 {{fullname}}

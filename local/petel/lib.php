@@ -375,7 +375,7 @@ function local_petel_periodic_table_button() {
         $title = get_string('periodictable', 'local_petel');
         $html .= html_writer::start_tag('a', array(
                 'href' => '#',
-                'class' => 'periodic_table-btn nav-link',
+                'class' => 'periodic_table-btn nav-link pl-3',
                 'title' => $title,
                 'id' => 'periodic_table-id',
                 'role' => 'button',

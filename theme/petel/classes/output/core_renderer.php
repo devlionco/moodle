@@ -398,23 +398,23 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         if (is_siteadmin()) {
             $url = new moodle_url('/admin/search.php');
             $attr = [
-                'class' => 'nav-admin-search-icon',
+                'class' => 'nav-admin-search-icon  d-flex align-items-center justify-content-center pr-3',
                 'title' => get_string('siteadminquicklink', 'theme_petel'),
                 'role' => 'button',
                 'data-toggle' => 'tooltip',
                 'data-placement' => 'bottom',
                 'aria-label' => get_string('siteadminquicklink', 'theme_petel')
             ];
-            $icon = new pix_icon('t/preferences', '');
-            $output .= html_writer::link($url, $OUTPUT->render($icon), $attr);
+            $icon = html_writer::tag('i', '', array('class' => 'fa-light fa-wrench nav-link'));
+            $output .= html_writer::link($url, $icon, $attr);
         }
 
         if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
-//            if (isset($pluginsfunction['local'])) {
-//                $local = $pluginsfunction['local'];
-//                unset($pluginsfunction['local']);
-//                array_unshift($pluginsfunction, $local);
-//            }
+           if (isset($pluginsfunction['local'])) {
+               $local = $pluginsfunction['local'];
+               unset($pluginsfunction['local']);
+               array_unshift($pluginsfunction, $local);
+           }
             foreach ($pluginsfunction as $plugintype => $plugins) {
                 foreach ($plugins as $name => $pluginfunction) {
                     if (!in_array($name, $CFG->list_navbar_plugin_output_custom) || $name == 'oer') {
