@@ -59,17 +59,18 @@ class section extends \core_courseformat\output\local\content\section {
         $showaslink = $this->section->collapsed == FORMAT_FLEXSECTIONS_COLLAPSED
             && $this->format->get_viewed_section() != $this->section->section;
 
-        $data->showaslink = $showaslink;
+        // TODO update $showaslink logic !!!!!!!!! its better to remove it.
+        $data->showaslink = false;//$showaslink;
         if ($showaslink) {
           //  $data->cmlist = [];
           //  $data->cmcontrols = '';
         }
 
         // Add subsections.
-        if (!$showaslink) {
+       //if (!$showaslink) {
             $data->subsections = $this->section->section ? $this->get_subsections($output) : [];
             $data->level = $this->level;
-        }
+        //}
 
         if (!$this->section->section || $this->section->section == $this->format->get_viewed_section()) {
             $data->contentcollapsed = false;

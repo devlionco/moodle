@@ -417,7 +417,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
            }
             foreach ($pluginsfunction as $plugintype => $plugins) {
                 foreach ($plugins as $name => $pluginfunction) {
-                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom) || $name == 'oer') {
+                    // TODO update logic here !!!
+                    if (!in_array($name, $CFG->list_navbar_plugin_output_custom) || $name == 'oer' || $name == 'sharewith') {
                         $output .= $pluginfunction($this);
                     }
                 }
