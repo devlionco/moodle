@@ -99,10 +99,6 @@ class content extends \core_courseformat\output\local\content {
             // Default image by instance.
             $imagename = 'course/' . $CFG->instancename;
             $courseimage = $OUTPUT->image_url($imagename, 'format_flexsections')->out(false);
-
-            if (file_get_contents($courseimage) == false) {
-                $courseimage = $OUTPUT->get_generated_image_for_id($this->format->get_course()->id);
-            }
         }
         $data->courseimageurl = $courseimage;
 
@@ -212,10 +208,10 @@ class content extends \core_courseformat\output\local\content {
 
     function get_course_completion($courseid) {
         global $DB, $USER;
-    
+
         // Get the course modules in the course.
         $courseModules = $DB->get_records('course_modules', ['course' => $courseid]);
-    
+
         if (empty($courseModules)) {
             // No modules found in the course.
             return [
@@ -225,17 +221,17 @@ class content extends \core_courseformat\output\local\content {
                 'iscomplete' => false
             ];
         }
-    
+
         $courseModuleIds = array_keys($courseModules);
         $completedModules = $DB->count_records_select('course_modules_completion',
             'coursemoduleid IN (' . implode(',', $courseModuleIds) . ') AND userid = :userid',
             ['userid' => $USER->id]
         );
-    
+
         $totalModules = count($courseModules);
         $percentage = round(($completedModules / $totalModules) * 100);
         $isComplete = ($completedModules == $totalModules);
-    
+
         //TODO: add correct names
         $rad1 =  round(100 - $percentage);
         $rad2 =  round(100 -  $rad1);
@@ -249,7 +245,7 @@ class content extends \core_courseformat\output\local\content {
             'rad2' => $rad2,
         ];
     }
-    
+
 
     /**
      * Export sections array data.
