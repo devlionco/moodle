@@ -213,6 +213,7 @@ class sharewith_form extends moodleform {
                 $mform->addElement('html', $html);
                 break;
 
+            case 'multiselect':
             case 'multimenu':
                 if (isset($default[$item->shortname])) {
                     foreach ($item->data_formated as $key => $t) {

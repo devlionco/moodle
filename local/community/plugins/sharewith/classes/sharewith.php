@@ -255,9 +255,39 @@ class sharewith {
 
     public function prepare_content_metadata($obj) {
 
-        if (in_array($obj->datatype, ['menu', 'multimenu', 'durationactivity', 'levelactivity'])) {
-            $result = array();
+        $result = [];
+        if(in_array($obj->datatype, ['multiselect'])) {
+            $data = array_filter(explode("\n", $obj->data));
+            foreach ($data as $str) {
+                // ID value for separator.
+                $idvalue = explode(':', $str);
 
+                // Lang values separator.
+                preg_match_all("/([^|=]+)=([^|=]+)/", end($idvalue), $r);
+                $arrlang = array_combine($r[1], $r[2]);
+
+                if (empty($obj->defaultdata)) {
+                    $checked = false;
+                } else {
+                    $checked = $obj->defaultdata == $idvalue[0] ? true : false;
+                }
+
+                // Check current language on system for display.
+                if(!$lang = get_parent_language()){
+                    $lang = current_language();
+                }
+
+                $result[] = array(
+                        'metadata_name' => isset($arrlang[$lang]) ? $arrlang[$lang] : $arrlang['en'],
+                        'metadata_icon' => '',
+                        'metadata_value' => $idvalue[0],
+                        'metadata_checked' => $checked,
+                        'metadata_id' => $obj->shortname . $idvalue[0] . time(),
+                );
+            }
+        }
+
+        if (in_array($obj->datatype, ['menu', 'multimenu', 'durationactivity', 'levelactivity'])) {
             $res = preg_split('/\R/', $obj->data);
             $res = array_unique($res);
 
