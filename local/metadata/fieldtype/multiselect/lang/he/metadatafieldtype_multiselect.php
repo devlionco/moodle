@@ -30,9 +30,9 @@ $string['pluginname'] = 'multiselect metadata fieldtype';
 $string['displayname'] = 'Dropdown multiselect';
 $string['privacy:metadata'] = 'Fieldtypes store data';
 $string['notinrightformat'] = 'Not in the right format, format should be like - <key>:<lang>=<value>|<lang>=<value>|...';
-$string['checkifmultiselectornot'] = 'Enable multi select';
-$string['duplicatevalues'] = 'There are some duplicate values.';
+$string['checkifmultiselectornot'] = 'אפשרות לבחירה מרובה';
+$string['duplicatevalues'] = 'קיימים ערכים כפולים.';
 $string['rightformat_help'] = "The format should be used in the following way: <key>:<values> and each <values> should include at least an English ".
-" and a Hebrew value seperated by '|' in the format <lang>=<value>|<lang>=<value>, where Hebrew <lang> can be either 'he' or 'he_kids' depending on your system. ".
-" Here is a full example: 1:en=Checking|he_kids=בדיקה ";
-$string['rightformat'] = 'Write the keys and the values?';
+    " and a Hebrew value seperated by '|' in the format <lang>=<value>|<lang>=<value>, where Hebrew <lang> can be either 'he' or 'he_kids' depending on your system. ".
+    " Here is a full example: 1:en=Checking|he_kids=בדיקה ";
+$string['rightformat'] = 'יש להזין מפתח וערכים לפי תחביר מיוחד המוצג בחלונית העזרה';

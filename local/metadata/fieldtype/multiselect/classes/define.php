@@ -41,9 +41,9 @@ class define extends \local_metadata\fieldtype\define_base {
      */
     public function define_form_specific($form) {
         // Sending the second param for yes or no multiselect.
-        $form->addElement('selectyesno', 'param2', get_string('checkifmultiselectornot', 'metadatafieldtype_multiselect'));
-        $form->setDefault('defaultdata', 0);
-        $form->setType('param2', PARAM_BOOL);
+//        $form->addElement('selectyesno', 'param2', get_string('checkifmultiselectornot', 'metadatafieldtype_multiselect'));
+//        $form->setDefault('defaultdata', 0);
+//        $form->setType('param2', PARAM_BOOL);
 
         // Sending the first param of multiselect.
         $form->addElement('textarea', 'param1', get_string('profilemenuoptions', 'admin'), array('rows' => 6, 'cols' => 40));
@@ -62,22 +62,18 @@ class define extends \local_metadata\fieldtype\define_base {
      * @return array
      */
     public function define_validate_specific($data, $files) {
-        // Array of Errors.
         $err = [];
         $valuesarray = [];
-        $currentclangs = array_keys(get_string_manager()->get_list_of_translations());
+        $currentclangs = array_keys(get_string_manager()->get_list_of_languages());
         $data->param1 = str_replace("\r", '', $data->param1);
-        // Check that we have at least 2 options.
-        if (($options = explode("\n", $data->param1)) === false) {
-            $err['param1'] = get_string('profilemenunooptions', 'admin');
-        } else if (count($options) < 2) {
-            $err['param1'] = get_string('profilemenutoofewoptions', 'admin');
-        } else if (!empty($data->defaultdata) && !in_array($data->defaultdata, $options)) {
-            // Check the default data exists in the options.
-            $err['defaultdata'] = get_string('profilemenudefaultnotinoptions', 'admin');
-        }
+
         // Check if data as at list two values like  <value>:<lang>=<string>|<lang2>=<string2>.
         $dataform = array_filter(explode("\n", $data->param1));
+
+        if (empty($dataform)) {
+            $err['param1'] = get_string('profilemenunooptions', 'admin');
+        }
+
         foreach ($dataform as $stringdata) {
             $valueseparator = explode(":", $stringdata);
             $valuesarray[] = $valueseparator[0];
@@ -85,19 +81,38 @@ class define extends \local_metadata\fieldtype\define_base {
             if (strlen(reset($valueseparator)) == 0) {
                 $err['param1'] = get_string('notinrightformat', 'metadatafieldtype_multiselect');
             } else {
+
+                $flagenpresent = false;
                 foreach ($pipeseparator as $lang) {
                     $langvalue = explode("=", $lang);
-                    if (!in_array($langvalue[0], $currentclangs)|| $langvalue[1] == '') {
+
+                    // Find default lang 'en'.
+                    if ($langvalue[0] == 'en') {
+                        $flagenpresent = true;
+                    }
+
+                    if (!in_array($langvalue[0], $currentclangs) || $langvalue[1] == '') {
                         $err['param1'] = get_string('notinrightformat', 'metadatafieldtype_multiselect');
                     }
                 }
+
+                if ($flagenpresent === false) {
+                    $err['param1'] = get_string('notinrightformat', 'metadatafieldtype_multiselect');
+                }
             }
         }
+
         // Check for duplicates values.
         if (array_unique($valuesarray) !== $valuesarray) {
             $err['param1'] = get_string('duplicatevalues', 'metadatafieldtype_multiselect');
-            return $err;
         }
+
+        // Check default.
+        if (!empty($data->defaultdata) && !in_array($data->defaultdata, $valuesarray)) {
+            // Check the default data exists in the options.
+            $err['defaultdata'] = get_string('profilemenudefaultnotinoptions', 'admin');
+        }
+
         return $err;
     }
     /**
@@ -106,6 +121,16 @@ class define extends \local_metadata\fieldtype\define_base {
      * @return array|stdClass
      */
     public function define_save_preprocess($data) {
+
+        $arr = explode("\n", $data->param1);
+        foreach($arr as $key => $str){
+            $str = trim($str);
+            if(empty($str)){
+                unset($arr[$key]);
+            }
+        }
+
+        $data->param1 = implode("\n", $arr);
         $data->param1 = str_replace("\r", '', $data->param1);
         return $data;
     }

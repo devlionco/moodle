@@ -799,7 +799,7 @@ class question_help {
         $query = "
             SELECT * 
             FROM {local_metadata_field}
-            WHERE contextlevel = ? AND datatype IN ('menu', 'multimenu')
+            WHERE contextlevel = ? AND datatype IN ('menu', 'multimenu', 'multiselect')
             ORDER BY sortorder ASC
         ";
 
@@ -822,7 +822,7 @@ class question_help {
             $data[$key]['uniqueid'] = $field . $key;
             $data[$key]['field'] = $field;
             $data[$key]['search'] = 'equal';
-            $data[$key]['print_value'] = $item['value'];
+            $data[$key]['print_value'] = isset($item['label']) ? $item['label'] : $item['value'];
             $data[$key]['group'] = $group;
         }
 

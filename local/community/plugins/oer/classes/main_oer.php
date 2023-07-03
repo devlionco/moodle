@@ -310,19 +310,51 @@ class main_oer {
         global $DB;
 
         $field = $DB->get_record('local_metadata_field', ['contextlevel' => $contextlevel, 'shortname' => $fieldname]);
-        if (!empty($field) && in_array($field->datatype, ['menu', 'multimenu'])) {
+        $result = [];
 
+        if(!empty($field) && $field->datatype === 'multiselect') {
+            $res = preg_split('/\R/', $field->param1);
+            $res = array_unique($res);
+            if (!empty($res)) {
+                foreach ($res as $str) {
+                    list($key, $vals) = explode(':', $str);
+                    $arrmenu = [];
+                    foreach (explode('|',$vals) as $langval) {
+                        list($language, $value) = explode('=', $langval);
+                        $arrmenu[$language] = $value;
+                    }
+
+                    // Check current language on system for display.
+                    if(!$lang = get_parent_language()){
+                        $lang = current_language();
+                    }
+
+                    $label = isset($arrmenu[$lang]) ? $arrmenu[$lang] : $arrmenu['en'];
+
+                    $result[] = ['uniqueid' => $fieldname.$arrmenu['en'], 'label' => $label, 'value' => $key];
+                }
+
+                return $result;
+            }
+        }
+
+        if(!empty($field) && in_array($field->datatype, ['menu', 'multimenu'])){
             $res = preg_split('/\R/', $field->param1);
             $res = array_unique($res);
 
-            if (!empty($res)) {
-                foreach ($res as $key => $str) {
+            if(!empty($res)){
+                foreach($res as $key => $str){
                     $arr = explode('|', $str);
-                    $result[] = ['uniqueid' => $fieldname . $key, 'value' => $arr[0]];
-                }
-            }
 
-            return $result;
+                    if(isset($arr[1]) && !empty($arr[1])) $icon = $arr[1];
+                    else $icon = '';
+
+                    //$result[$arr_str[0]] = $icon;
+                    $result[] = ['uniqueid' => $fieldname.$key, 'label' => $arr[0], 'value' => $arr[0]];
+                }
+
+                return $result;
+            }
         }
 
         return false;

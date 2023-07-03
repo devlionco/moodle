@@ -165,6 +165,7 @@ class section extends \core_courseformat\output\local\content\section {
      * @return array
      */
     public function get_section_completion(): array {
+        global $DB;
 
         // Can't do anything if completion is disabled, or we're a guest user.
         if (isguestuser() || !$this->format->get_course()->enablecompletion) {
@@ -183,13 +184,32 @@ class section extends \core_courseformat\output\local\content\section {
         }
 
         // List of course module IDs for this section.
-        $sectioncmids = $modinfo->sections[$this->section->section];
+        $currentsection = optional_param('section', 0, PARAM_INT);
 
-        $total = 0;
-        $completed = 0;
+        $sectioncmids = [];
+        if (!$currentsection) {
+            foreach ($modinfo->sections as $arr) {
+                $sectioncmids = array_merge($sectioncmids, $arr);
+            }
+        } else {
+            if ($obj = $DB->get_record('course_sections', ['course' => $this->format->get_course()->id, 'section' => $currentsection])) {
+                $sectioncmids = array_merge($sectioncmids, explode(',', $obj->sequence));
+
+                // Subsections.
+                foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+                    if ($subsection->parent == $obj->section && $num != $obj->section) {
+                        $sectioncmids = array_merge($sectioncmids, explode(',', $subsection->sequence));
+                    }
+                }
+
+                $sectioncmids = array_filter($sectioncmids);
+            }
+        }
+
+        $total = $completed = 0;
 
         // Iterate through all the course module ID's that appear in this section.
-        foreach ($sectioncmids as $cmid) {
+        foreach (array_unique($sectioncmids) as $cmid) {
             $cminfo = $modinfo->cms[$cmid];
 
             // Don't include the course module if it's not visible, or about to be deleted.

@@ -61,8 +61,8 @@ class metadata extends \local_metadata\fieldtype\metadata {
         }
         // Option for value in HTML.
         $this->options = [];
+
         // Option for value in language.
-        $this->langoption = [];
         if (!empty($this->field->required)) {
             $this->options[''] = get_string('choose').'...';
         }
@@ -71,23 +71,29 @@ class metadata extends \local_metadata\fieldtype\metadata {
             // ID value for separator.
             $idvalue = explode(':', $option);
             // Lang values separator.
-            preg_match_all("/([^|= ]+)=([^|= ]+)/", end($idvalue), $r);
+            preg_match_all("/([^|=]+)=([^|=]+)/", end($idvalue), $r);
             $result = array_combine($r[1], $r[2]);
+
             // Check current language on system for display.
-            $lang = substr(current_language(), 0, 2);
-            if (array_key_exists($lang , $result)) {
-                $this->langoption[$idvalue[0]] = format_string($result[$lang]);
+            if(!$lang = get_parent_language()){
+                $lang = current_language();
+            }
+
+            if (array_key_exists($lang, $result)) {
                 $this->options[$idvalue[0]] = format_string($result[$lang]);
             } else {
                 // If the value is not in supported in current lang set the result to be the first value.
-                $this->langoption[$idvalue[0]] = format_string(current($result));
-                $this->options[$idvalue[0]] = format_string(current($result));
+                $this->options[$idvalue[0]] = format_string($result['en']);
             }
         }
-        // If there is no values selected it will not show in profile page.
-        if ($this->data == '0') {
-            $this->data = '';
+
+        // Set the data key.
+        if ($this->data !== null) {
+            $key = json_decode($this->data);
+            $this->data = $key;
+            $this->datakey = $key;
         }
+
         // Set the name for display; will need to be a language string.
         $this->name = get_string('displayname', 'metadatafieldtype_multiselect');
     }
@@ -97,21 +103,21 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param moodleform $mform Moodle form instance
      */
     public function edit_field_add($mform) {
+        global $USER;
 
-        $attr = $this->field->locked == 1 && !$this->if_field_editable() ? ['disabled'] : [];
+        $admins = [];
+        foreach (get_admins() as $admin) {
+            $admins[] = $admin->id;
+        }
 
-        // Set the form for editing in profile preference.
-        if (isset($this->langoption)) {
-            // If there's an lang supported show it in the form edit.
-            $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->langoption, $attr);
-        } else {
-            // Show the default value wich is the first one.
-            $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options, $attr);
+        $attr = [];
+        if ($this->field->locked == 1 && !in_array($USER->id, $admins)) {
+            $attr = ['disabled'];
         }
-        if ($this->field->param2 == 1) {
-            // If param2 is set to yes show multiselect option.
-            $mform->getElement($this->inputname)->setMultiple(true);
-        }
+
+        // Show the default value wich is the first one.
+        $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options, $attr);
+        $mform->getElement($this->inputname)->setMultiple(true);
     }
 
     /**
@@ -120,7 +126,13 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param moodleform $mform instance of the moodleform class
      */
     public function edit_field_set_required($mform) {
-        if($this->field->locked != 1 || $this->if_field_editable()){
+        global $USER;
+
+        $admins = [];
+        foreach (get_admins() as $admin) {
+            $admins[] = $admin->id;
+        }
+        if ($this->field->locked != 1 || in_array($USER->id, $admins)) {
             parent::edit_field_set_required($mform);
         }
     }
@@ -146,18 +158,9 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @return mixed Data or null
      */
     public function edit_save_data_preprocess($data, $datarecord) {
-        // Process the data before it gets saved in database.
-        $string = '';
-        if (is_array($data)) {
-            foreach ($data as $key) {
-                if (isset($this->options[$key])) {
-                    $string .= $key."\r\n";
-                }
-            }
-            return substr($string, 0, -2);
-        }
-        return isset($this->options[$data]) ? $data : null;
 
+        $datastr = json_encode($data, JSON_UNESCAPED_UNICODE);
+        return $datastr;
     }
 
     /**
@@ -169,7 +172,7 @@ class metadata extends \local_metadata\fieldtype\metadata {
      * @param stdClass $instance Instance object.
      */
     public function edit_load_instance_data($instance) {
-        $instance->{$this->inputname} = explode("\r\n", $this->data);
+        $instance->{$this->inputname} = $this->data;
     }
 
     /**

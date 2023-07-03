@@ -221,6 +221,7 @@ class functionHelp {
                     $this->community_sharewith_update_activity_metadata($sourceactivityid, $shortname, $value, 1);
                     break;
 
+                case 'multiselect':
                 case 'multimenu':
                     $value = json_encode(explode(',', $post[$shortname]), JSON_UNESCAPED_UNICODE);
                     $this->community_sharewith_update_activity_metadata($sourceactivityid, $shortname, $value);

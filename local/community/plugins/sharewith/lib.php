@@ -210,6 +210,7 @@ function community_sharewith_output_fragment_upload_activity_maagar($args) {
                     $default[$item->shortname] = '';
                 }
                 break;
+            case 'multiselect':
             case 'multimenu':
                 $default[$item->shortname] = isset($data[$item->shortname]) ? json_decode($data[$item->shortname]) : [];
                 break;
