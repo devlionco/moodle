@@ -398,7 +398,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         if (is_siteadmin()) {
             $url = new moodle_url('/admin/search.php');
             $attr = [
-                'class' => 'nav-admin-search-icon  d-flex align-items-center justify-content-center pr-3',
+                'class' => 'nav-admin-search-icon  d-flex align-items-center justify-content-center pr-2 pr-md-3',
                 'title' => get_string('siteadminquicklink', 'theme_petel'),
                 'role' => 'button',
                 'data-toggle' => 'tooltip',

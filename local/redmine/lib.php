@@ -95,7 +95,7 @@ function local_redmine_render_navbar_output() {
                 $title = get_string('support', 'local_redmine');
 
             $output = '
-                    <div class="dropdown d-flex align-items-center pr-3" title="'. $title .'" aria-label="'. $title .'">
+                    <div class="dropdown d-flex align-items-center pr-2 pr-md-3" title="'. $title .'" aria-label="'. $title .'">
                         <a class="support-btn nav-link dropdown-toggle" href="#" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa-light fa-headset"></i>
                         <div id="issues_counter_user" style="display: none;" class="count-container " data-region="count-container">0</div> 
@@ -123,7 +123,7 @@ function local_redmine_render_navbar_output() {
                 break;
             case '3': // Student on course.
                 $title = get_string('support', 'local_redmine');
-                $output .= html_writer::start_tag('div',array('class' => 'd-flex align-items-center'));
+                $output .= html_writer::start_tag('div',array('class' => 'd-flex align-items-center pr-3'));
                 $output .= html_writer::start_tag('a', array(
                         'href'  => '#',
                         'class' => 'support-btn-student fa-light fa-question nav-link',

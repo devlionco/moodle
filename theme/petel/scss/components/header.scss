@@ -207,3 +207,40 @@ nav.navbar {
         font-weight: 400;
     }
 }
+@include media-breakpoint-down(sm) {
+    nav.navbar {
+        &.fixed-top {
+            height: 3rem;
+           .divider {
+            height: 1.75rem;
+           }
+        }
+        #usernavigation {
+
+            .nav-link {
+                font-size: 1.125rem;
+            }
+            .usermenu {
+                #user-menu-toggle {
+                    padding: 0;
+                    color: $white;
+                }
+    
+                .userbutton {
+                    height: 1.125rem;
+                       width: 1.125rem;
+                    i.defaultuserpic {
+                        font-size: 1.125rem;
+                    }
+    
+                    .userpicture {
+                       height: 1.125rem;
+                       width: 1.125rem;
+                    }
+    
+                }
+            }
+        }
+    }
+    
+}
