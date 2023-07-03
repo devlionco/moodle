@@ -186,6 +186,7 @@ class content extends \core_courseformat\output\local\content {
         $data->showsimplecards = $PAGE->user_is_editing() &&
             ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS) && !isset($data->singlesection);
         if($data->showsimplecards){
+            // Update section images.
             $PAGE->requires->js_call_amd('format_flexsections/sections', 'initCoursePage');
         }
 

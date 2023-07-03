@@ -34,7 +34,7 @@ require_once(__DIR__ . '/locallib.php');
  * @return string HTML for the navbar
  */
 function community_oer_render_navbar_output() {
-    global $PAGE, $OUTPUT, $USER, $COURSE;
+    global $PAGE, $OUTPUT, $USER, $COURSE, $CFG;
 
     $output = '';
 
