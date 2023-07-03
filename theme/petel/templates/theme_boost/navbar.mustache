@@ -73,7 +73,7 @@
     </a>
     
     {{#primarymoremenu}}
-        <div class="primary-navigation d-flex">
+        <div class="primary-navigation d-none d-md-flex">
             {{> core/moremenu}}
         </div>
     {{/primarymoremenu}}
@@ -93,7 +93,7 @@
             <div class="divider border-left h-75 align-self-center mx-1"></div>
         {{/langmenu}}
         {{{ output.navbar_plugin_output }}}
-        <div class="d-flex align-items-stretch usermenu-container ml-3" data-region="usermenu">
+        <div class="d-flex align-items-stretch usermenu-container ml-2 ml-md-3" data-region="usermenu">
             {{#usermenu}}
                 {{> core/user_menu }}
             {{/usermenu}}

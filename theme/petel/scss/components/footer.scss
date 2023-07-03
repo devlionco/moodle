@@ -58,14 +58,22 @@
     }
 }
 
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
     #page-footer {
         .logo-wrapper {
-            margin: 0 auto;
+            margin: 0 1rem;
         }
 
+    }
+}
+
+@include media-breakpoint-down(md) {
+    #page-footer {
         .copyright {
             text-align: center;
+        }
+        .logo-wrapper {
+            margin: 0 auto;
         }
     }
 
