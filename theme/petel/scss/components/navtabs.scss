@@ -21,7 +21,7 @@
             &:active {
                 color: $body-color;
 
-                &::after {
+                &::before {
                     content: '';
                     position: absolute;
                     display: block;
@@ -49,7 +49,7 @@
                 border-left: .0625rem solid $primary;
                 box-shadow: none;
 
-                &::after {
+                &::before {
                     content: '';
                     position: absolute;
                     display: block;

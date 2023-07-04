@@ -1,31 +1,39 @@
-<div class="modal-body d-flex justify-content-center pr-5 pl-5">
+<div class="modal-body d-flex justify-content-center px-3 row">
 
     {{#courseupload}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler= "uploadCourseToCatalog">
-        <i aria-hidden="true" title="{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}" class="fa-pro fa-upload fa-5x"></i>
-        <div class = "">{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}</div>
-    </button>
+    <div class="col-3">
+        <button type="button" class="btn btn-outline-primary w-100 h-100" data-handler= "uploadCourseToCatalog">
+            <i aria-hidden="true" title="{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}" class="fa-light fa-upload fa-3x mb-2"></i>
+            <div class = "">{{#str}}courseuploadtocatalog, community_sharecourse{{/str}}</div>
+        </button>
+    </div>
     {{/courseupload}}
 
     {{#sharecoursecommunity}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="shareCourseCommunity">
-        <i aria-hidden="true" title="{{#str}}eventcommunityshare, community_sharewith{{/str}}"  class="fa-pro fa-group fa-5x"></i>
-        <div class = "">{{#str}}sharecoursecommunity, community_sharecourse{{/str}}</div>
-    </button>
+    <div class="col-3">
+        <button type="button" class="btn btn-outline-primary w-100 h-100" data-handler="shareCourseCommunity">
+            <i aria-hidden="true" title="{{#str}}eventcommunityshare, community_sharewith{{/str}}"  class="fa-light fa-group fa-3x mb-2"></i>
+            <div class = "">{{#str}}sharecoursecommunity, community_sharecourse{{/str}}</div>
+        </button>
+    </div>
     {{/sharecoursecommunity}}
 
     {{#copycoursetoteacher}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="copyCourseToTeacher">
-        <i aria-hidden="true" title="{{#str}}copycoursetoteacher, community_sharecourse{{/str}}"  class="fa-pro fa-user fa-5x"></i>
-        <div class = "">{{#str}}copycoursetoteacher, community_sharecourse{{/str}}</div>
-    </button>
+    <div class="col-3">
+        <button type="button" class="btn btn-outline-primary w-100 h-100" data-handler="copyCourseToTeacher">
+            <i aria-hidden="true" title="{{#str}}copycoursetoteacher, community_sharecourse{{/str}}"  class="fa-light fa-user fa-3x mb-2"></i>
+            <div class = "">{{#str}}copycoursetoteacher, community_sharecourse{{/str}}</div>
+        </button>
+    </div>
     {{/copycoursetoteacher}}
 
     {{#copycoursetocategory}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-top mx-3" data-handler="copyCourseToMyCategory">
-        <i aria-hidden="true" title="{{#str}}copycoursetocategory, community_sharecourse{{/str}}"  class="fa-pro fa-copy fa-5x"></i>
-        <div class = "">{{#str}}copycoursetocategory, community_sharecourse{{/str}}</div>
-    </button>
+    <div class="col-3">
+        <button type="button" class="btn btn-outline-primary w-100 h-100" data-handler="copyCourseToMyCategory">
+            <i aria-hidden="true" title="{{#str}}copycoursetocategory, community_sharecourse{{/str}}"  class="fa-light fa-copy fa-3x mb-2"></i>
+            <div class = "">{{#str}}copycoursetocategory, community_sharecourse{{/str}}</div>
+        </button>
+    </div>
     {{/copycoursetocategory}}
 
 </div>
