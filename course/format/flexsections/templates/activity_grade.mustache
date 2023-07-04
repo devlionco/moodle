@@ -25,7 +25,7 @@ along with Moodle. If not, see
     {{/tooltip}}
 
     {{^tooltip}}
-    <div tabindex="0" class="d-flex align-items-center submissionstatus">
+    <div tabindex="0" class="d-flex align-items-center justify-content-start submissionstatus ">
         {{{modstatus}}}
         {{{modicon}}}
     </div>
@@ -33,18 +33,16 @@ along with Moodle. If not, see
 {{/submissionstatus}}
 
 {{#gradestatus}}
-<div class="gradestatus-wrapper d-flex align-items-center">
+<div class="gradestatus-wrapper d-block d-md-flex align-items-center flex-wrap">
 
-    <div class="studentfailed d-flex align-items-center">
+    <div class="studentfailed d-flex align-items-center mr-3 mr-md-0">
         {{#student_failed}}
-            <span class="circle bg-danger d-flex align-items-center justify-content-center rounded-circle p-1 mr-2">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </span>
+            <i class="fa-light text-danger fa-triangle-exclamation d-flex mr-2"></i>
             {{#str}}studentfailed, format_flexsections, {{student_failed}}{{/str}}
         {{/student_failed}}
     </div>
     {{#student_failed}}
-    <div class="divider"></div>
+    <div class="divider d-none d-md-block"></div>
     {{/student_failed}}
     <div tabindex="0" class="gradestatus d-flex align-items-center">
         <a class="grades mr-2 " target="__blank" href="{{{url}}}">{{#str}}grades{{/str}}</a>

@@ -129,7 +129,7 @@
         aspect-ratio: 4/4;
     }
 
-// Coursecards TODO: find better palce for this code.
+    // Coursecards TODO: find better palce for this code.
 
     .dashboard-card-deck {
         margin-left: -0.75rem;
@@ -149,6 +149,7 @@
 
     .card {
         margin-bottom: 0;
+
         .card-header-fade,
         .card-header {
             background: transparent !important;
@@ -156,9 +157,11 @@
             z-index: 5;
         }
     }
+
     .card-title {
         display: flex;
         color: $primary;
+
         span {
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -202,6 +205,7 @@
         }
 
     }
+
     .uploadsectionimage {
         .btn {
 
@@ -209,6 +213,7 @@
             font-size: 1rem;
         }
     }
+
     .lastseen-text {
         font-size: .75rem;
         font-weight: 500;
@@ -269,27 +274,6 @@
                 font-size: 1rem;
                 line-height: 1rem;
             }
-        }
-    }
-
-    .completion-btn {
-        display: flex;
-        align-items: center;
-        background-color: #fff;
-        box-shadow: none;
-        border: none;
-
-        i {
-            margin-left: .75rem;
-            font-size: 1.5rem;
-        }
-
-        &.overallcomplete {
-            color: $success;
-        }
-
-        &.overallincomplete {
-            color: $body-color;
         }
     }
 
@@ -363,10 +347,6 @@
 
     .gradestatus-wrapper {
 
-        .studentfailed {
-            font-size: .75rem;
-        }
-
         .divider {
             display: flex;
             width: .0625rem;
@@ -437,4 +417,65 @@
             }
         }
     }
+}
+
+
+@include media-breakpoint-down(sm) {
+    #page.drawers .main-inner {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+    }
+    
+    .path-course.format-flexsections {
+        #page-wrapper #page {
+            margin-top: 3rem;
+        }
+
+        .course-content {
+            padding: 1rem;
+
+            .coursecompletion {
+                width: 100%;
+            }
+
+            .card-deck .card {
+                aspect-ratio: unset;
+                margin-bottom: .25rem;
+            }
+        }
+
+        .dashboard-card-deck {
+            margin-left: 0;
+            margin-right: 0;
+
+            &:not(.fixed-width-cards) .dashboard-card {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+        }
+        .activity-instance {
+            margin-bottom: 1rem;
+        }
+        .submissionstatus {
+            width: 100%;
+        }
+        .sectionname {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .drawerheader {
+
+            .btn.btn-icon:hover,
+            .btn.btn-icon:focus {
+                background-color: transparent;
+            }
+        }
+    }
+
 }

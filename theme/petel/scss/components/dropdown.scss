@@ -8,6 +8,7 @@
             padding: .5rem 1rem;
             color: $body-color;
             font-family: $primary-font;
+            white-space: pre-wrap;
             &:hover {
                background-color: $secondarylight;
             }
