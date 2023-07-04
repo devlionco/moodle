@@ -163,3 +163,5 @@ $string['userlogs'] = 'User logs';
 $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'The verification code provided by the current authentication factor.';
 $string['viewlockedusers'] = 'View locked users';
+$string['settings:remeberip'] = 'Remember IP';
+$string['settings:remeberip_help'] = 'MFA is not activated if the user is re-logged in from the same IP during the same day';

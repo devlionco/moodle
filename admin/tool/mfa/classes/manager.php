@@ -220,7 +220,15 @@ class manager {
      * @return mixed a STATE variable from plugininfo
      */
     public static function get_status() {
-        global $SESSION;
+        global $SESSION, $USER;
+
+        if (get_config('tool_mfa', 'remeberip')) {
+            $lastlogin = get_user_preferences('lastlogin');
+            $lastip = get_user_preferences('lastip');
+            if ($lastlogin && $lastip && $lastlogin > strtotime("today", time()) && $lastip == getremoteaddr()) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
+            }
+        }
 
         // Check for any instant fail states.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
@@ -230,6 +238,19 @@ class manager {
             if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
                 return \tool_mfa\plugininfo\factor::STATE_FAIL;
             }
+        }
+
+        // Check for passing state. If found, ensure that session var is set.
+        if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
+            if (get_config('tool_mfa', 'remeberip')) {
+                set_user_preferences(['lastlogin' => $USER->lastlogin, 'lastip' => $USER->lastip]);
+            }
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        } else if (self::passed_enough_factors()) {
+            if (get_config('tool_mfa', 'remeberip')) {
+                set_user_preferences(['lastlogin' => $USER->lastlogin, 'lastip' => $USER->lastip]);
+            }
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
 
         $passcondition = ((isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) ||
