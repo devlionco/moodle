@@ -6,14 +6,38 @@
   &[class*="btn-outline"]:not(:hover):not(.hover):not(:focus):not(.focus):not(:active):not(.active):not(.disabled) {
     background-color: #fff;
   }
+
   &.btn-sm {
     min-height: 2.125rem;
     font-size: .75rem;
     padding: .5rem 1rem;
   }
+
   &.btn-lg {
     min-height: 3.25rem;
     font-size: 1.5rem;
   }
 }
 
+.completion-btn {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+
+
+    i.fa-regular {
+      margin-left: .75rem;
+      font-size: 1.5rem;
+    }
+  
+
+  &.overallcomplete {
+    color: $success;
+  }
+
+  &.overallincomplete {
+    color: $body-color;
+  }
+}
