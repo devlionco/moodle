@@ -140,7 +140,8 @@ class local_redmine_external extends external_api {
             $a->digest = mb_substr($moreinfo, 0, 85) . '...';
 
             $description = get_string('redmine_description', 'local_redmine', $a);
-            $subject = get_string('redmine_subject', 'local_redmine', $a);
+            $instanceprefix = $CFG->rm_instance_prefix ?? ''; // Helps distinguish request from PROD/DEV
+            $subject = $instanceprefix.' '.get_string('redmine_subject', 'local_redmine', $a);
 
             $url_components = parse_url($pageurl);
             parse_str($url_components['query'], $params);
