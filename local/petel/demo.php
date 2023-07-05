@@ -26,7 +26,6 @@
 require_once("../../config.php");
 require_once($CFG->libdir . '/enrollib.php');
 
-require_login();
 
 $key = required_param('key', PARAM_ALPHANUMEXT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
@@ -74,6 +73,7 @@ if ($formdata = $form->get_data()) {
 
     // Log user in.
     \core\session\manager::set_user($user);
+    complete_user_login($user);
 
     // Check function exists.
     $methodname = 'can_' . $instance->enrol . '_enrol';
