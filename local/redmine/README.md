@@ -2,6 +2,14 @@
 
 Display a list of Redmine issues open by current user.
 
+## Setup ##
+
+You can add a prefix to the subject of a newly created redmine issue,
+to distinguish issues created from a PROD ro DEV enviruments,
+by adding the following setting to the PETEL (Moodle) instance config.php file:
+
+> $CFG->rm_instance_prefix = '[M41Dev]';
+
 ## License ##
 
 Department of science education, Weizmann institute of science, Israel.
