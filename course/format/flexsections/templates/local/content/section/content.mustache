@@ -104,6 +104,33 @@
         {{> core_courseformat/local/content/section/badges }}
     {{/ core_courseformat/local/content/section/badges }}
 </div>
+
+{{#sectioncompletion}}
+    <div class="coursecompletion ml-auto">
+        {{#iscomplete}}
+            {{#pix}} i/checked, core, done {{/pix}}
+            <span class="sr-only">{{#str}} completed, core {{/str}}</span>
+        {{/iscomplete}}
+        <div class="progress-wrapper p-2">
+            <div class="progress mb-2">
+                <div class="progress-bar bg-linkhover" role="progressbar" style="width: {{percentage}}%"
+                     aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+            <p class="text-primary mb-0">
+                {{#showpercentage}}
+                    {{#str}} course:completion:percentage, format_flexsections, { "percentage":
+                        {{#quote}}{{percentage}}{{/quote}} } {{/str}}
+                {{/showpercentage}}
+                {{#showcount}}
+                    {{#str}} course:completion:count, format_flexsections, { "completed": {{#quote}}{{completed}}{{/quote}},
+                        "total": {{#quote}}{{total}}{{/quote}} } {{/str}}
+                {{/showcount}}
+            </p>
+        </div>
+    </div>
+{{/sectioncompletion}}
+
 {{#collapsemenu}}
 <div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
     <a

@@ -28,7 +28,7 @@
 }}
 {{#istrackeduser}}
     {{#overallcomplete}}
-        <button class="completion-btn overallcomplete text-nowrap"
+        <button class="btn btn-success btn-sm completion-btn overallcomplete text-nowrap"
                 data-action="toggle-manual-completion" data-toggletype="manual:undo" data-cmid="{{cmid}}"
                 data-activityname="{{activityname}}" data-withavailability="{{withavailability}}" 
                 {{#accessibledescription}} 
@@ -40,11 +40,11 @@
                 {{/accessibledescription}}>
                 {{!-- TODO: remove string! --}}
             {{#str}} completion_manual:done, core_course {{/str}}
-            <i class="fa-regular fa-circle-check"></i>
+            <i class="fa-regular fa-solid fa-check"></i>
         </button>
     {{/overallcomplete}}
     {{#overallincomplete}}
-        <button class="completion-btn overallincomplete text-nowrap"
+        <button class="btn btn-outline-secondary btn-sm completion-btn overallincomplete text-nowrap"
                 data-action="toggle-manual-completion" data-toggletype="manual:mark-done" data-cmid="{{cmid}}"
                 data-activityname="{{activityname}}" data-withavailability="{{withavailability}}"
                 {{#accessibledescription}}
@@ -56,7 +56,6 @@
                 {{/accessibledescription}}>
                 {{!-- TODO: remove string! --}}
             {{#str}} completion_manual:markdone, core_course {{/str}}
-            <i class="fa-regular fa-circle"></i>
         </button>
     {{/overallincomplete}}
 {{/istrackeduser}}

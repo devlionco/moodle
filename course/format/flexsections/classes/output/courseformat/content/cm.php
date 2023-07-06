@@ -82,6 +82,7 @@ class cm extends \core_courseformat\output\local\content\cm {
 
         // Has share button.
         $data->hassharebutton = true;
+        $data->pluginname = get_string('pluginname', 'mod_' . $this->mod->modname);
 
         // Completion.
         if (format_flexsections_has_teacher_capability($this->mod->id) &&

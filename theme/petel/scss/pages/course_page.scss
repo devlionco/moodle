@@ -119,6 +119,26 @@
         }
     }
 
+    .course-section-header {
+        .course-section-header-inner {
+            width: 100%;
+            max-width: 50%;
+        }
+        .coursecompletion {
+            max-width: 16rem;
+            width: 100%;
+        }
+        .sectionname {
+            width: 100%;
+
+            a {
+                white-space: nowrap;
+                max-width: 90%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+    }
     #coursecontentcollapse0 {
         .course-description-item.summarytext {
             padding: 0 .5rem;
@@ -418,7 +438,19 @@
         }
     }
 }
-
+.completion-bage {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+  
+  
+      i.fa-regular {
+        margin-left: .75rem;
+        font-size: 1.5rem;
+      }
+  }
 
 @include media-breakpoint-down(sm) {
     #page.drawers .main-inner {

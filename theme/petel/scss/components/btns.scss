@@ -18,26 +18,3 @@
     font-size: 1.5rem;
   }
 }
-
-.completion-btn {
-  display: flex;
-  align-items: center;
-  background-color: transparent;
-  box-shadow: none;
-  border: none;
-
-
-    i.fa-regular {
-      margin-left: .75rem;
-      font-size: 1.5rem;
-    }
-  
-
-  &.overallcomplete {
-    color: $success;
-  }
-
-  &.overallincomplete {
-    color: $body-color;
-  }
-}
