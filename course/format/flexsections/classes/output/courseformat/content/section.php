@@ -85,6 +85,7 @@ class section extends \core_courseformat\output\local\content\section {
         $completion = $this->get_section_completion();
         $data->completion = $completion;
         $data->hascompletion = !empty($completion);
+        $data->sectioncompletion = $completion;
 
         // Cards orientation
         if ($this->format->get_format_option('cardorientation') == FORMAT_FLEXSECTIONS_ORIENTATION_HORIZONTAL) {
@@ -161,12 +162,40 @@ class section extends \core_courseformat\output\local\content\section {
     }
 
     /**
+     * Recursion for grab subsections.
+     *
+     * @return array
+     */
+    private function get_sub_sections_cmids(&$cmids, $section): void {
+        global $DB;
+
+        $modinfo = $this->section->modinfo;
+
+        if ($obj = $DB->get_record('course_sections', ['course' => $this->format->get_course()->id, 'section' => $section])) {
+            $cmids = array_merge($cmids, explode(',', $obj->sequence));
+
+            // Subsections.
+            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+                if ($subsection->parent == $obj->section && $num != $obj->section) {
+                    $this->get_sub_sections_cmids($cmids, $subsection->section);
+                }
+            }
+
+            $cmids = array_filter($cmids);
+        }
+    }
+
+    /**
      * Grabs the completion info for this section
      *
      * @return array
      */
     public function get_section_completion(): array {
-        global $DB;
+
+        $coursecontext = \context_course::instance($this->format->get_course()->id);
+        if (has_capability('moodle/course:viewhiddensections', $coursecontext)) {
+            return [];
+        }
 
         // Can't do anything if completion is disabled, or we're a guest user.
         if (isguestuser() || !$this->format->get_course()->enablecompletion) {
@@ -185,26 +214,14 @@ class section extends \core_courseformat\output\local\content\section {
         }
 
         // List of course module IDs for this section.
-        $currentsection = optional_param('section', 0, PARAM_INT);
-
+        $currentsection = $this->section->section;
         $sectioncmids = [];
         if (!$currentsection) {
             foreach ($modinfo->sections as $arr) {
                 $sectioncmids = array_merge($sectioncmids, $arr);
             }
         } else {
-            if ($obj = $DB->get_record('course_sections', ['course' => $this->format->get_course()->id, 'section' => $currentsection])) {
-                $sectioncmids = array_merge($sectioncmids, explode(',', $obj->sequence));
-
-                // Subsections.
-                foreach ($modinfo->get_section_info_all() as $num => $subsection) {
-                    if ($subsection->parent == $obj->section && $num != $obj->section) {
-                        $sectioncmids = array_merge($sectioncmids, explode(',', $subsection->sequence));
-                    }
-                }
-
-                $sectioncmids = array_filter($sectioncmids);
-            }
+            $this->get_sub_sections_cmids($sectioncmids, $currentsection);
         }
 
         $total = $completed = 0;
@@ -246,6 +263,14 @@ class section extends \core_courseformat\output\local\content\section {
         $progressmode = $this->format->get_format_option('progressmode');
         $percentage = round(($completed / $total) * 100);
 
+        $modecircle = $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE;
+        $modeline = $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE;
+
+        if($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE){
+            $modecircle = false;
+            $modeline = true;
+        }
+        //echo '<pre>';print_r($percentage);
         return [
             'total' => $total,
             'completed' => $completed,
@@ -254,8 +279,8 @@ class section extends \core_courseformat\output\local\content\section {
             'iscomplete' => $iscomplete,
             'hasprogress' => $completed > 0,
             'showpercentage' => $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_PERCENTAGE,
-            'modecircle' => $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_CIRCLE,
-            'modeline' =>  $progressmode == FORMAT_FLEXSECTIONS_PROGRESSMODE_LINE,
+            'modecircle' => $modecircle,
+            'modeline' =>  $modeline,
             'showcount' => $progressformat == FORMAT_FLEXSECTIONS_PROGRESSFORMAT_COUNT,
         ];
     }

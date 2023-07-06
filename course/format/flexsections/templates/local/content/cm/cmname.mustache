@@ -54,11 +54,6 @@
                 >
             </div>
             <div class="media-body align-self-center">
-                {{#showpluginname}}
-                <div class="text-uppercase small">
-                    {{{pluginname}}}
-                </div>
-                {{/showpluginname}}
                 <div class="activityname">
                     {{#activityname}}
                         {{$ core/inplace_editable }}
@@ -66,6 +61,11 @@
                         {{/ core/inplace_editable }}
                     {{/activityname}}
                 </div>
+                {{#pluginname}}
+                <div class="text-uppercase small">
+                    {{{pluginname}}}
+                </div>
+                {{/pluginname}}
             </div>
         </div>
     </div>

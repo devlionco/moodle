@@ -259,6 +259,30 @@ class format_flexsections_external extends external_api {
     }
 
     /**
+     * Recursion for grab subsections.
+     *
+     * @return array
+     */
+    private static function get_sub_sections_cmids(&$cmids, $sectionid): void {
+        global $DB;
+
+        if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
+            $cmids = array_merge($cmids, explode(',', $obj->sequence));
+            $modinfo = get_fast_modinfo($obj->course);
+
+            // Subsections.
+            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+                if ($subsection->parent == $obj->section && $num != $obj->section) {
+                    self::get_sub_sections_cmids($cmids, $subsection->id);
+                }
+            }
+
+            $cmids = array_filter($cmids);
+            $cmids = array_unique($cmids);
+        }
+    }
+
+    /**
      * Returns welcome message
      * @param int $sectionid
      * @return string
@@ -269,19 +293,10 @@ class format_flexsections_external extends external_api {
         $data = $cmids = [];
         $waitingforsubmission = $failed = $notsubmitted = 0;
 
+        self::get_sub_sections_cmids($cmids, $sectionid);
+
         if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
-            $cmids = array_merge($cmids, explode(',', $obj->sequence));
             $modinfo = get_fast_modinfo($obj->course);
-
-            // Subsections.
-            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
-                if ($subsection->parent == $obj->section && $num != $obj->section) {
-                    $cmids = array_merge($cmids, explode(',', $subsection->sequence));
-                }
-            }
-
-            $cmids = array_filter($cmids);
-            $cmids = array_unique($cmids);
 
             foreach ($cmids as $cmid){
                 $cm = $modinfo->get_cm($cmid);
@@ -305,9 +320,15 @@ class format_flexsections_external extends external_api {
             }
         }
 
-        $data['waitingforsubmission'] = ['value' => $waitingforsubmission];
-        $data['failed'] = ['value' => $failed];
-        $data['notsubmitted'] = ['value' => $notsubmitted];
+        if($waitingforsubmission > 0){
+            $data['waitingforsubmission'] = ['value' => $waitingforsubmission];
+        }
+        if($failed > 0){
+            $data['failed'] = ['value' => $failed];
+        }
+        if($notsubmitted > 0){
+            $data['notsubmitted'] = ['value' => $notsubmitted];
+        }
 
         return json_encode($data);
     }
