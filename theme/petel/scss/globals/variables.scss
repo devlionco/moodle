@@ -107,13 +107,13 @@ $primary-font: 'Heebo', sans-serif;
 
 // TODO: Check is it needed
 // Breadcrumbs
-// $breadcrumb-padding-y: .25rem !default;
-// $breadcrumb-padding-x: 0 !default;
-// $breadcrumb-item-padding: .5rem !default;
-// $breadcrumb-margin-bottom: 0 !default;
-// $breadcrumb-bg: transparent !default;
-// $breadcrumb-divider: "/" !default;
-// $breadcrumb-divider-rtl: "/" !default;
+ $breadcrumb-padding-y: .25rem !default;
+ $breadcrumb-padding-x: 0 !default;
+ $breadcrumb-item-padding: .5rem !default;
+ $breadcrumb-margin-bottom: 0 !default;
+ $breadcrumb-bg: transparent !default;
+ $breadcrumb-divider: "/" !default;
+ $breadcrumb-divider-rtl: "/" !default;
 
 // $h1-font-size: $font-size-base * 2.5 !default;    // Edna UI KIT style guide = 40px = 2.5rem
 // $h2-font-size: $font-size-base * 2 !default; // Edna UI KIT style guide = 32px = 2rem

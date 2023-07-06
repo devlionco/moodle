@@ -129,8 +129,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
  * This renders the navbar.
  * Uses bootstrap compatible html.
  */
-
-    public function navbar(): string {
+// TODO use core navbar function from moodle 4.1 remove after QA
+    public function navbar_old(): string {
         global $PAGE;
 
         foreach ($this->page->navbar->get_items() as $key => $item) {
@@ -193,6 +193,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         $header->iscoursepage = $iscoursepage;
         $header->courseid = $COURSE->id;
         $header->headeractions = $this->page->get_header_actions();
+        $header->navbar = $this->navbar();
 
         if (getbacktocourse()) {
             $url = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $PAGE->course->id));
@@ -200,7 +201,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
             $url .= '#section-'.$PAGE->cm->sectionnum;
             $text = get_string('back_to_course', 'theme_petel');
             $header->backtocourse = html_writer::tag('a', $text, array('class' => 'btn  btn-default back-to-course-btn ml-auto', 'href' => $url));
-
         }
 
         $petelutility = new utility();
