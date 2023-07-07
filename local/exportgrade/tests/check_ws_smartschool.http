@@ -1,0 +1,44 @@
+POST https://petel-dev.stweizmann.org.il/physics/webservice/restful/server.php/local_exportgrades_learninggroup_activities
+Content-Type: application/json
+Accept: application/json
+Authorization: 3b67919c0e2920892c50aecff1df1609
+user-agent: phpstorm-test-clent
+
+{
+  "year": 2022,
+  "school_symbol": 12345,
+  "learninggroup_id": 444,
+  "teacher_idnumber": 123456789
+}
+
+### As asked by Yossi (smartschool)
+### Course: https://petel.stweizmann.org.il/physics/course/view.php?id=3164
+### Course: https://petel-dev.stweizmann.org.il/physics/course/view.php?id=7150
+POST https://petel-dev.stweizmann.org.il/physics/webservice/restful/server.php/local_exportgrades_learninggroup_activities
+Content-Type: application/json
+Accept: application/json
+Authorization: 3b67919c0e2920892c50aecff1df1609
+user-agent: phpstorm-test-clent
+
+{
+  "year": 2022,
+  "school_symbol": 441006,
+  "learninggroup_id": 4443,
+  "teacher_idnumber": 999634132
+}
+
+
+###
+
+POST https://petel-dev.stweizmann.org.il/physics/webservice/restful/server.php/local_exportgrades_learninggroup_grades
+Content-Type: application/json
+Accept: application/json
+Authorization: 3b67919c0e2920892c50aecff1df1609
+user-agent: phpstorm-test-clent
+
+{
+"smscode": "",
+"subject": "physics",
+"learninggroup_id": 4443,
+"cmid": 443298
+}
