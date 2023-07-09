@@ -6,13 +6,24 @@
 
 // Format flex-sections.
 .path-course.format-flexsections {
+    #page.drawers{
+        .main-inner{
+            max-width: 57.5rem;
+            margin-top: 0;
+            padding-top: 2rem;
+        }
+    }
+    .header-maxwidth {
+        margin: 0;
+        margin-bottom: .25rem;
+    }
     #page-header {
 
         // FIXME: should be changed by .php. add class .h1 instead of .h2
         .page-header-headings h1 {
             font-weight: 700;
-            font-size: 2.5rem;
-            line-height: 3.75rem;
+            font-size: 2rem;
+            line-height: normal;
         }
     }
 
@@ -120,6 +131,7 @@
     }
 
     .course-section-header {
+        padding: 1rem;
         .course-section-header-inner {
             width: 100%;
             max-width: 50%;
@@ -136,6 +148,7 @@
                 max-width: 90%;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                font-size: 2rem;
             }
         }
     }
@@ -158,8 +171,7 @@
         //TODO: fix it via all media queries.
         &:not(.fixed-width-cards) .dashboard-card {
             width: calc(33.33% - 1.5rem);
-            margin-right: .75rem;
-            margin-left: .75rem;
+            margin: .75rem;
         }
 
         .card-main-content {
@@ -444,8 +456,8 @@
     background-color: transparent;
     box-shadow: none;
     border: none;
-  
-  
+
+
       i.fa-regular {
         margin-left: .75rem;
         font-size: 1.5rem;
@@ -459,7 +471,7 @@
         padding-top: .5rem;
         padding-bottom: .5rem;
     }
-    
+
     .path-course.format-flexsections {
         #page-wrapper #page {
             margin-top: 3rem;

@@ -1,7 +1,10 @@
 .secondary-navigation {
     margin-bottom: 1rem;
     padding: 0;
-
+    .navigation .nav-tabs {
+        max-width: 100%;
+    }
+    
     .moremenu.navigation {
         padding: 0 1rem;
         margin: 0;
