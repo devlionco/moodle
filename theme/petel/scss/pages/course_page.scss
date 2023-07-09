@@ -6,17 +6,19 @@
 
 // Format flex-sections.
 .path-course.format-flexsections {
-    #page.drawers{
-        .main-inner{
+    #page.drawers {
+        .main-inner {
             max-width: 57.5rem;
             margin-top: 0;
             padding-top: 2rem;
         }
     }
+
     .header-maxwidth {
         margin: 0;
         margin-bottom: .25rem;
     }
+
     #page-header {
 
         // FIXME: should be changed by .php. add class .h1 instead of .h2
@@ -132,26 +134,50 @@
 
     .course-section-header {
         padding: 1rem;
+
         .course-section-header-inner {
             width: 100%;
-            max-width: 50%;
+            max-width: 60%;
         }
+
         .coursecompletion {
             max-width: 16rem;
             width: 100%;
         }
+
         .sectionname {
             width: 100%;
+            /*         white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden; */
+            max-width: 90%;
 
-            a {
+            &>span {
                 white-space: nowrap;
                 max-width: 90%;
-                text-overflow: ellipsis;
                 overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            a {
+                /*       white-space: nowrap;
+                max-width: 90%;
+                text-overflow: ellipsis;
+                overflow: hidden; */
                 font-size: 2rem;
             }
         }
     }
+
+    .allowedediting {
+        .course-section-header {
+
+            .course-section-header-inner {
+                max-width: 90%;
+            }
+        }
+    }
+
     #coursecontentcollapse0 {
         .course-description-item.summarytext {
             padding: 0 .5rem;
@@ -170,12 +196,12 @@
 
         //TODO: fix it via all media queries.
         &:not(.fixed-width-cards) .dashboard-card {
-            width: calc(33.33% - 1.5rem);
-            margin: .75rem;
+            width: calc(33.33% - .5rem);
+            margin: .25rem;
         }
 
         .card-main-content {
-            min-height: 10rem;
+            min-height: 13rem;
         }
     }
 
@@ -450,6 +476,7 @@
         }
     }
 }
+
 .completion-bage {
     display: flex;
     align-items: center;
@@ -458,11 +485,11 @@
     border: none;
 
 
-      i.fa-regular {
+    i.fa-regular {
         margin-left: .75rem;
         font-size: 1.5rem;
-      }
-  }
+    }
+}
 
 @include media-breakpoint-down(sm) {
     #page.drawers .main-inner {
@@ -502,12 +529,15 @@
             }
 
         }
+
         .activity-instance {
             margin-bottom: 1rem;
         }
+
         .submissionstatus {
             width: 100%;
         }
+
         .sectionname {
             font-size: 2rem;
             font-weight: 700;
