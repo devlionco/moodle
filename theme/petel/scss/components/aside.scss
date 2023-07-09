@@ -1,6 +1,8 @@
 // Aside drawer togglers btns.
 .drawer-toggles {
   .drawer-toggler {
+    top: calc(3.75rem + 5rem);
+
     button.btn {
       box-shadow: 0 .125rem .1875rem 0 rgba(0, 0, 0, .18);
       background-color: $secondarymedium;
@@ -44,7 +46,7 @@
   .courseindex-item.pageitem:focus .courseindex-link,
   .courseindex-item.pageitem:focus .courseindex-chevron,
   .courseindex-item.pageitem .courseindex-link,
-  .courseindex-item.pageitem .courseindex-chevron{
+  .courseindex-item.pageitem .courseindex-chevron {
     color: $white;
   }
 
@@ -69,6 +71,7 @@
     }
   }
 }
+
 #theme_boost-drawers-blocks {
   .block.card {
     border: .0625rem solid $gray-300;
@@ -81,6 +84,7 @@
   #theme_boost-drawers-primary {
     .drawerheader {
       background-color: $primary;
+
       .btn.btn-icon {
         color: $white;
       }

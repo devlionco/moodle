@@ -56,6 +56,8 @@
         background-color: $white;
         margin: 0 1rem;
     }
+    margin-left: -3rem;
+    margin-right: -3rem;
 }
 
 @include media-breakpoint-down(lg) {
@@ -79,5 +81,13 @@
 
     .footer-inner {
         margin: 0;
+    }
+}
+
+@media (max-width: 768px){
+
+    #page.drawers {
+        margin-left: 0;
+        margin-right: 0;
     }
 }

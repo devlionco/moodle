@@ -103,7 +103,7 @@ class section extends \core_courseformat\output\local\content\section {
                         $data->summary->summarytext,
                         '<b><i><u><strong><em><a>'
                     ),
-                    250,
+                    300,
                     true,
                     '&hellip;');
             } else {

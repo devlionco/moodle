@@ -1,6 +1,10 @@
-nav.navbar {
+nav.navbar.petel-navbar {
     .navbar-brand {
+
         //TODO: add logo styles
+        .logo {
+            max-height: 2.5rem;
+        }
     }
 
     .navigation {
@@ -80,6 +84,10 @@ nav.navbar {
             #user-menu-toggle {
                 padding: 0;
                 color: $white;
+
+                &::after {
+                    margin-left: .5rem;
+                }
 
                 &:hover {
                     text-decoration: none;
