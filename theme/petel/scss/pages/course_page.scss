@@ -6,6 +6,11 @@
 
 // Format flex-sections.
 .path-course.format-flexsections {
+    &.editing  {
+        .section.course-section {
+            background: $gray-200;
+        }
+    }
     #page.drawers {
         .main-inner {
             max-width: 57.5rem;
@@ -484,6 +489,10 @@
             }
         }
     }
+    .course-content ul.flexsections li.section {
+        padding-bottom: 0;
+        margin-bottom: 1rem;
+    }
 }
 
 .completion-bage {
@@ -553,12 +562,10 @@
         }
 
         .drawerheader {
-
             .btn.btn-icon:hover,
             .btn.btn-icon:focus {
                 background-color: transparent;
             }
         }
     }
-
 }
