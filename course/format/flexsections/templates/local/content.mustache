@@ -243,7 +243,7 @@ Example context (json):
     </div>
 {{/hasnavigation}}
 
-<div id="{{uniqid}}-course-format">
+<div id="{{uniqid}}-course-format" {{#allowedediting}}class = "allowedediting"{{/allowedediting}}>
     <h2 class="accesshide">{{{title}}}</h2>
     {{{completionhelp}}}
     <ul class="{{format}} flexsections-level-0" data-for="course_sectionlist">

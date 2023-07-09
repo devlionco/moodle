@@ -207,6 +207,8 @@ class content extends \core_courseformat\output\local\content {
             }
         }
 
+        $data->allowedediting = has_capability('moodle/course:viewhiddensections', $coursecontext);
+
         return $data;
     }
 

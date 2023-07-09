@@ -97,11 +97,11 @@ $string['form:course:sectionview:cards'] = 'Cards';
 $string['form:course:sectionview:list'] = 'List';
 $string['form:course:sectionviewoption'] = 'Show section as';
 
-$string['lastseen'] = 'You have recently viewed this unit'; // צפית ביחידה זו לאחרונה
-$string['section:completion:percentage'] = 'Completed {$a->percentage}%'; //'הושלמו {a->percentage}%';
-$string['section:completion:count'] = '{$a->completed} from {$a->total}';
-$string['course:completion:percentage'] = '{$a->percentage}% of the course has been completed'; //'הושלמו {a->percentage}%';
-$string['course:completion:count'] = '{$a->completed} from {$a->total}';
+$string['lastseen'] = 'צפית ביחידה זו לאחרונה';
+$string['section:completion:percentage'] = 'הושלמו {$a->percentage}%';
+$string['section:completion:count'] = 'הושלם {$a->completed} מתוך {$a->total}';
+$string['course:completion:percentage'] = 'הושלמו {$a->percentage}%';
+$string['course:completion:count'] = 'הושלם {$a->completed} מתוך {$a->total}';
 
 $string['quizinprogress'] = 'בתהליך';
 $string['quizwithgrades'] = 'הוגש וניתן ציון';
