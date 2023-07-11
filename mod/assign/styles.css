@@ -366,6 +366,56 @@
 .path-mod-assign [data-region="grading-navigation"] {
     padding: 1em;
 }
+.path-mod-assign [data-region="grading-navigation"] [data-region="configure-filters"]{
+    background: none;
+    border: 0px;
+}
+.path-mod-assign [data-region="grading-navigation"] [data-region="user-count"] {
+    min-width: 38px;
+}
+.path-mod-assign [data-region="grading-navigation"] [data-region="user-count-summary"]{
+    min-width: 50px;
+}
+.path-mod-assign [data-region="user-selector"] {
+    flex: auto;
+    max-width: 322px;
+    margin-left: auto;
+    margin-right: 88px
+}
+@media screen and (max-width: 1254px) {
+    .path-mod-assign [data-region="user-selector"] {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}
+
+.path-mod-assign [data-region="user-selector"] > div > div:nth-last-child(1) {
+    width: 484px;
+    height: 26px;
+    position: relative;
+    right: 111px;
+}
+.path-mod-assign [data-region="user-selector"] select {
+    height: 26px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    margin-top: 7px;
+}
+@media screen and (max-width: 768px) {
+    .path-mod-assign [data-region="grading-navigation"] {
+        flex-direction: column;
+        align-items: center;
+    }
+    .path-mod-assign [data-region="grading-navigation-panel"] {
+        overflow: hidden !important;
+    }
+    .path-mod-assign .input-field-wrapper {
+        display: flex;
+    }
+    .path-mod-assign [data-action="next-user"] {
+        margin-left: 0 !important;
+    }
+}
 .path-mod-assign [data-region="assignment-info"] {
     white-space: nowrap;
     overflow-x: hidden;
