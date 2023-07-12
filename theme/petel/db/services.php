@@ -34,6 +34,22 @@ $functions = array(
             'type' => 'write',
             'ajax' => true,
     ),
+    'theme_petel_quiz_set_timer_preferences' => array(
+        'classname'   => 'theme_petel_courseformat_external',
+        'methodname'  => 'quiz_set_timer_preferences',
+        'classpath'   => 'theme/petel/courseformatexternallib.php',
+        'description' => 'Get flexsections section content (intended to be used from AJAX)',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
+    'theme_petel_quiz_get_timer_preferences' => array(
+        'classname'   => 'theme_petel_courseformat_external',
+        'methodname'  => 'quiz_get_timer_preferences',
+        'classpath'   => 'theme/petel/courseformatexternallib.php',
+        'description' => 'Get flexsections section content (intended to be used from AJAX)',
+        'type'        => 'read',
+        'ajax'        => true,
+    ),
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -41,6 +57,8 @@ $services = array(
     'Petel AJAX' => array(
         'functions' => array(
             'theme_petel_quiz_student_question_message',
+            'theme_petel_quiz_set_timer_preferences',
+            'theme_petel_quiz_get_timer_preferences',
             ),
         'restrictedusers' => 0,
         'enabled' => 1,

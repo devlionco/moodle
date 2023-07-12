@@ -356,7 +356,7 @@ class question_renderer extends \core_question_renderer {
             $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
         $params['id'] = $qa->get_question_id();
-        $editurl      = new moodle_url('/question/question.php', $params);
+        $editurl      = new moodle_url('/question/bank/editquestion/question.php', $params);
         $icon = '<i class="fal fa-edit regular-state"></i>
                  <i class="far fa-edit hover-state"></i>
                  <i class="fas fa-edit active-state"></i>';

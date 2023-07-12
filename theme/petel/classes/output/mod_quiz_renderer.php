@@ -373,7 +373,7 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
     }
 
     public function navigation_panel(quiz_nav_panel_base $panel) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
         $output      = '';
         $userpicture = $panel->user_picture();
         if ($userpicture) {
@@ -388,6 +388,16 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
             );
         }
         $output .= $panel->render_before_button_bits($this);
+
+        $data = new stdClass;
+        $output .= $OUTPUT->render_from_template('theme_petel/quiz_nav_panel_title', $data);
+
+        // #6823 Hack. Use Reflection to access the protected property
+        $reflection = new \ReflectionClass($panel);
+        $property = $reflection->getProperty('attemptobj');
+        $property->setAccessible(true);
+        $attemptobj = $property->getValue($panel);
+        $output .= $this->countdown_timer($attemptobj, time());
 
         $bcc = $panel->get_button_container_class();
 
