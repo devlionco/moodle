@@ -33,7 +33,8 @@ $templatecontext = [
     'bodyattributes' => $bodyattributes,
     'abouturl' => $abouturl,
     'policies' => $policies,
+    'bglogin' => $OUTPUT->image_url('login_page_background', 'theme'),
 ];
 
-echo $OUTPUT->render_from_template('theme_boost/login', $templatecontext);
+echo $OUTPUT->render_from_template('theme_petel/login', $templatecontext);
 
