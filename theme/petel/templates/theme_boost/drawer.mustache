@@ -66,5 +66,57 @@
     </div>
 </div>
 {{#js}}
-require(['theme_boost/drawers']);
+require(['jquery','theme_boost/drawers'], function ($, drawers) {
+    
+    $(document).ready( function(){
+        if(!$(".drawer-right").hasClass("show")) {
+            $(".page-aside-switch-lg ").prependTo(".drawer-right-toggle .btn")
+        }
+        
+        $("[data-toggler=drawers]").on("mouseover", () => {
+            $("[data-toggler=drawers]").removeAttr("data-original-title")
+        })
+        $(".drawer-right-toggle .btn")[0].addEventListener("click", () => {
+            setTimeout(() => {$(".page-aside-switch-lg ").prependTo(".drawer-right .page-quiz-aside ")}, 100)
+        })
+        $('#theme_boost-drawers-blocks .drawerheader').on('click', function(){
+            const node = $("#theme_boost-drawers-blocks")[0]
+            const drawer = new drawers(node)
+            drawer.toggleVisibility()
+            $(".page-aside-switch-lg").prependTo(".drawer-right-toggle .btn");
+            if(!$(this).hasClass('expanded')){
+                 $.ajax({
+                     method: "POST",
+                     dataType: 'text',
+                     //cache: true,
+                     url: M.cfg.wwwroot + '/theme/petel/blockexpanded.php',
+                     data: {
+                        blockexpanded: 'off',
+                        url: window.location.href
+                    }
+                 })
+            }
+            else{
+                  $.ajax({
+                       method: "POST",
+                       dataType: 'text',
+                       //cache: true,
+                       url: M.cfg.wwwroot + '/theme/petel/blockexpanded.php',
+                        data: {
+                            blockexpanded: 'on',
+                            url: window.location.href
+                        }
+                   })
+            }
+        });
+
+        if($('.quiz-btn.fullscreen-btn').length > 0) {
+            $('.quiz-btn.fullscreen-btn').on('click', function(e){
+                let parent = $(e.target).closest('.que');
+                parent.toggleClass('fullscreen');
+                $('body').toggleClass('overflow-hidden');
+            });
+        }
+    });
+});
 {{/js}}

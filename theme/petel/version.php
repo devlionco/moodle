@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'theme_petel';
 $plugin->release = '0.1.0';
-$plugin->version = 2023051601;
+$plugin->version = 2023070500;
 $plugin->requires = 2022112802;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->dependencies = [
