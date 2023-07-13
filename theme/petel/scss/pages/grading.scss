@@ -1,6 +1,6 @@
-#page-grade-report-grader-index {
-    .tertiary-navigation-selector {
-        .dropdown-toggle {
+.path-grade {
+    .tertiary-navigation, .user-heading, .reportbuilder-report  {
+        .btn {
             box-shadow: none;
         }
     }
@@ -24,4 +24,7 @@
         overflow: hidden !important;
         height: auto !important;
     }
+}
+#page-mod-assign-grader {
+    background: #FFF !important;
 }
