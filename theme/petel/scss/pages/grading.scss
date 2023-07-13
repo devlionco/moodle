@@ -1,0 +1,27 @@
+#page-grade-report-grader-index {
+    .tertiary-navigation-selector {
+        .dropdown-toggle {
+            box-shadow: none;
+        }
+    }
+    .gradeparent {
+        overflow: auto;
+    }
+    .gradeparent th.header {
+        position: relative;
+        left: 0px !important;
+    }
+}
+#page-mod-assign-grading {
+    .table-striped {
+        thead tr:nth-child(1) {
+            th:nth-child(1) {
+                padding-left: 25px;
+            }
+        }
+    }
+    .dataTables_scrollBody {
+        overflow: hidden !important;
+        height: auto !important;
+    }
+}
