@@ -4,29 +4,32 @@
         padding-top: 0;
         padding-bottom: 0;
     }
+    #page.drawers .main-inner {
+        margin: 0;
+    }
 }
 
 // Main
 .main-title {
     margin-bottom: 2rem;
 }
-.main-filter-block {
-    .main-filter-nav {
-        .nav-tabs {
-            border-bottom: 0.0625rem solid #bbb;
-        }
-        .nav.nav-tabs .nav-item {
-            height: 2.5rem;
-            font-size: 1.125rem;
-        }
-    }
-    .main-filter-form {
-        min-width: 18.5rem;
-        button {
-            right: 0;
-        }
-    }
-}
+// .main-filter-block {
+//     .main-filter-nav {
+//         .nav-tabs {
+//             border-bottom: 0.0625rem solid #bbb;
+//         }
+//         .nav.nav-tabs .nav-item {
+//             height: 2.5rem;
+//             font-size: 1.125rem;
+//         }
+//     }
+//     .main-filter-form {
+//         min-width: 18.5rem;
+//         button {
+//             right: 0;
+//         }
+//     }
+// }
 .inner-copy-question-btn {
     display: flex !important;
     align-items: center;
@@ -49,7 +52,9 @@
 }
 .activity-aside-menu {
     min-height: 80vh;
-
+    ul.list-unstyled {
+        padding: 0;
+    }
     .heading-wrapp {
         .collapse-btn[aria-expanded="true"] {
             .fa.fa-caret-left {
@@ -66,17 +71,17 @@
         font-size: 1.125rem;
         & > li {
             .collapse-btn {
-                padding-left: 3.5rem;
+                padding-left: 1rem;
             }
             a {
                 display: block;
                 width: 100%;
             }
             .sub-menu-item {
-                padding-left: 6rem;
+                padding-left: 4rem;
             }
             .sub-sub-menu-item {
-                padding-left: 7rem;
+                padding-left: 5rem;
             }
         }
     }
@@ -135,6 +140,9 @@
     a:hover {
         text-decoration: none;
     }
+    &:last-of-type {
+        margin-bottom: 0;
+    }
 }
 .oer-custom-checkbox .custom-control-label::before{
     width: 1.25rem;
@@ -175,13 +183,14 @@
 }
 .activity-title {
     h2 {
-        font-size: 2rem;
+        font-size: 1.5rem;
         overflow-wrap: break-word;
         max-width: 70%;
+        line-height: 1.25;
     }
     .activity-title-info {
         line-height: 1.6;
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 }
 .teacher-img {
@@ -226,6 +235,7 @@
 }
 
 .sort-result-dropdown-menu {
+    min-width: 11rem !important;
     .form-check .fa-check {
         visibility: hidden;
         font-size: 1.25rem;

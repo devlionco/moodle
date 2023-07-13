@@ -47,33 +47,34 @@
     <div class="activity-block-header d-flex align-items-center justify-content-between">
 
         <h3 class="total-activities-block activity-block-title bold"></h3>
-
-        <button class="btn btn-outline-primary activity-block-header-btn rounded dropdown sort-result-dropdown-btn d-flex align-items-center" type="button"
-                id="sort_result_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{#str}}sortby, community_oer{{/str}}
-            <i class="fa fa-caret-down ml-2" aria-hidden="true"></i>
-        </button>
-
-        <div class="dropdown-menu sort-result-dropdown-menu" aria-labelledby="sort_result_dropdown">
-            <form class="py-3 px-2">
-
-                {{#sorting}}
-                    <div class="form-group dropdown-item menu-action">
-                        <div class="form-check d-flex align-items-center pl-0">
-
-                            <input type="checkbox" class="form-check-input d-none" id="dropdownSorting{{value}}"
-                                   data-plugin="course" data-area="sorting" data-value="{{value}}"
-                                {{#selected}} data-selected="1" checked {{/selected}}>
-
-                            <i class="fa fa-check mr-2 text-primary" aria-hidden="true"></i>
-                            <label class="form-check-label text-primary" for="dropdownSorting{{value}}">
-                                {{name}}
-                            </label>
+        <div class="dropdown dropdownmoremenu">
+            <button class="btn btn-outline-primary activity-block-header-btn rounded dropdown sort-result-dropdown-btn d-flex align-items-center" type="button"
+                    id="sort_result_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{#str}}sortby, community_oer{{/str}}
+                <i class="fa fa-caret-down ml-2" aria-hidden="true"></i>
+            </button>
+    
+            <div class="dropdown-menu sort-result-dropdown-menu" aria-labelledby="sort_result_dropdown">
+                <form class="">
+    
+                    {{#sorting}}
+                        <div class="form-group dropdown-item menu-action mb-0 px-2">
+                            <div class="form-check d-flex align-items-center pl-0">
+    
+                                <input type="checkbox" class="form-check-input d-none" id="dropdownSorting{{value}}"
+                                       data-plugin="course" data-area="sorting" data-value="{{value}}"
+                                    {{#selected}} data-selected="1" checked {{/selected}}>
+    
+                                <i class="fal fa-check mr-2" aria-hidden="true"></i>
+                                <label class="form-check-label" for="dropdownSorting{{value}}">
+                                    {{name}}
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                {{/sorting}}
-
-            </form>
+                    {{/sorting}}
+    
+                </form>
+            </div>
         </div>
     </div>
 

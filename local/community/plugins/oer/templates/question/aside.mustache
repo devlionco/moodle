@@ -2,14 +2,14 @@
     {{#str}}titleaside, community_oer{{/str}}
 </h3>
 <div class="border-top activity-aside-menu-divider mr-3 ml-2"></div>
-<ul class="list-unstyled">
+<ul class="list-unstyled p-0 m-0">
 
     {{#aside_menu}}
     <li class="py-2">
-        <div class="d-flex heading-wrapp">
-            <div class="btn collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#questioncategory{{cat_id}}"
+        <div class="d-flex heading-wrapp px-2">
+            <div class="collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#questioncategory{{cat_id}}"
                 aria-expanded="false" aria-controls="questioncategory{{cat_id}}">
-                <i class="fa fa-caret-left"></i>
+                <i class="fa fa-caret-left mr-2"></i>
             </div>
             <a class="menu-heading bold d-flex align-items-center pl-2" href="javascript:void(0);"
                 data-plugin="question" data-area="sidemenu" data-action="category" data-value="{{cat_id}}"
@@ -18,14 +18,14 @@
             </a>
         </div>
 
-        <ul class="activity-aside-menu-block collapse list-unstyled" id="questioncategory{{cat_id}}">
+        <ul class="activity-aside-menu-block collapse list-unstyled p-0 m-0" id="questioncategory{{cat_id}}">
             {{#courses}}
 
             <li class="collapsed py-1">
-                <div class="d-flex heading-wrapp">
-                    <div class="btn collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#questioncourse{{id}}"
+                <div class="d-flex heading-wrapp px-2">
+                    <div class="collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#questioncourse{{id}}"
                         aria-expanded="false" aria-controls="questioncourse{{id}}">
-                        <i class="fa fa-caret-left"></i>
+                        <i class="fa fa-caret-left mr-2"></i>
                     </div>
 
 
@@ -50,12 +50,12 @@
                         {{/if_child_category_present}}
 
                         {{#if_child_category_present}}
-                            <div class="d-flex heading-wrapp">
-                                <div class="btn collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse"
+                            <div class="d-flex heading-wrapp px-2">
+                                <div class="collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse"
                                      data-target="#questionchildcategory{{sectionid}}" aria-expanded="false"
                                      aria-controls="questionchildcategory{{sectionid}}">
 
-                                    <i class="fa fa-caret-left"></i>
+                                    <i class="fa fa-caret-left mr-2"></i>
                                 </div>
                                 <a class="sub-submenu-heading d-flex align-items-center " href="javascript:void(0);"
                                     data-plugin="question" data-area="sidemenu" data-action="section" data-value="{{sectionid}}" data-parentcourse="{{id}}"
