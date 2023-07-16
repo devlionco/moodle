@@ -628,3 +628,14 @@
         font-family: $primary-font;
     }
 }
+
+//TODO: move to correct place after refactoring
+// Advancedoverview
+.path-mod-quiz#page-mod-quiz-report {
+    #page-header {
+        max-width: 100%;
+    }
+    #studentstableNavFilter {
+
+    }
+}
