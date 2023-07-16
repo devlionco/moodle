@@ -60,6 +60,12 @@
   font-size: 1rem;
 }
 
+.block_advancedoverview_report {
+  /* 
+  	#studentsActionsBtn {
+  		width: 9rem;
+  	} */
+}
 .block_advancedoverview_report .top-block {
   padding-bottom: 2rem;
 }
@@ -306,7 +312,7 @@
 }
 .block_advancedoverview_report .nav.nav-tabs .nav-item {
   max-width: 15rem;
-  height: 2.5rem;
+  min-height: 2.5rem;
   margin: 0;
   background-color: transparent;
   border-radius: 1.25rem;
@@ -316,6 +322,7 @@
   border-radius: 1.25rem !important;
   background-color: transparent;
   border-color: transparent;
+  margin-bottom: 0;
 }
 .block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link.active p {
   color: #fff;
@@ -329,9 +336,6 @@
 }
 .block_advancedoverview_report #selectedstudents {
   font-size: 1.125rem;
-}
-.block_advancedoverview_report #studentsActionsBtn {
-  width: 9rem;
 }
 .block_advancedoverview_report #questions-table.tabulator,
 .block_advancedoverview_report #students-table.tabulator {
