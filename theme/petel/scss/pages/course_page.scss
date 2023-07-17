@@ -11,6 +11,11 @@
             background: $gray-200;
         }
     }
+    &#page-course-view-participants {
+        #page.drawers  .main-inner {
+            max-width: 70.5rem;
+        }
+    }
     #page.drawers {
         .main-inner {
             max-width: 57.5rem;
@@ -502,6 +507,7 @@
     }
 }
 
+// TODO: move to correct place.
 .completion-bage {
     display: flex;
     align-items: center;
