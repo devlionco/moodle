@@ -19,7 +19,7 @@ namespace format_flexsections\output\courseformat;
 use course_modinfo;
 use html_writer;
 use stdClass;
-
+require_once $CFG->dirroot . "/course/format/flexsections/locallib.php";
 /**
  * Render a course content.
  *

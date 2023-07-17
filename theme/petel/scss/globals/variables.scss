@@ -46,11 +46,16 @@ $green:   #287D28 !default;
 $teal:    #20C997 !default;
 $cyan:    #17A2B8 !default;
 
+// Additional colors.
+$warninglight:      #F7F3BA;
+$success-light:     #E9F2E9;
+$danger-light:      #FAE6E6;
+$info-light:        #D9EEF8;
 
 $primary:           $petel-primary !default;
 $secondary:         $petel-secondary !default;
 $success:           $green !default;
-$info:              $cyan !default;
+$info:              $blue !default;
 $warning:           $yellow !default;
 $danger:            $red !default;
 $light:             $petel-light !default;
@@ -103,7 +108,7 @@ $theme-colors: map-merge(
 );
 
 // Fonts
-$primary-font: 'Heebo', sans-serif;
+$primary-font: 'Heebo';
 
 // TODO: Check is it needed
 // Breadcrumbs
