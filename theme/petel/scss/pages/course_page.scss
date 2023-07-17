@@ -150,6 +150,11 @@
         .coursecompletion {
             max-width: 16rem;
             width: 100%;
+            display: flex;
+            align-items: center;
+            .progress-wrapper {
+                width: 100%;
+            }
         }
 
         .sectionname {
@@ -450,7 +455,9 @@
             z-index: 5;
         }
     }
-
+    h3.sectionname {
+        text-align: left;
+    }
     // TODO: find correct place for this code!
     h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         margin-top: -2rem;

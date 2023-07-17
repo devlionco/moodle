@@ -85,19 +85,19 @@ Example context (json):
 }}
 {{#backtocourse}}
 <div class="header backto">
-    <a href="{{url}}">
+  <!--   <a href="{{url}}">
         <i class="icon fa fa-arrow-up fa-fw " aria-hidden="true"></i>
         {{#str}}backtocourse, format_flexsections, {{coursename}} {{/str}}
     </a>
-</div>
+</div> -->
 {{/backtocourse}}
 {{#backtosection}}
 <div class="header backto">
-    <a href="{{url}}">
+<!--     <a href="{{url}}">
         <i class="icon fa fa-arrow-up fa-fw " aria-hidden="true"></i>
         {{#str}}backtosection, format_flexsections, {{sectionname}} {{/str}}
     </a>
-</div>
+</div> -->
 {{/backtosection}}
 {{#collapsemenu}}
 <div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
@@ -274,17 +274,11 @@ Example context (json):
     {{/showascard}}
     {{#hasnavigation}}
     <div class="single-section">
-        {{#sectionnavigation}}
-            {{> format_flexsections/local/content/section }}
-        {{/sectionnavigation}}
         <ul class="{{format}}">
             {{#singlesection}}
                 {{> format_flexsections/local/content/section }}
             {{/singlesection}}
         </ul>
-        {{#sectionselector}}
-            {{> format_flexsections/local/content/section }}
-        {{/sectionselector}}
     </div>
     {{/hasnavigation}}
     {{#numsections}}

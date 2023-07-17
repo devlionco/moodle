@@ -107,11 +107,10 @@
 
 {{#sectioncompletion}}
     <div class="coursecompletion ml-auto">
-        {{#iscomplete}}
-            {{#pix}} i/checked, core, done {{/pix}}
-            <span class="sr-only">{{#str}} completed, core {{/str}}</span>
-        {{/iscomplete}}
         <div class="progress-wrapper p-2">
+            {{#iscomplete}}
+                <span class="sr-only">{{#str}} completed, core {{/str}}</span>
+            {{/iscomplete}}
             <div class="progress mb-2">
                 <div class="progress-bar bg-linkhover" role="progressbar" style="width: {{percentage}}%"
                      aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
@@ -162,7 +161,7 @@
 </div>
 <div id="coursecontentcollapse{{num}}"
     class="content {{^iscoursedisplaymultipage}}
-        {{^sitehome}}course-content-item-content collapse p-3{{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
+        {{^sitehome}}course-content-item-content course-section-level-0 collapse p-3 {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
     {{/iscoursedisplaymultipage}}">
     <div class="{{#hasavailability}}description{{/hasavailability}} mb-3 px-3" data-for="sectioninfo">
     {{#summary}}
