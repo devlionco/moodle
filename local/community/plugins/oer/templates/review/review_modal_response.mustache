@@ -1,14 +1,14 @@
 
       <div class="modal-content review_modal">
-          <div class="modal-header">
+          <div class="modal-header bg-primary d-flex align-items-center">
               <div class="modal-header-content">
-                  <p class="modal-header-title">
+                  <p class="modal-header-title mb-0 text-white">
                       {{header}}
                       <span class="modal-header-subtitle">{{^messageurl}}{{author}}{{/messageurl}}{{#messageurl}}<a href="{{.}}">{{author}}</a>{{/messageurl}} | {{objcreated}}</span>
                   </p>
               </div>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true"><i class="fa fa-times-circle"></i></span>
+                  <span aria-hidden="true"><i class="fa fa-times-circle text-white"></i></span>
               </button>
           </div>
           <div class="modal-body d-flex flex-column">
@@ -16,7 +16,7 @@
                   <a
                         href = "{{objurl}}"
                         target="_blank"
-                        class="btn btn-sm">
+                        class="btn btn-link btn-sm">
                         <i class="fa fa-external-link" aria-hidden="true"></i>
                         {{objlinkname}}
                   </a>
@@ -30,7 +30,7 @@
                               <span>{{userfirstname}} {{userlastname}}</span>
                           </div>
                           <div class="instant_review_block-body review_block-body">
-                              <textarea rows=3 class="description_text short-review-form-description" name="instant_review" placeholder="{{#str}}add_text, community_oer {{/str}}"></textarea>
+                              <textarea rows=3 class="description_text short-review-form-description w-100" name="instant_review" placeholder="{{#str}}add_text, community_oer {{/str}}"></textarea>
                               <div class = "control d-flex justify-content-end pt-2 sendshortreview">
                                   <button
                                           data-handler="sendShortReview"

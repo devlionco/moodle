@@ -1,4 +1,4 @@
-
+/* 
 @font-face {
     font-family: 'Heebo';
     src: url([[font:theme_petel|heebo-black.ttf]]) format('ttf');
@@ -46,7 +46,11 @@
     src: url([[font:theme_petel|heebo-thin.ttf]]) format('ttf');
     font-weight: 100;
     font-style: normal;
-}
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
 
 @import "font_awesome_6";
 @import "font_awesome_pro";
