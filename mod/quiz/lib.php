@@ -1746,7 +1746,7 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
         $previewnode->set_show_in_secondary_navigation(false);
     }
     //PTL-5321 View printable questions
-    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+    if (has_capability('mod/quiz:manage', $settings->get_page()->cm->context)) {
         $url = new moodle_url('/mod/quiz/report.php',
             array('id'=>$PAGE->cm->id, 'mode'=>'correctanswer', 'answers'=>'no'));
         $node = navigation_node::create(get_string('printquestions', 'quiz'), $url,
@@ -1756,7 +1756,7 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
     }
 
     // PTL-817.
-    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+    if (has_capability('mod/quiz:manage', $settings->get_page()->cm->context)) {
         $url = new moodle_url('/mod/quiz/report.php',
                 array('id'=>$PAGE->cm->id, 'mode'=>'correctanswer', 'hint'=>'1'));
         $node = navigation_node::create(get_string('correctanswersandhints', 'quiz'), $url,
