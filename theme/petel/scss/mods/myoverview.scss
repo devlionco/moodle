@@ -1,0 +1,21 @@
+.block-myoverview {
+    .block-myoverview-listitem  {
+        .quickaccessbar {
+            background-color: $warning;
+            color: $body-color;
+        }
+    }
+    .myoverview-listitem-header {
+        background-color: $primary;
+    }
+    .course-grouping-nav{
+
+        .grouping-nav-item-link.active::before {
+            background-color: $primary;
+            
+        }
+    }
+    .add-btn .plus-circle {
+        background-color: $secondary;
+    }
+}
