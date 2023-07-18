@@ -51,11 +51,6 @@ class quiz_advancedoverview_report extends quiz_attempts_report {
 
         $PAGE->requires->css('/mod/quiz/report/advancedoverview/css/tabulator.min.css');
 
-        $PAGE->set_url('/mod/quiz/report/advancedoverview/report.php', array(
-                'id' => $cm->id,
-                'mode' => 'advancedoverview'
-        ));
-
         // Print the page header.
         $PAGE->set_title($quiz->name);
         $PAGE->set_heading($course->fullname);
