@@ -1,0 +1,19 @@
+#page-login-signup {
+
+    span[data-passwordunmask="wrapper"] {
+        display: flex;
+        align-items: center;
+    }
+    .collapsible-actions {
+        display: none;
+    }
+/*     fieldset[id*="id_category_"] {
+        display: none;
+    } */
+}
+#page-login-signup #fitem_id_recaptcha_element {
+    transform: translateY(-75%);
+}
+#page-login-signup #fgroup_id_buttonar {
+    transform: translateY(225%);
+}
