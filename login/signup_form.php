@@ -53,7 +53,7 @@ class login_signup_form extends moodleform implements renderable, templatable {
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
-        $mform->addElement('password', 'password', get_string('password'), [
+        $mform->addElement('passwordunmask', 'password', get_string('password'), [
             'maxlength' => 32,
             'size' => 12,
             'autocomplete' => 'new-password'
@@ -107,13 +107,13 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->setType('country', PARAM_TEXT);
         }
 
-        profile_signup_fields($mform);
-
         if (signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('security_question', 'auth'));
             $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
             $mform->closeHeaderBefore('recaptcha_element');
         }
+
+        profile_signup_fields($mform);
 
         // Hook for plugins to extend form definition.
         core_login_extend_signup_form($mform);
@@ -125,7 +125,7 @@ class login_signup_form extends moodleform implements renderable, templatable {
         //$manager->signup_form($mform);
 
         // buttons
-        $this->set_display_vertical();
+        // $this->set_display_vertical();
         $this->add_action_buttons(true, get_string('createaccount'));
 
     }
