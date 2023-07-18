@@ -225,7 +225,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         if ($enablereviews == 1) {
             $reviewrequests = \community_oer\reviews_oer::count_review_oncourse($COURSE->id);
         }
-        $btnclass = 'mx-1 btn btn-sm btn-secondary quicklinks ';
+        $btnclass = 'mx-1 btn btn-sm btn-primary quicklinks ';
         if ($COURSE->id > 1) {
             // if ($reviewrequests) {
             //     $title = get_string('give_feedback', 'community_oer');
