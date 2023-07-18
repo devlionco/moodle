@@ -76,9 +76,10 @@ require(['jquery','theme_boost/drawers'], function ($, drawers) {
         $("[data-toggler=drawers]").on("mouseover", () => {
             $("[data-toggler=drawers]").removeAttr("data-original-title")
         })
-        $(".drawer-right-toggle .btn")[0].addEventListener("click", () => {
-            setTimeout(() => {$(".page-aside-switch-lg ").prependTo(".drawer-right .page-quiz-aside ")}, 100)
-        })
+        $(document).on('click', '.drawer-right-toggle .btn', function(){
+            setTimeout(() => {$(".page-aside-switch-lg ").prependTo(".drawer-right .page-quiz-aside ")}, 100);
+        });
+
         $('#theme_boost-drawers-blocks .drawerheader').on('click', function(){
             const node = $("#theme_boost-drawers-blocks")[0]
             const drawer = new drawers(node)

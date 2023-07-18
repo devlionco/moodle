@@ -19,13 +19,7 @@ export const initquestionstable = function(data) {
   SELECTORS.studentstableNavFilter = document.getElementById('studentstableNavFilter');
   SELECTORS.studentsActionsCollapse = document.getElementById('studentsActionsCollapse');
 
-
-  let lang = $('html')[0].lang;
-  let textDirection = 'ltr';
-
-  if (lang === 'he') {
-    textDirection = 'rtl';
-  }
+  let textDirection = $('html').attr('dir');
 
   let tabledata = JSON.parse(data);
   QLENGTH = tabledata.length;
@@ -238,12 +232,7 @@ export const initstudentstable = function(data) {
       },
     ];
 
-    let lang = $('html')[0].lang;
-    let textDirection = 'ltr';
-
-    if (lang === 'he') {
-      textDirection = 'rtl';
-    }
+    let textDirection = $('html').attr('dir');
 
     let tabledata = JSON.parse(data);
 
