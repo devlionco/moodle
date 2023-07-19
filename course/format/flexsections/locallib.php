@@ -379,11 +379,15 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
  * @param cm_info $mod
  * @return object|boolean
  */
-function format_flexsections_cm_submission_data(cm_info $mod) {
+function format_flexsections_cm_submission_data(cm_info $mod, $userid = 0) {
     global $DB, $USER, $CFG;
 
-    require_once $CFG->dirroot . '/mod/assign/locallib.php';
-    require_once $CFG->dirroot . '/mod/quiz/locallib.php';
+    require_once ($CFG->dirroot . '/mod/assign/locallib.php');
+    require_once ($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    if (!$userid) {
+        $userid = $USER->id;
+    }
 
     if (!in_array($mod->modname, ['quiz', 'assign', 'questionnaire'])) {
         return false;
@@ -427,7 +431,7 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
                     )
             ";
 
-            if ($rowas = $DB->get_records_sql($sql, [$mod->course, $mod->instance, $USER->id])) {
+            if ($rowas = $DB->get_records_sql($sql, [$mod->course, $mod->instance, $userid])) {
 
                 $row = reset($rowas);
 
@@ -456,7 +460,7 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
                     )
             ";
 
-            if ($rowag = $DB->get_record_sql($sql, [$mod->course, $mod->instance, $USER->id])) {
+            if ($rowag = $DB->get_record_sql($sql, [$mod->course, $mod->instance, $userid])) {
                 $tmod->grade     = $rowag->grade;
                 $tmod->submitted = true;
             }
@@ -488,8 +492,8 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
             $context           = \context_module::instance($cm->id);
             $assign            = new \assign($context, $cm, $course);
 
-            $submission = $assign->get_user_submission($USER->id, 0);
-            $status     = $assign->get_grading_status($USER->id);
+            $submission = $assign->get_user_submission($userid, 0);
+            $status     = $assign->get_grading_status($userid);
 
             if ($submission->status === 'submitted') {
                 $tmod->submitted = true;
@@ -503,7 +507,7 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
 
             if ($submission->status !== 'new' && $status !== 'notgraded') {
                 $tmod->submitted = true;
-                $tmod->grade     = $assign->get_grade_item()->get_final($USER->id)->finalgrade;
+                $tmod->grade     = $assign->get_grade_item()->get_final($userid)->finalgrade;
             }
             break;
 
@@ -514,7 +518,7 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
 
             $rowas = $DB->get_record('questionnaire_response', [
                 'questionnaireid' => $extra->id,
-                'userid'          => $USER->id,
+                'userid'          => $userid,
                 'complete'        => 'y']);
             if ($rowas) {
                 $tmod->submitted = true;
@@ -558,7 +562,7 @@ function format_flexsections_cm_submission_data(cm_info $mod) {
                        ORDER BY g.timemodified DESC
                     ";
 
-            $rowas = $DB->get_record_sql($query, [$mod->instance, $hvp->id, $USER->id]);
+            $rowas = $DB->get_record_sql($query, [$mod->instance, $hvp->id, $userid]);
             if ($rowas && !empty($rowas->rawgrade)) {
                 $tmod->submitted = true;
                 $tmod->grade     = $rowas->rawgrade;
