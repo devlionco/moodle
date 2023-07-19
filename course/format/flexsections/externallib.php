@@ -291,12 +291,73 @@ class format_flexsections_external extends external_api {
         global $DB;
 
         $data = $cmids = [];
-        $waitingforsubmission = $failed = $notsubmitted = 0;
-
         self::get_sub_sections_cmids($cmids, $sectionid);
 
-        if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
-            $modinfo = get_fast_modinfo($obj->course);
+        $section = $DB->get_record('course_sections', ['id' => $sectionid]);
+        $modinfo = get_fast_modinfo($section->course);
+
+        // Teacher.
+        if(format_flexsections_has_teacher_course_capability($section->course)){
+
+            $students = [];
+            $context = \context_course::instance($section->course);
+            foreach (get_enrolled_users($context) as $enroluser) {
+                foreach (get_user_roles($context, $enroluser->id, true) as $role) {
+                    if ($role->shortname == 'student') {
+                        $students[] = $enroluser->id;
+                    }
+                }
+            }
+
+            $cmwaitingforsubmission = $cmfailed = $cmnotsubmitted = 0;
+            foreach ($cmids as $cmid){
+                $cm = $modinfo->get_cm($cmid);
+                $flagwaitingforsubmission = $flagfailed = $flagnotsubmitted = false;
+                foreach ($students as $userid) {
+                    if ($tmod = format_flexsections_cm_submission_data($cm, $userid)) {
+                        // Status הוגש וטרם נבדק.
+                        if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
+                            $flagwaitingforsubmission = true;
+                        }
+
+                        // Status failed.
+                        if ($tmod->failed) {
+                            $flagfailed = true;
+                        }
+
+                        // Status לאחר תאריך הגשה סופי.
+                        if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
+                            $flagnotsubmitted = true;
+                        }
+                    }
+                }
+
+                if ($flagwaitingforsubmission) {
+                    $cmwaitingforsubmission++;
+                }
+                if ($flagfailed) {
+                    $cmfailed++;
+                }
+                if ($flagnotsubmitted) {
+                    $cmnotsubmitted++;
+                }
+            }
+
+            if($cmwaitingforsubmission > 0){
+                $data['firstrow'] = [
+                        'value' => $cmwaitingforsubmission,
+                        'label' => get_string('statuscmwaitingforsubmission', 'format_flexsections')
+                ];
+            }
+            if($cmfailed > 0){
+                $data['secondrow'] = [
+                        'value' => $cmfailed,
+                        'label' => get_string('statuscmfailed', 'format_flexsections')
+                ];
+            }
+        }else{
+            // Student.
+            $waitingforsubmission = $failed = $notsubmitted = 0;
 
             foreach ($cmids as $cmid){
                 $cm = $modinfo->get_cm($cmid);
@@ -318,16 +379,25 @@ class format_flexsections_external extends external_api {
                     }
                 }
             }
-        }
 
-        if($waitingforsubmission > 0){
-            $data['waitingforsubmission'] = ['value' => $waitingforsubmission];
-        }
-        if($failed > 0){
-            $data['failed'] = ['value' => $failed];
-        }
-        if($notsubmitted > 0){
-            $data['notsubmitted'] = ['value' => $notsubmitted];
+            if($waitingforsubmission > 0){
+                $data['firstrow'] = [
+                        'value' => $waitingforsubmission,
+                        'label' => get_string('statuswaitingforsubmission', 'format_flexsections')
+                ];
+            }
+            if($failed > 0){
+                $data['secondrow'] = [
+                        'value' => $failed,
+                        'label' => get_string('statusfailed', 'format_flexsections')
+                ];
+            }
+            if($notsubmitted > 0){
+                $data['thirdrow'] = [
+                        'value' => $notsubmitted,
+                        'label' => get_string('statusnotsubmittedintime', 'format_flexsections')
+                ];
+            }
         }
 
         return json_encode($data);

@@ -129,6 +129,8 @@ $string['cut_of_date_less_days_label'] = 'Submit within ';
 $string['editimage'] = 'Edit image';
 
 // Student status.
-$string['statuswaitingforsubmission'] = 'Activities are waiting for your submission';
-$string['statusfailed'] = 'Activities in which you fail';
-$string['statusnotsubmittedintime'] = 'Activities were not submitted on time';
+$string['statuswaitingforsubmission'] = 'activities are waiting for your submission';
+$string['statusfailed'] = 'activities in which you fail';
+$string['statusnotsubmittedintime'] = 'activities were not submitted on time';
+$string['statuscmwaitingforsubmission'] = 'activities are waiting for check';
+$string['statuscmfailed'] = 'activities were students failed';

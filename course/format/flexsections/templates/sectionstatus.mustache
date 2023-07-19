@@ -19,29 +19,30 @@
     Section complition/submission status.
 }}
 
-{{#waitingforsubmission}}
-<div class="d-flex align-items-center mb-3" id="waitingForSubmission">
+{{#firstrow}}
+<div class="d-flex align-items-center mb-3" id="firstrow">
     <i class="fa-light fa-hourglass-end text-secondary d-flex align-items-center justify-content-center"></i>
     <span class="info-block-value text-secondary px-2">{{value}}</span>
-    <span class="info-block-text">{{#str}} statuswaitingforsubmission, format_flexsections {{/str}}</span>
+    <span class="info-block-text">{{label}}</span>
 </div>
-{{/waitingforsubmission}}
+{{/firstrow}}
 
-{{#failed}}
-<div class="d-flex align-items-center mb-3" id="failed">
+{{#secondrow}}
+<div class="d-flex align-items-center mb-3" id="secondrow">
     <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center">
         <i class="fa-light fa-triangle-exclamation text-white"></i>
     </div>
     <span class="info-block-value text-secondary px-2">{{value}}</span>
-    <span class="info-block-text">{{#str}} statusfailed, format_flexsections {{/str}}</span>
+    <span class="info-block-text">{{label}}</span>
 </div>
-{{/failed}}
+{{/secondrow}}
 
-{{#notsubmitted}}
-<div class="d-flex align-items-center mb-3" id="notSubmitted">
+{{#thirdrow}}
+<div class="d-flex align-items-center mb-3" id="thirdrow">
     <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center">
         <i class="fa-light fa-triangle-exclamation text-white"></i>
     </div>
     <span class="info-block-value text-secondary px-2">{{value}}</span>
-    <span class="info-block-text">{{#str}} statusnotsubmittedintime, format_flexsections {{/str}}</span>
-{{/notsubmitted}}
+    <span class="info-block-text">{{label}}</span>
+</div>
+{{/thirdrow}}

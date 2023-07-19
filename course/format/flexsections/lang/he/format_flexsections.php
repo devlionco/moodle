@@ -131,3 +131,5 @@ $string['editimage'] = 'ערוך תמונה';
 $string['statuswaitingforsubmission'] = 'פעילויות ממתינות להגשה שלך';
 $string['statusfailed'] = 'פעילויות בהן נכשלת';
 $string['statusnotsubmittedintime'] = 'פעילויות לא הוגשו בזמן';
+$string['statuscmwaitingforsubmission'] = 'פעילויות ממתינות לבדיקה';
+$string['statuscmfailed'] = 'פעילויות בהן תלמידים נכשלו';
