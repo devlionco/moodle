@@ -23,6 +23,10 @@
             }
             .pin-circle-wrapper {
                 z-index: 10;
+                .pin-circle {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
             }
             .petel-progressbar-progressline {
                 max-width: 12.25rem;
