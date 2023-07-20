@@ -24,12 +24,10 @@
     font-weight: $font-weight-light;
     font-size: 60px;
     line-height: 60px;
-    font-family: inherit;
     &--bold {
       text-align: center;
       font-weight: $font-weight-semibold;
       font-size: 39px;
-      font-family: inherit;
     }
   }
 
@@ -38,7 +36,6 @@
     font-weight: $font-weight-light;
     font-size: 24px;
     line-height: 30px;
-    font-family: inherit;
     margin-bottom: 35px;
   }
   .intro_btn {
@@ -49,7 +46,6 @@
     font-weight: $font-weight-normal;
     font-size: 24px;
     line-height: 44px;
-    font-family: inherit;
     padding: 0 18px;
     transition: .2s;
     background-color: $purple;
@@ -59,7 +55,6 @@
       font-weight: $font-weight-normal;
       font-size: 24px;
       line-height: 36px;
-      font-family: inherit;
       padding: 0 15px;
     }
     &:hover {
@@ -115,7 +110,6 @@
     font-weight: $font-weight-normal;
     font-style: 23px;
     line-height: 32px;
-    font-family: inherit;
     margin-top: 24px;
   }
 }
