@@ -12,10 +12,9 @@
     {{/title}}
 
     <div class="uploadactivity-range-wrapper position-relative">
-        <input type="range" class="custom-range uploadactivity-custom-range w-100 position-absolute" min="0"
-            max="{{count}}" data-default="{{defaultdata}}" value="{{defaultdata}}" id="{{shortname}}{{unique}}" name="{{shortname}}">
         <div class="innerblock">
             <div class="uploadactivity-range-bottom d-flex justify-content-between w-100 bg-light">
+                <div class="uploadactivity-range-bottom-color bg-secondarymedium position-absolute w-100" style="max-width: 0;"></div>
                 {{#data_formated}}
                 <div class="pin bg-light border border-primary rounded-circle"></div>
                 {{/data_formated}}
@@ -27,6 +26,8 @@
                 {{/data_formated}}
             </div>
         </div>
+        <input type="range" class="custom-range uploadactivity-custom-range w-100 position-absolute" min="0"
+            max="{{count}}" data-default="{{defaultdata}}" value="{{defaultdata}}" id="{{shortname}}{{unique}}" name="{{shortname}}">
         <div class="uploadactivity-range-bottom-textblock d-flex justify-content-between position-absolute">
             {{#data_formated}}
             <div class="text-mark position-relative">{{metadata_name}}</div>
@@ -38,14 +39,31 @@
     require(['jquery'], function($) {
         var range = $('#range-{{unique}}').find('.uploadactivity-custom-range');
         var rangeTextBlock = $('#range-{{unique}}').find('.uploadactivity-range-bottom-textblock .text-mark');
+        var rangePns = $('#range-{{unique}}').find('.uploadactivity-range-bottom .pin');
+        let rangeOffsetWidth = 0;
+        let fragmentWidth = 0;
+        let defaultVal= 0;
+
       $(document).ready(function(){
-        var defaultVal = range.data('default');       
+        defaultVal = range.data('default');       
         rangeTextBlock.eq(defaultVal).addClass('bold');
       });
+
+      $('#collapseNotRequired').on('shown.bs.collapse', function () {
+        rangeOffsetWidth = $('.uploadactivity-range-bottom-textmarker').width();
+        fragmentWidth = parseInt(rangeOffsetWidth/(rangePns.length - 1));
+      })
       range.on('input', function () {
-         var val = $(this).val()
-         rangeTextBlock.removeClass('bold');
-            rangeTextBlock.eq(val).addClass('bold');
+          var val = +$(this).val()
+          console.log(val);
+          rangeTextBlock.removeClass('bold');
+          rangeTextBlock.eq(val).addClass('bold');
+          rangePns.removeClass('active');
+          rangePns.eq(val).addClass('active');
+
+         if(fragmentWidth > 0) {
+            $('.uploadactivity-range-bottom-color')[0].style.maxWidth = `${fragmentWidth*val}px`;
+         }
         });
     });
 {{/js}}

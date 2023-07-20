@@ -6,16 +6,18 @@
 
 // Format flex-sections.
 .path-course.format-flexsections {
-    &.editing  {
+    &.editing {
         .section.course-section {
             background: $gray-200;
         }
     }
+
     &#page-course-view-participants {
-        #page.drawers  .main-inner {
+        #page.drawers .main-inner {
             max-width: 70.5rem;
         }
     }
+
     #page.drawers {
         .main-inner {
             max-width: 57.5rem;
@@ -141,9 +143,11 @@
             }
         }
     }
+
     .course-section {
         border-bottom-color: $gray-600;
     }
+
     .course-section-header {
         padding: 1rem;
 
@@ -157,20 +161,21 @@
             width: 100%;
             display: flex;
             align-items: center;
+
             .progress-wrapper {
                 width: 100%;
             }
         }
 
         .sectionname {
-           /*   width: 100%;
+            /*   width: 100%;
                    white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden; 
             max-width: 90%;*/
 
             &>span {
-          /*       white-space: nowrap;
+                /*       white-space: nowrap;
                 max-width: 90%;
                 overflow: hidden;
                 text-overflow: ellipsis; */
@@ -185,12 +190,15 @@
             }
         }
     }
+
     [data-for="course_subsectionlist"] {
+
         .sectionname,
         .sectionname a {
             font-size: 1.125rem;
         }
     }
+
     .allowedediting {
         .course-section-header {
 
@@ -460,9 +468,11 @@
             z-index: 5;
         }
     }
+
     h3.sectionname {
         text-align: left;
     }
+
     // TODO: find correct place for this code!
     h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         margin-top: -2rem;
@@ -501,6 +511,7 @@
             }
         }
     }
+
     .course-content ul.flexsections li.section {
         padding-bottom: 0;
         margin-bottom: 1rem;
@@ -519,6 +530,12 @@
     i.fa-regular {
         margin-left: .75rem;
         font-size: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .path-course.format-flexsections #page.drawers .main-inner {
+        max-width: 100%;
     }
 }
 
@@ -575,6 +592,7 @@
         }
 
         .drawerheader {
+
             .btn.btn-icon:hover,
             .btn.btn-icon:focus {
                 background-color: transparent;
