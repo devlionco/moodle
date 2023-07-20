@@ -67,8 +67,19 @@ export const init = () => {
         },
         true);
 
-    $(HEADERBUTTON).on('show.bs.popover', () => {
+    $(HEADERBUTTON).on('shown.bs.popover', () => {
         footerIsShown = true;
+        let popoverBody = document.querySelector('.popover-body');
+        let listTitleIcons = popoverBody.querySelectorAll('.oer-popup-list-title-icon');
+        let listItemIcons = popoverBody.querySelectorAll('.oer-popup-list-item-icon');
+        listTitleIcons.forEach((el) => {
+            el.style.backgroundImage = `url(${el.title})`;
+            el.removeAttribute('title');
+        });
+        listItemIcons.forEach((el) => {
+            el.style.backgroundImage = `url(${el.title})`;
+            el.removeAttribute('title');
+        });
     });
 
     $(HEADERBUTTON).on('hide.bs.popover', () => {

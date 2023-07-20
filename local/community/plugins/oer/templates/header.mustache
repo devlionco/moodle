@@ -8,9 +8,10 @@
             {{#menu}}
                 <ul class="list-unstyled col-md-auto px-1">
                     <li class="d-flex align-items-center p-2 mb-0">
-                        <div class="oer-popup-list-title-icon mr-2" 
-                            style="background-image: url({{config.wwwroot}}/local/community/plugins/oer/pix/default-category);">
-                        </div>
+                        <a class="oer-popup-list-title-icon mr-2" 
+                            title="{{config.wwwroot}}/local/community/plugins/oer/pix/default-category.png">
+                            
+                        </a>
                         <a class="text-secondary oer-popup-list-title" href="{{config.wwwroot}}/local/community/plugins/oer/?categoryid={{cat_id}}">{{cat_name}}</a>
 
                         {{#user_editing}}
@@ -34,8 +35,8 @@
                                 <i class="fat fa-edit"></i>
                             </a>
 
-                            <div class="oer-popup-list-item-icon d-block ml-2"
-                                style="background-image: url({{{default_course_image}}});"></div>
+                            <a class="oer-popup-list-item-icon d-block ml-2"
+                                title="{{{default_course_image}}}"></a>
                             {{/user_editing}}
                         </li>
                     {{/courses}}
