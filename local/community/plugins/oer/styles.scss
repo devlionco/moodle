@@ -674,6 +674,7 @@ body[dir="rtl"] {
         background-repeat: no-repeat;
         background-size: contain;
         background-position: center;
+        background-image: url(attr(href));
     }
     .oer-popup-list-item-icon {
         height: 1.5rem;

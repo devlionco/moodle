@@ -231,33 +231,7 @@
             color: $body-color !important;
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
     //copy activity btn dropdown styles
     .resources-tooltip {
         // font-family: $font-family-text, sans-serif !important;
@@ -480,4 +454,15 @@
             }
         }
     }
+}
+.oer-popup-list-title-icon {
+
+ background-image: attr(title);
+ height: 1.5rem;
+ width: 1.5rem;
+ background-repeat: no-repeat;
+ background-size: contain;
+ background-position: center;
+    
+    
 }

@@ -619,6 +619,7 @@ body[dir=rtl] .certificate_stamp-wrapper .certificate_stamp {
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+  background-image: url(attr(href));
 }
 .oer-nav .oer-popup-list-item-icon {
   height: 1.5rem;
