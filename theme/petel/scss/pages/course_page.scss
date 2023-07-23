@@ -20,7 +20,8 @@
 
     #page.drawers {
         .main-inner {
-            max-width: 57.5rem;
+            /* Use Boost_union admin setting for width */
+            /*max-width: 57.5rem;*/
             margin-top: 0;
             padding-top: 2rem;
         }
@@ -171,7 +172,7 @@
             /*   width: 100%;
                    white-space: nowrap;
             text-overflow: ellipsis;
-            overflow: hidden; 
+            overflow: hidden;
             max-width: 90%;*/
 
             &>span {
