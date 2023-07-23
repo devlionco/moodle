@@ -84,5 +84,16 @@ if ($class === 'section' && $field === 'move') {
     }
 
     $isvisible = moveto_module($cm, $section, $beforemod);
+
+    // PTL-6658 Add event move module.
+    $eventdata = array(
+            'userid' => $USER->id,
+            'cmid' => $cm->id,
+            'sectionid' => $section->id,
+            'fromsectionid' => $cm->section,
+            'beforemod' => $beforemod ? $beforemod->id : null,
+    );
+    \community_oer\event\module_move::create_event($eventdata)->trigger();
+
     echo json_encode(array('visible' => (bool) $isvisible));
 }

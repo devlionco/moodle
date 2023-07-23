@@ -45,10 +45,24 @@ switch ($action) {
     case 'movecourseup' :
         $courseid = required_param('courseid', PARAM_INT);
         $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_up_one_by_record($courseid);
+
+        // Event data.
+        $eventdata = [
+                'userid' => $USER->id,
+                'courseid' => $courseid,
+        ];
+        \community_oer\event\resort_course::create_event($eventdata)->trigger();
         break;
     case 'movecoursedown' :
         $courseid = required_param('courseid', PARAM_INT);
         $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_down_one_by_record($courseid);
+
+        // Event data.
+        $eventdata = [
+                'userid' => $USER->id,
+                'courseid' => $courseid,
+        ];
+        \community_oer\event\resort_course::create_event($eventdata)->trigger();
         break;
     case 'movecourseintocategory':
         $courseid = required_param('courseid', PARAM_INT);
@@ -74,12 +88,26 @@ switch ($action) {
         $outcome->totalcatcourses = $category->get_courses_count();
         $outcome->fromcatcoursecount = $totalcourses;
         $outcome->paginationtotals = $str;
+
+        // Event data.
+        $eventdata = [
+                'userid' => $USER->id,
+                'categoryid' => $categoryid,
+        ];
+        \community_oer\event\resort_course::create_event($eventdata)->trigger();
         break;
     case 'movecourseafter' :
         $courseid = required_param('courseid', PARAM_INT);
         $moveaftercourseid = required_param('moveafter', PARAM_INT);
         $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_after_course(
             $courseid, $moveaftercourseid);
+
+        // Event data.
+        $eventdata = [
+                'userid' => $USER->id,
+                'courseid' => $courseid,
+        ];
+        \community_oer\event\resort_course::create_event($eventdata)->trigger();
         break;
     case 'hidecourse' :
         $courseid = required_param('courseid', PARAM_INT);
