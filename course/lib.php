@@ -1681,7 +1681,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $actions = array();
 
     // Update.
-    if ($hasmanageactivities) {
+    if ($hasmanageactivities) { //&& !\community_oer\main_oer::if_activity_in_research_mode($mod->id)
         $actions['update'] = new action_menu_link_secondary(
             new moodle_url($baseurl, array('update' => $mod->id)),
             new pix_icon('t/edit', '', 'moodle', array('class' => 'iconsmall')),
@@ -1836,12 +1836,25 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     if (has_all_capabilities($dupecaps, $coursecontext) &&
             plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2) &&
             course_allowed_module($mod->get_course(), $mod->modname)) {
-        $actions['duplicate'] = new action_menu_link_secondary(
-            new moodle_url($baseurl, array('duplicate' => $mod->id)),
-            new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
-            $str->duplicate,
-            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
-        );
+
+        // PTL-4771.
+        list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
+
+        if(in_array($mod->id, $activities)){
+            $actions['duplicate'] = new action_menu_link_secondary(
+                    new moodle_url('javascript:void(0)'),
+                    new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
+                    $str->duplicate,
+                    array('class' => 'editing_duplicate', 'data-sharebtn' => 'true', 'data-handler' => 'openDialog', 'data-cmid' => $mod->id)
+            );
+        }else{
+            $actions['duplicate'] = new action_menu_link_secondary(
+                new moodle_url($baseurl, array('duplicate' => $mod->id)),
+                new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
+                $str->duplicate,
+                array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
+            );
+        }
     }
 
     // Assign.
@@ -1851,6 +1864,19 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new pix_icon('t/assignroles', '', 'moodle', array('class' => 'iconsmall')),
             $str->assign,
             array('class' => 'editing_assign', 'data-action' => 'assignroles', 'data-sectionreturn' => $sr)
+        );
+    }
+
+    // Editing_metadata.
+    if (is_siteadmin() || can_edit_in_category($COURSE->category)) {
+        $actions['metadata'] = new action_menu_link_secondary(
+                new moodle_url('/local/metadata/index.php', array('id' => $mod->id, 'action' => 'moduledata'
+                    ,'contextlevel' => $modcontext->contextlevel)),
+                new pix_icon('t/edit', get_string('metadatatitle', 'metadatacontext_module'), 'moodle',
+                    array('class' => 'iconsmall', 'title' => '')),
+                    get_string('metadatatitle', 'metadatacontext_module'),
+                array('class' => 'editing_metadata', 'data-action' => 'editing_metadata'
+                    ,'data-sectionreturn' => $sr, 'target'=>'_blank')
         );
     }
 
@@ -2496,8 +2522,9 @@ function update_course($data, $editoroptions = NULL) {
         // Remove all options stored for the previous format
         // We assume that new course format migrated everything it needed watching trigger
         // 'course_updated' and in method format_XXX::update_course_format_options()
-        $DB->delete_records('course_format_options',
-                array('courseid' => $course->id, 'format' => $oldcourse->format));
+        //
+        // Do not remove options for the previous course format! $DB->delete_records('course_format_options',
+        //        array('courseid' => $course->id, 'format' => $oldcourse->format));
     }
 }
 

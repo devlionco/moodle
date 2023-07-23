@@ -195,6 +195,13 @@ if ($action !== false && confirm_sesskey()) {
             required_param('categoryid', PARAM_INT);
             $sort = required_param('resort', PARAM_ALPHA);
             \core_course\management\helper::action_category_resort_courses($category, $sort);
+
+            // Event data.
+            $eventdata = [
+                    'userid' => $USER->id,
+                    'categoryid' => $category->id,
+            ];
+            \community_oer\event\resort_course::create_event($eventdata)->trigger();
             break;
         case 'showcourse' :
             $redirectback = \core_course\management\helper::action_course_show($course);
@@ -414,6 +421,13 @@ if ($action !== false && confirm_sesskey()) {
                     redirect(new moodle_url($PAGE->url, array('categoryid' => reset($categoryids))));
                 }
             }
+
+            // Event data.
+            $eventdata = [
+                    'userid' => $USER->id,
+            ];
+            \community_oer\event\resort_category::create_event($eventdata)->trigger();
+
     }
     if ($redirectback) {
         if ($redirectmessage) {

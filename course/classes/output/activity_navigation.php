@@ -72,7 +72,7 @@ class activity_navigation implements renderable, templatable {
             }
 
             $attributes = [
-                'class' => 'btn btn-link',
+                'class' => 'btn btn-outline-secondary',
                 'id' => 'prev-activity-link',
             ];
             $this->prevlink = new \action_link($linkurl, $OUTPUT->larrow() . ' ' . $linkname, null, $attributes);
@@ -87,7 +87,7 @@ class activity_navigation implements renderable, templatable {
             }
 
             $attributes = [
-                'class' => 'btn btn-link',
+                'class' => 'btn btn-outline-secondary',
                 'id' => 'next-activity-link',
             ];
             $this->nextlink = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow(), null, $attributes);

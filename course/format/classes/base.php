@@ -187,7 +187,7 @@ abstract class base {
                 $format = $DB->get_field('course', 'format', array('id' => $courseid), MUST_EXIST);
             }
         } else {
-            $format = $courseorid->format;
+            $format = (isset($courseorid->format)) ? $courseorid->format : '';
             if (isset($courseorid->id)) {
                 $courseid = clean_param($courseorid->id, PARAM_INT);
             } else {
@@ -940,6 +940,11 @@ abstract class base {
      * @return array array of references to the added form elements
      */
     public function create_edit_form_elements(&$mform, $forsection = false) {
+        global $DB;
+
+        $preopts = $DB->get_records_menu('course_format_options', array('format' => $this->format, 'courseid' =>
+                $this->courseid), '','name, value');
+
         $elements = array();
         if ($forsection) {
             $options = $this->section_format_options(true);
@@ -965,10 +970,10 @@ abstract class base {
             if (isset($option['type'])) {
                 $mform->setType($optionname, $option['type']);
             }
-            if (isset($option['default']) && !array_key_exists($optionname, $mform->_defaultValues)) {
+            if ((isset($option['default']) || isset($preopts[$optionname])) && !array_key_exists($optionname, $mform->_defaultValues)) {
                 // Set defaults for the elements in the form.
                 // Since we call this method after set_data() make sure that we don't override what was already set.
-                $mform->setDefault($optionname, $option['default']);
+                $mform->setDefault($optionname, (isset($preopts[$optionname])) ? $preopts[$optionname] : $option['default']);
             }
         }
 

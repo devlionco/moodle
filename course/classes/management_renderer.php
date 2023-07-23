@@ -962,8 +962,9 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function grid_column_start($size, $id = null, $class = null) {
 
         if ($id == 'course-detail') {
-            $size = 12;
-            $bootstrapclass = 'col-md-'.$size;
+            // Show course details next to categories (nadavkav)
+            //$size = 12;
+            //$bootstrapclass = 'col-md-'.$size;
         } else {
             $bootstrapclass = 'd-flex flex-wrap px-3 mb-3';
         }

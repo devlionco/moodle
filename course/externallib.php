@@ -870,6 +870,12 @@ class core_course_external extends external_api {
             } catch (Exception $e) {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
+
+                // Only Feinberg change category location for creating new courses.
+                if ($CFG->instancename === 'feinberg' && isset($CFG->feinberg_year_categoryid)) {
+                    $course['categoryid'] = $CFG->feinberg_year_categoryid;
+                }
+
                 $exceptionparam->catid = $course['categoryid'];
                 throw new moodle_exception('errorcatcontextnotvalid', 'webservice', '', $exceptionparam);
             }
