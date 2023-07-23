@@ -38,6 +38,7 @@ define(
     'core_message/message_drawer_helper',
     'core/pending',
     'core/drawer',
+    'core/str'
 ],
 function(
     $,
@@ -55,7 +56,8 @@ function(
     Events,
     Helper,
     Pending,
-    Drawer
+    Drawer,
+    Str
 ) {
 
     var SELECTORS = {
@@ -255,6 +257,12 @@ function(
             });
         });
 
+        $(document).keyup(function (e) {
+            if (e.key === "Escape") {
+                hide(root);
+            }
+        });
+
         $(SELECTORS.JUMPTO).focus(function() {
             var firstInput = root.find(SELECTORS.CLOSE_BUTTON);
             if (firstInput.length) {
@@ -284,10 +292,20 @@ function(
                 if (isVisible(root)) {
                     hide(root);
                     $(SELECTORS.JUMPTO).attr('tabindex', -1);
+
+                    $(`#${buttonid}`).attr('aria-expanded', false);
+                    Str.get_string('togglemessagemenuclose', 'theme_petel').then(function(string) {
+                        $(`#${buttonid}`).attr('aria-label', string);
+                    });
                 } else {
                     show(namespace, root);
                     setJumpFrom(buttonid);
                     $(SELECTORS.JUMPTO).attr('tabindex', 0);
+
+                    $(`#${buttonid}`).attr('aria-expanded', true);
+                    Str.get_string('togglemessagemenuopen', 'theme_petel').then(function(string) {
+                        $(`#${buttonid}`).attr('aria-label', string);
+                    });
                 }
             });
         }
