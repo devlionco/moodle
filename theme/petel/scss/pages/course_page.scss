@@ -20,7 +20,7 @@
 
     #page.drawers {
         .main-inner {
-            /* Use Boost_union admin setting for width */
+            /* Use Boost_union admin setting for content width */
             /*max-width: 57.5rem;*/
             margin-top: 0;
             padding-top: 2rem;
@@ -536,7 +536,8 @@
 
 @media screen and (max-width: 1440px) {
     .path-course.format-flexsections #page.drawers .main-inner {
-        max-width: 100%;
+        /* Use Boost_union admin setting for content width */
+        /*max-width: 100%;*/
     }
 }
 
