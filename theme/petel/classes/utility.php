@@ -300,7 +300,7 @@ class utility {
      * @param str $pageurl
      * @return string
      */
-    public static function get_course_category_selector($category = '', $search = '', $pageurl) {
+    public static function get_course_category_selector($category = '', $search = '', $pageurl = '') {
         $categories = \coursecat::make_categories_list();
 
         $categoryhtml = "<form method='get' action='{$pageurl}'>";
@@ -551,11 +551,7 @@ class utility {
      * @return obj
      */
     public static function get_course_image($course, $islist = false) {
-        global $CFG, $OUTPUT, $PAGE;
-
-        $coursecontext = context_course::instance($course->id);
-        // require_login($course);
-        $PAGE->set_context($coursecontext);
+        global $CFG, $OUTPUT;
 
         if (!$islist) {
             $course = new core_course_list_element($course);
