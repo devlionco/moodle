@@ -195,6 +195,7 @@ $string['ppall'] = 'All';
 $string['searchplaceholder'] = 'Search for participants';
 $string['filterlabel'] = 'The list shows';
 $string['settings_participiant_filter'] = 'Default participant filtering';
+$string['pageparticipiants'] = 'Participants';
 
 // Page session timeout.
 $string['catcustomsettings'] = 'Custom settings';
