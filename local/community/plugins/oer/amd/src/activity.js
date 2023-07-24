@@ -619,6 +619,7 @@ define([
 
                                 $('#page-header div').html('');
                                 $('.header.backto').hide();
+                                $('.secondary-navigation').hide();
                             })
                             .fail(Notification.exception);
                     }
