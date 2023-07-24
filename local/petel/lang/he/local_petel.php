@@ -187,6 +187,7 @@ $string['ppall'] = 'הכל';
 $string['searchplaceholder'] = 'חיפוש משתתפים';
 $string['filterlabel'] = 'ברשימה מוצגים';
 $string['settings_participiant_filter'] = 'ברירת מחדל סינון משתתפים';
+$string['pageparticipiants'] = 'משתתפים';
 
 // Page session timeout.
 $string['catcustomsettings'] = 'הגדרות מותאמות אישית';
