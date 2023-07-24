@@ -102,7 +102,7 @@ export const init = function () {
     // Search.
     $('#searchinput').on('keyup', function () {
         let searchValue = $(this).val().trim();
-        if (searchValue.length >= 3 || searchValue === '') {
+        if (searchValue.length >= 1 || searchValue === '') {
             CONFIG.participants.search = searchValue;
         }
     });
