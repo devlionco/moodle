@@ -151,7 +151,7 @@ class quiz_correctanswer_report extends quiz_attempts_report {
 
         // Get and validate display options.
         $maxvariant = min($question->get_num_variants(), QUESTION_PREVIEW_MAX_VARIANTS);
-        $options = new question_preview_options($question);
+        $options = new \qbank_previewquestion\question_preview_options($question);
         $options->load_user_defaults();
         $options->set_from_request();
 
