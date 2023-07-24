@@ -66,7 +66,7 @@ define([
         QUIZ_TYPE_SELECTOR: '.quiz-type-selector',
         QUIZ_TYPE_SELECTOR_N: '#quiz-type-selector-',
         QUIZ_TYPE_DESCRIPTION: '.selector-type-description',
-        QUIZ_INFO: '.quizinfo',
+        QUIZ_INFO: '.quizstartbuttondiv',
         QUIZ_CMID: 'input[name="cmid"]',
         QUIZ_CMID2: '#local-quizpreset-cmid',
         QUIZ_CMID3: 'input[name="coursemodule"]',
@@ -525,7 +525,7 @@ define([
                 var response = JSON.parse(res);
                 Templates.render("local_quizpreset/buttons_bar", response)
                 .done(function (html) {
-                    $(Selector.QUIZ_INFO).before(html);
+                    $(Selector.QUIZ_INFO).after(html);
                     callback();
                 });
             },
