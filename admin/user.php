@@ -184,7 +184,7 @@
     // Carry on with the user listing
     $context = context_system::instance();
     // These columns are always shown in the users list.
-    $requiredcolumns = array('city', 'country', 'lastaccess');
+    $requiredcolumns = array('city', 'country', 'lastaccess', 'idnumber', 'email');
     // Extra columns containing the extra user fields, excluding the required columns (city and country, to be specific).
     $userfields = \core_user\fields::for_identity($context, true)->excluding(...$requiredcolumns);
     $extracolumns = $userfields->get_required_fields();
@@ -308,13 +308,21 @@
         foreach ($extracolumns as $field) {
             $table->head[] = ${$field};
         }
+        $table->colclasses[] = '';
+        $table->head[] = 'Username'; // PTL-844 Improve system user management
+        $table->colclasses[] = 'rightalign';
+        $table->head[] = 'ID Number';
+        $table->colclasses[] = 'rightalign';
+        $table->head[] = 'eMail';
+        $table->colclasses[] = 'rightalign';
         $table->head[] = $city;
-        $table->head[] = $country;
+        //$table->head[] = $country;
         $table->head[] = $lastaccess;
         $table->head[] = get_string('edit');
         $table->colclasses[] = 'centeralign';
         $table->head[] = "";
         $table->colclasses[] = 'centeralign';
+        $table->head[] = "Roles";
 
         $table->id = "users";
         foreach ($users as $user) {
@@ -371,6 +379,15 @@
                 }
             }
 
+            if (!\core\session\manager::is_loggedinas() && has_capability('moodle/user:loginas',
+                            $sitecontext) && !is_siteadmin($user->id)) {
+                $url = new moodle_url('/course/loginas.php',
+                        array('id' => 1, 'user' => $user->id, 'sesskey' => sesskey()));
+                $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/user', get_string('loginas')));
+                //$node = new  core_user\output\myprofile\node('administration', 'loginas', get_string('loginas'), null, $url);
+                //$tree->add_node($node);
+            }
+
             // the last column - confirm or mnet info
             if (is_mnet_remote_user($user)) {
                 // all mnet users are confirmed, let's print just the name of the host there
@@ -407,8 +424,11 @@
             foreach ($extracolumns as $field) {
                 $row[] = s($user->{$field});
             }
+            $row[] = $user->username; // PTL-844 Improve system user management
+            $row[] = (isset($user->idnumber)) ? $user->idnumber : '';
+            $row[] = $user->email;
             $row[] = $user->city;
-            $row[] = $user->country;
+            //$row[] = $user->country;
             $row[] = $strlastaccess;
             if ($user->suspended) {
                 foreach ($row as $k=>$v) {
@@ -417,6 +437,8 @@
             }
             $row[] = implode(' ', $buttons);
             $row[] = $lastcolumn;
+            // PTL-844 Improve system user management
+            $row[] = " (<a target=\"_new\" href=\"$CFG->wwwroot/admin/roles/usersroles.php?userid=$user->id&courseid=1\">".get_string('roles')."</a>) ";
             $table->data[] = $row;
         }
     }
