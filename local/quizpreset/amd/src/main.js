@@ -50,15 +50,15 @@ define([
                     Preset.configureViewQuizPage();
                 }
 
-                if (modulename == 'quiz') {
+                if (modulename === 'quiz') {
                     var addinput = $(Selector.ADD_INPUT).val();
                     var updateinput = $(Selector.UPDATE_INPUT).val();
 
-                    if (addinput == 'quiz' && Number(updateinput) == 0) {
+                    if (addinput === 'quiz' && Number(updateinput) === 0) {
                         Preset.configureAddQuizPage();
                     }
 
-                    if ((!addinput || addinput == 0 || addinput == '') && Number(updateinput) > 0) {
+                    if ((!addinput || addinput === 0 || addinput === '') && Number(updateinput) > 0) {
                         Preset.configureUpdateQuizPage();
                     }
                 }

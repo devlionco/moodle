@@ -125,11 +125,11 @@ class preset {
         $links = array();
         if (self::if_user_admin_or_teacher() && has_capability('mod/quiz:manage', $context)) {
 
-            $url1 = new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cmid, 'sesskey' => sesskey()));
-            $links[] = array(
-                    'url' => $url1->out(false),
-                    'title' => get_string('preview', 'local_quizpreset'),
-            );
+            //$url1 = new moodle_url('/mod/quiz/startattempt.php', array('cmid' => $cmid, 'sesskey' => sesskey()));
+            //$links[] = array(
+            //        'url' => $url1->out(false),
+            //        'title' => get_string('preview', 'local_quizpreset'),
+            //);
 
             $url2 = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
 

@@ -64,3 +64,7 @@
 #page-mod-quiz-view .quizattemptcounts {
   display: none !important;
 }
+
+#page-mod-quiz-view .tertiary-navigation .row {
+    column-gap: 0.25rem!important;
+}
