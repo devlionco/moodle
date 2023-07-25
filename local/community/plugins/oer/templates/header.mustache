@@ -7,16 +7,18 @@
 
             {{#menu}}
                 <ul class="list-unstyled col-md-auto px-1">
-                    <li class="d-flex align-items-center p-2 mb-0">
-                        <a class="oer-popup-list-title-icon mr-2" 
-                            title="{{config.wwwroot}}/local/community/plugins/oer/pix/default-category.png">
-                            
-                        </a>
+                    <li class="d-flex align-items-center p-2 mb-0 border-bottom border-primary">
+
+                        {{#default_category_image}}
+                            <img class="mr-2" src="{{{default_category_image}}}" width="24" height="24">
+                        {{/default_category_image}}
+
                         <a class="text-secondary oer-popup-list-title" href="{{config.wwwroot}}/local/community/plugins/oer/?categoryid={{cat_id}}">{{cat_name}}</a>
 
                         {{#user_editing}}
                             <a title="{{#str}}changeiconcategory, community_oer{{/str}}"
-                                href="{{config.wwwroot}}/local/metadata/index.php?id={{cat_id}}&action=categorydata&contextlevel=40">
+                                href="{{config.wwwroot}}/local/metadata/index.php?id={{cat_id}}&action=categorydata&contextlevel=40"
+                                class="ml-2">
                                 <i class="fat fa-edit"></i>
                             </a>
                         {{/user_editing}}
@@ -30,13 +32,16 @@
                             </a>
 
                             {{#user_editing}}
-                            <a title="{{#str}}changedefaultimage, community_oer{{/str}}"
-                                href="{{config.wwwroot}}/local/metadata/index.php?id={{id}}&action=coursedata&contextlevel=50">
-                                <i class="fat fa-edit"></i>
-                            </a>
+                                <a title="{{#str}}changedefaultimage, community_oer{{/str}}"
+                                    href="{{config.wwwroot}}/local/metadata/index.php?id={{id}}&action=coursedata&contextlevel=50"
+                                    class="ml-2">
+                                    <i class="fat fa-edit"></i>
+                                </a>
 
-                            <a class="oer-popup-list-item-icon d-block ml-2"
-                                title="{{{default_course_image}}}"></a>
+                                {{#default_course_image}}
+                                    <img class="ml-2" src="{{{default_course_image}}}" width="20" height="20">
+                                {{/default_course_image}}
+
                             {{/user_editing}}
                         </li>
                     {{/courses}}
