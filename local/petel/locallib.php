@@ -379,8 +379,8 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $course->shortname = $shortname;
     $course->visible = $visible;
 
-    $startdate = date('Y-m-d', strtotime(date() . ' - 1 days'));
-    $enddate = date('Y-m-d', strtotime(date() . ' -1 days + 1 years'));
+    $startdate = date('Y-m-d', strtotime(' - 1 days'));
+    $enddate = date('Y-m-d', strtotime(' -1 days + 1 years'));
 
     $course->startdate = strtotime($startdate);
     $course->enddate = strtotime($enddate);
