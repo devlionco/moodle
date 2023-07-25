@@ -42,26 +42,7 @@
                 {{#str}}all_rights_reserved, theme_petel {{/str}}
             </p>
             <div class="footer-links align-items-center justify-content-center justify-content-lg-start d-flex  flex-wrap">
-                {{!-- TODO: add links from back-end --}}
-                <a href="#" class="footer-link text-white mb-3">
-                    אתחול סיורים בעמוד זה
-                </a>
-                <span class="footer-link-divider mb-3"></span>
-                <a href="#" class="footer-link text-white mb-3">
-                    אודות מיזם פטל
-                </a>
-                <span class="footer-link-divider mb-3"></span>
-                <a href="#" class="footer-link text-white mb-3">
-                    מדיניות פרטיות
-                </a>
-                <span class="footer-link-divider mb-3"></span>
-                <a href="#" class="footer-link text-white mb-3">
-                    תנאי שימוש
-                </a>
-                <span class="footer-link-divider mb-3"></span>
-                <a href="#" class="footer-link text-white mb-3">
-                    מסמך להצהרת נגישות
-                </a>
+                {{{ output.standard_footer_html }}}
             </div>
         </div>
     </div>
@@ -72,32 +53,3 @@
     </div>
       {{{ output.standard_end_of_body_html }}}
 </footer>
-<!-- 
-        {{# output.has_popover_links }}
-            <div class="footer-section p-3 border-bottom">
-                {{# output.page_doc_link }}
-                    <div class="footer-support-link text-white">{{{ output.page_doc_link }}}</div>
-                {{/ output.page_doc_link }}
-
-                {{# output.services_support_link }}
-                    <div class="footer-support-link text-white">{{{ output.services_support_link }}}</div>
-                {{/ output.services_support_link }}
-
-                {{# output.supportemail }}
-                    <div class="footer-support-link text-white">{{{ output.supportemail }}}</div>
-                {{/ output.supportemail }}
-            </div>
-        {{/ output.has_popover_links }}
-       
-        <div class="footer-section p-3 border-bottom">
-            
-            <div class="logininfo text-white">
-                {{{ output.login_info }}}
-            </div>
-        
-            <div class="tool_usertours-resettourcontainer">
-            </div>
-            {{{ output.standard_footer_html }}}
-    
-        </div>
- -->
