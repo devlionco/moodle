@@ -190,7 +190,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                                 'Payload' => $payload,
                         ));
                         mtrace($result);
-                        $resboby = $result['body'];
+                        $resboby = $result['Payload'];
                         mtrace('Lambda response body');
                         mtrace(json_encode(json_decode($resboby), JSON_UNESCAPED_UNICODE));
                         $output = json_decode($resboby);
