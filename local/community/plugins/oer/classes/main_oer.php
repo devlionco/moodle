@@ -195,8 +195,7 @@ class main_oer {
                     $tmp['cat_name'] = $cat->name;
 
                     // Get category image.
-                    $category_image = self::category_image_default($cat->id);
-                    $tmp['category_image_url'] =  '$category_image->out()';
+                    $tmp['default_category_image'] = self::category_image_default($cat->id);
 
                     $sql = "
                         SELECT c.id, c.fullname, c.shortname, COUNT(c.id) AS count_activities
@@ -432,7 +431,7 @@ class main_oer {
     }
 
     public static function category_image_default($catid) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $image = false;
 
@@ -440,7 +439,7 @@ class main_oer {
         $data = \local_metadata\mcontext::category()->get($catid, 'imagecategory');
 
         // Default image.
-        /*$image = $OUTPUT->image_url('default-category', 'community_oer')->out(false);*/
+        //$image = $OUTPUT->image_url('default-category', 'community_oer')->out(false);
 
         if (!empty($data)) {
             $sql = "
