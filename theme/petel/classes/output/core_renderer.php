@@ -1021,6 +1021,24 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                     urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
             </ul></div>';
         }
+
+        // Revert all links to new format.
+        $linkarray = [];
+        if(preg_match_all('/<a\s+.*?href=[\"\']?([^\"\' >]*)[\"\']?[^>]*>(.*?)<\/a>/i', $output, $matches, PREG_SET_ORDER)){
+            foreach ($matches as $match) {
+                array_push($linkarray, [$match[1], $match[2]]);
+            }
+        }
+
+        $arr = [];
+        foreach ($linkarray as $item) {
+            if (isset($item[0]) && isset($item[1])) {
+                $arr[] = '<a href="'.$item[0].'" class="footer-link text-white mb-3">'.$item[1].'</a>';
+            }
+        }
+
+        $output = implode('<span class="footer-link-divider mb-3"></span>', $arr);
+
         return $output;
     }
 }
