@@ -20,6 +20,12 @@
 }
 
 #page-mod-quiz-attempt {
+    .secondary-navigation {
+        display: none !important;
+    }
+    #topofscroll.wider{
+        max-width: 75rem;
+    }
     .fullscreen {
         position: fixed;
         top: 0;
