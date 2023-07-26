@@ -42,6 +42,17 @@
         }
     }
 
+    .moremenu.navigation {
+        .dropdownmoremenu {
+          .dropdown-menu.show{
+            display: flex;
+            flex-direction: column;
+            width: fit-content;
+          }
+        }
+
+    }
+
     .btn-disable-share-course {
         color: $primary;
         font-size: .75rem;
