@@ -67,8 +67,11 @@
 		font-size: 1rem;
 	}
 }
-
+#page-mod-quiz-report .block_advancedoverview_report {
+	max-width: 100% !important;
+}
 .block_advancedoverview_report {
+
 	.top-block {
 		padding-bottom: 2rem;
 	}
@@ -385,10 +388,15 @@
 				background-color: transparent;
 				border-color: transparent;
 				margin-bottom: 0;
+				&:hover,
+				&:focus {
+					p {
+						font-weight: 500;
+					}
+				}
 			}
 
 			.nav-link.active p {
-				color: #fff;
 				font-weight: 500;
 			}
 		}
