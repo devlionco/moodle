@@ -714,6 +714,7 @@ define([
 
                                 $('#page-header div').html('');
                                 $('.header.backto').hide();
+                                $('#topofscroll').addClass('wider');
                             })
                             .fail(Notification.exception);
                     }

@@ -619,7 +619,7 @@ define([
 
                                 $('#page-header div').html('');
                                 $('.header.backto').hide();
-                                $('.secondary-navigation').hide();
+                                $('#topofscroll').addClass('wider');
                             })
                             .fail(Notification.exception);
                     }
