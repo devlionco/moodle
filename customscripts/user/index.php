@@ -116,10 +116,6 @@ foreach ($enrolbuttons as $enrolbutton) {
     $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
 }
 
-echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolbuttonsout, '', [
-    'data-region' => 'wrapper',
-    'data-table-uniqueid' => $participanttable->uniqueid,
-]));
 
 echo $OUTPUT->heading(get_string('pageparticipiants', 'local_petel'));
 
@@ -201,6 +197,11 @@ echo '
 ';
 
 echo $userrenderer->participants_filter($context, $participanttable->uniqueid);
+
+echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolbuttonsout, '', [
+    'data-region' => 'wrapper',
+    'data-table-uniqueid' => $participanttable->uniqueid,
+]));
 
 echo '<div class="userlist">';
 

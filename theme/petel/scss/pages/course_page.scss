@@ -16,6 +16,12 @@
         #page.drawers .main-inner {
             max-width: 70.5rem;
         }
+        #action_bar .row{
+            justify-content: flex-end;
+            .navitem {
+                margin-bottom: 0;
+            }
+        }
     }
 
     #page.drawers {
@@ -147,9 +153,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            &.btn-primary {
+                &:hover {
+                    border-color: $secondarylight;
+                    background-color: $secondarylight;
+                    color: $primary;
+                }
+            }
         }
 
-        #uploadcourseimagelabelб #enrolkeybtn {
+        #uploadcourseimagelabel #enrolkeybtn {
             i {
                 font-size: 1.125rem;
             }
@@ -391,6 +404,7 @@
     .activity-actions {
         align-self: center;
     }
+
 
     .activity-info {
         align-self: center;
