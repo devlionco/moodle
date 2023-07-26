@@ -174,24 +174,26 @@
     }
 
     .nav.nav-tabs {
-        background-color: $secondarylight;
+        background-color: $light;
 
         .nav-item {
             .nav-link {
                 color: $body-color;
-                background-color: $secondarylight;
+                background-color: $light;
 
                 &.active {
-                    background-color: $secondary;
-                    border-color: $secondary;
-                    color: $white;
-                    //  &:hover {
-                    //      background-color: $petel-secondarylight;
-                    //      border-color: $petel-secondarylight;
-                    //      p{
-                    //          color: $body-color;
-                    //      }
-                    //  }
+                    background-color: $secondarymedium;
+                    border-color: $secondarymedium;
+                    p{
+                        color: $white;
+                    }
+                     &:hover {
+                         background-color: $secondary;
+                         border-color: $secondary;
+                         p {
+                             color: $white;
+                            }
+                     }
                     //  &:focus {
                     //      color: $body-color;
                     //      background-color: $petel-secondarylight;
@@ -205,27 +207,29 @@
 
                 &:hover {
                     color: $body-color;
-                    background-color: $light;
-                    border-color: $secondarymedium;
-
+                    background-color: $secondarylight;
+                    border-color: $secondarylight;
+                    font-weight: 500;
                     p {
                         color: $body-color;
                     }
                 }
 
-                /*   &:focus {
+                  &:focus {
                     color: $body-color;
-                    background-color: $petel-secondarylight;
-                    border-color: $petel-secondary;
+                    font-weight: 500;
+
+                    background-color: $secondarylight;
+                    border-color: $secondarymedium;
                     box-shadow: none;
                     p{
                         color: $body-color;
                     }
-                } */
+                }
 
                 &.disabled {
-                    background-color: $gray-300;
-                    border-color: $gray-300;
+                    background-color: $gray-200;
+                    border-color: $gray-200;
                 }
             }
         }

@@ -60,6 +60,10 @@
   font-size: 1rem;
 }
 
+#page-mod-quiz-report .block_advancedoverview_report {
+  max-width: 100% !important;
+}
+
 .block_advancedoverview_report {
   /* 
   	#studentsActionsBtn {
@@ -324,8 +328,10 @@
   border-color: transparent;
   margin-bottom: 0;
 }
+.block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link:hover p, .block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link:focus p {
+  font-weight: 500;
+}
 .block_advancedoverview_report .nav.nav-tabs .nav-item .nav-link.active p {
-  color: #fff;
   font-weight: 500;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn[data-target="#studentsActionsCollapse"] {
