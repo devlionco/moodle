@@ -63,16 +63,16 @@ class qtype_savpl_edit_form extends question_edit_form {
         global $PAGE, $OUTPUT, $CFG;
         $modvplcfg = get_config('mod_vpl');
         $acetheme = get_user_preferences('vpl_acetheme', isset($modvplcfg->editor_theme) ? $modvplcfg->editor_theme : 'chrome');
-        $templatechangehelp = $OUTPUT->help_icon('templatevplchange', SASAQVPL, get_string('help'));
+        $templatechangehelp = $OUTPUT->help_icon('templatevplchange', SAQVPL, get_string('help'));
 
         $plugin = new stdClass();
         require($CFG->dirroot . '/mod/vpl/version.php');
         $vplversion = $plugin->version;
         unset($plugin);
 
-        $PAGE->requires->strings_for_js(array('merge', 'overwrite', 'templatevplchange', 'templatevplchangeprompt'), SASAQVPL);
+        $PAGE->requires->strings_for_js(array('merge', 'overwrite', 'templatevplchange', 'templatevplchangeprompt'), SAQVPL);
         $PAGE->requires->string_for_js('cancel', 'moodle');
-        $PAGE->requires->js_call_amd(SASAQVPL.'/editform', 'setup', array($acetheme, $templatechangehelp, $vplversion));
+        $PAGE->requires->js_call_amd(SAQVPL.'/editform', 'setup', array($acetheme, $templatechangehelp, $vplversion));
     }
 
     /**
@@ -152,9 +152,9 @@ class qtype_savpl_edit_form extends question_edit_form {
         $this->create_header($mform, 'teachercorrection');
         $this->add_codeeditor($mform, 'teachercorrection');
 
-        $mform->addElement('advcheckbox', 'validateonsave', null, get_string('validateonsave', SASAQVPL));
+        $mform->addElement('advcheckbox', 'validateonsave', null, get_string('validateonsave', SAQVPL));
         $mform->setDefault('validateonsave', false);
-        $mform->addHelpButton('validateonsave', 'validateonsave', SASAQVPL);
+        $mform->addHelpButton('validateonsave', 'validateonsave', SAQVPL);
     }
 
     /**
@@ -167,14 +167,14 @@ class qtype_savpl_edit_form extends question_edit_form {
 
         //$this->add_fileset_editor($mform, 'execfiles', 'execfileslist', 'execfile');
 
-        $mform->addElement('select', 'precheckpreference', get_string('precheckpreference', SASAQVPL),
-            array('none' => get_string('noprecheck', SASAQVPL),
-                'dbg' => get_string('precheckisdebug', SASAQVPL),
-                'same' => get_string('precheckhassamefiles', SASAQVPL),
-                'diff' => get_string('precheckhasownfiles', SASAQVPL),
+        $mform->addElement('select', 'precheckpreference', get_string('precheckpreference', SAQVPL),
+            array('none' => get_string('noprecheck', SAQVPL),
+                'dbg' => get_string('precheckisdebug', SAQVPL),
+                'same' => get_string('precheckhassamefiles', SAQVPL),
+                'diff' => get_string('precheckhasownfiles', SAQVPL),
             ));
         $mform->setDefault('precheckpreference', 'same');
-        $mform->addHelpButton('precheckpreference', 'precheckpreference', SASAQVPL);
+        $mform->addHelpButton('precheckpreference', 'precheckpreference', SAQVPL);
 
         if (isset($this->question->id) && !empty($this->question->id) && $this->question->options->precheckpreference == 'diff') {
             $options = [];
@@ -199,9 +199,9 @@ class qtype_savpl_edit_form extends question_edit_form {
         }
 
         $mform->addElement('select', 'gradingmethod',
-            get_string('gradingmethod', SASAQVPL),
-            array(get_string('allornothing', SASAQVPL), get_string('scaling', SASAQVPL)));
-        $mform->addHelpButton('gradingmethod', 'gradingmethod', SASAQVPL);
+            get_string('gradingmethod', SAQVPL),
+            array(get_string('allornothing', SAQVPL), get_string('scaling', SAQVPL)));
+        $mform->addHelpButton('gradingmethod', 'gradingmethod', SAQVPL);
     }
 
     /**
@@ -214,10 +214,10 @@ class qtype_savpl_edit_form extends question_edit_form {
     private function add_fileset_editor($mform, $name, $listname, $editorname) {
         $mform->addElement('hidden', $name);
         $mform->setType($name, PARAM_RAW);
-        $mform->addElement('static', $listname, get_string($name, SASAQVPL),
-            '<em class="novplmessage">'.get_string('selectavpl', SASAQVPL, '#id_qvplbaseheader').'</em>
+        $mform->addElement('static', $listname, get_string($name, SAQVPL),
+            '<em class="novplmessage">'.get_string('selectavpl', SAQVPL, '#id_qvplbaseheader').'</em>
             <ul id="'.$listname.'" class="filelist inline-list"></ul>');
-        $mform->addHelpButton($listname, $name, SASAQVPL);
+        $mform->addHelpButton($listname, $name, SAQVPL);
 
         $mform->addElement('textarea', $editorname, '', array('rows' => 1, 'class' => 'code-editor manylangs'));
     }
@@ -229,12 +229,12 @@ class qtype_savpl_edit_form extends question_edit_form {
      * @param array $attributes (optional) the attributes to add to the editor.
      */
     private function add_codeeditor($mform, $field, $attributes=null) {
-        $mform->addElement('textarea', $field, get_string($field, SASAQVPL),
+        $mform->addElement('textarea', $field, get_string($field, SAQVPL),
             array('rows' => 1, 'class' => 'code-editor'));
         if ($attributes != null) {
             $mform->updateElementAttr($field, $attributes);
         }
-        $mform->addHelpButton($field, $field, SASAQVPL);
+        $mform->addHelpButton($field, $field, SAQVPL);
     }
 
     /**
@@ -243,7 +243,7 @@ class qtype_savpl_edit_form extends question_edit_form {
      * @param string $identifier the name of the section.
      */
     private function create_header($mform, $identifier) {
-        $mform->addElement('header', $identifier.'header', get_string($identifier, SASAQVPL));
+        $mform->addElement('header', $identifier.'header', get_string($identifier, SAQVPL));
         $mform->setExpanded($identifier.'header', true);
     }
 
@@ -275,14 +275,14 @@ class qtype_savpl_edit_form extends question_edit_form {
                     }
                 } else {
                     if ($result->serverwassilent) {
-                        $details = get_string('serverwassilent', SASAQVPL);
+                        $details = get_string('serverwassilent', SAQVPL);
                     } else {
-                        $details = get_string('lastservermessage', SASAQVPL, $result->lastmessage);
+                        $details = get_string('lastservermessage', SAQVPL, $result->lastmessage);
                     }
-                    $errors['teachercorrection'] = get_string('nogradeerror', SASAQVPL, $details);
+                    $errors['teachercorrection'] = get_string('nogradeerror', SAQVPL, $details);
                 }
             } catch (Exception $e) {
-                $errors['teachercorrection'] = get_string('nogradeerror', SASAQVPL, $e->getMessage());
+                $errors['teachercorrection'] = get_string('nogradeerror', SAQVPL, $e->getMessage());
             }
         }
 
