@@ -322,7 +322,7 @@ class question_renderer extends \core_question_renderer {
             $attributes['class'] = 'customquestionflagimage fal fa-bookmark regular-state';
 
             // $icon = 'i/unflagged';
-            // $alt = get_string('notflagged', 'question');
+            // $alt = get_string('notflagged', 'theme_petel');
             // $label = get_string('clickflag', 'question');
         }
         // $attributes = array(
