@@ -22,80 +22,80 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addsections'] = 'Add section';
-$string['addsubsection'] = 'Add subsection';
-$string['backtocourse'] = 'Back to course \'{$a}\'';
-$string['backtosection'] = 'Back to \'{$a}\'';
+$string['addsections'] = 'הוספת יחידת הוראה';
+$string['addsubsection'] = 'הוספת תת יחידת הוראה';
+$string['backtocourse'] = 'חזרה לעמוד קורס ראשי \'{$a}\'';
+$string['backtosection'] = 'חזרה ל \'{$a}\'';
 $string['confirmdelete'] = 'Are you sure you want to delete this section? All activities and subsections will also be deleted';
 $string['confirmmerge'] = 'Are you sure you want to merge this section content with the parent? All activities and subsections will be moved';
-$string['currentsection'] = 'This section';
-$string['deletesection'] = 'Delete section';
-$string['displaycontent'] = 'Display content';
-$string['editsection'] = 'Edit section';
-$string['editsectionname'] = 'Edit section name';
-$string['hidefromothers'] = 'Hide section';
-$string['mergeup'] = 'Merge with parent';
+$string['currentsection'] = 'יחידת הוראה זו';
+$string['deletesection'] = 'מחיקת יחידת הוראה';
+$string['displaycontent'] = 'תצוגת תוכן';
+$string['editsection'] = 'עריכת יחידת הוראה';
+$string['editsectionname'] = 'עריכת שם יחידת הוראה';
+$string['hidefromothers'] = 'הסתרת יחידת הוראה';
+$string['mergeup'] = 'שילוב יחידה זו ביחידה הראשית';
 $string['moveassubsection'] = 'As a subsection of \'{$a}\'';
-$string['movebeforecm'] = 'Before activity \'{$a}\'';
-$string['movebeforesection'] = 'Before \'{$a}\'';
-$string['movecmendofsection'] = 'To the end of section \'{$a}\'';
-$string['movecmsection'] = 'To the section \'{$a}\'';
-$string['moveendofsection'] = 'As the last subsection of \'{$a}\'';
-$string['movesectiontotheend'] = 'To the end';
-$string['newsectionname'] = 'New name for section {$a}';
+$string['movebeforecm'] = 'לפני פעילות \'{$a}\'';
+$string['movebeforesection'] = 'לפני \'{$a}\'';
+$string['movecmendofsection'] = 'בסוף יחידת ההוראה \'{$a}\'';
+$string['movecmsection'] = 'ליחידת הוראה \'{$a}\'';
+$string['moveendofsection'] = 'לתת יחידה האחרונה של \'{$a}\'';
+$string['movesectiontotheend'] = 'לסוף';
+$string['newsectionname'] = 'שם חדש ליחידת הוראה {$a}';
 $string['page-course-view-flexsections'] = 'Any course main page in Flexible sections format';
 $string['page-course-view-flexsections-x'] = 'Any course page in Flexible sections format';
-$string['pluginname'] = 'Flexible sections format';
+$string['pluginname'] = 'יחידות ותתי יחידות בתמונות';
 $string['privacy:metadata'] = 'The Flexible sections format plugin does not store any personal data.';
-$string['section0name'] = 'General';
-$string['sectionname'] = 'Topic';
-$string['showcollapsed'] = 'Display as a link';
-$string['showexpanded'] = 'Display on the same page';
-$string['showfromothers'] = 'Show section';
+$string['section0name'] = 'מבוא';
+$string['sectionname'] = 'יחידת הוראה';
+$string['showcollapsed'] = 'תצוגה כקישור';
+$string['showexpanded'] = 'תצוגה באופן מלא';
+$string['showfromothers'] = 'תצוגת יחידת הוראה';
 
 // Deprecated but still can be used in 4.0, to be removed when we have a branch for Moodle 4.1 or later.
-$string['addsection'] = 'Add section';
-$string['addsubsectionfor'] = 'Add subsection for \'{$a}\'';
-$string['cancelmoving'] = 'Cancel moving \'{$a}\'';
-$string['removemarker'] = 'Do not mark as current';
-$string['setmarker'] = 'Mark as current';
+$string['addsection'] = 'הוספת יחידת הוראה';
+$string['addsubsectionfor'] = 'הוספת תת יחידת הוראה ל \'{$a}\'';
+$string['cancelmoving'] = 'ביטול העברת \'{$a}\'';
+$string['removemarker'] = 'ביטול סימון יחידה בלמידה';
+$string['setmarker'] = 'סימון כיחידת בלמידה';
 
-$string['image'] = 'Image';
-$string['editcard'] = 'Add image';
+$string['image'] = 'תמונה';
+$string['editcard'] = 'הוספת תמונה';
 $string['editimage:resizefailed'] = 'Failed to resize the selected image. The card will use the image at it\'s original size. You can try re-uploading the image later.';
 
 // Settings
 $string['settings:name'] = 'Flexsections format settings';
-$string['form:course:usedefault'] = 'Default ({$a})';
+$string['form:course:usedefault'] = 'בררת מחדל ({$a})';
 
-$string['form:course:hiddensections'] = 'Hidden sections';
+$string['form:course:hiddensections'] = 'הסתרת יחידותהוראה';
 $string['form:course:hiddensections_help'] = 'Whether hidden sections are displayed to students as not available (perhaps for a course in weekly format to indicate holidays) or are completely hidden.';
 
-$string['form:course:showprogress'] = 'Section progress';
+$string['form:course:showprogress'] = 'מעקב השלמה';
 $string['form:course:showprogress:description'] = 'Whether to display progress within each section on the card';
-$string['form:course:showprogress:show'] = 'Shown';
-$string['form:course:showprogress:hide'] = 'Hidden';
-$string['form:course:progressformat'] = 'Display progress as';
-$string['form:course:progressformat:count'] = 'A count of items';
-$string['form:course:progressformat:percentage'] = 'A percentage';
-$string['form:course:progressmode'] = 'Progress mode';
-$string['form:course:progressmode:circle'] = 'Circle';
-$string['form:course:progressmode:line'] = 'Line';
-$string['form:course:cardorientation'] = 'Card orientation';
-$string['form:course:cardorientation:vertical'] = 'Vertical';
-$string['form:course:cardorientation:horizontal'] = 'Horizontal';
-$string['form:course:showsummary'] = 'Section summary';
-$string['form:course:showsummary:show'] = 'Shown';
-$string['form:course:showsummary:hide'] = 'Hidden';
+$string['form:course:showprogress:show'] = 'מוצג';
+$string['form:course:showprogress:hide'] = 'מוסתר';
+$string['form:course:progressformat'] = 'תצורת תצוגת השלמה';
+$string['form:course:progressformat:count'] = 'מספר פעילויות שהושלמו';
+$string['form:course:progressformat:percentage'] = 'אחוז פעיליות שהושלמו';
+$string['form:course:progressmode'] = 'אופן תצוגת השלמה';
+$string['form:course:progressmode:circle'] = 'גרף עגול';
+$string['form:course:progressmode:line'] = 'סרגל השלמה';
+$string['form:course:cardorientation'] = 'עימוד תמונת יחידת הוראה';
+$string['form:course:cardorientation:vertical'] = 'מאונך';
+$string['form:course:cardorientation:horizontal'] = 'מאוזן';
+$string['form:course:showsummary'] = 'תקציר יחידת הוראה';
+$string['form:course:showsummary:show'] = 'מוצג';
+$string['form:course:showsummary:hide'] = 'מוסתר';
 $string['form:course:showsummary_help'] = 'Whether to show the section summary on cards';
-$string['form:course:section0'] = 'General section';
+$string['form:course:section0'] = 'יחידת מבוא';
 $string['form:course:section0_help'] = 'The general section is the first section in your course, which usually contains the course\'s announcements page. You can choose to have this visible either only on the course\'s main page, on top of the card deck, or visible on the main page and each individual section page.';
-$string['form:course:section0:coursepage'] = 'Only show on the main course page';
-$string['form:course:section0:allpages'] = 'Show on all pages, including individual sections';
+$string['form:course:section0:coursepage'] = 'תוצג בעמוד קורס הראשי בלבד';
+$string['form:course:section0:allpages'] = 'תוצג בכל עמודי ותת עמודי הקורס';
 
-$string['form:course:sectionview:cards'] = 'Cards';
-$string['form:course:sectionview:list'] = 'List';
-$string['form:course:sectionviewoption'] = 'Show section as';
+$string['form:course:sectionview:cards'] = 'כרטיסים';
+$string['form:course:sectionview:list'] = 'רשימה';
+$string['form:course:sectionviewoption'] = 'תצוגת יחידת הוראה';
 
 $string['lastseen'] = 'צפית ביחידה זו לאחרונה';
 $string['section:completion:percentage'] = 'הושלמו {$a->percentage}%';
@@ -117,7 +117,7 @@ $string['questionnairesubmitted'] = 'הגישו';
 $string['questionnairenotsubmitted'] = 'טרם התחילו';
 $string['hvphavegrade'] = 'הוגש וניתן ציון';
 $string['hvpnotsubmitted'] = 'טרם הוגש';
-$string['studentfailed'] = 'נכשלו {$a} תלמידים';
+$string['studentfailed'] = '{$a} תלמידים נכשלו';
 $string['cut_of_date'] = 'לא הוגש';
 $string['cut_of_date_label'] = 'להגיש עד {$a->date}';
 $string['cut_of_date_less_days_label'] = '<span>להגיש תוך {$a} <i class="fa fa-exclamation-circle red" style="color: red" aria-hidden="true"></i> </span>';
@@ -125,7 +125,7 @@ $string['no_submission_date'] = 'ללא תאריך הגשה';
 $string['complete'] = 'הושלם';
 $string['waitgrade'] = 'הוגש וטרם נבדק';
 
-$string['editimage'] = 'ערוך תמונה';
+$string['editimage'] = 'עריכת תמונה';
 
 // Student status.
 $string['statuswaitingforsubmission'] = 'פעילויות ממתינות להגשה שלך';
