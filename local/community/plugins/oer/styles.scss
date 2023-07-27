@@ -1294,6 +1294,7 @@ html[dir="ltr"] {
     background-color: #e2e1e1;
     border-radius: 10px;
     padding: 10px;
+    border: none;
 }
 
 #modalContentReview .review_modal .review_block-body .review_block-body-text {
@@ -1304,12 +1305,27 @@ html[dir="ltr"] {
 
 #modalContentReview .review_modal .review_block .review_block-content {
     margin-right: 0;
-    margin-top: 7px;
+    margin-top: .25rem;
+    width: 100%;
 }
-
+#modalContentReview .review_modal {
+    .review_block-comment,
+    .review_block {
+        display: flex;
+        align-items: flex-start;
+    }
+    .review_block-header {
+        display: flex;
+        align-items: center;
+    }
+    .userpic {
+     border-radius: 100%;   
+    }
+}
 #modalContentReview .review_modal .review_block-comment .review_block-content {
     margin-right: 0;
     margin-top: 3px;
+    width: 100%;
 }
 
 #modalContentReview .review_modal .review_block-comment .review_block-body-text {
