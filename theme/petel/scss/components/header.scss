@@ -185,10 +185,15 @@ nav.navbar.petel-navbar {
                     position: absolute;
                     width: .875rem;
                     height: .875rem;
-                    left: .125rem;
+                    left: 1.25rem;
                     top: .125rem;
                     border-radius: 100%;
                     background-color: $secondary;
+                }
+            }
+            .custom-control-input:checked ~ .custom-control-label {
+                &::after {
+                  transform: translateX($custom-switch-width - $custom-control-indicator-size - .35rem);
                 }
             }
         }
@@ -252,7 +257,18 @@ nav.navbar.petel-navbar {
         font-weight: 400;
     }
 }
-
+html[dir="ltr"] {
+   
+    nav.navbar.petel-navbar .editmode-switch-form .custom-switch .custom-control-label::after {
+        left: unset;
+        right: 1.25rem;
+    }
+    nav.navbar.petel-navbar .editmode-switch-form .custom-switch .custom-control-input:checked ~ .custom-control-label {
+        &::after {
+          transform: translateX($custom-switch-width - $custom-control-indicator-size + .35rem);
+        }
+    }
+}
 @include media-breakpoint-down(sm) {
     nav.navbar {
         &.fixed-top {

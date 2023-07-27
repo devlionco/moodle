@@ -24,8 +24,8 @@
 
               <div class="modal-body-main" data-simplebar>
                   <div data-ref = "addInstantReview" class="instant_review_block review_block review-unit">
-                      <div class="userpic" style ="background-image: url({{avatar}})"></div>
-                      <div class="instant_review_block-content review_block-content">
+                      <div class="userpic mr-2" style ="background-image: url({{avatar}})"></div>
+                      <div class="instant_review_block-content review_block-content w-100">
                           <div class="instant_review_block-header review_block-header">
                               <span>{{userfirstname}} {{userlastname}}</span>
                           </div>
@@ -50,7 +50,7 @@
                   <div class="review_bigblock" data-reviewid="{{reviewid}}" data-objid="{{objid}}">
                     <div class="review_block">
                         <div
-                          class="userpic"
+                          class="userpic mr-2"
                           style ="background-image: url({{userpicture}})"
                           >
                         </div>
@@ -126,18 +126,18 @@
 
                       <div class="ml-5">
 
-                        <button data-handler = "addComment" class="btn btn-outline-secondary btn-sm mb-0">{{#str}}addcomment, community_oer {{/str}}</button>
+                        <button data-handler = "addComment" class="btn btn-secondary btn-sm mb-3">{{#str}}addcomment, community_oer {{/str}}</button>
 
                           <div data-ref = "addComment" class="review_block-comment">
-                              <div class="userpic" style ="background-image: url({{avatar}})"></div>
-                              <div class="review_block-content">
+                              <div class="userpic mr-2" style ="background-image: url({{avatar}})"></div>
+                              <div class="review_block-content mt-0">
                                   <div class="review_block-header">
                                       <div class="user_info">
                                         <span>{{userfirstname}} {{userlastname}}</span>
                                       </div>
                                   </div>
                                   <div class="review_block-body addcomment_block review-unit">
-                                      <textarea rows=3 class="description_text" name="addcomment{{reviewid}}" placeholder="{{#str}}add_text, community_oer {{/str}}"></textarea>
+                                      <textarea rows=3 class="description_text w-100" name="addcomment{{reviewid}}" placeholder="{{#str}}add_text, community_oer {{/str}}"></textarea>
                                       <div class = "control d-flex justify-content-end pt-2 sendcomment">
                                           <button
                                                   data-handler="sendComment"
@@ -155,7 +155,7 @@
                           </div>
 
                           <div id="btn-colapse-comments-{{reviewid}}" class="row ml-0 mt-2 mb-0 {{^comments.length}}hide{{/comments.length}}">
-                              <button class="collapse-comments btn ml-0 mt-0 d-flex align-items-center collapsed" type="button" data-toggle="collapse" data-target="#block-comments-{{reviewid}}"
+                              <button class="collapse-comments btn btn-link ml-0 mt-0 d-flex align-items-center collapsed" type="button" data-toggle="collapse" data-target="#block-comments-{{reviewid}}"
                                       aria-expanded="false" aria-controls="block-comments-{{reviewid}}">
                                   <i class="fa fa-caret-down mr-1" aria-hidden="true"></i>
                                   <i class="fa fa-caret-left mr-1" aria-hidden="true"></i>
@@ -168,12 +168,12 @@
                               </button>
                           </div>
 
-                          <div class="collapse" id="block-comments-{{reviewid}}">
+                          <div class="collapse mt-2 pl-2" id="block-comments-{{reviewid}}">
 
                           {{#comments}}
-                          <div class="review_block-comment" data-commentid="{{commentid}}" data-reviewid="{{reviewid}}">
-                              <div class="userpic" style ="background-image: url({{userpicture}})"></div>
-                              <div class="review_block-content">
+                          <div class="review_block-comment mb-3" data-commentid="{{commentid}}" data-reviewid="{{reviewid}}">
+                              <div class="userpic mr-2" style ="background-image: url({{userpicture}})"></div>
+                              <div class="review_block-content w-100 mt-0">
                                 <div class="review_block-header">
                                     <div class="user_info">
                                       <span class="title">{{firstname}} {{lastname}}</span> |
