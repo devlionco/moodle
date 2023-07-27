@@ -35,7 +35,7 @@ class question_flags extends \question_flags {
             0 => array(
                 'src' => $OUTPUT->image_url('i/bookmark-regular') . '',
                 'title' => 'ADD', // get_string('clicktoflag', 'question'),
-                'alt' => get_string('notflagged', 'question'),
+                'alt' => get_string('notflagged', 'theme_petel'),
                'text' => get_string('clickflag', 'question'),
             ),
             1 => array(
