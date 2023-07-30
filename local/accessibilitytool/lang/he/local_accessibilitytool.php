@@ -26,10 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$string['accessibilitytool'] = "כלי נגישות";
-$string['accessibilitytools'] = "כלי נגישות";
-$string['accessibilitytoolpreferences'] = "הגדרות נגישות";
-$string['pluginname'] = "כלי נגישות";
+$string['accessibilitytool'] = "העדפות נגישות";
+$string['accessibilitytools'] = "העדפות נגישות";
+$string['accessibilitytoolpreferences'] = "העדפות נגישות";
+$string['pluginname'] = "העדפות נגישות";
 $string['return'] = "חזרה";
 $string['returnhelp'] = "Return to the page you were looking at before coming here";
 $string['about'] = '<h3>About accessibility tool</h3>
