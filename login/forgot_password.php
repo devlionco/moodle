@@ -49,7 +49,7 @@ $PAGE->set_context($systemcontext);
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
-$PAGE->set_pagelayout('login');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($strforgotten);
 $PAGE->set_heading($COURSE->fullname);
 
