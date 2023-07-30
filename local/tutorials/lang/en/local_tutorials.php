@@ -48,3 +48,4 @@ $string['setting_fire_prevention_he_cmid'] = 'Hebrew quiz CMID';
 $string['setting_fire_prevention_he_cmid_desc'] = 'Hebrew - Watch user completion for the following CMID ';
 $string['setting_fire_prevention_en_cmid'] = 'English quiz CMID';
 $string['setting_fire_prevention_en_cmid_desc'] = 'English - Watch user completion for the following CMID ';
+$string['tasks:send_fire_prevention_reminders'] = 'Send fire prevention reminders';
