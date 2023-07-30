@@ -350,10 +350,31 @@ class enrol_self_plugin extends enrol_plugin {
         $fields = $this->get_instance_defaults();
 
         if ($this->get_config('requirepassword')) {
-            $fields['password'] = generate_password(20);
+            // PTL-798 Auto generate enrol key.
+            $fields['password'] = $this->incrementalHash(3) . (string)$course->id . $this->incrementalHash(3);
         }
 
         return $this->add_instance($course, $fields);
+    }
+
+    private function incrementalHash($len = 5){
+        // Option A
+        return substr(str_shuffle(str_repeat("123456789ABCDEFGHIJKLMNPQRSTUVWXYZ", $len)), 0, $len);
+
+        // Option B
+        /*
+        $charset = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+        $base = strlen($charset);
+        $result = '';
+
+        $now = explode(' ', microtime())[1];
+        while ($now >= $base){
+            $i = $now % $base;
+            $result = $charset[$i] . $result;
+            $now /= $base;
+        }
+        return substr($result, -$len);
+        */
     }
 
     /**
