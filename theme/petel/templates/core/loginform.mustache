@@ -143,14 +143,14 @@
                                 <input type="text" name="username" id="username"
                                         class="form-control"
                                         value="{{username}}"
-                                        placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}}
+                                        placeholder={{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}
                                         autocomplete="username"/>
                             </div>
                             <div class="form-group">
                                 <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
                                    <input type="password" name="password" id="password" value=""
                                     class="form-control"
-                                    placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
+                                    placeholder={{#str}}password{{/str}}
                                     autocomplete="current-password"/>
                                     <i id="passeye" class="fa fa-eye passeye" aria-hidden="true" onclick="showPassword()"></i>
                                     <style>
@@ -237,7 +237,7 @@
                     </div> -->
                 </div>
                 <div class="col-12 d-flex flex-column justify-content-end flex-shrink-1">
-                    <img class="petel-logo shadow-image" src="{{{petellogo}}}" role="presentation" alt="{{#str}}logo_department_of_science_teaching, theme_petel{{/str}}"> 
+                    <img class="petel-logo shadow-image" src="{{{petellogo}}}" role="presentation" alt="{{#str}}logo_department_of_science_teaching, theme_petel{{/str}}">
                     <div class="d-flex flex-row-reverse justify-content-between policies">
                         {{#policies}}
                         <a href="{{url}}" rel="nofollow" target="_blank" class="py-2 bg-white text-primary">{{name}}</a>
@@ -261,7 +261,7 @@
                     <button type="submit" class="btn btn-secondary">{{#str}}startsignup{{/str}}</button>
                 </form>
                 {{/cansignup}}
-            </div>    
+            </div>
         {{/hasinstructions}}
         -->
         <div class="page-copyright">
@@ -294,7 +294,7 @@
         {{/ social }}
         {{/ loginsocial_context }}
         </div>
-       
+
     </div>
 </div>
 
