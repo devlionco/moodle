@@ -51,13 +51,13 @@ Example context (json):
             <div class="card-img-top" id="section-image-{{id}}" role="presentation" {{#image}}style="background: url('{{{image}}}') center/cover"
                 {{/image}}>
             </div>
-            <div class="card-header-fade p-1">
+            <div class="card-header-fade">
                 {{$ core_courseformat/local/content/section/badges }}
                     {{> core_courseformat/local/content/section/badges }}
                 {{/ core_courseformat/local/content/section/badges }}
                 {{#summary}}
                 {{#summarytext}}
-                <div class="summary">
+                <div class="summary p-1">
                     {{{summarytext}}}
                 </div>
                 {{/summarytext}}
