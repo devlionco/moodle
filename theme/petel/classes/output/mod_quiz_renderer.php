@@ -35,6 +35,7 @@ use single_button;
 use stdClass;
 use question_state_todo;
 use quiz_nav_question_button;
+use renderable;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -482,7 +483,7 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         if(($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') && $timeleft !== false){
             $output .= $OUTPUT->render_from_template('theme_petel/time_block', $params);
         }
-        if($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') {
+        if($PAGE->pagetype == 'mod-quiz-attempt') {
             $this->page->requires->js_call_amd('theme_petel/quiz_timer', 'init', $params);
         }
 

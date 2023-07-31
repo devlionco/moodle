@@ -10,7 +10,14 @@
 
     {{#middlelist}}
     <div class="btn-group" role="group">
-        <button id="{{blockid}}middle1" type="button" class="btn" data-toggle="dropdown" aria-expanded="false"></button>
+        <button id="{{blockid}}middle1" type="button" class="btn" data-toggle="dropdown" aria-expanded="false">
+            <div class="dots h-100 pb-1">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+        </button>
         <div class="dropdown-menu" aria-labelledby="{{blockid}}middle1">
             {{#middlelistitems}}
             <a data-page="{{page}}" class="dropdown-item {{blockid}}-action-page pagebutton " href="#">{{title}}</a>
