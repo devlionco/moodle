@@ -22,6 +22,25 @@
                 margin-bottom: 0;
             }
         }
+        #participiants-table-block {
+            .cell.c1 {
+               vertical-align: middle;
+            }
+            .cell.c1 >div,
+            .c7.cell-last > div {
+                display: flex;
+                align-items: center;
+            }
+            .cell.c4 {
+                min-width: 4rem;
+            }
+            .quickeditlink.aalink {
+                white-space: nowrap;
+            }
+            .defaultuserpic {
+                margin-right: .25rem;
+            }
+        }
     }
 
     #page.drawers {
@@ -35,7 +54,7 @@
 
     .header-maxwidth {
         margin: 0;
-        margin-bottom: .25rem;
+        margin-bottom: .5rem;
     }
 
     #page-header {
@@ -257,6 +276,11 @@
 
         .card-main-content {
             min-height: 13rem;
+            .summary {
+                background-color: rgba($color: $white, $alpha: .70);
+                border-top-right-radius: .5em;
+                border-top-left-radius: .5em;
+            }
         }
     }
 

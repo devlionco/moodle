@@ -224,7 +224,25 @@ nav.navbar.petel-navbar {
         }
     }
 }
-
+.periodictable {
+    .ui-dialog-titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    button.ui-dialog-titlebar-close{
+        margin-left: auto !important;
+        position: relative;
+        right: unset;
+        top: unset;
+        width: auto;
+        height: auto;
+        padding-left: .25rem;
+        padding-right: .25rem;
+        margin: 0;
+        box-shadow: none !important;
+    }
+}
 .userloggedinas {
     nav.navbar #usernavigation .usermenu .userbutton .avatars .avatar.current {
         display: inline-flex;

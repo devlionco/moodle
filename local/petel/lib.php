@@ -375,11 +375,10 @@ function local_petel_periodic_table_button() {
         $title = get_string('periodictable', 'local_petel');
         $html .= html_writer::start_tag('a', array(
                 'href' => '#',
-                'class' => 'periodic_table-btn nav-link pl-3',
+                'class' => 'periodic_table-btn nav-link mr-3',
                 'title' => $title,
                 'id' => 'periodic_table-id',
-                'role' => 'button',
-                'data-toggle' => 'tooltip'));
+                'role' => 'button',));
         $html .= html_writer::img($CFG->wwwroot.'/local/petel/pix/chemistry/chemistry_periodic_table_icon.svg', $title,
                 ['style'=>'width: 32px;']);
                 
@@ -424,7 +423,8 @@ function local_petel_periodic_table_button() {
                         });
 
                         $('.ui-dialog-titlebar-close').html('$strclosedialog');
-                        var headerheight = $('nav.navbar-petel').outerHeight() + 'px';
+                        $('.ui-dialog-titlebar-close').addClass('btn btn-light')
+                        var headerheight = $('nav.petel-navbar').outerHeight() + 'px';
                         $('.periodictable').css('height', 'calc(100vh - '+ headerheight +')');
                         $('.periodictable').css('top', headerheight);
                         return false;

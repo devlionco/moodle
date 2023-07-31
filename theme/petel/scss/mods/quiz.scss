@@ -19,6 +19,12 @@
     display: contents;
 }
 
+#page-mod-quiz-view {
+    .container-fluid.tertiary-navigation .row {
+        justify-content: center;
+    }
+}
+
 #page-mod-quiz-attempt {
     .secondary-navigation {
         display: none !important;
@@ -634,7 +640,12 @@
         font-family: $primary-font;
     }
 }
-
+#page-mod-quiz-summary {
+    .moodle-dialogue {
+        min-width: 22.5rem;
+        width: auto;
+    }
+}
 //TODO: move to correct place after refactoring
 // Advancedoverview
 .path-mod-quiz#page-mod-quiz-report {

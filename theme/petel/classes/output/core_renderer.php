@@ -401,9 +401,9 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 'class' => 'nav-admin-search-icon  d-flex align-items-center justify-content-center pr-2 pr-md-3',
                 'title' => get_string('siteadminquicklink', 'theme_petel'),
                 'role' => 'button',
-                'data-toggle' => 'tooltip',
+               /*  'data-toggle' => 'tooltip', */
                 'data-placement' => 'bottom',
-                'aria-label' => get_string('siteadminquicklink', 'theme_petel')
+                'title' => get_string('siteadminquicklink', 'theme_petel')
             ];
             $icon = html_writer::tag('i', '', array('class' => 'fa-light fa-wrench nav-link'));
             $output .= html_writer::link($url, $icon, $attr);
