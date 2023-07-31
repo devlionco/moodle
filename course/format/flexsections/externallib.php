@@ -311,35 +311,39 @@ class format_flexsections_external extends external_api {
 
             $cmwaitingforsubmission = $cmfailed = $cmnotsubmitted = 0;
             foreach ($cmids as $cmid){
-                $cm = $modinfo->get_cm($cmid);
-                $flagwaitingforsubmission = $flagfailed = $flagnotsubmitted = false;
-                foreach ($students as $userid) {
-                    if ($tmod = format_flexsections_cm_submission_data($cm, $userid)) {
-                        // Status הוגש וטרם נבדק.
-                        if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
-                            $flagwaitingforsubmission = true;
-                        }
+                try {
+                    $cm = $modinfo->get_cm($cmid);
+                    $flagwaitingforsubmission = $flagfailed = $flagnotsubmitted = false;
+                    foreach ($students as $userid) {
+                        if ($tmod = format_flexsections_cm_submission_data($cm, $userid)) {
+                            // Status הוגש וטרם נבדק.
+                            if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
+                                $flagwaitingforsubmission = true;
+                            }
 
-                        // Status failed.
-                        if ($tmod->failed) {
-                            $flagfailed = true;
-                        }
+                            // Status failed.
+                            if ($tmod->failed) {
+                                $flagfailed = true;
+                            }
 
-                        // Status לאחר תאריך הגשה סופי.
-                        if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
-                            $flagnotsubmitted = true;
+                            // Status לאחר תאריך הגשה סופי.
+                            if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
+                                $flagnotsubmitted = true;
+                            }
                         }
                     }
-                }
 
-                if ($flagwaitingforsubmission) {
-                    $cmwaitingforsubmission++;
-                }
-                if ($flagfailed) {
-                    $cmfailed++;
-                }
-                if ($flagnotsubmitted) {
-                    $cmnotsubmitted++;
+                    if ($flagwaitingforsubmission) {
+                        $cmwaitingforsubmission++;
+                    }
+                    if ($flagfailed) {
+                        $cmfailed++;
+                    }
+                    if ($flagnotsubmitted) {
+                        $cmnotsubmitted++;
+                    }
+                } catch (Exception $e) {
+
                 }
             }
 
