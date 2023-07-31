@@ -656,3 +656,24 @@
 
     }
 }
+
+html[dir="rtl"] {
+    .quiz-time-settings .stopwatch-control .custom-control-input:checked ~ .custom-control-label::after {
+        transform: translateX(-1.1rem) !important;
+    }
+    #page-mod-quiz-attempt .quiz_pagination .arr {
+        &.arr-left {
+            transform: rotate(90deg);
+        }
+
+        &.arr-right {
+            transform: rotate(-90deg);
+        }
+    }
+    /*     #page-mod-quiz-attempt .alert-quiz-timer .color-block {
+        transform: scaleX(-1);
+    } */
+    .quiz_pagination .arr {
+        transform: scaleX(-1);
+    }
+}
