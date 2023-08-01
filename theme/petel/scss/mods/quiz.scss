@@ -639,8 +639,12 @@
     }
     .que .outcome,
     .que .comment {
-        @include alert-variant(theme-color-level('danger', $alert-bg-level),
-        theme-color-level('danger', $alert-border-level), theme-color-level('danger', $alert-color-level - 0.9));
+        // @include alert-variant(theme-color-level('danger', $alert-bg-level),
+        // theme-color-level('danger', $alert-border-level), theme-color-level('danger', $alert-color-level - 0.9));
+
+        background-color: #FCEFDC;
+        border-color: #FBE8CD;
+        color: #8E662E;
 
     /* stylelint-disable-line max-line-length */
     // Darken link colour inside comments for better colour contrast against regular text.

@@ -37,6 +37,7 @@ require_once($CFG->dirroot . '/lib/form/mathlive.php');
 class qtype_shortanswer_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
+        global $DB;
 
         $question = $qa->get_question();
         $currentanswer = $qa->get_last_qt_var('answer');
@@ -75,7 +76,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
         }
 
         // Input mathlive or normal.
-        if($question->mathliveenable == 1){
+        $obj = $DB->get_record('qtype_shortanswer_options', ['questionid' => $question->id]);
+        if(!empty($obj) && $obj->mathliveenable == 1){
             $mathlive = new \form_mathlive();
             $input = '<div class="d-flex align-items-center">' .
                         $mathlive->render($inputname, $inputname, $currentanswer).
@@ -126,6 +128,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
     }
 
     public function correct_response(question_attempt $qa) {
+        global $DB;
+
         $question = $qa->get_question();
 
         $answer = $question->get_matching_answer($question->get_correct_response());
@@ -134,7 +138,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
         }
 
         // Answer mathlive or normal.
-        if($question->mathliveenable == 1){
+        $obj = $DB->get_record('qtype_shortanswer_options', ['questionid' => $question->id]);
+        if(!empty($obj) && $obj->mathliveenable == 1){
             $mathlive = new \form_mathlive();
             $correctanswer = $mathlive->static_formula($question->clean_response($answer->answer));
         }else{
