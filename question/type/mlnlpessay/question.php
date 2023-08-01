@@ -309,13 +309,13 @@ class qtype_mlnlpessay_question extends question_graded_automatically {
         $step = $this->getProtectedValue($response['answer'], 'step');
 
         if ($step == null) {
-            $questionusageid = optional_param('questionusageid', '', PARAM_INT);
             $sql = "SELECT qa.*
                     FROM {question_attempts} qa
-                    WHERE qa.questionid = ? AND qa.questionusageid = ?
+                    JOIN {quiz_attempts} qza ON qa.questionusageid = qza.uniqueid 
+                    WHERE qa.questionid = ?
                     ORDER BY id DESC
                     LIMIT 1";
-            $param = [$question->questionid, $questionusageid];
+            $param = [$question->questionid];
 
             $question_attempt = $DB->get_record_sql($sql, $param);
         } else {
