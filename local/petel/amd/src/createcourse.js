@@ -120,7 +120,7 @@ define([
             ]).done(function (strings) {
 
                 let template = '<input id="'+name+'" name="'+name+'"  class="w-100" type="text" placeholder="'+strings[0]+'">';
-                template += '<span style="display: none;" class="label label-warning error-block">'+strings[1]+'</span>';
+                template += '<span style="display: none;" class="label text-danger error-block">'+strings[1]+'</span>';
 
                 return ModalFactory.create({
                     type: ModalFactory.types.SAVE_CANCEL,

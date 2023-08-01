@@ -484,10 +484,9 @@
 
         .btn-secondary:hover {
             background-color: $petel-light!important;
-            border: 0.0125rem solid #4f80bb !important;
-            -webkit-box-shadow: 0 .375rem .75rem 0 rgba(43, 43, 43, .2) !important;
+            border: 0.0125rem solid $primary !important;
             box-shadow: 0 .375rem .75rem 0 rgba(43, 43, 43, .2) !important;
-            color: $petel-secondary !important;
+            color: $secondary !important;
         }
 
         .card-body>h5 {
@@ -556,13 +555,12 @@
     }
 
     .mod_quiz-section-heading {
-        font-family: "Meoded Pashut", sans-serif;
         font-weight: 800;
         font-size: 1.25rem;
-        color: $petel-primary;
+        color: $primary;
         margin-bottom: 0.6875rem;
         padding: 0.5rem 0 0 0;
-        border-top: 0.0625rem solid #4f80bb;
+        border-top: 0.0625rem solid $secondary;
         margin-top: 1rem;
         width: 100%;
     }
@@ -639,6 +637,18 @@
     &>:not(.wrs_modal_dialogContainer) p {
         font-family: $primary-font;
     }
+    .que .outcome,
+    .que .comment {
+        @include alert-variant(theme-color-level('danger', $alert-bg-level),
+        theme-color-level('danger', $alert-border-level), theme-color-level('danger', $alert-color-level - 0.9));
+
+    /* stylelint-disable-line max-line-length */
+    // Darken link colour inside comments for better colour contrast against regular text.
+        a {
+            color: darken($link-color, 30%);
+        }
+}
+
 }
 #page-mod-quiz-summary {
     .moodle-dialogue {
