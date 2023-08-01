@@ -160,7 +160,7 @@ function community_oer_render_info_single_page() {
             $activity = new \community_oer\activity_oer;
             if ($activity->single_cmid_render_data($cm->id, 'view')) {
 
-                if (strpos($PAGE->url->get_path(), 'quiz/edit.php') === false &&
+                if (strpos($PAGE->url->get_path(), 'quiz/attempt.php') === false &&
                         strpos($PAGE->url->get_path(), 'questionnaire/preview.php') === false &&
                         strpos($PAGE->url->get_path(), 'mod/hvp/view.php') === false
                 ) {
