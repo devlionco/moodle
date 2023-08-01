@@ -63,6 +63,14 @@ class quiz_advancedoverview_report extends quiz_attempts_report {
         $data = $quizdata->get_render_data();
         echo $OUTPUT->render_from_template('quiz_advancedoverview/dashboard', $data);
 
+        echo "
+            <style>
+                .navitem {
+                    display: none!important;
+                }
+            </style>
+        ";
+
         $PAGE->requires->js_call_amd('quiz_advancedoverview/main', 'init', [$cm->id, $course->id, $quiz->id]);
 
         // Export to XLSX prepare.
