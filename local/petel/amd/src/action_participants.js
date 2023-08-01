@@ -37,8 +37,9 @@ define([
     'core/modal_events',
     'core/modal_factory',
     'core/templates',
-    'core/toast'
-], function($, Str, Ajax, Notification, ModalEvents, ModalFactory, Templates, toast) {
+    'core/toast',
+    'core/custom_interaction_events'
+], function($, Str, Ajax, Notification, ModalEvents, ModalFactory, Templates, toast, CustomEvents) {
 
     var uniqueid;
 
@@ -63,15 +64,12 @@ define([
                     }
                 });
 
-                $(document).on('change', '#formactionid', function() {
-                    if ($(this).val() === "#createcourse") {
+                $(document).on('click', '#participants-createcourse', function(e) {
                         self.openPopupCourseCreate(currentcourseid, currentuserid, defaults);
-                    }
-
-                    if ($(this).val() === "#addsystemgroups") {
-                        self.openPopupAddSystemGroups(currentcourseid, currentuserid, defaults);
-                    }
                 });
+                $(document).on('click', '#participants-addsystemgroups', function(e) {
+                    self.openPopupAddSystemGroups(currentcourseid, currentuserid, defaults);
+            });
 
             });
         },
