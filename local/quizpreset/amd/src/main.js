@@ -58,7 +58,7 @@ define([
                         Preset.configureAddQuizPage();
                     }
 
-                    if ((!addinput || addinput === 0 || addinput === '') && Number(updateinput) > 0) {
+                    if ((!addinput || addinput === '0' || addinput === '') && Number(updateinput) > 0) {
                         Preset.configureUpdateQuizPage();
                     }
                 }
