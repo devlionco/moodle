@@ -271,7 +271,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                         'role' => 'button', 'title' => $title));
                 }
             }
-            
+
             if (has_capability('community/sharesequence:sequencecopy', \context_course::instance($COURSE->id))){
                 $availabletocohort = get_config('community_sharesequence', 'availabletocohort');
 
@@ -864,6 +864,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
     }
 
     public function activity_navigation() {
+        // PTL-9374 Disable bottom of page quiz/activity navigation.
+        return '';
         // First we should check if we want to add navigation.
         $context = $this->page->context;
         if (($this->page->pagelayout !== 'incourse' && $this->page->pagelayout !== 'frametop')
