@@ -110,20 +110,23 @@ H5P.EventDispatcher.prototype.setActivityStarted = function () {
  * @param {H5P.XAPIEvent} event
  */
 H5P.xAPICompletedListener = function (event) {
-  if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+  if ((event.getVerb() === 'completed' || event.getVerb() === 'answered')
+      && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
     var score = event.getScore();
     var maxScore = event.getMaxScore();
-    var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+    var contentId = event.getVerifiedStatementValue(
+        ['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
     H5P.setFinished(contentId, score, maxScore);
   }
 };
 
 // Save total user score for each 'answered' interaction.
 H5P.externalDispatcher.on('xAPI', function (event) {
-  if (event.getVerb() === 'answered') {
+  if (event.getVerb() === 'answered' && this.parent) {
     var total_score = this.parent.getScore();
     var total_maxScore = this.parent.getMaxScore();
-    var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+    var contentId = event.getVerifiedStatementValue(
+        ['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
     if (H5P.opened[contentId] === undefined) {
       H5P.opened[contentId] = new Date();
     }
