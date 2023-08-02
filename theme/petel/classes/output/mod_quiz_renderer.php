@@ -319,6 +319,7 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
 
         $output .= $this->countdown_timer($attemptobj, time());
 
+        $output .= html_writer::start_tag('div', ['class'=>'container row ']);
         // Return to place button.
         if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
             $button = new single_button(
@@ -330,7 +331,7 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
             $output .= $this->container($this->container(
                 $this->render($button),
                 'controls'
-            ), 'submitbtns mdl-align');
+            ), 'submitbtns mdl-align col-md-6');
         }
 
         // Finish attempt button.
@@ -368,7 +369,8 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         $output .= $this->container($message . $this->container(
             $this->render($button),
             'controls'
-        ), 'submitbtns mdl-align');
+        ), 'submitbtns mdl-align col-md-6');
+        $output .= html_writer::end_tag('div');
 
         return $output;
     }
@@ -843,6 +845,25 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         }
 
         return $this->render_from_template('theme_petel/mod_quiz/review_summary_table', ['rows' => $rows]);
+    }
+
+    /**
+     * Render the tertiary navigation for pages during the attempt.
+     *
+     * @param string|moodle_url $quizviewurl url of the view.php page for this quiz.
+     * @return string HTML to output.
+     */
+    public function during_attempt_tertiary_nav($quizviewurl): string {
+        $output = '';
+        $output .= html_writer::start_div('container-fluid tertiary-navigation');
+            $output .= html_writer::start_div('row');
+                $output .= html_writer::start_div('navitem');
+                //$output .= html_writer::link($quizviewurl, get_string('back'),
+                //        ['class' => 'btn btn-secondary']);
+                $output .= html_writer::end_div();
+            $output .= html_writer::end_div();
+        $output .= html_writer::end_div();
+        return $output;
     }
 
 }
