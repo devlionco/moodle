@@ -25,3 +25,15 @@ body#page-admin-tool-mfa-auth {
   width: 100%;
   right: 0;
 }
+
+.alert-warning {
+  font-weight: 400;
+  background-color: $petel-orange-light;/* color(alert-orange-light); */
+  border-color: $petel-orange-light; /* color(alert-orange-light); */
+  color: $body-color;
+  font-family: Heebo, sans-serif;
+  .alert-colorblock {
+    background-color: color(alert-orange);
+    border: 0.0625rem solid color(alert-orange);
+  }
+}
