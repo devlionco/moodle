@@ -393,3 +393,7 @@ body .block.block_advnotifications:not(.editing) .block.block_advnotifications .
     padding: 0;
     background-color: transparent;
 }
+html[dir="rtl"] .block_advnotifications .carousel-control-prev-icon,
+html[dir="rtl"] .block_advnotifications .carousel-control-next-icon {
+    transform: scaleX(-1);
+}
