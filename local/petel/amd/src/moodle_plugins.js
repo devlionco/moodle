@@ -58,7 +58,7 @@ define([
             Str.get_strings([
                 {key: 'settings'},
             ]).done(function(strings) {
-                let tag = '<div class="allresponses ml-1"><a class="btn btn-primary" href="'+M.cfg.wwwroot+'/course/modedit.php?update='+cmid+'" title="'+strings[0]+'">'+strings[0]+'</a></div>';
+                let tag = '<div class="allresponses ml-2"><a class="btn btn-primary" href="'+M.cfg.wwwroot+'/course/modedit.php?update='+cmid+'" title="'+strings[0]+'">'+strings[0]+'</a></div>';
                 $('.allresponses').last().after(tag);
             })
         },

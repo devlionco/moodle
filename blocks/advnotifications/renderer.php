@@ -151,11 +151,11 @@ class block_advnotifications_renderer extends plugin_renderer_base
             }
 
             $html .= '  </div>
-                        <button class="carousel-control-prev btn mb-3 ml-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
+                        <button class="carousel-control-prev btn btn-link mb-3 ml-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
                         </button>
-                        <button class="carousel-control-next btn mb-3 mr-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="next">
+                        <button class="carousel-control-next btn btn-link mb-3 mr-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
                         </button>

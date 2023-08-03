@@ -16,27 +16,34 @@
         #page.drawers .main-inner {
             max-width: 70.5rem;
         }
-        #action_bar .row{
+
+        #action_bar .row {
             justify-content: flex-end;
+
             .navitem {
                 margin-bottom: 0;
             }
         }
+
         #participiants-table-block {
             .cell.c1 {
-               vertical-align: middle;
+                vertical-align: middle;
             }
-            .cell.c1 >div,
-            .c7.cell-last > div {
+
+            .cell.c1>div,
+            .c7.cell-last>div {
                 display: flex;
                 align-items: center;
             }
+
             .cell.c4 {
                 min-width: 4rem;
             }
+
             .quickeditlink.aalink {
                 white-space: nowrap;
             }
+
             .defaultuserpic {
                 margin-right: .25rem;
             }
@@ -69,11 +76,11 @@
 
     .moremenu.navigation {
         .dropdownmoremenu {
-          .dropdown-menu.show{
-            display: flex;
-            flex-direction: column;
-            width: fit-content;
-          }
+            .dropdown-menu.show {
+                display: flex;
+                flex-direction: column;
+                width: fit-content;
+            }
         }
 
     }
@@ -172,6 +179,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+
             &.btn-primary {
                 &:hover {
                     border-color: $secondarylight;
@@ -276,6 +284,7 @@
 
         .card-main-content {
             min-height: 13rem;
+
             .summary {
                 background-color: rgba($color: $white, $alpha: .70);
                 border-top-right-radius: .5em;
@@ -390,6 +399,7 @@
             border: .0625rem solid $secondary;
             width: 3rem;
             height: 3rem;
+
             &:hover {
                 background-color: $light;
                 border-color: $secondarymedium;
@@ -413,11 +423,12 @@
                 text-decoration: none;
             }
         }
+
         &:active {
             .pluscontainer {
                 background-color: $primary;
                 border-color: $primary;
-                color: $white;        
+                color: $white;
             }
         }
 
@@ -587,6 +598,22 @@
 }
 
 // TODO: move to correct place.
+.format-flexsections {
+
+    .quizattempt .alert-warning,
+    .que .outcome,
+    .que .comment {
+        background-color: #FCEFDC;
+        border-color: #FBE8CD;
+        color: #8E662E;
+
+        a {
+            color: darken($link-color, 30%);
+        }
+    }
+}
+
+// TODO: move to correct place.
 .completion-bage {
     display: flex;
     align-items: center;
@@ -598,6 +625,104 @@
     i.fa-regular {
         margin-left: .75rem;
         font-size: 1.5rem;
+    }
+}
+
+// TODO: move to correct place.
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-prevmonth:hover,
+.yui3-skin-sam [dir="rtl"] .yui3-calendarnav-prevmonth:hover {
+    border-right-color: $secondary;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-nextmonth:hover,
+.yui3-skin-sam [dir="rtl"] .yui3-calendarnav-nextmonth:hover {
+    border-left-color: $secondary;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-prevmonth,
+.yui3-skin-sam [dir="rtl"] .yui3-calendarnav-prevmonth {
+    border-right-color: $primary;
+}
+
+[dir="rtl"] .yui3-skin-sam .yui3-calendarnav-nextmonth,
+.yui3-skin-sam [dir="rtl"] .yui3-calendarnav-nextmonth {
+    border-left-color: $primary;
+}
+
+
+
+
+
+
+
+.yui3-skin-sam .yui3-calendarnav-prevmonth:hover,
+.yui3-skin-sam .yui3-calendarnav-prevmonth:hover {
+    border-right-color: $secondary;
+}
+
+.yui3-skin-sam .yui3-calendarnav-nextmonth:hover,
+.yui3-skin-sam .yui3-calendarnav-nextmonth:hover {
+    border-left-color: $secondary;
+}
+
+.yui3-skin-sam .yui3-calendarnav-prevmonth,
+.yui3-skin-sam .yui3-calendarnav-prevmonth {
+    border-right-color: $primary;
+}
+
+.yui3-skin-sam .yui3-calendarnav-nextmonth,
+.yui3-skin-sam  .yui3-calendarnav-nextmonth {
+    border-left-color: $primary;
+}
+#dateselector-calendar-panel {
+    font-family: $primary-font, sans-serif;
+
+    .yui3-calendarbase {
+        /*  width: 21.25rem !important; */
+    }
+
+    #dateselector-calendar-content {
+        border: .0625rem solid $gray-300;
+        padding: .75rem;
+        background: $white;
+        border-radius: .625rem;
+
+        .yui3-calendar-header-label {
+            font-size: 1rem;
+            font-weight: normal;
+            color: $primary;
+        }
+
+        .yui3-calendar-grid {
+
+            td,
+            th {
+                font-size: .5625rem;
+                line-height: .875rem;
+                font-weight: bold;
+                text-align: center;
+            }
+
+        }
+
+        .yui3-calendar-row td {
+            border-color: transparent;
+
+            &:hover {
+                background-color: $secondarylight;
+                color: $body-color;
+            }
+
+            &[aria-selected="true"] {
+                background-color: $secondarylight;
+
+                &:hover {
+                    color: $white;
+                    background-color: $primary;
+
+                }
+            }
+        }
     }
 }
 
@@ -667,5 +792,11 @@
                 background-color: transparent;
             }
         }
+    }
+}
+
+html[dir="rtl"] .format-flexsections {
+    .fa-flip-horizontal {
+        transform: scale(1, 1);
     }
 }

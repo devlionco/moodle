@@ -37,6 +37,7 @@ class qtype_essay_embedded_renderer extends qtype_combined_text_entry_renderer_b
 
         $question = $subq->question;
         $responseoutput = $question->get_format_renderer($PAGE);
+        $responseoutput->set_displayoptions($options);
 
         // Answer field.
         $step = $qa->get_last_step_with_qt_var($subq->step_data_name('answer'));
