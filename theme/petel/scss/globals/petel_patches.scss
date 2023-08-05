@@ -85,3 +85,9 @@ html[dir="rtl"] .visual-math-input-wrapper {
   min-height: 4rem;
   padding: 4px 8px 4px 8px;
 }
+
+/* PTL-9521 course format flexsection - center header image */
+.path-course.format-flexsections .course-content .course-image {
+  background-size: cover;
+  background-position: center;
+}
