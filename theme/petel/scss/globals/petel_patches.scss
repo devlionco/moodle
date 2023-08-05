@@ -76,5 +76,6 @@ body#page-admin-tool-mfa-auth {
 
 /* PTL-9575 Fix qtype/shortmath button directionality in RTL. */
 html[dir="rtl"] .visual-math-input-wrapper {
+  /*rtl:ignore*/
   direction: ltr;
 }
