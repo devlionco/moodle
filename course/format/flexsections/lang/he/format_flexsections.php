@@ -133,3 +133,7 @@ $string['statusfailed'] = 'פעילויות בהן נכשלת';
 $string['statusnotsubmittedintime'] = 'פעילויות לא הוגשו בזמן';
 $string['statuscmwaitingforsubmission'] = 'פעילויות ממתינות לבדיקה';
 $string['statuscmfailed'] = 'פעילויות בהן תלמידים נכשלו';
+
+// Collapse button.
+$string['collapsebuttonopen'] = 'תצוגה מלאה';
+$string['collapsebuttonclose'] = 'תצוגה מצומצמת';

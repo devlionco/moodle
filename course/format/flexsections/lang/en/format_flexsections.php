@@ -134,3 +134,7 @@ $string['statusfailed'] = 'activities in which you fail';
 $string['statusnotsubmittedintime'] = 'activities were not submitted on time';
 $string['statuscmwaitingforsubmission'] = 'activities are waiting for check';
 $string['statuscmfailed'] = 'activities were students failed';
+
+// Collapse button.
+$string['collapsebuttonopen'] = 'Full view';
+$string['collapsebuttonclose'] = 'Collapse all';

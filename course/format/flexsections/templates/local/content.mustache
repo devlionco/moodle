@@ -259,11 +259,18 @@ Example context (json):
             </li>
         {{/showsimplecards}}
 
+        {{#showcollapsebutton}}
+            {{> format_flexsections/collapsebutton }}
+        {{/showcollapsebutton}}
+
         {{^showascard}}
             {{#sections}}
                 {{> format_flexsections/local/content/section }}
             {{/sections}}
         {{/showascard}}
+
+
+
     </ul>
     {{#showascard}}
         <div class="card-deck dashboard-card-deck {{format}} px-2" role="list" data-for="course_sectionlist">
