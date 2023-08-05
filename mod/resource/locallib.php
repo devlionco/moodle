@@ -331,7 +331,7 @@ function resource_get_file_details($resource, $cm) {
  * @return string Size and type or empty string if show options are not enabled
  */
 function resource_get_optional_details($resource, $cm) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $details = '';
 
@@ -344,6 +344,7 @@ function resource_get_optional_details($resource, $cm) {
         }
         $size = '';
         $type = '';
+        $image = $OUTPUT->image_url(file_mimetype_icon($filedetails['mimetype']));
         $date = '';
         $langstring = '';
         $infodisplayed = 0;
@@ -356,7 +357,7 @@ function resource_get_optional_details($resource, $cm) {
         }
         if (!empty($options['showtype'])) {
             if (!empty($filedetails['type'])) {
-                $type = $filedetails['type'];
+                $type = "<img src='".$image."'> " . $filedetails['type'];
                 $langstring .= 'type';
                 $infodisplayed += 1;
             }
@@ -374,6 +375,7 @@ function resource_get_optional_details($resource, $cm) {
         }
 
         if ($infodisplayed > 1) {
+
             $details = get_string("resourcedetails_{$langstring}", 'resource',
                     (object)array('size' => $size, 'type' => $type, 'date' => $date));
         } else {
