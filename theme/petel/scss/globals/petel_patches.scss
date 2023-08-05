@@ -79,3 +79,9 @@ html[dir="rtl"] .visual-math-input-wrapper {
   /*rtl:ignore*/
   direction: ltr;
 }
+
+/* PTL-9536 narrow down the redundant space inside course module cards - flexsection */
+.path-course.format-flexsections .activity-wrapper .activity-item {
+  min-height: 4rem;
+  padding: 4px 8px 4px 8px;
+}
