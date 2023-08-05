@@ -278,7 +278,7 @@
 
         //TODO: fix it via all media queries.
         &:not(.fixed-width-cards) .dashboard-card {
-            width: calc(33.33% - .5rem);
+            width: calc(25% - .5rem);
             margin: .25rem;
         }
 
