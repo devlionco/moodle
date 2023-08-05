@@ -91,3 +91,8 @@ html[dir="rtl"] .visual-math-input-wrapper {
   background-size: cover;
   background-position: center;
 }
+
+/* PTL-9433 Course format flexsection - Hide text summery from topic card pictures */
+.path-course.format-flexsections .dashboard-card-deck .card-main-content .summary {
+  display: none;
+}
