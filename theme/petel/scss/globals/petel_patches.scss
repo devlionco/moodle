@@ -93,6 +93,7 @@ html[dir="rtl"] .visual-math-input-wrapper {
 }
 
 /* PTL-9433 Course format flexsection - Hide text summery from topic card pictures */
+.path-course.format-flexsections .singlesection-card .card-header-fade .summary,
 .path-course.format-flexsections .dashboard-card-deck .card-main-content .summary {
   display: none;
 }
