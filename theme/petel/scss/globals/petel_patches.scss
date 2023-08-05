@@ -26,6 +26,30 @@ body#page-admin-tool-mfa-auth {
   right: 0;
 }
 
+.alert-info {
+  font-weight: 400;
+  background-color: $info-light;
+  border-color: $info-light;
+  color: $body-color;
+  font-family: Heebo, sans-serif;
+  .alert-colorblock {
+    background-color: $blue;
+    border: 0.0625rem solid $blue;
+  }
+}
+
+.alert-success {
+  font-weight: 400;
+  background-color: $success-light;
+  border-color: $success-light;
+  color: $body-color;
+  font-family: Heebo, sans-serif;
+  .alert-colorblock {
+    background-color: $green;
+    border: 0.0625rem solid $green;
+  }
+}
+
 .alert-warning {
   font-weight: 400;
   background-color: $petel-orange-light;/* color(alert-orange-light); */
@@ -33,7 +57,19 @@ body#page-admin-tool-mfa-auth {
   color: $body-color;
   font-family: Heebo, sans-serif;
   .alert-colorblock {
-    background-color: color(alert-orange);
-    border: 0.0625rem solid color(alert-orange);
+    background-color: $orange;
+    border: 0.0625rem solid $orange;
+  }
+}
+
+.alert-danger {
+  font-weight: 400;
+  background-color: $danger-light;
+  border-color: $danger-light;
+  color: $body-color;
+  font-family: Heebo, sans-serif;
+  .alert-colorblock {
+    background-color: $red;
+    border: 0.0625rem solid $red;
   }
 }
