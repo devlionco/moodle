@@ -193,6 +193,9 @@ class content extends \core_courseformat\output\local\content {
             $PAGE->requires->js_call_amd('format_flexsections/sections', 'initCoursePage');
         }
 
+        // Show collapse button.
+        $data->showcollapsebutton = $PAGE->user_is_editing();
+
         $data->showsingleuploadsection = $PAGE->user_is_editing() && isset($data->singlesection);
         if($data->showsingleuploadsection){
             $PAGE->requires->js_call_amd('format_flexsections/sections', 'initSectionPage');
