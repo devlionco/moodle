@@ -45,7 +45,14 @@
             }
 
             .defaultuserpic {
-                margin-right: .25rem;
+                margin-right: .5rem;
+            }
+            .fa-light.fa-circle-user.defaultuserpic {
+                font-size: 2.25rem;
+            }
+            a[id*="action-menu-toggle-"] {
+                display: inline-flex;
+                align-items: center;
             }
         }
     }
@@ -527,10 +534,12 @@
     }
 
     .singlesection-card {
-        width: 40%;
-        min-height: 10rem;
+        width: 100%;
+        max-width: 25.5rem;
+        min-height: 13rem;
 
         .card-img {
+            border-radius: .5rem;
             position: absolute;
             top: 0;
             bottom: 0;
@@ -565,10 +574,16 @@
             padding-left: 3.5rem;
 
             .fa-hourglass-end {
-                font-size: 2.5rem;
-                width: 2.875rem;
+                color: $primary;
+               
             }
-
+            .info-block-icon {
+                font-size: 1.5rem;
+                width: 2.25rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
             .info-block-value {
                 font-size: 2rem;
                 font-weight: 700;
@@ -577,16 +592,7 @@
             .info-block-text {
                 color: $black;
                 font-size: 1.5rem;
-            }
-
-            .rounded-circle {
-                width: 2.875rem;
-                height: 2.6875rem;
-
-                i {
-
-                    font-size: 1.875rem;
-                }
+                font-weight: 400;
             }
         }
     }
@@ -594,6 +600,28 @@
     .course-content ul.flexsections li.section {
         padding-bottom: 0;
         margin-bottom: 1rem;
+    }
+    .changenumsections {
+
+        .add-sections {
+            border: .0625rem solid $secondarylight;
+            border-radius: .5rem;
+            background-color: $light;
+            color: $link-color;
+            font-size: 1rem;
+            line-height: 1;
+            min-width: 17.125rem;
+            i {
+                color: $body-color;
+            }
+            &:hover {
+                background-color: $secondarylight;
+                border-color: $secondary;
+                transition: all ease .25s;
+                text-decoration: none;
+                text-decoration: none;
+            }
+        }
     }
 }
 

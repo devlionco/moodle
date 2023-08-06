@@ -660,7 +660,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid));
             }
 
-            $attributes = array('href' => $url, 'class' => 'd-inline-block aabtn');
+            $attributes = array('href' => $url, 'class' => 'd-inline-flex align-items-center aabtn');
             if (!$userpicture->visibletoscreenreaders) {
                 $attributes['tabindex'] = '-1';
                 $attributes['aria-hidden'] = 'true';

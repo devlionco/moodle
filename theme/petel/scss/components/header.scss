@@ -9,11 +9,15 @@ nav.navbar.petel-navbar {
     .count-container {
         width: 1.25rem;
         height: 1.25rem;
+        background-color: $warning;
+        color: $body-color;
         border-radius: 100%;
         line-height: 1rem;
         text-align: center;
         font-size: .75rem;
         top: .5rem;
+        right: unset;
+        left: 0;
     }
     [data-region="popover-region-messages"] {
         .count-container {

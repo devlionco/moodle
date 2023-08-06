@@ -527,6 +527,11 @@ class quizdata {
 
         $data = new stdClass;
         $data->questionstateclass = $questionstateclass;
+
+        if ($questionstateclass == 'notyetanswered') {
+            $questionstate = '—';
+        }
+
         $data->questionstate = $questionstate;
         $data->grade = $grade;
         $data->link = $link->out(false);
