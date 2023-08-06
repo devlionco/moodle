@@ -207,7 +207,7 @@ Example context (json):
                 </div>
             {{/modecircle}}
             {{^modecircle}}
-                <div class="coursecompletion">
+                <div class="coursecompletion ml-auto">
                     {{#iscomplete}}
                         {{#pix}} i/checked, core, done {{/pix}}
                         <span class="sr-only">{{#str}} completed, core {{/str}}</span>
@@ -289,7 +289,7 @@ Example context (json):
     </div>
     {{/hasnavigation}}
     {{#numsections}}
-        {{> core_courseformat/local/content/addsection}}
+        {{> format_flexsections/local/content/addsection}}
     {{/numsections}}
 </div>
 

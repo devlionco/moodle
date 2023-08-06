@@ -401,7 +401,15 @@
 			}
 		}
 	}
-
+	.partiallycorrect-icon {
+		width: 1.2rem;
+		height: 1.2rem;
+		background-image: url("[[pix:quiz_advancedoverview|grade_partiallycorrect]]");
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		margin: 0 auto;
+	}
 	.advancedoverview_report-dropdown-btn[data-target="#studentsActionsCollapse"] {
 		width: 7.5rem;
 	}
@@ -652,6 +660,9 @@
 				.requiresgrading,
 				.notyetanswered {
 					.sr-only {
+						position: relative;
+						white-space: normal;
+						line-height: 1;
 						display: block;
 						font-size: 1rem;
 						width: auto;
