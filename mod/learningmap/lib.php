@@ -40,6 +40,7 @@ define('LEARNINGMAP_FEATURES', [
     'showall',
     'showtext',
     'slicemode',
+    'showwaygone',
 ]);
 
 /**
@@ -190,9 +191,6 @@ function learningmap_cm_info_dynamic(cm_info $cm) : void {
     // Decides whether to display the link.
     if ($cm->showdescription == 1) {
         $cm->set_no_view_link(true);
-
-        $completion = new completion_info($cm->get_course());
-        $completion->set_module_viewed($cm);
     }
 }
 
@@ -273,7 +271,7 @@ function learningmap_get_place_cm(cm_info $cm) : array {
  * @return string
  */
 function learningmap_get_learningmap(cm_info $cm) : string {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $PAGE;
 
     $context = context_module::instance($cm->id);
 
@@ -290,14 +288,26 @@ function learningmap_get_learningmap(cm_info $cm) : string {
 
     $placestore = json_decode($map->placestore, true);
 
-    $worker = new \mod_learningmap\mapworker($svg, $placestore, $cm);
+    $group = (empty($cm->groupmode) ? 0 : groups_get_activity_group($cm, true));
+
+    $worker = new \mod_learningmap\mapworker($svg, $placestore, $cm, false, $group);
     $worker->process_map_objects();
     $worker->remove_tags_before_svg();
 
+    $allowedfilters = explode(',', str_replace(' ', '', get_config('mod_learningmap', 'allowedfilters')));
+
+    $filtermanager = filter_manager::instance();
+    $skipfilters = array_diff(array_keys(filter_get_active_in_context($cm->context)), $allowedfilters);
+
     return(
-        $OUTPUT->render_from_template(
-            'mod_learningmap/mapcontainer',
-            ['mapcode' => $worker->get_svgcode()]
+        $filtermanager->filter_text(
+            $OUTPUT->render_from_template(
+                'mod_learningmap/mapcontainer',
+                ['mapcode' => $worker->get_svgcode()]
+            ),
+            $cm->context,
+            ['trusted' => true, 'noclean' => true],
+            $skipfilters
         )
     );
 }

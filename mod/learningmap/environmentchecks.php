@@ -15,18 +15,20 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version information for mod_learningmap
+ * Environment checks for mod_learningmap
  *
  * @package     mod_learningmap
  * @copyright   2021-2023, ISB Bayern
  * @author      Stefan Hanauska <stefan.hanauska@csg-in.de>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/licenses/agpl-3.0.html GNU AGPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_learningmap';
-$plugin->release = '0.9.5';
-$plugin->version = 2023080102;
-$plugin->requires = 2020061500;
-$plugin->supported = [39, 402];
-$plugin->maturity = MATURITY_STABLE;
+/**
+ * Detects whether FreeType extension for GD is installed
+ *
+ * @param object $result
+ * @return void
+ */
+function mod_learningmap_check_freetype($result) {
+    $result->setStatus(gd_info()['FreeType Support']);
+}

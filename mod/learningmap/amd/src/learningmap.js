@@ -83,6 +83,11 @@ export const init = () => {
                 if (text) {
                     text.textContent = activitySelector.querySelector('option[value="' + activitySelector.value + '"]').textContent;
                 }
+                let title = document.getElementById('title' + elementForActivitySelector);
+                if (title) {
+                    title.textContent =
+                        activitySelector.querySelector('option[value="' + activitySelector.value + '"]').textContent;
+                }
                 document.getElementById(elementForActivitySelector).classList.remove('learningmap-emptyplace');
             } else {
                 document.getElementById(elementForActivitySelector).classList.add('learningmap-emptyplace');
@@ -147,6 +152,7 @@ export const init = () => {
         advancedSettingsLogic('hidestroke', placestore.getHideStroke, placestore.setHideStroke);
         advancedSettingsLogic('showtext', placestore.getShowText, placestore.setShowText, fixPlaceLabels);
         advancedSettingsLogic('slicemode', placestore.getSliceMode, placestore.setSliceMode);
+        advancedSettingsLogic('showwaygone', placestore.getShowWayGone, placestore.setShowWayGone);
     }
 
     // Attach listener to the color choosers
