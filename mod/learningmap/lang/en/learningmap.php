@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['advancedsettings'] = 'Advanced settings';
+$string['allowedfilters'] = 'Filters allowed for use with mod_learningmap';
+$string['allowedfilters_desc'] = 'Comma separated list without filter_ prefix';
 $string['backgroundfile'] = 'Background image';
 $string['backgroundfile_help'] = 'This file will be used as background for the map.';
 $string['completion_with_all_places'] = 'Reaching all places is necessary for completion';
@@ -38,6 +40,7 @@ $string['completiondisabled'] = 'Completion tracking is disabled in course setti
 $string['completiontype'] = 'Type of completion';
 $string['editorhelp'] = 'How to use the editor';
 $string['editplace'] = 'Edit place';
+$string['freetype_required'] = 'FreeType extension to GD is required to run mod_learningmap.';
 $string['groupmode'] = 'Group mode';
 $string['groupmode_help'] = 'When group mode is active, it is sufficient that one member of the group has completed an activity to be able to have the connected places available.';
 $string['hiddenactivitywarning'] = 'This activity is hidden and can\'t be accessed by students';
@@ -77,6 +80,8 @@ $string['showdescription'] = 'Show map on course page';
 $string['showdescription_help'] = 'If checked, the learning map will be displayed on the course page (like a label). Else there will be a link and the map will be displayed on a separate page.';
 $string['showtext'] = 'Show activity names';
 $string['showtext_help'] = 'This option shows the names of the activities as a text besides the places. The text can be dragged around and is automatically updated when the activity name changes.';
+$string['showwaygone'] = 'Highlight way';
+$string['showwaygone_help'] = 'This option highlights the way the participant went through the map (in the order of completion times).';
 $string['slicemode'] = 'Reveal map with places';
 $string['slicemode_help'] = 'This option subsequently reveals the map when new places become reachable. The hidden parts of the map are covered with fog. The fog will clear completely as soon as all places become reachable.';
 $string['startingplace'] = 'Starting place';
