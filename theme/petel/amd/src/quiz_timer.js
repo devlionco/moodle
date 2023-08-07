@@ -114,7 +114,11 @@ const updateTimer = () => {
     let minutesBeenPassed = Math.floor((TIMER.timeLimitTotal - secondslefttotal) / 60);
 
     if (SELECTORS.quizTimecounterLabel) {
-        SELECTORS.quizTimecounterLabel.innerText = STRINGS.timeStr(secondslefttotal * 1000);
+        if (secondslefttotal > 0) {
+            SELECTORS.quizTimecounterLabel.innerText = STRINGS.timeStr(secondslefttotal * 1000) + ' ' + STRINGS.minutesleft;
+        } else {
+            SELECTORS.quizTimecounterLabel.innerText = STRINGS.timeisup;
+        }
     }
 
     switch (REMINDER.type) {
@@ -331,6 +335,14 @@ export const init = function (start, timeleft, timelimit,
             key: 'alert',
             component: 'theme_petel'
         },
+        {
+            key: 'timeisup',
+            component: 'theme_petel'
+        },
+        {
+            key: 'minutesleft',
+            component: 'theme_petel'
+        },
     ];
 
     Str.get_strings(strings)
@@ -341,6 +353,8 @@ export const init = function (start, timeleft, timelimit,
             STRINGS.fifteenMinBeforeEnd = results[3];
             STRINGS.fiveMinBeforeEnd = results[4];
             STRINGS.alert = results[5];
+            STRINGS.timeisup = results[6];
+            STRINGS.minutesleft = results[7];
 
             STRINGS.timeStr = timeHumanizer.humanizer({
                 language: TIMER.lang,

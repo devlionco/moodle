@@ -173,6 +173,9 @@ export const initstudentstable = function(data) {
 
     const clickMenu = [
       {
+        disabled: function(component) {
+          return component.getData().userprofilelink ? false : true;
+        },
         label: `<span>${self.translatedStrings.viewingprofile}</span>`,
         action: function(e, row) {
           var link = row.getData().userprofilelink;
@@ -180,6 +183,9 @@ export const initstudentstable = function(data) {
         }
       },
       {
+        disabled: function(component) {
+          return component.getData().resetpasswordlink ? false : true;
+        },
         label: `<span>${self.translatedStrings.passwordreset}</span>`,
         action: function(e, row) {
           var link = row.getData().resetpasswordlink;
@@ -197,6 +203,9 @@ export const initstudentstable = function(data) {
         }
       },
       {
+        disabled: function(component) {
+          return component.getData().completereportlink ? false : true;
+        },
         label: `<span>${self.translatedStrings.allcoursereport}</span>`,
         action: function(e, row) {
           var link = row.getData().completereportlink;
@@ -204,6 +213,9 @@ export const initstudentstable = function(data) {
         }
       },
       {
+        disabled: function(component) {
+          return component.getData().outlinereportlink ? false : true;
+        },
         label: `<span>${self.translatedStrings.courseobservationreport}</span>`,
         action: function(e, row) {
           var link = row.getData().outlinereportlink;

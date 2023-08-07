@@ -26,14 +26,14 @@
 <div id="block-myoverview-{{uniqid}}" class="block-myoverview block-cards" data-region="myoverview" role="navigation">
     <hr class="mt-0"/>
 
-    <div role="search" data-region="filter" class="d-flex align-items-center my-2 justify-content-between flex-wrap mb-1" aria-label="{{#str}} aria:controls, block_myoverview {{/str}}">
+    <div role="search" data-region="filter" class="d-flex align-items-start my-2 justify-content-between flex-wrap mb-1" aria-label="{{#str}} aria:controls, block_myoverview {{/str}}">
         <div class="row no-gutters">
             {{> block_myoverview/nav-grouping-selector }}
             {{> block_myoverview/nav-grouping-buttons }}
 
             {{> block_myoverview/nav-search-widget }}
 
-            <div class="d-flex align-items-center my-2 justify-content-between flex-wrap mb-1">
+            <div class="d-flex align-items-center justify-content-between flex-wrap mb-1 mr-3">
                 {{> block_myoverview/nav-sort-selector }}
 
                 {{#displaydropdown}}

@@ -48,6 +48,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
 
             'init': function () {
 
+                // Disable buttons in form.
+                $("form").submit(function(event) {
+                    event.preventDefault();
+                });
+
                 // Print
                 $("#ca_print").click(function() {
                     window.print();

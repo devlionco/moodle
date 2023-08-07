@@ -303,3 +303,4 @@ $string['questionpointstext'] = '{$a->questionpoints} points';
 $string['progresspage'] = '{$a->totalcomplinpage} of {$a->totalquestions} answered';
 $string['stopwatchshowhide'] = 'Shown/Hidden Stopwatch';
 $string['notflagged'] = 'Not flagged';
+$string['timeisup'] = 'Time is up';

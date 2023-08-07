@@ -286,3 +286,4 @@ $string['questionpointstext'] = '{$a->questionpoints} נקודות';
 $string['progresspage'] = '{$a->totalcomplinpage} מתוך {$a->totalquestions} נענו';
 $string['stopwatchshowhide'] = 'הצגת/הסתרת שעון עצר';
 $string['notflagged'] = 'לא מסומן';
+$string['timeisup'] = 'זמן תם';

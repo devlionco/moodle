@@ -29,3 +29,22 @@ function quiz_advancedoverview_get_question_link($question, $cmid) {
 
     return $editurl;
 }
+
+/**
+ * Check if a user has course update privileges for a given course.
+ *
+ * @param int $courseid The course ID.
+ * @param int|null $userid The user ID. If null, the current user is used.
+ * @return bool Whether the user has course update privileges.
+ */
+function quiz_advancedoverview_is_user_have_course_update_privileges($courseid, $userid = null) {
+    global $USER;
+
+    if ($userid !== null) {
+        $user = \core_user::get_user($userid);
+    } else {
+        $user = $USER;
+    }
+
+    return has_capability('moodle/course:update', context_course::instance($courseid), $user);
+}
