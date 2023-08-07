@@ -111,13 +111,14 @@ require(['jquery','theme_boost/drawers'], function ($, drawers) {
             }
         });
 
-        if($('.quiz-btn.fullscreen-btn').length > 0) {
-            $('.quiz-btn.fullscreen-btn').on('click', function(e){
+        $('.quiz-btn.fullscreen-btn')
+            .off('click')
+            .on('click', function(e) {
                 let parent = $(e.target).closest('.que');
                 parent.toggleClass('fullscreen');
                 $('body').toggleClass('overflow-hidden');
             });
-        }
+
     });
 });
 {{/js}}

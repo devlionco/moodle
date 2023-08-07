@@ -202,11 +202,14 @@
     .modal-footer {
         padding: 0;
     }
+    &.modal .close {
+        margin: 0;
+    }
 }
 html[dir="ltr"] {
     .petel-progressbar-wrapper {
         .petel-progressbar-progressline {
-            margin-left: 24% !important;
+            margin-left: 24%;
         }
     }
 }

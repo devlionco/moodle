@@ -76,7 +76,7 @@ function local_redmine_extend_navigation_menuuser($returnobject, $user, $context
 */
 
 function local_redmine_render_navbar_output() {
-    global $PAGE;
+    global $PAGE, $DB, $USER;
 
     $output    = '';
 
@@ -86,7 +86,13 @@ function local_redmine_render_navbar_output() {
         if (get_config('local_redmine', 'redminestatus') && local_petel_user_admin_or_teacher()) {
             $access = 2;
         } else if ($PAGE->context->contextlevel == CONTEXT_COURSE || $PAGE->context->contextlevel == CONTEXT_MODULE) {
-            $access = 3;
+
+            // Get cohort.
+            if ($cohort = $DB->get_record('cohort', ['name' => 'teachers'])) {
+                if (cohort_is_member($cohort->id, $USER->id)) {
+                    $access = 3;
+                }
+            }
         }
 
         switch ($access) {

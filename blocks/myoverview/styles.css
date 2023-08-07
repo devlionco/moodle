@@ -16,6 +16,9 @@
     border: none;
     box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.5);
 }
+.block-myoverview-listitem-content .dropdown-menu.show {
+    width: fit-content;
+}
 
 .block-myoverview-listitem .activity-lines {
     overflow-y: auto;

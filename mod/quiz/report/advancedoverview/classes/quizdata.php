@@ -1159,9 +1159,6 @@ class quizdata {
     }
 
     private function generate_link($path, $params) {
-        if (!is_siteadmin()) {
-            return '';
-        }
 
         $url = new moodle_url($path, $params);
 
@@ -1169,17 +1166,45 @@ class quizdata {
     }
 
     public function get_resetpassword_link($userid) {
-        $path = '/report/roster/resetpassword.php';
-        $params = ['userid' => $userid, 'courseid' => $this->course->id, 'sesskey' => sesskey(), 'layout' => 'embedded'];
+        global $USER;
 
-        return $this->generate_link($path, $params);
+        if (
+            (quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $USER->id) &&
+            !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid))
+            || 
+            is_siteadmin()
+        ) {
+            $path = '/report/roster/resetpassword.php';
+            $params = ['userid' => $userid, 'courseid' => $this->course->id, 'sesskey' => sesskey(), 'layout' => 'embedded'];
+
+            return $this->generate_link($path, $params);
+        }
+
+        return '';
     }
 
+    /**
+     * Get the user profile link for a given user ID based on privileges.
+     *
+     * @param int $userid The user ID.
+     * @return string The user profile link HTML or an empty string.
+     */
     public function get_userprofile_link($userid) {
-        $path = '/user/view.php';
-        $params = ['id' => $userid, 'courseid' => $this->course->id];
+        global $USER;
 
-        return $this->generate_link($path, $params);
+        if (
+            (quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $USER->id) &&
+            !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid))
+            || 
+            is_siteadmin()
+        ) {
+            $path   = '/user/view.php';
+            $params = ['id' => $userid, 'courseid' => $this->course->id];
+
+            return $this->generate_link($path, $params);
+        }
+
+        return '';
     }
 
     public function get_loginas_link($userid) {
@@ -1187,7 +1212,10 @@ class quizdata {
 
         $coursecontext = context_course::instance($this->course->id);
         if ($USER->id != $userid && !\core\session\manager::is_loggedinas() &&
-                has_capability('moodle/user:loginas', $coursecontext)) {
+                has_capability('moodle/user:loginas', $coursecontext) &&
+                !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid)
+                || 
+                is_siteadmin()) {
             $path = '/course/loginas.php';
             $params = ['user' => $userid, 'courseid' => $this->course->id, 'sesskey' => sesskey()];
         } else {
@@ -1198,8 +1226,14 @@ class quizdata {
     }
 
     public function get_completereport_link($userid) {
+        global $USER;
 
-        if (is_siteadmin()) {
+        if (
+            (quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $USER->id) &&
+            !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid))
+            || 
+            is_siteadmin()
+        ) {
             $path = '/report/outline/user.php';
             $params = ['id' => $userid, 'course' => $this->course->id, 'mode' => 'complete'];
         } else {
@@ -1210,8 +1244,14 @@ class quizdata {
     }
 
     public function get_outlinereport_link($userid) {
+        global $USER;
 
-        if (is_siteadmin()) {
+        if (
+            (quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $USER->id) &&
+            !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid))
+            || 
+            is_siteadmin()
+        ) {
             $path = '/report/outline/user.php';
             $params = ['id' => $userid, 'course' => $this->course->id, 'mode' => 'outline'];
         } else {

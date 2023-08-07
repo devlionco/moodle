@@ -25,6 +25,9 @@
     }
 }
 
+#page-mod-quiz-summary,
+#page-mod-quiz-review,
+#page-mod-quiz-report,
 #page-mod-quiz-attempt {
     .secondary-navigation {
         display: none !important;
@@ -734,6 +737,7 @@
         font-family: $primary-font;
     }
 }
+
 #page-mod-quiz-summary {
     .moodle-dialogue {
         min-width: 22.5rem;

@@ -60,7 +60,8 @@ class quiz_correctanswer_report extends quiz_attempts_report {
             exit;
         }
 
-        $content = '';
+        $content = '<form>';
+
         foreach($structure->get_slots() as $item){
             list($quba, $slot, $options) = $this->get_quba($item->questionid, $cm->id, $showanswers);
 
@@ -93,6 +94,8 @@ class quiz_correctanswer_report extends quiz_attempts_report {
 
             $content .= $OUTPUT->render_from_template('quiz_correctanswer/main', $data);
         }
+
+        $content .= '</form>';
 
         echo $OUTPUT->header();
         if($showanswers === 'no'){
@@ -190,19 +193,19 @@ class quiz_correctanswer_report extends quiz_attempts_report {
         } catch (Exception $e) {
             // This may not seem like the right error message to display, but
             // actually from the user point of view, it makes sense.
-            print_error('submissionoutofsequencefriendlymessage', 'question',
-                    question_preview_url($question->id, $options->behaviour,
+            throw new \moodle_exception ('submissionoutofsequencefriendlymessage', 'question',
+                    \qbank_previewquestion\helper::question_preview_url($question->id, $options->behaviour,
                             $options->maxmark, $options, $options->variant, $context), null, $e);
         }
 
         if ($quba->get_owning_context()->instanceid != $USER->id) {
-            print_error('notyourpreview', 'question');
+            throw new \moodle_exception ('notyourpreview', 'question');
         }
 
         $slot = $quba->get_first_question_number();
         $usedquestion = $quba->get_question($slot, false);
         if ($usedquestion->id != $question->id) {
-            print_error('questionidmismatch', 'question');
+            throw new \moodle_exception ('questionidmismatch', 'question');
         }
         $question = $usedquestion;
         $options->variant = $quba->get_variant($slot);
