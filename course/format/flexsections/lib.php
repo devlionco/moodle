@@ -161,6 +161,8 @@ class format_flexsections extends core_courseformat\base {
      */
 
     public function get_view_url($section, $options = []) {
+        global $PAGE;
+
         $url = new moodle_url('/course/view.php', ['id' => $this->courseid]);
 
         $sectionno = $this->resolve_section_number($section);
@@ -176,16 +178,24 @@ class format_flexsections extends core_courseformat\base {
                 $url->set_anchor('section-'.$sectionno);
             }
         } else if ($sectionno) {
-            // Check if this section has separate page.
-            if ($section->collapsed == FORMAT_FLEXSECTIONS_COLLAPSED) {
+
+            if ($PAGE->user_is_editing()) {
+                $url->set_anchor('section-'.$sectionno);
+            } else {
                 $url->param('section', $section->section);
-                return $url;
             }
-            // Find the parent (or grandparent) page that is displayed on separate page.
-            if ($parent = $this->find_collapsed_parent($section->parent)) {
-                $url->param('section', $parent);
-            }
-            $url->set_anchor('section-'.$sectionno);
+
+            // Check if this section has separate page.
+            //if ($section->collapsed == FORMAT_FLEXSECTIONS_COLLAPSED) {
+            //    $url->param('section', $section->section);
+            //    return $url;
+            //}
+            //// Find the parent (or grandparent) page that is displayed on separate page.
+            //if ($parent = $this->find_collapsed_parent($section->parent)) {
+            //    $url->param('section', $parent);
+            //}
+            //$url->set_anchor('section-'.$sectionno);
+
             return $url;
         } else {
             // General section.
