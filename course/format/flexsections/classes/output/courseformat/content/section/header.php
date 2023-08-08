@@ -85,11 +85,15 @@ class header extends \core_courseformat\output\local\content\section\header {
                 $image->get_filename(),
                 false
             )->out(false);
+
+            $data->imggenerated = false;
         } else {
             $pattern = new core_geopattern();
             $pattern->setColor($this->get_course_colour());
             $pattern->patternbyid($this->section->id);
             $data->image = $pattern->datauri();
+
+            $data->imggenerated = true;
         }
 
         $data->headerdisplaymultipage = !empty($data->headerdisplaymultipage);
