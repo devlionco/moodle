@@ -28,6 +28,7 @@ abstract class H5PEditorEndpoints {
    * Endpoint for installing libraries from the Content Type Hub
    */
   const LIBRARY_INSTALL = 'library-install';
+  const LIBRARY_INSTALL_CLI = 'library-install-cli';
 
   /**
    * Endpoint for uploading libraries used by the editor through the Content
@@ -131,6 +132,18 @@ class H5PEditorAjax {
 
         $machineName = func_get_arg(2);
         $this->libraryInstall($machineName);
+        break;
+
+      case H5PEditorEndpoints::LIBRARY_INSTALL_CLI:
+        // We do not need this, as it is CLI
+        //if (!$this->isPostRequest()) return;
+
+        // Only ADMIN (root) can run CLI, so not token is needed.
+        //$token = func_get_arg(1);
+        //if (!$this->isValidEditorToken($token)) return;
+
+        $machineName = func_get_arg(2);
+        $this->libraryInstallCLI($machineName);
         break;
 
       case H5PEditorEndpoints::LIBRARY_UPLOAD:
@@ -320,6 +333,56 @@ class H5PEditorAjax {
     // Successfully installed. Refresh content types
     H5PCore::ajaxSuccess($this->getContentTypeCache());
   }
+    /**
+     * Handles CLI installation of libraries from the Content Type Hub.
+     *
+     * Accepts a machine name and attempts to fetch and install it from the Hub if
+     * it is valid. Will also install any dependencies to the requested library.
+     *
+     * @param string $machineName Name of library that should be installed
+     */
+    private function libraryInstallCLI($machineName) {
+
+        // Determine which content type to install from post data
+        if (!$machineName) {
+            H5PCore::ajaxError($this->core->h5pF->t('No content type was specified.'), 'NO_CONTENT_TYPE');
+            return;
+        }
+
+        // Look up content type to ensure it's valid(and to check permissions)
+        $contentType = $this->editor->ajaxInterface->getContentTypeCache($machineName);
+        if (!$contentType) {
+            H5PCore::ajaxError($this->core->h5pF->t('The chosen content type is invalid.'), 'INVALID_CONTENT_TYPE');
+            return;
+        }
+
+        // Check install permissions
+        //if (!$this->editor->canInstallContentType($contentType)) {
+        //    H5PCore::ajaxError($this->core->h5pF->t('You do not have permission to install content types. Contact the administrator of your site.'), 'INSTALL_DENIED');
+        //    return;
+        //}
+        //else {
+        // Override core permission check
+        $this->core->mayUpdateLibraries(TRUE);
+        //}
+
+        // Retrieve content type from hub endpoint
+        $response = $this->callHubEndpoint(H5PHubEndpoints::CONTENT_TYPES . $machineName);
+        if (!$response) return;
+
+        // Session parameters has to be set for validation and saving of packages
+        if (!$this->isValidPackage(TRUE)) return;
+        //echo 'isValidPackage - ok';die;
+        // Save H5P
+        $storage = new H5PStorage($this->core->h5pF, $this->core);
+        $storage->savePackage(NULL, NULL, TRUE);
+
+        // Clean up
+        $this->storage->removeTemporarilySavedFiles($this->core->h5pF->getUploadedH5pFolderPath());
+
+        // Successfully installed. Refresh content types
+        H5PCore::ajaxSuccess($this->getContentTypeCache());
+    }
 
   /**
    * End-point for filter parameter values according to semantics.
