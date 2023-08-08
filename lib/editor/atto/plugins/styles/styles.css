@@ -65,3 +65,89 @@
     display: inline-block;
     margin-left: 39px;
 }
+
+/* Style samples */
+.attostylesbox {
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%
+}
+.attostylesbox.attostylesbox-solid {
+    color: white;
+}
+.attostylesbox.attostylesbox-outline {
+    background-color: white;
+    border-width: 2px;
+    border-style: solid;
+}
+.attostylesbox.attostylesbox-callout {
+    background-color: white;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+}
+.attostylesbox.attostylesbox-solid-blue {
+    background-color: #7d9fd3;
+}
+.attostylesbox.attostylesbox-solid-green {
+    background-color: #98ca3e;
+}
+.attostylesbox.attostylesbox-solid-yellow {
+    background-color: #ffcf35;
+}
+.attostylesbox.attostylesbox-solid-red {
+    background-color: #ef4540;
+}
+.attostylesbox.attostylesbox-solid-black {
+    background-color: #3a3a3a;
+}
+.attostylesbox.attostylesbox-outline-blue {
+    border-color: #7d9fd3;
+    color: #7d9fd3;
+}
+.attostylesbox.attostylesbox-outline-green {
+    border-color: #98ca3e;
+    color: #98ca3e;
+}
+.attostylesbox.attostylesbox-outline-yellow {
+    border-color: #ffcf35;
+    color: #ffcf35;
+}
+.attostylesbox.attostylesbox-outline-red {
+    border-color: #ef4540;
+    color: #ef4540;
+}
+.attostylesbox.attostylesbox-outline-black {
+    border-color: #3a3a3a;
+    color: #3a3a3a;
+}
+.attostylesbox.attostylesbox-callout-blue {
+    border-left-color: #7d9fd3;
+}
+.attostylesbox.attostylesbox-callout-green {
+    border-left-color: #98ca3e;
+}
+.attostylesbox.attostylesbox-callout-yellow {
+    border-left-color: #ffcf35;
+}
+.attostylesbox.attostylesbox-callout-red {
+    border-left-color: #ef4540;
+}
+.attostylesbox.attostylesbox-callout-black {
+    border-left-color: #3a3a3a;
+}
+.attostylestextmarker {
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.attostylestextmarker.attostylestextmarker-green {
+    background: #99ffcc;
+}
+.attostylestextmarker.attostylestextmarker-pink {
+    background: #ffccff;
+}
+.attostylestextmarker.attostylestextmarker-yellow {
+    background: #ffffcc;
+}
