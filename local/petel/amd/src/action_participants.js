@@ -64,13 +64,16 @@ define([
                     }
                 });
 
-                $(document).on('click', '#participants-createcourse', function(e) {
-                        self.openPopupCourseCreate(currentcourseid, currentuserid, defaults);
+                $('#formactionid').on('change', function(e) {
+                    switch ($(this).val()) {
+                        case '#addsystemgroups':
+                            self.openPopupAddSystemGroups(currentcourseid, currentuserid, defaults);
+                            break;
+                        case '#createcourse':
+                            self.openPopupCourseCreate(currentcourseid, currentuserid, defaults);
+                            break;
+                      }
                 });
-                $(document).on('click', '#participants-addsystemgroups', function(e) {
-                    self.openPopupAddSystemGroups(currentcourseid, currentuserid, defaults);
-            });
-
             });
         },
 

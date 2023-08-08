@@ -117,7 +117,7 @@ Example context (json):
         <div class="section-header d-flex">
             <div class="singlesection-card card-main-content mt-1 d-flex flex-column justify-content-between position-relative
                 {{^showsectionstatus}}w-100{{/showsectionstatus}}" >
-                <div class="card-img" role="presentation" {{#image}}style="background: url('{{{image}}}') center/cover"{{/image}}></div>
+                <div class="card-img" role="presentation" {{#image}}style="background: url('{{{image}}}'){{^imggenerated}} no-repeat center/contain {{/imggenerated}} {{#imggenerated}}  center/cover {{/imggenerated}}"{{/image}}></div>
 
                 <div class="card-header-fade p-1">
                     {{$ core_courseformat/local/content/section/badges }}

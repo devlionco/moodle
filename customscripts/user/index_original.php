@@ -291,7 +291,6 @@ $bulkoptions->noteStateNames = note_get_state_names();
 
 echo '</form>';
 
-$PAGE->requires->js_call_amd('core_user/participants', 'init', [$bulkoptions]);
 echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
@@ -307,3 +306,5 @@ echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
 ]);
 
 echo $OUTPUT->footer();
+
+$PAGE->requires->js_call_amd('core_user/participants', 'init', [$bulkoptions]);
