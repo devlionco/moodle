@@ -983,3 +983,25 @@ iframe.h5peditor-semi-fullscreen {
 .h5p-dir-rtl .h5p-interactive-book-status-arrow.h5p-interactive-book-status-button .icon-next::before {
   content: '\e907';
 }
+
+.h5p-dir-rtl .h5p-summary .summary-evaluation .joubel-tip-container {
+  left: 0;
+  right: auto;
+}
+.h5p-dir-rtl .h5p-summary .summary-evaluation-content {
+  float: right;
+  padding: 0.1em 0 0.1em 2em;
+}
+
+.h5p-dir-rtl .h5peditor-copypaste-wrap {
+  float: left;
+}
+.h5p-dir-rtl .h5p-hub .h5p-hub-client-drop-down .h5p-hub-icon-hub-icon::after {
+  right: auto;
+  left: 10px;
+}
+.h5p-dir-rtl .h5p-interactivevideo-editor .h5peditor-guided-tour {
+  left: 1em;
+  right: auto;
+  border: 1px solid darkgray;
+}
