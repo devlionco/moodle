@@ -6,6 +6,7 @@ nav.navbar.petel-navbar {
             max-height: 2.5rem;
         }
     }
+
     .count-container {
         width: 1.25rem;
         height: 1.25rem;
@@ -19,6 +20,7 @@ nav.navbar.petel-navbar {
         right: unset;
         left: 0;
     }
+
     [data-region="popover-region-messages"] {
         .count-container {
             top: 0;
@@ -36,30 +38,42 @@ nav.navbar.petel-navbar {
             line-height: 1.5rem;
             color: $white;
             padding: .5rem 1rem;
-            transition: all ease .25s;
+            transition: all ease .125s;
 
             &:active {
-                text-shadow: 0 0 .0344rem currentColor,
-                    0 0 .0344rem currentColor,
-                    0 0 .0344rem currentColor,
-                    0 0 .0344rem currentColor;
-                transition: all ease .25s;
+                text-shadow: 0 0 .04rem currentColor,
+                    0 0 .04rem currentColor,
+                    0 0 .04rem currentColor,
+                    0 0 .04rem currentColor;
+                transition: all ease .125s;
             }
 
             &:hover,
             &:focus {
                 background-color: transparent;
-                text-shadow: 0 0 .0344rem currentColor, 0 0 .0344rem currentColor;
+                text-shadow: 0 0 .04rem currentColor,
+                    0 0 .04rem currentColor,
+                    0 0 .04rem currentColor,
+                    0 0 .04rem currentColor;
                 text-decoration: underline;
-                transition: all ease .25s;
+                transition: all ease .125s;
 
                 &:active {
-                    text-shadow: 0 0 .0344rem currentColor,
-                        0 0 .0344rem currentColor,
-                        0 0 .0344rem currentColor,
-                        0 0 .0344rem currentColor;
+                    text-shadow: 0 0 .04rem currentColor,
+                        0 0 .04rem currentColor,
+                        0 0 .04rem currentColor,
+                        0 0 .04rem currentColor;
 
                 }
+            }
+
+            &:focus {
+                text-decoration: none;
+                text-shadow: 0 0 .06rem currentColor,
+                    0 0 .06rem currentColor,
+                    0 0 .06rem currentColor,
+                    0 0 .06rem currentColor;
+                transition: all ease .125s;
             }
 
         }
@@ -72,21 +86,21 @@ nav.navbar.petel-navbar {
             // FIXME:
             // width: 3rem;
             height: 3rem;
-            border: .0625rem solid transparent;
-            transition: all ease .25s;
+            border: .06rem solid transparent;
+            transition: all ease .125s;
 
             &:hover {
                 background-color: transparent;
-                text-shadow: 0 0 .0344rem currentColor,
-                    0 0 .0344rem currentColor,
-                    0 0 .0344rem currentColor;
-                transition: all ease .25s;
+                text-shadow: 0 0 .04rem currentColor,
+                    0 0 .04rem currentColor,
+                    0 0 .04rem currentColor;
+                transition: all ease .125s;
             }
 
             &:active {
                 border-color: $petel-secondarylight;
                 color: $petel-secondarylight;
-                transition: all ease .25s;
+                transition: all ease .125s;
 
             }
         }
@@ -122,7 +136,6 @@ nav.navbar.petel-navbar {
                 .userpicture {
                     border-radius: 100%;
                 }
-
 
                 i.defaultuserpic {
                     font-size: 2.25rem;
@@ -181,7 +194,7 @@ nav.navbar.petel-navbar {
                     height: 100%;
                     background: none;
                     background-color: $white;
-                    border: .0625rem solid $secondary;
+                    border: .06rem solid $secondary;
                     border-radius: 1.125rem;
                 }
 
@@ -195,9 +208,10 @@ nav.navbar.petel-navbar {
                     background-color: $secondary;
                 }
             }
-            .custom-control-input:checked ~ .custom-control-label {
+
+            .custom-control-input:checked~.custom-control-label {
                 &::after {
-                  transform: translateX($custom-switch-width - $custom-control-indicator-size - .35rem);
+                    transform: translateX($custom-switch-width - $custom-control-indicator-size - .35rem);
                 }
             }
         }
@@ -223,18 +237,21 @@ nav.navbar.petel-navbar {
         &::after {
             display: none;
         }
+
         .count-container {
             right: .75rem;
         }
     }
 }
+
 .periodictable {
     .ui-dialog-titlebar {
         display: flex;
         align-items: center;
         justify-content: flex-start;
     }
-    button.ui-dialog-titlebar-close{
+
+    button.ui-dialog-titlebar-close {
         margin-left: auto !important;
         position: relative;
         right: unset;
@@ -247,6 +264,7 @@ nav.navbar.petel-navbar {
         box-shadow: none !important;
     }
 }
+
 .userloggedinas {
     nav.navbar #usernavigation .usermenu .userbutton .avatars .avatar.current {
         display: inline-flex;
@@ -279,32 +297,42 @@ nav.navbar.petel-navbar {
         font-weight: 400;
     }
 }
+
 html[dir="ltr"] {
-   
+
     nav.navbar.petel-navbar .editmode-switch-form .custom-switch .custom-control-label::after {
         left: unset;
         right: 1.25rem;
     }
-    nav.navbar.petel-navbar .editmode-switch-form .custom-switch .custom-control-input:checked ~ .custom-control-label {
+
+    nav.navbar.petel-navbar .editmode-switch-form .custom-switch .custom-control-input:checked~.custom-control-label {
         &::after {
-          transform: translateX($custom-switch-width - $custom-control-indicator-size + .35rem);
+            transform: translateX($custom-switch-width - $custom-control-indicator-size + .35rem);
         }
     }
 }
+
 @include media-breakpoint-down(sm) {
-    nav.navbar {
+    nav.navbar.petel-navbar {
         &.fixed-top {
             height: 3rem;
-
+            z-index: 1055;
             .divider {
                 height: 1.75rem;
             }
+        }
+
+        .count-container {
+            width: 1rem;
+            height: 1rem;
+            line-height: 1;
         }
 
         #usernavigation {
 
             .nav-link {
                 font-size: 1.125rem;
+                padding: 0 0.25rem;
             }
 
             .usermenu {
@@ -318,6 +346,10 @@ html[dir="ltr"] {
 
                     i.defaultuserpic {
                         font-size: 1.125rem;
+                    }
+
+                    .avatar.current {
+                        display: flex;
                     }
 
                     .userpicture {

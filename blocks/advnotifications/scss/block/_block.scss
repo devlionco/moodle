@@ -146,3 +146,17 @@ body .block.block_advnotifications:not(.editing) {
         }
     }
 }
+html[dir="rtl"] .block_advnotifications .carousel-control-prev-icon,
+html[dir="rtl"] .block_advnotifications .carousel-control-next-icon {
+    transform: scaleX(-1);
+}
+body .block.block_advnotifications {
+    .carousel-control-prev,
+    .carousel-control-next{
+        width: 3.5rem;
+        padding: 1rem;
+        span {
+            background-size: contain;
+        }
+    }
+}
