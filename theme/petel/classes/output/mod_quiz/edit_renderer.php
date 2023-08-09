@@ -871,6 +871,8 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
      * @return string HTML to output.
      */
     public function get_checkbox_render(structure $structure, int $slot) : string {
+        global $PAGE;
+
         $questionslot = $structure->get_displayed_number_for_slot($slot);
         $checkbox = new \core\output\checkbox_toggleall($this->togglegroup, false,
             [

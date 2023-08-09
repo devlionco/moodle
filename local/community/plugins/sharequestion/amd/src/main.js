@@ -618,16 +618,30 @@ define([
 
             // Event on button share.
             $('.btn-share-questions').on( "click", function(e) {
-                let selected = [];
 
-                $('.select-multiple-checkbox-share').each(function( index ) {
-                    if($(this).find('input').is(':checked')) {
-                         let value = $(this).data('qid');
-                         selected.push(value);
+                // Selected_questions.
+                const questionsContainer = document.querySelector('div.mod-quiz-edit-content');
+                const checkboxes = questionsContainer.querySelectorAll('input.select-multiple-checkbox:checked');
+                const selected_questions = [];
+                checkboxes.forEach(checkbox => {
+                    const questionContainer = checkbox.closest('li.activity');
+                    if (questionContainer) {
+                        const activityInstance = questionContainer.querySelector('div.activityinstance');
+                        if (activityInstance) {
+                            const link = activityInstance.querySelector('a[href*="id="]');
+                            if (link) {
+                                const questionHref = link.getAttribute('href');
+                                const questionIdMatch = questionHref.match(/[?&]id=(\d+)/);
+                                if (questionIdMatch) {
+                                    const questionRealId = questionIdMatch[1];
+                                    selected_questions.push(questionRealId);
+                                }
+                            }
+                        }
                     }
                 });
 
-                open_selector(selected, currentcourseid, currentcoursecontext, visiblebuttons);
+                open_selector(selected_questions, currentcourseid, currentcoursecontext, visiblebuttons);
             });
 
             function mod_quiz_edit_recalculate_page() {
