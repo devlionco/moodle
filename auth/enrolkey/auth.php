@@ -234,16 +234,15 @@ class auth_plugin_enrolkey extends auth_plugin_base {
             );
         }
 
-        // New Enrolkey hook, if configured will redirect the user based on the enrolkey used.
-        \auth_enrolkey\persistent\enrolkey_redirect_mapping::redirect_during_signup($availableenrolids);
         // If no courses found (empty key) go to dashboard.
         if (empty($availableenrolids)) {
             redirect(new moodle_url('/my/'));
         } else {
+            $enrol = $DB->get_record('enrol', ['id' => current($availableenrolids)], 'id, courseid');
             // Disable option to select from a list of several courses (with same key)
             // And redirect to the first in the list.
             //redirect(new moodle_url("/auth/enrolkey/view.php", ['ids' => implode(',', $availableenrolids)]));
-            redirect(new moodle_url("/course/view.php", array('id' => $availableenrolids[0])));
+            redirect(new moodle_url("/course/view.php", array('id' => $enrol->courseid)));
         }
     }
 
