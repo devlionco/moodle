@@ -142,7 +142,7 @@ class block_advnotifications_renderer extends plugin_renderer_base
                 $html .= '</div>';
                 // If dismissible, add close button.
                 if ($notification['dismissible'] == 1) {
-                    $html .= '<div class="notification-block-close ml-auto mt-1"><i class="fal fa-times-circle"></i></div>';
+                    // $html .= '<div class="notification-block-close ml-auto mt-1"><i class="fal fa-times-circle"></i></div>';
                 }
 
                 // Close notification block.
@@ -151,11 +151,11 @@ class block_advnotifications_renderer extends plugin_renderer_base
             }
 
             $html .= '  </div>
-                        <button class="carousel-control-prev btn btn-link mb-3 ml-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
+                        <button class="carousel-control-prev btn btn-link mb-3" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
                         </button>
-                        <button class="carousel-control-next btn btn-link mb-3 mr-5" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="next">
+                        <button class="carousel-control-next btn btn-link mb-3" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
                         </button>

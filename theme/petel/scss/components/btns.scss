@@ -17,15 +17,17 @@
     min-height: 3.25rem;
     font-size: 1.5rem;
   }
+ 
   &.btn-primary {
     background-color: $secondary;
     border-color: $secondary;
     &:hover {
       background-color: $light;
-      color: $secondarymedium;
+      color: $secondary;
       border-color: $secondarymedium;
     }
-    &:active, &.active {
+    &:not(:disabled):not(.disabled):active,
+    &:not(:disabled):not(.disabled).active {
       background-color: $primary;
       border-color: $primary;
       color: $white;
@@ -34,6 +36,7 @@
       background-color: $secondarylight;
       color: $primary;
       border-color: $primary;
+      outline: none;
     }
   }
   &.btn-secondary {
