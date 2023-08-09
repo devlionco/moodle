@@ -138,7 +138,8 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         global $DB;
 
         $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $id]);
-        $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $category]);
+        $contextid = $DB->get_field('question_categories', 'contextid',
+                                    ['id' => $category]);
         self::exportFileTree($target, $contextid, 'content', '/', $id);
     }
 
@@ -595,7 +596,8 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         global $DB;
 
         $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $qid]);
-        $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $category]);
+        $contextid = $DB->get_field('question_categories', 'contextid',
+                                    ['id' => $category]);
         if ($contextid == 0) {
             return 0;
         }
@@ -627,6 +629,7 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         if (is_object($itemid)) {
             $itemid = $itemid->id;
         }
+
 	$ctxid = $this->getQuestionContextId($itemid);
 
         if ($filearea === 'editor') {
