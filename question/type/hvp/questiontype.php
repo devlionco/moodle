@@ -73,7 +73,7 @@ class qtype_hvp extends question_type {
                 isset($oldlib) ? $oldlib : null,
                 isset($oldparams) ? $oldparams : null);
         }
-
+        $form->id = $result->id;
         return $result;
     }
 
