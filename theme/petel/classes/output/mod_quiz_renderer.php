@@ -480,12 +480,14 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         $params['userid']          = $USER->id;
         $params['answered']        = $answered;
         $params['totalquestions']  = $totalquestions;
-        $params['timer_enabled']   = $timeleft !== false;
+        $params['timer_enabled']   = $timeleft !== false && $PAGE->pagetype == 'mod-quiz-attempt';
+        $params['active']          = $PAGE->pagetype == 'mod-quiz-attempt';
 
         if(($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') && $timeleft !== false){
             $output .= $OUTPUT->render_from_template('theme_petel/time_block', $params);
         }
-        if($PAGE->pagetype == 'mod-quiz-attempt') {
+
+        if($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review' || $PAGE->pagetype ==  'mod-quiz-summary'  || $PAGE->pagetype ==  'mod-quiz-report') {
             $this->page->requires->js_call_amd('theme_petel/quiz_timer', 'init', $params);
         }
 
