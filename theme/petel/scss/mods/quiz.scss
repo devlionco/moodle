@@ -14,6 +14,11 @@
     }
 }
 
+#page-mod-quiz-edit .btn-group.selectmultiplecommand,
+#page-mod-quiz-edit .selectmultiplecommandbuttons,
+#page-mod-quiz-edit .select-multiple-checkbox {
+    display: inline-block;
+}
 
 .btn-group.selectmultiplecommand {
     display: contents;

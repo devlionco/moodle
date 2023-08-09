@@ -16,7 +16,6 @@ define([
         init: function (uniqueid) {
             var form = $('#sharing_activities_form_'+uniqueid),
                 self = this;
-
             form.on('keydown','input[type="text"]', function(e) {
                 if (e.keyCode === 13 ) {
                     e.preventDefault();
@@ -91,6 +90,30 @@ define([
             });
 
             data['selected_competencies'] = selected_competencies;
+
+            // Selected_questions.
+            const questionsContainer = document.querySelector('div.mod-quiz-edit-content');
+            const checkboxes = questionsContainer.querySelectorAll('input.select-multiple-checkbox:checked');
+            const selected_questions = [];
+            checkboxes.forEach(checkbox => {
+                const questionContainer = checkbox.closest('li.activity');
+                if (questionContainer) {
+                    const activityInstance = questionContainer.querySelector('div.activityinstance');
+                    if (activityInstance) {
+                        const link = activityInstance.querySelector('a[href*="id="]');
+                        if (link) {
+                            const questionHref = link.getAttribute('href');
+                            const questionIdMatch = questionHref.match(/[?&]id=(\d+)/);
+                            if (questionIdMatch) {
+                                const questionRealId = questionIdMatch[1];
+                                selected_questions.push(questionRealId);
+                            }
+                        }
+                    }
+                }
+            });
+
+            data['selected_questions'] = JSON.stringify(selected_questions);
 
             var parseResponse = function (response) {
                 if (response.result) {
