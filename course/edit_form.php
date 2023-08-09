@@ -206,6 +206,20 @@ class course_edit_form extends moodleform {
         $mform->addElement('header', 'courseformathdr', get_string('type_format', 'plugin'));
 
         $courseformats = get_sorted_course_formats(true);
+
+        // PTL-9636.
+        if (isset($CFG->hiddencourseformats) && is_array($CFG->hiddencourseformats)) {
+            if (has_capability('moodle/site:config', \context_system::instance())) {
+                foreach ($courseformats as $key => $formatname) {
+                    if (in_array($formatname, $CFG->hiddencourseformats)) {
+                        unset($courseformats[$key]);
+                    }
+                }
+
+                $courseformats = array_values($courseformats);
+            }
+        }
+
         $formcourseformats = array();
         foreach ($courseformats as $courseformat) {
             $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
