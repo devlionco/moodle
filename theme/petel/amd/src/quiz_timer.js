@@ -305,7 +305,7 @@ export const checkState = () => {
 };
 
 export const init = function (start, timeleft, timelimit,
-    ispreview, progress, attemptid, cmid, userid, answered, totalquestions, timerEnabled) {
+    ispreview, progress, attemptid, cmid, userid, answered, totalquestions, timerEnabled, active) {
 
     TIMER.timerEnabled = timerEnabled;
     TIMER.lang = document.documentElement.lang || 'en';
@@ -401,9 +401,12 @@ export const init = function (start, timeleft, timelimit,
             SELECTORS.quizProgressLabel.innerText = answered;
             SELECTORS.quizTotalLabel.innerText = totalquestions;
             SELECTORS.textWrapper.classList.remove('d-none');
-            SELECTORS.form.onsubmit = () => {
-                stop();
-            };
+
+            if (active) {
+                SELECTORS.form.onsubmit = () => {
+                    stop();
+                };
+            }
 
             return;
 
