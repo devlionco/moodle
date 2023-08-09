@@ -217,6 +217,18 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $this->render_from_template('core/full_header', $header);
     }
 
+    /**
+     * Renders the "breadcrumb" for all pages in boost union.
+     *
+     * This renderer function is copied and modified from /theme/boost/classes/output/core_renderer.php
+     *
+     * @return string the HTML for the navbar.
+     */
+    public function navbar(): string {
+        $newnav = new \theme_petel\petelnavbar($this->page);
+        return $this->render_from_template('core/navbar', $newnav);
+    }
+
     public static function course_links() {
         global $CFG, $COURSE, $OUTPUT, $USER, $DB, $PAGE;
         $html = '';
