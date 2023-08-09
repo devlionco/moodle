@@ -66,6 +66,26 @@ $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
+
+    // PTL-9609.
+    if (!has_capability('moodle/site:config', \context_system::instance())) {
+        $exclude = [
+            'filtermanagement',
+            'filtermanage',
+            'roleoverride',
+            'backup',
+            'restore',
+            'metadata',
+        ];
+
+        $lists = $PAGE->secondarynav->get_children_key_list();
+        foreach ($exclude as $key) {
+            if (in_array($key, $lists)) {
+                $PAGE->secondarynav->children->remove($key);
+            }
+        }
+    }
+
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);
