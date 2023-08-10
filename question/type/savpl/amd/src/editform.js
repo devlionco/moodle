@@ -60,7 +60,6 @@ define(['jquery', 'jqueryui', 'core/log', 'qtype_savpl/vplservice', 'qtype_savpl
      */
     function applyTemplateChoice(keepContents) {
         var selectedVpl = $('#id_templatevpl').val();
-        $('#fitem_id_templatecontext').toggle(selectedVpl > '');
         updateExecfilesVisibility();
         if (selectedVpl) {
             // Update template content.
