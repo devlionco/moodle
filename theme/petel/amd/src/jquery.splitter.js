@@ -104,7 +104,7 @@
                 panel_2 = panel_1.next().addClass('bottom_panel');
                 cls = 'hsplitter';
             }
-            panels = [panel_1, panel_2];
+            panels = ($('html').attr('dir') === 'rtl') ? [panel_2, panel_1] : [panel_1, panel_2];
         } else {
             children.each(function() {
                 var panel = $(this);

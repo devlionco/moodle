@@ -59,6 +59,8 @@ class format_flexsections_external extends external_api {
      */
     public static function change_courseimage($img, $courseid, $filename) {
 
+        $filename = str_replace(' ', '_', $filename);
+
         preg_match('/^data:image\/(\w+);base64,/', $img, $type);
         $img  = substr($img, strpos($img, ',') + 1);
         $type = strtolower($type[1]); // jpg, png, gif
@@ -133,6 +135,8 @@ class format_flexsections_external extends external_api {
      */
     public static function change_sectionimage($img, $sectionid, $filename) {
         global $DB, $CFG;
+
+        $filename = str_replace(' ', '_', $filename);
 
         $row = $DB->get_record('course_sections', ['id' => $sectionid]);
 

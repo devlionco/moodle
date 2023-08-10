@@ -80,13 +80,15 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         $output .= html_writer::start_tag('div', array('class' => 'col-12 quizheading-block p-0'));
 
         //$output .= $OUTPUT->heading($coursename, 1, 'coursename mb-0');
-        $output .= $OUTPUT->heading($quizname, 1, 'quizname mb-0');
+        // PTL-9578.
+        // $output .= $OUTPUT->heading($quizname, 1, 'quizname mb-0');
 
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
         // Navbar.
-        $output .= $OUTPUT->navbar_petel();
+        // PTL-9578.
+        // $output .= $OUTPUT->navbar_petel();
 
         // Start the form.
         $output .= html_writer::start_tag('form',
@@ -868,4 +870,17 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         return $output;
     }
 
+    // PTL-9578.
+    public function summary_page($attemptobj, $displayoptions) {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->during_attempt_tertiary_nav($attemptobj->view_url());
+        // PTL-9578.
+        // $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
+        $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
+        $output .= $this->summary_table($attemptobj, $displayoptions);
+        $output .= $this->summary_page_controls($attemptobj);
+        $output .= $this->footer();
+        return $output;
+    }
 }
