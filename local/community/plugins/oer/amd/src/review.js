@@ -130,7 +130,7 @@ define([
         },
 
         add_icon: function(icon, callback) {
-            $('#maincontent').parent().find('h2').append(' '+ icon).ready(function () {
+            $('.page-header-headings').find('h1').append(' '+ icon).ready(function () {
                 callback()
             });
         },
@@ -143,7 +143,7 @@ define([
         add_and_open_icon_on_page: function(icon) {
             this.add_icon(icon, function(){
                 setTimeout(function(){
-                    $('#maincontent').parent().find('.comment-icon')[0].click();
+                    $('.page-header-headings').parent().find('.comment-icon')[0].click();
                 }, 1000);
             })
         },

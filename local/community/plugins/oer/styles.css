@@ -30,19 +30,41 @@
 
 .activity-aside-menu {
   min-height: 80vh;
+  max-width: 25.5625rem;
+  box-shadow: 0 0.1875rem 0.375rem 0 rgba(0, 0, 0, 0.25);
+  border-radius: 0;
 }
 .activity-aside-menu ul.list-unstyled {
   padding: 0;
 }
+.activity-aside-menu .activity-aside-menu-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2.125rem;
+  border-bottom: 0.0625rem solid;
+}
+.activity-aside-menu .heading-wrapp {
+  border-bottom: 0.0625rem solid;
+}
 .activity-aside-menu .heading-wrapp .menu-heading {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 2.125rem;
 }
-.activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=true] .fa.fa-caret-left {
-  transform: rotate(-90deg);
+.activity-aside-menu .heading-wrapp .submenu-heading {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.activity-aside-menu .heading-wrapp .collapse-btn {
+  display: flex;
+  align-items: center;
+}
+.activity-aside-menu .heading-wrapp .collapse-btn .fa-sharp.fa-solid.fa-triangle {
   transition: all 0.25s ease;
+  font-size: 1rem;
 }
-.activity-aside-menu .fa.fa-caret-left {
-  font-size: 1.75rem;
+.activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
+  transform: rotate(90deg);
   transition: all 0.25s ease;
 }
 .activity-aside-menu .activity-aside-menu-block {
@@ -56,10 +78,9 @@
   width: 100%;
 }
 .activity-aside-menu .activity-aside-menu-block > li .sub-menu-item {
-  padding-left: 4rem;
-}
-.activity-aside-menu .activity-aside-menu-block > li .sub-sub-menu-item {
-  padding-left: 5rem;
+  padding-left: 2.5rem;
+  font-weight: 300;
+  font-size: 1rem;
 }
 
 .activity-filters .card-body {
@@ -685,10 +706,13 @@ body[dir=rtl] .certificate_stamp-wrapper .certificate_stamp {
   box-sizing: border-box !important;
   position: relative;
   display: block;
-  height: 100%; /* Required for horizontal native scrollbar to not appear if parent is taller than natural height */
+  height: 100%;
+  /* Required for horizontal native scrollbar to not appear if parent is taller than natural height */
   width: auto;
-  max-width: 100%; /* Not required for horizontal scroll to trigger */
-  max-height: 100%; /* Needed for vertical scroll to trigger */
+  max-width: 100%;
+  /* Not required for horizontal scroll to trigger */
+  max-height: 100%;
+  /* Needed for vertical scroll to trigger */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -1189,7 +1213,8 @@ html[dir=ltr] .oer-tooltip[data-carret-position=left]::after {
 }
 
 #modalContentReview .review_modal .review_block-body {
-  background-color: #e2e1e1; /* $petel-lightgray */
+  background-color: #e2e1e1;
+  /* $petel-lightgray */
   margin-top: 5px;
   padding: 0;
 }
@@ -1465,6 +1490,11 @@ html[dir=rtl] .sequence-blocks-content .sequence-item-content .nav-control {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 5; /* number of lines to show */
+  -webkit-line-clamp: 5;
+  /* number of lines to show */
   -webkit-box-orient: vertical;
+}
+
+html[dir=rtl] .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
+  transform: rotate(-90deg);
 }/*# sourceMappingURL=styles.css.map */

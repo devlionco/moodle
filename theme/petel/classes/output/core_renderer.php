@@ -209,10 +209,10 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
 
         // TODO: find better deccission
         $header->ismodquiz = false;
-        if(($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') && is_siteadmin()){
-            // $header->ismodquiz = true;
-            return '<br>';
-        }
+        // if(($PAGE->pagetype == 'mod-quiz-attempt' || $PAGE->pagetype ==  'mod-quiz-review') && is_siteadmin()){
+        //     // $header->ismodquiz = true;
+        //     return '<br>';
+        // }
 
         return $this->render_from_template('core/full_header', $header);
     }

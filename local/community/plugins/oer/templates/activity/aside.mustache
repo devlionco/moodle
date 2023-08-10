@@ -1,15 +1,15 @@
-<h3 class="activity-aside-menu-title pt-2 pb-2 pl-4 mb-0">
+<h3 class="activity-aside-menu-title p-2 mb-0">
     {{#str}}titleaside, community_oer{{/str}}
 </h3>
-<div class="border-top activity-aside-menu-divider mr-3 ml-2"></div>
+
 <ul class="list-unstyled p-0 m-0">
 
     {{#aside_menu}}
-    <li class="py-2">
-        <div class="d-flex heading-wrapp px-2">
-            <div class="collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#activitycategory{{cat_id}}"
+    <li class="p-0">
+        <div class="d-flex heading-wrapp p-2">
+            <div class="collapse-btn border-0 mr-2 p-0 " role="button" data-toggle="collapse" data-target="#activitycategory{{cat_id}}"
                 aria-expanded="false" aria-controls="activitycategory{{cat_id}}">
-                <i class="fa fa-caret-left mr-2"></i>
+                <i class="fa-sharp fa-solid fa-triangle m-0"></i>
             </div>
             <a class="menu-heading  bold d-flex align-items-center" href="javascript:void(0);"
                 data-plugin="activity" data-area="sidemenu" data-action="category" data-value="{{cat_id}}"
@@ -21,11 +21,11 @@
         <ul class="activity-aside-menu-block collapse list-unstyled p-0 m-0" id="activitycategory{{cat_id}}">
             {{#courses}}
 
-            <li class="collapsed py-1">
-                <div class="d-flex heading-wrapp px-2">
-                    <div class="collapse-btn border-0 ml-2 py-0" role="button" data-toggle="collapse" data-target="#activitycourse{{id}}"
+            <li class="collapsed p-0">
+                <div class="d-flex heading-wrapp submenu-heading-wrapp p-2 pl-3">
+                    <div class="collapse-btn border-0 mr-2 p-0 " role="button" data-toggle="collapse" data-target="#activitycourse{{id}}"
                         aria-expanded="false" aria-controls="activitycourse{{id}}">
-                        <i class="fa fa-caret-left mr-2"></i>
+                        <i class="fa-sharp fa-solid fa-triangle m-0"></i>
                     </div>
 
 
@@ -40,7 +40,7 @@
                 <ul class="sub-menu collapse list-unstyled m-0" id="activitycourse{{id}}">
                     {{#sections}}
                     <li class="">
-                        <a href="javascript:void(0);" class="sub-menu-item pr-2" role="button" data-plugin="activity"
+                        <a href="javascript:void(0);" class="sub-menu-item py-2 pr-2" role="button" data-plugin="activity"
                             data-area="sidemenu" data-action="section" data-value="{{sectionid}}" data-parentcourse="{{id}}"
                             data-breadcrumbs="{{cat_name}} | {{fullname}} | {{section_name}}">
                             {{section_name}}
@@ -53,7 +53,6 @@
             {{/courses}}
         </ul>
     </li>
-    <li class="activity-aside-menu-divider border-top mr-3 ml-2"></li>
     {{/aside_menu}}
 </ul>
 

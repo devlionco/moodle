@@ -34,9 +34,11 @@
 #page-mod-quiz-review,
 #page-mod-quiz-report,
 #page-mod-quiz-attempt {
-    .secondary-navigation {
-        display: none !important;
-    }
+#page-mod-quiz-attempt .secondary-navigation
+    // PTL-9578.
+    // .secondary-navigation {
+    //     display: none !important;
+    // }
     #topofscroll.wider{
         max-width: 75rem;
     }

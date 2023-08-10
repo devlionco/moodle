@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/grade/lib.php');
 $courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 $PAGE->set_url(new moodle_url($CFG->wwwroot . '/grade/report/quizanalytics/index.php', array('id' => $courseid)));
-$PAGE->requires->css('/grade/report/quizanalytics/css/bootstrap.min.css', true);
+// $PAGE->requires->css('/grade/report/quizanalytics/css/bootstrap.min.css', true);
 $PAGE->requires->js('/grade/report/quizanalytics/js/Chart.js', true);
 $PAGE->requires->js_call_amd('gradereport_quizanalytics/analytic', 'analytic');
 $page = optional_param('page', 0, PARAM_INT);
@@ -358,7 +358,6 @@ echo $OUTPUT->footer();
     position: relative;
     padding-bottom: 20px !important;
   }
-  .navbar .popover-region-toggle,
   .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu {
     display: inline !important;
   }
@@ -468,9 +467,7 @@ echo $OUTPUT->footer();
   #page-grade-report-quizanalytics-index .navbar-light .navbar-nav .nav-link {
     font-size: 1.2rem;
   }
-  #page-grade-report-quizanalytics-index .navbar .popover-region {
-    margin-top: 10px;
-  }
+
   #page-grade-report-quizanalytics-index .popover-region-toggle::before,
   #page-grade-report-quizanalytics-index .popover-region-toggle::after {
     bottom: -10px;

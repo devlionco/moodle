@@ -194,7 +194,13 @@ class content extends \core_courseformat\output\local\content {
         }
 
         // Show collapse button.
-        $data->showcollapsebutton = $PAGE->user_is_editing();
+        if ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS) {
+            $data->showcollapsebutton = $PAGE->user_is_editing();
+        }
+
+        if ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST) {
+            $data->showcollapsebutton = true;
+        }
 
         $data->showsingleuploadsection = $PAGE->user_is_editing() && isset($data->singlesection);
         if($data->showsingleuploadsection){

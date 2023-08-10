@@ -88,11 +88,14 @@ if ($PAGE->has_secondary_navigation()) {
 
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
-    $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+    // PTL-9578.
+    // $secondarynavigation = $moremenu->export_for_template($OUTPUT);
     $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
     if (!is_null($overflowdata)) {
         $overflow = $overflowdata->export_for_template($OUTPUT);
     }
+    // PTL-9578.
+    $secondarynavigation = $moremenu->export_for_template($OUTPUT);
 }
 
 $primary = new theme_petel\navigation\primary($PAGE);
@@ -103,7 +106,14 @@ $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_action
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
 $header = $PAGE->activityheader;
-$headercontent = $header->export_for_template($renderer);
+
+// PTL-9578.
+if(strpos($PAGE->pagetype, 'mod-') !== false){
+    $headercontent = false;
+} else {
+    $headercontent = $header->export_for_template($renderer);
+}
+
 $abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
 $policies = theme_petel_get_policies();
 $templatecontext = [
