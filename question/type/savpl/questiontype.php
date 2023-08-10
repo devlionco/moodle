@@ -43,10 +43,36 @@ class qtype_savpl extends question_type {
             "answertemplate",
             "teachercorrection",
             "validateonsave",
+            "templatefilename",
             "execfiles",
             "precheckpreference",
             "precheckexecfiles",
             "gradingmethod",
         );
+    }
+
+    /**
+     * Saves question-type specific options
+     *
+     * This is called by {@link save_question()} to save the question-type specific data from a
+     * submitted form. This method takes the form data and formats into the correct format for
+     * writing to the database. It then calls the parent method to actually write the data.
+     *
+     * @param object $form  This holds the information from the editing form,
+     *                          it is not a standard question object.
+     * @return object $result->error or $result->noticeyesno or $result->notice
+     */
+    public function save_question_options($form) {
+        global $DB;
+        // Start a try block to catch any exceptions generated when we attempt to parse and
+        // then add the answers and variables to the database.
+
+        if ($form->oldparent) {
+            //since we have no ability to get execfiles from formdata - we just get it from old question
+            $oldquestion = $DB->get_record('question_savpl', ['questionid' => $form->oldparent]);
+            $form->execfiles = $oldquestion->execfiles;
+        }
+
+        parent::save_question_options($form);
     }
 }

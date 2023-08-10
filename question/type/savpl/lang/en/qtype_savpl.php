@@ -91,6 +91,8 @@ $string['evaluationerror'] = 'Evaluation error:';
 $string['execerror'] = 'Execution error:';
 $string['execerrordetails'] = 'Operation aborted by VPL. Execution resources limits may have been exceeded.';
 $string['execution'] = 'Execution error:';
+$string['templatefilename'] = 'Template file name';
+$string['executionfiles'] = 'Execution files';
 
 $string['merge'] = 'Merge';
 $string['overwrite'] = 'Overwrite';
