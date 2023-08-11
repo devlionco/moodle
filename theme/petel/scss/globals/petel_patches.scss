@@ -97,3 +97,8 @@ html[dir="rtl"] .visual-math-input-wrapper {
 .path-course.format-flexsections .dashboard-card-deck .card-main-content .summary {
   display: none;
 }
+
+/* mod/hvp - Hide content hub from users (teachers) prevent sharing */
+.cm-type-hvp .content-hub-options {
+  display: none;
+}
