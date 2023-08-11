@@ -69,6 +69,10 @@ define('TOOL_OBJECTFS_DELETE_EXTERNAL_NO', 0);
 define('TOOL_OBJECTFS_DELETE_EXTERNAL_TRASH', 1);
 define('TOOL_OBJECTFS_DELETE_EXTERNAL_FULL', 2);
 
+/*
+// Deprecated - TODO: completly remove (nadavkav)
+// https://github.com/catalyst/moodle-tool_objectfs/pull/548
+
 // Legacy cron function.
 function tool_objectfs_cron() {
     mtrace('RUNNING legacy cron objectfs');
@@ -84,6 +88,7 @@ function tool_objectfs_cron() {
 
     return true;
 }
+*/
 
 /**
  * Sends a plugin file to the browser.

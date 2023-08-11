@@ -32,12 +32,17 @@ class tasks_test extends \tool_objectfs\tests\testcase {
         ob_end_clean();
     }
 
+/*
+// Deprecated - TODO: completly remove (nadavkav)
+// https://github.com/catalyst/moodle-tool_objectfs/pull/548
+
     public function test_run_legacy_cron() {
         $config = manager::get_objectfs_config();
         $config->enabletasks = true;
         manager::set_objectfs_config($config);
         $this->assertTrue(tool_objectfs_cron());
     }
+*/
 
     public function test_run_scheduled_tasks() {
         global $CFG;
