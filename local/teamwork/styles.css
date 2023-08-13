@@ -720,3 +720,10 @@
 .teamworkdialog {
   z-index: 1000;
 }
+#page-mod-quiz-view #open_local {
+  margin: 1.5rem 0 !important;
+  display: flex;
+}
+#page-mod-quiz-view .teamwork_team {
+  text-align: left;
+}

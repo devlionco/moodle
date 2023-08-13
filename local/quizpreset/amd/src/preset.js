@@ -290,6 +290,10 @@ define([
 
                 var response = JSON.parse(res);
 
+                if(response.selector.items.length > 0){
+                    response.selector.items_enable = true;
+                }
+
                 Templates.render("local_quizpreset/selector", response)
                 .done(function (html, js) {
 
@@ -332,6 +336,93 @@ define([
 
                     loadingIcon.remove();
                 });
+            },
+            fail: Notification.exception
+        }]);
+
+    };
+
+    var addTypeSelectorViewQuizPage = function() {
+
+        loadingIcon.show();
+
+        // Get url params.
+        var urlparams={};
+        window.location.search
+            .replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str,key,value) {
+                    urlparams[key] = value;
+                }
+            );
+
+        var url = new URL(window.location.href);
+        var defaulttype = url.searchParams.get("defaulttype");
+        var viewall = url.searchParams.get("viewall");
+
+        // If not set viewall in url.
+        if(viewall === null){
+            viewall = 100;
+        }
+
+        Ajax.call([{
+            methodname: 'local_quizpreset_get_pagedata',
+            args: {
+                'cmid': Number(cmid),
+                'defaulttype': Number(defaulttype),
+                'viewall': Number(viewall),
+                'pagestate': pageState,
+                'urlparams': JSON.stringify(urlparams),
+            },
+            done: function(res) {
+
+                var response = JSON.parse(res);
+
+                // Remove selector.items.
+                if(response.selector.items.length > 0){
+                    response.selector.items_enable = false;
+                }
+
+                Templates.render("local_quizpreset/selector", response)
+                    .done(function (html, js) {
+
+                        // Insert to page.
+                        let block = `<div id="block-quizpreset-selector"></div>`;
+                        if ($(Selector.TYPE_SELECTOR_ANCOR1).length) {
+                            $(Selector.TYPE_SELECTOR_ANCOR1).before(block);
+                        } else if ($(Selector.TYPE_SELECTOR_ANCOR2).length) {
+                            $(Selector.TYPE_SELECTOR_ANCOR2).before(block);
+                        }
+
+                        Templates.replaceNodeContents('#block-quizpreset-selector', html, js);
+
+                        // Fill global.
+                        fillGlobal(response);
+
+                        // Fill values.
+                        fillValues(response);
+
+                        // Add button and change submit buttons.
+                        preconfigurePage(response);
+
+                        // Expanded fieldsets.
+                        expandedFieldset(response);
+
+                        // Run button userexposure.
+                        Userexposure.init();
+
+                        // Collapse fieldset.
+                        if(response.details.viewall === 1) {
+                            $('.collapsible-actions').show();
+                        }
+
+                        // Tooltip.
+                        $(function () {
+                            $('[data-toggle="tooltip"]').tooltip({
+                                delay: { show: 700, hide: 500 }
+                            });
+                        });
+
+                        loadingIcon.remove();
+                    });
             },
             fail: Notification.exception
         }]);
@@ -547,9 +638,11 @@ define([
 
         configureViewQuizPage: function() {
             pageState = "view";
-            addButtonsBar(function(){
-                addTypeSelector();
-            });
+            addTypeSelectorViewQuizPage();
+
+            // addButtonsBar(function(){
+            //     addTypeSelector();
+            // });
         },
 
         configureSaveMyPreset: function() {

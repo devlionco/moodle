@@ -3,11 +3,13 @@
     <input type="hidden" id="defaulttype_for_save" name="" value="{{details.type}}">
     <input type="hidden" id="viewall_for_save" name="" value="{{details.viewall}}">
 
-    <ul class="types-selector">
-    {{#selector.items}}
-        {{> local_quizpreset/selector_item}}
-    {{/selector.items}}
-    </ul>
+    {{#selector.items_enable}}
+        <ul class="types-selector">
+        {{#selector.items}}
+            {{> local_quizpreset/selector_item}}
+        {{/selector.items}}
+        </ul>
+    {{/selector.items_enable}}
 
     <input id="presetId" type="hidden" value="{{selector.activeDbId}}">
     <input id="cmcontextid" type="hidden" value="{{selector.cmcontextid}}">

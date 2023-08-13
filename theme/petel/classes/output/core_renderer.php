@@ -33,7 +33,6 @@ use moodle_url;
 use action_menu;
 use context_course;
 use pix_icon;
-use theme_petel\setting_menu;
 use theme_petel\utility;
 use core_renderer_toolbox;
 use user_picture;

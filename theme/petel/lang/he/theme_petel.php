@@ -287,3 +287,5 @@ $string['progresspage'] = '{$a->totalcomplinpage} מתוך {$a->totalquestions} 
 $string['stopwatchshowhide'] = 'הצגת/הסתרת שעון עצר';
 $string['notflagged'] = 'לא מסומן';
 $string['timeisup'] = 'זמן תם';
+
+$string['advancedoverviewlink'] = 'ציונים ומשוב מורחב';
