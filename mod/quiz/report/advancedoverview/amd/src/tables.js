@@ -6,6 +6,7 @@ import * as Str from 'core/str';
 import $ from 'jquery';
 import Tabulator from 'report/advancedoverview/js/tabulator.min.js';
 import * as Main from 'quiz_advancedoverview/main';
+import * as studentsTableActions from 'quiz_advancedoverview/studentsTableActions';
 
 // TODO: refactore code!
 export let QLENGTH = 0;
@@ -85,8 +86,7 @@ export const initquestionstable = function(data) {
   TABLES.questionsTable = new Tabulator('#questions-table', content);
 };
 
-export const initstudentstable = function(data) {
-
+export const initstudentstable = function(data, anon = 0) {
   const self = this;
   const strings = [
     {
@@ -514,6 +514,8 @@ export const initstudentstable = function(data) {
         self.TABLES.studentsTable.setSort("lastname", resultSort);
       });
     });
+
+    studentsTableActions.setAnonToggl(anon);
   }).fail(Notification.exception);
 
 };

@@ -5,6 +5,7 @@ import ModalEvents from 'core/modal_events';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
+import * as studentsTableActions from 'quiz_advancedoverview/studentsTableActions';
 
 const PILLS = {};
 const SELECTORS = {
@@ -303,13 +304,7 @@ export const renderDynamicBlock = function (cmid, groupid) {
             // Render dinamic block.
             Templates.render('quiz_advancedoverview/dynamic_block', data)
                 .done(function (html, js) {
-                    $('#anonymousStripe').addClass('hidden');
-                    let stateText = $('#anonymousmodeToggler1').closest('.advancedoverview_report-toggle').data('textoff');
-
-                    $('.advancedoverview_report-toggle.anonymousmode').each(function (index) {
-                        $('.advancedoverview_report-toggle.anonymousmode').eq(index).find('.link-btn-text').html(stateText);
-                    });
-                    $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', false);
+                    studentsTableActions.setAnonToggl(data.config.anonymous_mode);
                     Templates.replaceNodeContents(SELECTORS.dynamicBlock, html, js);
                 })
                 .fail(Notification.exception);

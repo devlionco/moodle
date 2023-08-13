@@ -71,14 +71,19 @@ class quizdata {
     public $anonymouscount = 1;
 
     public function __construct($cmid, $groupid = 0, $config = null) {
+        global $USER;
 
         $this->states = [];
 
         $defaultconfig = (object) [
-                'anonymous_mode' => '0',
+                'anonymous_mode' => $this->get_anon_state_for_user($cmid, $USER->id),
                 'participants' => (object) [
                 ],
         ];
+
+        if(isset($config->anonymous_mode)) {
+            $this->set_anon_state_for_user($cmid, $USER->id, $config->anonymous_mode);
+        }
 
         $this->config = $config ? $config : $defaultconfig;
 
@@ -118,6 +123,22 @@ class quizdata {
                 $this->usersinprogresslist,
                 $this->usersnotstartedlist) = $this->quiz_submissions_stat();
 
+    }
+
+    public function set_anon_state_for_user($cmid, $userid, $state) {
+
+        $name = 'quiz_advancedoverview_anon_' . $cmid;
+        $value = (int) $state;
+
+        return set_user_preference($name, $value, $userid);
+    }
+
+    public function get_anon_state_for_user($cmid, $userid) {
+
+        $name = 'quiz_advancedoverview_anon_' . $cmid;
+        $state = get_user_preferences($name, 0, $userid);
+
+        return $state;
     }
 
     public function get_slots() {
@@ -1138,6 +1159,7 @@ class quizdata {
 
         $data['data_table_according_students_options'] = $this->options;
 
+        $data['anonymous_mode'] = $this->config->anonymous_mode;
         $data['config'] = $this->config;
 
         return $data;
