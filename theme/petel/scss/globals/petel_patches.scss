@@ -102,3 +102,8 @@ html[dir="rtl"] .visual-math-input-wrapper {
 .cm-type-hvp .content-hub-options {
   display: none;
 }
+
+/* move the right drawer toggle, so it is not blocking the browser side scroll */
+.drawer-toggles .drawer-right-toggle {
+  right: 10px;
+}
