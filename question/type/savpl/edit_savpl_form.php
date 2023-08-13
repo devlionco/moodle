@@ -91,6 +91,12 @@ class qtype_savpl_edit_form extends question_edit_form {
         $mform->setType('templatefilename', PARAM_FILE);
         $mform->addRule('templatefilename', null, 'required', null, 'client');
 
+        $mform->addElement('static', 'templatefilenamesave',
+            get_string('templatefilenamesave_label', 'qtype_savpl'),
+            get_string('templatefilenamesave_message', 'qtype_savpl'));
+        $mform->addElement('submit', 'updatebutton',
+            get_string('savechangesandcontinueediting', 'question'));
+
         $this->add_codeeditor($mform, 'templatecontext');
         $mform->setDefault('templatecontext', '{{ANSWER}}');
 
