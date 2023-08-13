@@ -27,6 +27,10 @@ $string['addquestionfrommycourses'] = 'שאלות מקורסים שלי';
 $string['addquestionfromoer'] = 'שאלות ממאגר משותף';
 $string['recommendation'] = 'מומלץ';
 $string['favorites'] = 'מועדפים';
+
 //PTL-5321
 $string['printquestions'] = 'הדפסת שאלות';
 $string['correctanswersandhints'] = 'הצגת התשובות הנכונות ורמזים';
+
+$string['completionpasscustom'] = 'דרוש ציון עובר';
+$string['completionpasscustomdesc'] = 'על הסטודנט להשיג ציון עובר כדי להשלים את הפעילות';

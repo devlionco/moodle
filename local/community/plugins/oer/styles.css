@@ -115,25 +115,30 @@
   transition: all 0.25s ease;
 }
 
+.copy-link i {
+  font-size: 1.125rem;
+}
 .copy-link u {
   white-space: nowrap;
+  font-weight: 300;
+  font-size: 1rem;
 }
 
 .activity-block-title {
   margin-bottom: 1.5rem;
 }
 
-.activity-item {
+.path-local-community-plugins-oer .activity-blocks-content .activity-item {
   min-height: 12rem;
   margin-bottom: 2rem;
   padding: 1.5rem 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 0.1875rem 0.1875rem 0 rgba(43, 43, 43, 0.25);
 }
-.activity-item a:hover {
+.path-local-community-plugins-oer .activity-blocks-content .activity-item a:hover {
   text-decoration: none;
 }
-.activity-item:last-of-type {
+.path-local-community-plugins-oer .activity-blocks-content .activity-item:last-of-type {
   margin-bottom: 0;
 }
 
@@ -178,19 +183,19 @@
 }
 
 .activity-title h2 {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   overflow-wrap: break-word;
   max-width: 70%;
   line-height: 1.25;
 }
 .activity-title .activity-title-info {
   line-height: 1.6;
-  font-size: 1rem;
+  font-size: 0.75rem;
 }
 
 .teacher-img {
-  width: 2rem;
-  height: 2rem;
+  width: 1.125rem;
+  height: 1.125rem;
   display: block;
   background-size: cover;
   background-position: center;
@@ -201,12 +206,12 @@
   padding-left: 0.875rem;
   padding-right: 0.875rem;
   line-height: 2rem;
-  font-size: 1.125rem;
+  font-size: 0.75rem;
 }
 
 .activity-text {
-  line-height: 1.78;
-  font-size: 1rem;
+  line-height: normal;
+  font-size: 0.75rem;
 }
 
 .activity-info button:not(.close) {
@@ -216,12 +221,19 @@
 .activity-info .activity-info-blocks .activity-info-block {
   text-align: center;
 }
+.activity-info .activity-info-blocks .activity-info-block .activity-info-tooltip {
+  padding-left: 2rem;
+}
 .activity-info .activity-info-blocks .activity-info-block a {
   display: block;
 }
 .activity-info .activity-info-blocks .activity-info-block p {
-  font-size: 1rem;
-  line-height: 1.5;
+  color: #000;
+  padding-left: 2rem;
+  font-size: 0.5625rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 0.75rem;
 }
 .activity-info .activity-info-blocks .activity-info-block i {
   font-size: 1.5rem;
@@ -244,11 +256,11 @@
 
 .copy-activity-btn,
 .copy-course-btn {
-  font-size: 1rem;
+  min-width: 11.25rem;
 }
 .copy-activity-btn i,
 .copy-course-btn i {
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .copy-activity-dropdown {
@@ -292,6 +304,23 @@
 .copy-activity-dropdown .copy-activity-dropdown-inner {
   max-height: 20rem;
   overflow-y: auto;
+}
+
+#oer_btn_container .comments button {
+  font-size: 1.375rem;
+  font-style: normal;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#oer_btn_container button {
+  height: 2.375rem;
+  display: flex;
+  align-items: center;
+}
+#oer_btn_container button span {
+  font-size: 0.75rem;
 }
 
 .oer-tooltip {
@@ -1476,6 +1505,7 @@ html[dir=rtl] .sequence-blocks-content .sequence-item-content .nav-control {
 
 .main-filter-form .main-search-input {
   padding-right: 2.5rem;
+  padding-left: 2rem;
 }
 
 .copy-course-img {
@@ -1497,4 +1527,12 @@ html[dir=rtl] .sequence-blocks-content .sequence-item-content .nav-control {
 
 html[dir=rtl] .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
   transform: rotate(-90deg);
-}/*# sourceMappingURL=styles.css.map */
+}
+
+/* html[dir='ltr'] {
+
+    .path-local-community-plugins-oer .pagination .page-item .page-link.prev-btn,
+    .path-local-community-plugins-oer .pagination .page-item .page-link.next-btn {
+        transform: rotate(-180deg);
+    }
+} *//*# sourceMappingURL=styles.css.map */

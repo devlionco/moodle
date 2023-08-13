@@ -1083,6 +1083,10 @@ $string['favorites'] = 'Favorites';
 $string['numattemptsmade'] = '{$a} attempts made on this quiz';
 $string['reviewofattempt'] = 'Review of attempt {$a}';
 $string['reviewofpreview'] = 'Review of preview';
+
 //PTL-5321
 $string['printquestions'] = 'Print questions';
 $string['correctanswersandhints'] = 'Presenting the correct answer and hints';
+
+$string['completionpasscustom'] = 'Require passing grade';
+$string['completionpasscustomdesc'] = 'Student must achieve a passing grade to complete this activity';

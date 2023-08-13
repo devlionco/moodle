@@ -2,7 +2,7 @@
 
 <div class="bg-white w-100 border border-light d-flex position-relative activity-item mx-3 flex-wrap flex-xl-nowrap">
     <div class="activity-img-wrapper overflow-hidden position-relative ">
-        <a class="activity-img d-block border border-primary position-relative" href="{{{urlactivitymid}}}"
+        <a class="activity-img d-block border border-secondary-light position-relative" href="{{{urlactivitymid}}}"
             title="{{image_title}}" style="background-image: url('{{{imageactivity}}}');">
             <div class="certificate_stamp-wrapper d-flex align-items-center justify-content-center position-absolute">
                 {{#stamp_teachers_offer}}
@@ -119,9 +119,9 @@
     </div>
     <div class="activity-info ml-auto ">
         <div class="copy-link-wrapper w-100 position-relative mb-2">
-            <div class="copy-link w-100 ml-auto d-flex align-items-center justify-content-center px-3"
+            <div class="copy-link w-100 ml-auto d-flex align-items-center justify-content-end"
                 data-linkrel="{{{urlactivitymid}}}" data-toggle="dropdown" role="button" tabindex="0">
-                <i class="icon fas fa-link iconsmall" aria-hidden="true"></i>
+                <i class="fa-light fa-link mr-2"></i>
                 <u>{{#str}}copyactivityadress, community_oer{{/str}}</u>
             </div>
             <div class="dropdown-menu dropdown-menu-right p-3 w-100" aria-labelledby="dropdownMenuLink">
@@ -138,8 +138,8 @@
             <a class="comments reviews mr-2 align-self-start" href="javascript:void(0)" data-objid="{{cmid}}" data-type="activity"
                 data-handler="showReview">
                 <div class="activity-info-tooltip position-relative">
-                    <button type="button" class="btn btn-primary rounded mb-3">
-                        <i class="fal fa-comment" aria-hidden="true"></i>
+                    <button type="button" class="btn btn-primary rounded mb-3 px-3">
+                        <i class="fa-light fa-comment"></i>
                     </button>
                     <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left"
                         data-carret-position="top-left">
@@ -149,13 +149,13 @@
             </a>
             {{/showteachercomments}}
             <div class="dropdown copy-activity-dropdown-wrapper">
-                <button class="copy-activity-btn btn
+                <button class="copy-activity-btn btn px-3
                     {{#activity_shared}}btn--white{{/activity_shared}} {{^activity_shared}}btn-primary{{/activity_shared}}
                     rounded mb-3 w-100 dropdown-toggle" type="button" id="copy_activity_btn_{{cmid}}"
                     data-toggle="dropdown" data-cmid="{{cmid}}" data-referer="{{referer}}">
 
-                    <i class="fal fa-clone mr-2"></i>
-                    <span>
+                    <i class="fa-light fa-copy mr-2"></i>
+                    <span class="mr-2">
                         {{#activity_shared}}{{#str}}activitycopied, community_oer{{/str}}{{/activity_shared}}
                         {{^activity_shared}}{{#str}}activitycopy, community_oer{{/str}}{{/activity_shared}}
                     </span>
@@ -168,10 +168,10 @@
                     </div>
                 </div>
 
-                <div class="activity-info-blocks d-flex align-items-start justify-content-between">
+                <div class="activity-info-blocks d-flex align-items-start justify-content-end">
                     <div class="activity-info-block">
                         <div class="text-primary activity-info-tooltip position-relative">
-                            <i class="fal fa-download"></i>
+                            <i class="fa-light fa-download"></i>
                             <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left"
                                 data-carret-position="top-left">
                                 <span>{{count_used_activity}} {{#str}}used_activity, community_oer{{/str}}</span>
@@ -182,7 +182,7 @@
 
                     <div class="activity-info-block">
                         <div class="text-primary activity-info-tooltip position-relative">
-                            <i class="fal fa-graduation-cap"></i>
+                            <i class="fa-light fa-graduation-cap"></i>
                             <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left"
                                 data-carret-position="top-left">
                                 <span>{{count_student_response}} {{#str}}student_response, community_oer{{/str}}</span>
@@ -197,7 +197,7 @@
                         <a href="{{{urlactivity}}}&comments=1" target="__blank"
                             title="{{#str}}teachersdiscourse, community_comments{{/str}}">
                             <div class="text-primary">
-                                <i class="fal fa-comment"></i>
+                                <i class="fa-light fa-comment"></i>
                             </div>
                             <p class="text-body m-0">{{countcomments}}</p>
                         </a>
@@ -207,7 +207,7 @@
                     <div class="activity-info-block">
                         {{#metadata_sourceurl}}
                         <div class="text-primary activity-info-tooltip position-relative">
-                            <i class="fal fa-message-quote"></i>
+                            <i class="fa-light fa-message-quote"></i>
                             <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left"
                                 data-carret-position="top-left">
                                 <span>{{{metadata_sourceurl}}}</span>

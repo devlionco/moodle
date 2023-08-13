@@ -81,7 +81,7 @@
                             <button class="copy-course-btn btn btn--white rounded mb-3 w-100" disabled
                                     type="button" id="copy_corse_btn_{{cid}}" data-cid="{{cid}}" data-error-category="{{error_category}}">
 
-                                <i class="fal fa-clone mr-2"></i> <span> {{#str}}activitycopy, community_oer{{/str}} </span>
+                                    <i class="fa-light fa-copy mr-2"></i> <span> {{#str}}activitycopy, community_oer{{/str}} </span>
                             </button>
 
                             <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left" data-carret-position="top-left" >
@@ -99,7 +99,7 @@
                             rounded mb-3 w-100"
                                 type="button" id="copy_corse_btn_{{cid}}" data-cid="{{cid}}" data-error-category="{{error_category}}">
 
-                            <i class="fal fa-clone mr-2"></i>
+                                <i class="fa-light fa-copy mr-2"></i>
                             <span>
                                 {{#course_shared}}{{#str}}activitycopied, community_oer{{/str}}{{/course_shared}}
                                 {{^course_shared}}{{#str}}activitycopy, community_oer{{/str}}{{/course_shared}}
@@ -110,7 +110,7 @@
                 {{/course_shared_disabled}}
             </div>
 
-            <div class="activity-info-blocks d-flex align-items-start justify-content-between ml-4">
+            <div class="activity-info-blocks d-flex align-items-start justify-content-end ml-4">
                 <div class="activity-info-block">
                     <div class="text-primary">
                         <i class="fal fa-download"></i>

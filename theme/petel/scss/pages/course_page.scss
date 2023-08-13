@@ -81,16 +81,6 @@
         }
     }
 
-    .moremenu.navigation {
-        .dropdownmoremenu {
-            .dropdown-menu.show {
-                display: flex;
-                flex-direction: column;
-                width: fit-content;
-            }
-        }
-
-    }
 
     .btn-disable-share-course {
         color: $primary;
@@ -823,6 +813,16 @@
     }
 }
 
+.moremenu.navigation {
+    .dropdownmoremenu {
+        .dropdown-menu.show {
+            display: flex;
+            flex-direction: column;
+            width: fit-content;
+        }
+    }
+
+}
 html[dir="rtl"] {
     .fa-flip-horizontal {
         transform: scale(1, 1);
