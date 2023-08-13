@@ -15,71 +15,72 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qtype_savpl', language 'en'
+ * Strings for component 'qtype_savpl', language 'he'
  * @package    qtype_savpl
  * @copyright  Nadav Kavalerchik <nadav.kavalerchik@weizmann.ac.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'VPL Question (Adv)';
+$string['pluginname'] = 'שאלות הרצת קוד VPL';
 $string['pluginname_help'] = 'VPL Questions allow you to make simple coding exercises.<br>
 It works with a VPL, but is designed to be a lot simpler on the students\' side.';
-$string['pluginnameadding'] = 'Adding a VPL Question';
-$string['pluginnameediting'] = 'Editing a VPL Question';
+$string['pluginnameadding'] = 'הוספת שאלות הרצת קוד VPL';
+$string['pluginnameediting'] = 'עריכת שאלות הרצת קוד VPL';
 $string['pluginnamesummary'] = 'VPL Questions allow you to make simple coding exercises.<br>
 It works with a VPL, but is designed to be a lot simpler on the students\' side.';
-$string['informationtext'] = 'VPL Question';
+$string['informationtext'] = 'שאלות הרצת קוד VPL';
 
-$string['allornothing'] = 'All or nothing';
-$string['answertemplate'] = 'Answer template';
+$string['allornothing'] = 'נכון / לא־נכון';
+$string['answertemplate'] = 'תבנית תשובה';
 $string['answertemplate_help'] = 'Write here what code will be prefilled in the answer box for the student.';
 $string['cannotimportquestionvplnotfound'] = 'Import warning: the VPL module id specified in VPL Question "{$a}" is invalid.';
 $string['cannotimportquestionvplunreachable'] = 'Import warning: the VPL specified in VPL Question "{$a}" is not in this course.';
-$string['choose'] = 'Choose...';
-$string['correction'] = 'Correction';
-$string['evaluationdetails'] = 'Evaluation details:';
-$string['execfiles'] = 'Execution files';
+$string['choose'] = 'בחירה...';
+$string['correction'] = 'תשובה נכונה';
+$string['evaluationdetails'] = 'תוצאות הערכה:';
+$string['execfiles'] = 'קבצי הרצה ובדיקת קוד';
 $string['execfiles_help'] = 'You can edit here execution files. These are only sent during evaluation (and Pre-check if files are the same), and not during run (except for files specified as "to keep when running" in the VPL).<br>
 To add files, add them in the VPL as execution files.<br>
 If there is a file you wish not to use, write "UNUSED" on its first line and it will be omitted.';
-$string['execfilesevalsettings'] = 'Execution files and evaluate settings';
-$string['gradingmethod'] = 'Grading';
+$string['execfilesevalsettings'] = 'הגדרות קבצי הרצה ובדיקת קוד';
+$string['gradingmethod'] = 'ניקוד';
 $string['gradingmethod_help'] = 'Determines grading method for this question.
 <ul><li>If "All or nothing" is selected, the student will earn either 100% or 0% of the mark for this question, depending on whether they got perfect VPL grade or not.</li>
 <li>If "Scaling" is selected, the student\'s mark for this question will scale with their VPL grade.</li></ul>';
 $string['lastservermessage'] = 'Last execution server message received: {$a}';
 $string['nogradeerror'] = 'An error occurred during question grading (no grade obtained).
 {$a}.';
-$string['noprecheck'] = 'No Pre-check';
-$string['pleaseanswer'] = 'Please provide an answer.';
-$string['possiblesolution'] = 'Possible solution:';
-$string['precheck'] = 'Pre-check';
-$string['precheckexecfiles'] = 'Pre-check execution files';
+$string['noprecheck'] = 'ללא בדיקות מקדימות';
+$string['pleaseanswer'] = 'יש להזין תשובה.';
+$string['possiblesolution'] = 'פתרונות אפשריים:';
+$string['precheck'] = 'בדיקת קוד מקדימה';
+$string['precheckexecfiles'] = 'קבצים לשימוש בבדיקת קוד מקדימה';
 $string['precheckexecfiles_help'] = 'You can edit here execution files that will be used for Pre-check. For additional information, see help from "Execution files".';
-$string['precheckhasownfiles'] = 'Pre-check uses its own execution files';
-$string['precheckhassamefiles'] = 'Pre-check uses the same execution files as Check';
+$string['precheckhasownfiles'] = 'בדיקה מקדימה משתמשת בקבצי הרצה שלה';
+$string['precheckhassamefiles'] = 'בדיקה מקדימה משתמשת באותם קבצים של מנגנון הבדיקה';
 $string['precheckhelp'] = 'Evaluate your answer on a subset of tests';
-$string['precheckisdebug'] = 'Pre-check is Debug';
-$string['precheckpreference'] = 'Pre-check preference';
+$string['precheckisdebug'] = 'בדיקה מקדימה היא Debug';
+$string['precheckpreference'] = 'הגדרות קדם בדיקה';
 $string['precheckpreference_help'] = 'Determines whether the student will have access to a "Pre-check" button during question attempt (with unlimited use).
 <ul><li>If "No Pre-check" is selected, no such button will be available.</li>
 <li>If "Pre-check is Debug" is selected, the button will act as the "Debug" button on a VPL. Please note that it however does not provide usual graphic interface.</li>
 <li>If "Pre-check uses the same execution files as Check" is selected, the button will evaluate the answer with execution files above.</li>
 <li>If "Pre-check uses its own execution files" is selected, you will be able to edit specific execution files and they will be used for Pre-check. This is the recommended option, as it allows you to specify a subset of tests the student has access to during attempt.</li></ul>';
-$string['qvplbase'] = 'VPL Question template';
-$string['run'] = 'Run';
-$string['scaling'] = 'Scaling';
+$string['qvplbase'] = 'תבנית קוד להגשה';
+$string['run'] = 'הרצה';
+$string['scaling'] = 'ניקוד מספרי';
 $string['selectavpl'] = '<a href="{$a}">Select a template VPL</a> to edit execution files.';
 $string['serverwassilent'] = 'Execution server was silent - no message received';
-$string['teachercorrection'] = 'Teacher Correction';
+$string['teachercorrection'] = 'דוגמת קוד נכונה של המורה';
 $string['teachercorrection_help'] = 'Write here your correction for this question.';
-$string['templatecontext'] = 'Edit template';
+$string['templatecontext'] = 'עריכת תבנית קוד';
+
 $string['templatecontext_help'] = 'You can edit here the code that will be executed (ie. the content of the required file).<br>
 The "{{ANSWER}}" tag will be replaced by the student\'s answer. You can move the tag where you want, but please do not remove it!';
-$string['templatevpl'] = 'Template VPL';
+$string['templatevpl'] = 'תבנית קוד לשאלה';
 $string['templatevpl_help'] = 'Select the VPL this question will be based on.<br>
 <b>Note:</b> Please select a VPL dedicated to this purpose, as student submissions on this VPL may be discarded if such setting has been checked by platform administrator.';
-$string['validateonsave'] = 'Validate';
+$string['validateonsave'] = 'בדיקת תקינות קוד';
 $string['validateonsave_help'] = 'If checked, the provided code will be tested against provided test cases before saving this question.';
 $string['vplnotavailablewarning'] = 'Warning! The VPL this question is based on is not available. The question may not function properly.';
 $string['vplnotfounderror'] = 'Error! The VPL this question is based on could not be instantiated:<br>{$a}';
@@ -91,12 +92,13 @@ $string['evaluationerror'] = 'Evaluation error:';
 $string['execerror'] = 'Execution error:';
 $string['execerrordetails'] = 'Operation aborted by VPL. Execution resources limits may have been exceeded.';
 $string['execution'] = 'Execution error:';
-$string['templatefilename'] = 'Template file name';
-$string['executionfiles'] = 'Execution files';
+$string['templatefilename'] = 'שם קובץ';
 
-$string['merge'] = 'Merge';
-$string['overwrite'] = 'Overwrite';
-$string['templatevplchange'] = 'Template VPL change';
+$string['executionfiles'] = 'קבצי הרצה ובדיקת קוד';
+
+$string['merge'] = 'מיזוג';
+$string['overwrite'] = 'עדכון';
+$string['templatevplchange'] = 'עדכון תבנית קוד';
 $string['templatevplchange_help'] = 'The template VPL code and execution files currently have content.<br>
 Changing the template VPL will overwrite this content, unless you decide to merge the current content into the new one.<br>
 Please note that the merge will only work on files with the same name. Files with no name correspondance will be overwritten.';
@@ -104,10 +106,10 @@ $string['templatevplchangeprompt'] = 'What do you want to do with the current co
 
 $string['privacy:metadata'] = 'The VPL Question plugin does not store any personal data itself. It however sends user-submitted data to the mod_vpl plugin, which may store it on its side.';
 
-$string['cfg:deletevplsubmissions'] = 'Delete VPL submissions';
+$string['cfg:deletevplsubmissions'] = 'מחיקת הגשות';
 $string['cfg:deletevplsubmissions_help'] = 'Whether or not submissions of VPL Questions made on the VPL should be discarded on question evaluation.';
-$string['cfg:generalsettings'] = 'General settings';
+$string['cfg:generalsettings'] = 'הגדרות כלליות';
 $string['cfg:generalsettings_help'] = '';
 
-$string['templatefilenamesave_label'] = 'Save to continue';
-$string['templatefilenamesave_message'] = 'After you add a filename in the above input, you should save and reload that page before you continue.';
+$string['templatefilenamesave_label'] = 'שמירה והמשך הגדרות';
+$string['templatefilenamesave_message'] = 'לאחר הזנת שם וסוג קובץ עבור הגשת התלמיד, <br> לדוגמה: student.java לתרגיל בשפת Java או student.cs לתרגיל בשפת #C, השם לא חשוב אלא הסיומת שפה חשובה! <br>יש לבצע שמירה לפני שממשיכים להגדרות הבאות.<br>';
