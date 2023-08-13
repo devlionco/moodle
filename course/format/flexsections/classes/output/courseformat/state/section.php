@@ -55,6 +55,18 @@ class section extends \core_courseformat\output\local\state\section {
         $data->haschildren = !empty($data->children);
         $data->singlesection = (int)($this->section->collapsed && $this->section->section == $this->format->get_viewed_section());
 
+        // PTL-9520.
+        $count = 0;
+        $arropened = [];
+        foreach ($this->format->get_modinfo()->get_section_info_all() as $item) {
+            if ($count <= 1) {
+                $arropened[] = $item->section;
+            }
+            $count++;
+        }
+
+        $data->indexcollapsed = in_array($this->section->section, $arropened) ? false : true;
+
         return $data;
     }
 

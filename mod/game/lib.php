@@ -1620,7 +1620,7 @@ function mod_game_get_completion_active_rule_descriptions($cm) {
                 break;
             case 'completionpass':
                 if (!empty($val)) {
-                    $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($val));
+                    $descriptions[] = get_string('completionpasscustomdesc', 'quiz', format_time($val));
                 }
                 break;
         }

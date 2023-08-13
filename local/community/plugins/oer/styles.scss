@@ -172,28 +172,43 @@
     }
 }
 
-.copy-link u {
-    white-space: nowrap;
+.copy-link {
+    i {
+        font-size: 1.125rem;
+    }
+
+    u {
+        white-space: nowrap;
+        font-weight: 300;
+        font-size: 1rem;
+    }
+
 }
 
 .activity-block-title {
     margin-bottom: 1.5rem;
 }
+.path-local-community-plugins-oer {
 
-.activity-item {
-    min-height: 12rem;
-    margin-bottom: 2rem;
-    padding: 1.5rem 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(43, 43, 43, 0.25);
-
-    a:hover {
-        text-decoration: none;
+    .activity-blocks-content {
+        
+        .activity-item {
+            min-height: 12rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.1875rem 0.1875rem 0 rgba(43, 43, 43, 0.25);
+            
+            a:hover {
+                text-decoration: none;
+            }
+            
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
     }
 
-    &:last-of-type {
-        margin-bottom: 0;
-    }
 }
 
 .oer-custom-checkbox .custom-control-label::before {
@@ -241,7 +256,7 @@
 
 .activity-title {
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.125rem;
         overflow-wrap: break-word;
         max-width: 70%;
         line-height: 1.25;
@@ -249,13 +264,13 @@
 
     .activity-title-info {
         line-height: 1.6;
-        font-size: 1rem;
+        font-size: .75rem;
     }
 }
 
 .teacher-img {
-    width: 2rem;
-    height: 2rem;
+    width: 1.125rem;
+    height: 1.125rem;
     display: block;
     background-size: cover;
     background-position: center;
@@ -266,12 +281,12 @@
     padding-left: 0.875rem;
     padding-right: 0.875rem;
     line-height: 2rem;
-    font-size: 1.125rem;
+    font-size: .75rem;
 }
 
 .activity-text {
-    line-height: 1.78;
-    font-size: 1rem;
+    line-height: normal;
+    font-size: .75rem;
 }
 
 .activity-info {
@@ -283,14 +298,20 @@
     .activity-info-blocks {
         .activity-info-block {
             text-align: center;
-
+            .activity-info-tooltip {
+                padding-left: 2rem;
+            }
             a {
                 display: block;
             }
 
             p {
-                font-size: 1rem;
-                line-height: 1.5;
+                color: #000;
+                padding-left: 2rem;
+                font-size: 0.5625rem;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 0.75rem;
             }
 
             i {
@@ -320,11 +341,10 @@
 
 .copy-activity-btn,
 .copy-course-btn {
-    font-size: 1rem;
-
     i {
-        font-size: 1rem;
+        font-size: 1.125rem;
     }
+    min-width: 11.25rem;
 }
 
 .copy-activity-dropdown {
@@ -383,7 +403,25 @@
         overflow-y: auto;
     }
 }
-
+#oer_btn_container {
+    .comments button {
+        font-size: 1.375rem;
+        font-style: normal;
+        font-weight: 300;
+     
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    button {
+        height: 2.375rem;
+        display: flex;
+        align-items: center;
+        span {
+            font-size: .75rem;
+        }
+    }
+}
 .oer-tooltip {
     background-color: transparent;
 
@@ -1781,6 +1819,7 @@ html[dir="rtl"] {
 
 .main-filter-form .main-search-input {
     padding-right: 2.5rem;
+    padding-left: 2rem;
 }
 
 // Copy course
@@ -1800,10 +1839,16 @@ html[dir="rtl"] {
     /* number of lines to show */
     -webkit-box-orient: vertical;
 }
-
 html[dir='rtl'] {
 
     .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded="false"] .fa-sharp.fa-solid.fa-triangle {
         transform: rotate(-90deg);
     }
 }
+/* html[dir='ltr'] {
+
+    .path-local-community-plugins-oer .pagination .page-item .page-link.prev-btn,
+    .path-local-community-plugins-oer .pagination .page-item .page-link.next-btn {
+        transform: rotate(-180deg);
+    }
+} */
