@@ -67,7 +67,22 @@ $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
 
+    // Custom navigation.
+
+    // PTL-9414.
+    if ($PAGE->pagetype == 'mod-quiz-view') {
+        if ($cmid = optional_param('id', 0, PARAM_INT)) {
+            $context = context_module::instance($cmid);
+
+            if (has_capability('mod/quiz:manage', $context)) {
+                $advancedoverviewurl = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
+                $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
+            }
+        }
+    }
+
     // PTL-9609.
+    // Exclude links from menu.
     if (!has_capability('moodle/site:config', \context_system::instance())) {
         $exclude = [
             'filtermanagement',
@@ -76,6 +91,7 @@ if ($PAGE->has_secondary_navigation()) {
             'backup',
             'restore',
             'metadata',
+            'questionbank',
         ];
 
         $lists = $PAGE->secondarynav->get_children_key_list();

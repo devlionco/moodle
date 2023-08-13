@@ -304,3 +304,5 @@ $string['progresspage'] = '{$a->totalcomplinpage} of {$a->totalquestions} answer
 $string['stopwatchshowhide'] = 'Shown/Hidden Stopwatch';
 $string['notflagged'] = 'Not flagged';
 $string['timeisup'] = 'Time is up';
+
+$string['advancedoverviewlink'] = 'Grades and extended feedback';
