@@ -57,15 +57,41 @@ echo $output->header();
 // Prepare summary information about this question attempt.
 $summarydata = array();
 
+// PTL-9577.
+$anon = false;
+if (class_exists('\quiz_advancedoverview\quizdata')) {
+    $quizdata = new \quiz_advancedoverview\quizdata($attemptobj->get_cm()->id);
+    $quizdata->prepare_questions();
+    $quizdata->prepare_charts();
+    $quizdata->prepare_students();
+
+    $anon = $quizdata->get_anon_state_for_user($attemptobj->get_cm()->id, $USER->id);
+}
+
 // Student name.
-$userpicture = new user_picture($student);
-$userpicture->courseid = $attemptobj->get_courseid();
-$summarydata['user'] = array(
-    'title'   => $userpicture,
-    'content' => new action_link(new moodle_url('/user/view.php', array(
-            'id' => $student->id, 'course' => $attemptobj->get_courseid())),
-            fullname($student, true)),
-);
+if ($anon) {
+    $userfullname = '';
+    foreach ($quizdata->get_students_table() as $item) {
+        if ($item['userid'] == $student->id) {
+            $userfullname = $item['firstname'];
+        }
+    }
+
+    $summarydata['user'] = array(
+            'title'   => '<i class="fa-light fa-circle-user"></i>',
+            'content' => new action_link(new moodle_url('javascript:void();', array()),
+                    $userfullname),
+    );
+} else {
+    $userpicture = new user_picture($student);
+    $userpicture->courseid = $attemptobj->get_courseid();
+    $summarydata['user'] = array(
+            'title'   => $userpicture,
+            'content' => new action_link(new moodle_url('/user/view.php', array(
+                    'id' => $student->id, 'course' => $attemptobj->get_courseid())),
+                    fullname($student, true)),
+    );
+}
 
 // Quiz name.
 $summarydata['quizname'] = array(

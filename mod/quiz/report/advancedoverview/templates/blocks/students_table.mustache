@@ -236,7 +236,7 @@
              'quiz_advancedoverview/studentsTableActions'
             ],
             function ($, Tables, StudentsTableActions) {
-                Tables.initstudentstable('{{{data_table_according_students}}}');
+                Tables.initstudentstable('{{{data_table_according_students}}}', '{{anonymous_mode}}');
                 StudentsTableActions.init();
             });
     {{/enable_table_according_students}}

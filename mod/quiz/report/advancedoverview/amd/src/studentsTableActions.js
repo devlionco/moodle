@@ -18,7 +18,6 @@ export let CONFIG = {
     anonymous_mode: 0
 };
 
-
 export const regenerateTable = function (callback = null) {
     const cmid = $('#datacmid').data('cmid');
     const groupid = $('#datagroupid').data('groupid');
@@ -31,7 +30,7 @@ export const regenerateTable = function (callback = null) {
         },
         done: function (response) {
             let data = JSON.parse(response);
-            Tables.initstudentstable(data.data_table_according_students, CONFIG);
+            Tables.default.initstudentstable(data.data_table_according_students, CONFIG.anonymous_mode);
             Charts.initcharts(data.charts);
             if (callback) {
                 callback();
@@ -41,6 +40,24 @@ export const regenerateTable = function (callback = null) {
     }]);
 };
 
+export const setAnonToggl = function (state) {
+    if (+state == 1) {
+        $('#anonymousStripe').removeClass('hidden');
+        $('#anonymousStripe').attr('style', 'top:' + $('nav.navbar-petel').outerHeight() + 'px');
+        let stateText = $('#anonymousmodeToggler1').closest('.advancedoverview_report-toggle').data('texton');
+        $('.advancedoverview_report-toggle.anonymousmode').each(function (index) {
+            $('.advancedoverview_report-toggle.anonymousmode').eq(index).find('.link-btn-text').html(stateText);
+        });
+        $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', true);
+    } else {
+        $('#anonymousStripe').addClass('hidden');
+        let stateText = $('#anonymousmodeToggler1').closest('.advancedoverview_report-toggle').data('textoff');
+        $('.advancedoverview_report-toggle.anonymousmode').each(function (index) {
+            $('.advancedoverview_report-toggle.anonymousmode').eq(index).find('.link-btn-text').html(stateText);
+        });
+        $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', false);
+    }
+};
 
 export const init = function () {
     // Add anonymous mode sticky stripe.
@@ -118,20 +135,7 @@ export const init = function () {
         $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', state);
         CONFIG.anonymous_mode = state ? 1 : 0;
         anonymousmodestate = state ? 1 : 0;
-        let stateText = '';
-        if (state) {
-            stateText = $('#anonymousmodeToggler1').closest('.advancedoverview_report-toggle').data('texton');
-            $('#anonymousStripe').removeClass('hidden');
-            $('#anonymousStripe').attr('style', 'top:' + $('nav.navbar-petel').outerHeight() + 'px');
-        } else {
-            stateText = $('#anonymousmodeToggler1').closest('.advancedoverview_report-toggle').data('textoff');
-            $('#anonymousStripe').addClass('hidden');
-        }
-
-        $('.advancedoverview_report-toggle.anonymousmode').each(function (index) {
-            $('.advancedoverview_report-toggle.anonymousmode').eq(index).find('.link-btn-text').html(stateText);
-        });
-
+        setAnonToggl(state);
         regenerateTable();
 
     });
