@@ -32,3 +32,16 @@
     -o-animation: yellow-fade 1s ease-in-out 0s;
     animation: yellow-fade 1s ease-in-out 0s;
 }
+.block_oer_reviews .userinfo-wrapper .dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+.block_oer_reviews .userinfo-wrapper .dropdown-toggle img.userpicture {
+    margin: 0;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+}
+.block_oer_reviews .userinfo-wrapper .dropdown-toggle .defaultuserpic {
+    font-size: 2rem;
+}

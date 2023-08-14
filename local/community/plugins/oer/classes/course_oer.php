@@ -652,10 +652,10 @@ class course_help {
         $course = new \community_oer\course_oer;
         $structure = $course->structure_course_catalog();
         foreach ($structure as $cat) {
-            foreach ($cat['courses'] as $key => $course) {
+            foreach ($cat['courses'] as $key => $objcourse) {
                 $sections = [];
 
-                $modinfo = get_fast_modinfo($course);
+                $modinfo = get_fast_modinfo($objcourse);
                 foreach ($modinfo->get_section_info_all() as $item) {
                     $data = $item->getIterator()->getArrayCopy();
 
@@ -664,9 +664,11 @@ class course_help {
                     }
 
                     if ($data['section'] != 0 && $data['visible'] == 1 && $data['parent'] == 0) {
-                        $sectionname = course_get_format($course)->get_section_name($data['section']);
-
-                        $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
+                        $courses = $course->query()->compare('sectionid', $data['id'])->compare('visible', '1')->get();
+                        if (!empty($courses)) {
+                            $sectionname = course_get_format($objcourse)->get_section_name($data['section']);
+                            $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
+                        }
                     }
                 }
 

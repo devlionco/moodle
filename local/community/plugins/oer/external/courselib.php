@@ -252,11 +252,6 @@ class community_oer_course_external extends external_api {
             $itemvalue = 1;
             foreach ($data as $item) {
                 if ($item->area == 'paging') {
-
-                    if ($item->value > $pages) {
-                        $item->value = 1;
-                    }
-
                     switch ($item->value) {
                         case 'previus':
                             $itemvalue = ($item->page > 1) ? $item->page - 1 : $item->page;
@@ -265,6 +260,9 @@ class community_oer_course_external extends external_api {
                             $itemvalue = ($item->page < $pages) ? $item->page + 1 : $item->page;
                             break;
                         default:
+                            if ($item->value > $pages) {
+                                $item->value = 1;
+                            }
                             $itemvalue = $item->value;
                     }
                 }
@@ -340,7 +338,8 @@ class community_oer_course_external extends external_api {
                 'default_page' => $itemvalue,
                 'enable_pagination' => !empty($pagination) && count($pagination) > 1 ? true : false,
                 'prev_pagination_disable' => $prevpaginationdisable,
-                'next_pagination_disable' => $nextpaginationdisable
+                'next_pagination_disable' => $nextpaginationdisable,
+                'template_type' => 'course'
         ];
 
         // Event data.

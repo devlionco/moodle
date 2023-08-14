@@ -626,12 +626,15 @@ class question_help {
                             }
                         }
 
-                        $sections[] = [
-                                'sectionid' => $data['id'],
-                                'section_name' => $sectionname,
-                                'if_child_category_present' => !empty($childcategory) ? true : false,
-                                'child_category' => $childcategory
-                        ];
+                        $questions = $question->query()->compare('sectionid', $data['id'])->compare('metadata_qhidden', '0')->get();
+                        if (!empty($questions)) {
+                            $sections[] = [
+                                    'sectionid' => $data['id'],
+                                    'section_name' => $sectionname,
+                                    'if_child_category_present' => !empty($childcategory) ? true : false,
+                                    'child_category' => $childcategory
+                            ];
+                        }
                     }
                 }
 
