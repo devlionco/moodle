@@ -107,3 +107,7 @@ html[dir="rtl"] .visual-math-input-wrapper {
 .drawer-toggles .drawer-right-toggle {
   right: 10px;
 }
+
+body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 {
+  display: none;
+}

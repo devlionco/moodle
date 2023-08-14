@@ -1232,14 +1232,18 @@ class quizdata {
     public function get_loginas_link($userid) {
         global $USER;
 
+        // 39
+        // http://localhost/PETEL39/moodle-icecream-39/course/loginas.php?id=86&user=139&sesskey=svNvHzLUG0
+
+
         $coursecontext = context_course::instance($this->course->id);
         if ($USER->id != $userid && !\core\session\manager::is_loggedinas() &&
                 has_capability('moodle/user:loginas', $coursecontext) &&
                 !quiz_advancedoverview_is_user_have_course_update_privileges($this->course->id, $userid)
                 || 
                 is_siteadmin()) {
-            $path = '/course/loginas.php';
-            $params = ['user' => $userid, 'courseid' => $this->course->id, 'sesskey' => sesskey()];
+            $path = '/theme/petel/loginas.php';
+            $params = ['user' => $userid, 'sesskey' => sesskey()];
         } else {
             return '';
         }

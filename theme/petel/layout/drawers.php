@@ -68,39 +68,7 @@ $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
 
     // Custom navigation.
-
-    // PTL-9414.
-    if ($PAGE->pagetype == 'mod-quiz-view') {
-        if ($cmid = optional_param('id', 0, PARAM_INT)) {
-            $context = context_module::instance($cmid);
-
-            if (has_capability('mod/quiz:manage', $context)) {
-                $advancedoverviewurl = new moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
-                $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
-            }
-        }
-    }
-
-    // PTL-9609.
-    // Exclude links from menu.
-    if (!has_capability('moodle/site:config', \context_system::instance())) {
-        $exclude = [
-            'filtermanagement',
-            'filtermanage',
-            'roleoverride',
-            'backup',
-            'restore',
-            'metadata',
-            'questionbank',
-        ];
-
-        $lists = $PAGE->secondarynav->get_children_key_list();
-        foreach ($exclude as $key) {
-            if (in_array($key, $lists)) {
-                $PAGE->secondarynav->children->remove($key);
-            }
-        }
-    }
+    theme_petel\custom_navigation::secondary_navigation();
 
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
@@ -112,6 +80,18 @@ if ($PAGE->has_secondary_navigation()) {
     }
     // PTL-9578.
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+
+    // PTL-9713. Hide drawer by default for student on quiz.
+    if ( in_array($PAGE->pagetype, [
+        'mod-quiz-attempt',
+        'mod-quiz-review',
+        'mod-quiz-view',
+        'mod-quiz-report',
+        'mod-quiz-summary',
+    ])) {
+        $courseindexopen = false;
+    }
+
 }
 
 $primary = new theme_petel\navigation\primary($PAGE);

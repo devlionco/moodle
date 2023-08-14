@@ -188,21 +188,22 @@
 .activity-block-title {
     margin-bottom: 1.5rem;
 }
+
 .path-local-community-plugins-oer {
 
     .activity-blocks-content {
-        
+
         .activity-item {
             min-height: 12rem;
             margin-bottom: 2rem;
             padding: 1.5rem 1rem;
             border-radius: 0.5rem;
             box-shadow: 0 0.1875rem 0.1875rem 0 rgba(43, 43, 43, 0.25);
-            
+
             a:hover {
                 text-decoration: none;
             }
-            
+
             &:last-of-type {
                 margin-bottom: 0;
             }
@@ -298,9 +299,11 @@
     .activity-info-blocks {
         .activity-info-block {
             text-align: center;
-            .activity-info-tooltip {
+
+     /*        .activity-info-tooltip {
                 padding-left: 2rem;
-            }
+            } */
+
             a {
                 display: block;
             }
@@ -316,6 +319,7 @@
 
             i {
                 font-size: 1.5rem;
+                padding-left: 2rem;
             }
         }
     }
@@ -344,84 +348,101 @@
     i {
         font-size: 1.125rem;
     }
+
     min-width: 11.25rem;
 }
 
 .copy-activity-dropdown {
     min-width: 100% !important;
+    width: fit-content;
 
-    .drodpdown-menu-top-text {
-        white-space: nowrap;
+    &.show {
+        right: 0 !important;
+        left: unset !important;
     }
-
-    .section-item {
-        .fa-check {
-            display: none;
+    .dropdown-item.active, .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
+        span, i {
+            color: #fff;
         }
-
-        .section-item-inner::before {
-            content: "";
-            display: block;
-            width: 1.75rem;
-            height: 1.3rem;
-            background-image: url([[pix:community_oer|progress]]);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        &.active {
-            background: #f8f9fa;
-            color: inherit;
-
-            .fa-check {
-                display: block;
-            }
-        }
-    }
-
-    .dropdown-item {
-
-        &:hover,
-        &:focus {
-            color: inherit;
-            text-decoration: none;
-            background-color: #f8f9fa;
-        }
-    }
-
-    button.back {
-        cursor: pointer;
-        width: 1.5rem;
-        height: 1rem;
-        background: url([[pix:community_oer|arrow-right]]) 50% 50% no-repeat;
-        background-size: contain;
-    }
-
-    .copy-activity-dropdown-inner {
-        max-height: 20rem;
-        overflow-y: auto;
     }
 }
+
+.drodpdown-menu-top-text {
+    white-space: nowrap;
+}
+
+.section-item {
+    .fa-check {
+        display: none;
+    }
+
+    .section-item-inner::before {
+        content: "";
+        display: block;
+        width: 1.75rem;
+        height: 1.3rem;
+        background-image: url([[pix:community_oer|progress]]);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    &.active {
+        background: #f8f9fa;
+        color: inherit;
+
+        .fa-check {
+            display: block;
+        }
+    }
+}
+
+.dropdown-item {
+
+    &:hover,
+    &:focus {
+        color: inherit;
+        text-decoration: none;
+        background-color: #f8f9fa;
+    }
+}
+
+button.back {
+    cursor: pointer;
+    width: 1.5rem;
+    height: 1rem;
+    background: url([[pix:community_oer|arrow-right]]) 50% 50% no-repeat;
+    background-size: contain;
+}
+
+.copy-activity-dropdown-inner {
+    max-height: 20rem;
+    overflow-y: auto;
+
+}
+
 #oer_btn_container {
     .comments button {
         font-size: 1.375rem;
         font-style: normal;
         font-weight: 300;
-     
+
         display: flex;
         align-items: center;
         justify-content: center;
     }
+
     button {
         height: 2.375rem;
         display: flex;
         align-items: center;
+
         span {
             font-size: .75rem;
         }
     }
 }
+
 .oer-tooltip {
     background-color: transparent;
 
@@ -1839,12 +1860,20 @@ html[dir="rtl"] {
     /* number of lines to show */
     -webkit-box-orient: vertical;
 }
+
 html[dir='rtl'] {
 
     .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded="false"] .fa-sharp.fa-solid.fa-triangle {
         transform: rotate(-90deg);
     }
+
+    .copy-activity-dropdown.show {
+        right: 0 !important;
+        left: unset;
+
+    }
 }
+
 /* html[dir='ltr'] {
 
     .path-local-community-plugins-oer .pagination .page-item .page-link.prev-btn,

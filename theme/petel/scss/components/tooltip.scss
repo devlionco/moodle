@@ -88,4 +88,11 @@ html[dir="rtl"] {
         height: .8rem;
         transform: rotate(180deg);
     }
+    .bs-tooltip-right .arrow, .bs-tooltip-auto[x-placement^="right"] .arrow {
+        right: 0;
+        left: unset;
+        width: .4rem;
+        height: .8rem;
+        transform: rotate(180deg);
+    }
 }

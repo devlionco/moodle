@@ -531,13 +531,10 @@
         }
     }
 
-
-
-
     // TODO: move to correct place
     .pagination {
         .page-item {
-            .page-link:not(.disabled) {
+            .page-link {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -552,16 +549,19 @@
                 font-weight: 700;
                 text-align: center;
 
-                &:hover {
+                &:hover:not(.prev-btn),
+                &:hover:not(.next-btn) {
                     color: $body-color;
                     background-color: $white;
                     border-color: $primary;
                     box-shadow: none;
                     outline: none;
-                }
-
-                &:active,
-                &:focus {
+                }            
+                
+                &:active:not(.prev-btn),
+                &:focus:not(.next-btn)
+                &:active:not(.prev-btn),
+                &:focus:not(.next-btn){
                     color: $white;
                     background-color: $secondary;
                     border-color: $secondary;
@@ -571,7 +571,6 @@
             }
 
             &.active {
-
                 .page-link:not(.prev-btn),
                 .page-link:not(.next-btn) {
                     color: $white;
@@ -582,18 +581,12 @@
                 }
             }
 
-
             &.disabled {
                 color: $gray-400;
             }
 
-            .page-link:first-of-type,
-            .page-link:last-of-type {
-                width: auto;
-            }
-
-            .next-btn:not(.disabled),
-            .prev-btn:not(.disabled) {
+            .page-link.prev-btn,
+            .page-link.next-btn {
                 .circle {
                     display: flex;
                     align-items: center;
@@ -606,25 +599,23 @@
                     border: none;
 
                     i {
-                        color: $white;
                         font-size: 1rem;
+                        color: $white;
+                        z-index: 5;
                     }
                 }
 
-                &:hover {
+                &:hover:not(:focus) {
                     border-color: transparent;
                     box-shadow: none;
                     outline: none;
-
                     .circle {
                         background-color: $white;
                         border: .0625rem solid $primary;
-
+                        position: relative;
                         i {
-                            text-shadow: 0 0 .08rem $primary,
-                                0 0 .08rem $primary,
-                                0 0 .08rem $primary,
-                                0 0 .08rem $primary;
+                            color: $white;
+                            -webkit-text-stroke: .0625rem $primary;
                         }
                     }
                 }
@@ -645,11 +636,8 @@
             }
 
             &.disabled {
-
-                .next-btn,
-                .prev-btn {
-                    width: auto;
-
+                .page-link.prev-btn,
+                .page-link.next-btn {
                     .circle {
                         background-color: $gray-400;
                         display: flex;
@@ -666,7 +654,12 @@
         }
     }
 }
-
+html[dir="rtl"] {
+    .path-local-community-plugins-oer .pagination .page-item .page-link.prev-btn,
+    .path-local-community-plugins-oer .pagination .page-item .page-link.next-btn {
+        transform: scaleX(-1);
+    }
+}
 .oer-popup-list-title-icon {
     background-image: attr(title);
     height: 1.5rem;

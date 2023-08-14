@@ -220,9 +220,9 @@
 }
 .activity-info .activity-info-blocks .activity-info-block {
   text-align: center;
-}
-.activity-info .activity-info-blocks .activity-info-block .activity-info-tooltip {
-  padding-left: 2rem;
+  /*        .activity-info-tooltip {
+             padding-left: 2rem;
+         } */
 }
 .activity-info .activity-info-blocks .activity-info-block a {
   display: block;
@@ -237,6 +237,7 @@
 }
 .activity-info .activity-info-blocks .activity-info-block i {
   font-size: 1.5rem;
+  padding-left: 2rem;
 }
 
 .sort-result-dropdown-menu {
@@ -265,14 +266,25 @@
 
 .copy-activity-dropdown {
   min-width: 100% !important;
+  width: -moz-fit-content;
+  width: fit-content;
 }
-.copy-activity-dropdown .drodpdown-menu-top-text {
+.copy-activity-dropdown.show {
+  right: 0 !important;
+  left: unset !important;
+}
+.copy-activity-dropdown .dropdown-item.active span, .copy-activity-dropdown .dropdown-item.active i, .copy-activity-dropdown .dropdown-item:active span, .copy-activity-dropdown .dropdown-item:active i, .copy-activity-dropdown .dropdown-item:hover span, .copy-activity-dropdown .dropdown-item:hover i, .copy-activity-dropdown .dropdown-item:focus span, .copy-activity-dropdown .dropdown-item:focus i, .copy-activity-dropdown .dropdown-item:focus-within span, .copy-activity-dropdown .dropdown-item:focus-within i {
+  color: #fff;
+}
+
+.drodpdown-menu-top-text {
   white-space: nowrap;
 }
-.copy-activity-dropdown .section-item .fa-check {
+
+.section-item .fa-check {
   display: none;
 }
-.copy-activity-dropdown .section-item .section-item-inner::before {
+.section-item .section-item-inner::before {
   content: "";
   display: block;
   width: 1.75rem;
@@ -282,26 +294,29 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-.copy-activity-dropdown .section-item.active {
+.section-item.active {
   background: #f8f9fa;
   color: inherit;
 }
-.copy-activity-dropdown .section-item.active .fa-check {
+.section-item.active .fa-check {
   display: block;
 }
-.copy-activity-dropdown .dropdown-item:hover, .copy-activity-dropdown .dropdown-item:focus {
+
+.dropdown-item:hover, .dropdown-item:focus {
   color: inherit;
   text-decoration: none;
   background-color: #f8f9fa;
 }
-.copy-activity-dropdown button.back {
+
+button.back {
   cursor: pointer;
   width: 1.5rem;
   height: 1rem;
   background: url([[pix:community_oer|arrow-right]]) 50% 50% no-repeat;
   background-size: contain;
 }
-.copy-activity-dropdown .copy-activity-dropdown-inner {
+
+.copy-activity-dropdown-inner {
   max-height: 20rem;
   overflow-y: auto;
 }
@@ -1527,6 +1542,10 @@ html[dir=rtl] .sequence-blocks-content .sequence-item-content .nav-control {
 
 html[dir=rtl] .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
   transform: rotate(-90deg);
+}
+html[dir=rtl] .copy-activity-dropdown.show {
+  right: 0 !important;
+  left: unset;
 }
 
 /* html[dir='ltr'] {

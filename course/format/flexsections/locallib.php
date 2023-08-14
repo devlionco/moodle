@@ -198,23 +198,31 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
 
                     // Students failed.
                     $studentfailed = 0;
-                    $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
-                    switch ($quiz->grade) {
-                        case 10:
-                            foreach($rows as $item){
-                                if($item->sumgrades * $quiz->grade < 6){
-                                    $studentfailed++;
-                                }
-                            }
-                            break;
+                    if (class_exists('\quiz_advancedoverview\quizdata')) {
+                        $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
+                        $quizdata->prepare_questions();
+                        $quizdata->prepare_charts();
+                        $quizdata->prepare_students();
 
-                        case 100:
-                            foreach($rows as $item){
-                                if($item->sumgrades < 60){
-                                    $studentfailed++;
+                        $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
+
+                        foreach ($quizdata->get_students_table() as $item) {
+                            $grade = trim(strip_tags($item['grade']));
+                            if (is_numeric($grade)) {
+                                switch ($quiz->grade) {
+                                    case 10:
+                                        if ($grade < 6) {
+                                            $studentfailed++;
+                                        }
+                                        break;
+                                    case 100:
+                                        if ($grade < 60) {
+                                            $studentfailed++;
+                                        }
+                                        break;
                                 }
                             }
-                            break;
+                        }
                     }
 
                     $querytmp           = $query . " AND qa.state = 'finished' AND qa.sumgrades IS NULL ";
@@ -466,19 +474,34 @@ function format_flexsections_cm_submission_data(cm_info $mod, $userid = 0) {
             }
 
             if ($tmod->submitted && $tmod->requiregrade && $tmod->grade) {
-                $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
-                switch ($quiz->grade) {
-                    case 10:
-                        if($tmod->grade * $quiz->grade < 6){
-                            $tmod->failed = true;
-                        }
-                        break;
+                if (class_exists('\quiz_advancedoverview\quizdata')) {
+                    $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
+                    $quizdata->prepare_questions();
+                    $quizdata->prepare_charts();
+                    $quizdata->prepare_students();
 
-                    case 100:
-                        if($tmod->grade < 60){
-                            $tmod->failed = true;
+                    $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
+
+                    foreach ($quizdata->get_students_table() as $item) {
+                        if ($item['userid'] == $userid) {
+
+                            $grade = trim(strip_tags($item['grade']));
+                            if (is_numeric($grade)) {
+                                switch ($quiz->grade) {
+                                    case 10:
+                                        if ($grade < 6) {
+                                            $tmod->failed = true;
+                                        }
+                                        break;
+                                    case 100:
+                                        if ($grade < 60) {
+                                            $tmod->failed = true;
+                                        }
+                                        break;
+                                }
+                            }
                         }
-                        break;
+                    }
                 }
             }
             break;

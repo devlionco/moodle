@@ -62,7 +62,7 @@ class block_oer_reviews extends block_base {
             $text = html_writer::div(get_string('intro', 'block_oer_reviews'), 'intro', ['id' => 'fade-it']);
 
             // Scrolling.
-            $text .= '<div class="overflow-auto p-3" style="max-height: 25rem;">';
+            $text .= '<div class="p-3" style="">';
 
             $maxusers = trim(get_config('block_oer_reviews', 'items'));
             if (empty($maxusers) || !is_numeric($maxusers)) {
@@ -158,14 +158,24 @@ class block_oer_reviews extends block_base {
                 $activity = html_writer::link($activityurl, $activityinfo->oername,
                         ['aria-label' => $activityinfo->oername . ' ' . strip_tags($feedbacktooltip)]);
 
-                $text .= html_writer::tag('span',
-                        "<div class='row'>
-                        <div class='col-3'>$userpicture</div>
-                        <div class='col-9'>$username</div>
-                        <div class='col-3'></div>
-                        <div class='col-9' data-toggle='tooltip' data-html='true' title='$feedbacktooltip'>
-                            <i class='fa fa-info-circle'></i> $activity</div>
-                     </div><br>", ['class' => 'reviewer']);
+                $text .= html_writer::tag('div',
+                        "<div class='row mb-3'>
+                            <div class='col userinfo-wrapper d-flex align-items-start flex-grow-0'>
+                                $userpicture
+                            </div>
+                            <div class='col d-flex flex-wrap align-items-start w-100 flex-grow-1 pl-0'>
+                                <div class='username w-100 d-flex align-items-center' style='height: 2rem;'>
+                                $username
+                                </div>
+                                <div class='d-inline-flex align-items-center'
+                                    data-toggle='tooltip' data-html='true' title='$feedbacktooltip'>
+                                    <i class='fa fa-info-circle mr-2'></i>
+                                    $activity
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ", ['class' => 'reviewer']);
 
                 $counter++;
 

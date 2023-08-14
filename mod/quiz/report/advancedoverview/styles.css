@@ -228,7 +228,7 @@
   justify-content: space-between;
   line-height: 1;
   height: 2.5rem;
-  width: 13rem;
+  /* 	width: 13rem; */
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn::after {
   font-size: 1rem;

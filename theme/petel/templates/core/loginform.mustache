@@ -96,7 +96,7 @@
 
 <div class="d-flex justify-content-end h-100 position-relative">
     <div class="card h-100">
-        <div class="card-block mb-4 h-100">
+        <div class="card-block h-100">
             <div class="card-body align-items-stretch p-0 d-flex flex-column h-100">
                 {{#error}}
                 <div class="loginerrors mt-3">
@@ -181,22 +181,20 @@
                                         }
                                     </script>
                             </div>
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between pass-btns-wrapper">
                             {{#rememberusername}}
-                                <div class="rememberpass p-2">
+                                <div class="rememberpass">
                                     <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#username}} checked="checked" {{/username}}/>
                                     <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
                                 </div>
                             {{/rememberusername}}
-                                <div class="forgetpass p-2">
-                                    <a href="{{forgotpasswordurl}}">{{#str}}forgotten, theme_petel{{/str}}</a>
-                                </div>
+                                <a class="forgetpass" href="{{forgotpasswordurl}}">{{#str}}forgotten, theme_petel{{/str}}</a>
                             </div>
-                            <button type="submit" class="btn btn-secondary btn-block mt-3" id="loginbtn">{{#str}}login{{/str}}</button>
+                            <button type="submit" class="btn btn-primary btn-block" id="loginbtn">{{#str}}login{{/str}}</button>
                         </form>
                         {{#hasinstructions}}
                         {{#cansignup}}
-                        <a href="{{signupurl}}" class="btn btn-outline-secondary btn-block mt-2">{{#str}}startsignup{{/str}}</a>
+                        <a id="signupbtn" href="{{signupurl}}" class="btn btn-outline-primary btn-block mt-3">{{#str}}startsignup{{/str}}</a>
                         {{/cansignup}}
                         {{/hasinstructions}}
                         {{#canloginasguest}}
@@ -237,10 +235,11 @@
                     </div> -->
                 </div>
                 <div class="col-12 d-flex flex-column justify-content-end flex-shrink-1">
-                    <img class="petel-logo shadow-image" src="{{{petellogo}}}" role="presentation" alt="{{#str}}logo_department_of_science_teaching, theme_petel{{/str}}">
-                    <div class="d-flex flex-row-reverse justify-content-between policies">
+                    <img class="petel-logo mb-3" src="{{{petellogo}}}" role="presentation" alt="{{#str}}logo_department_of_science_teaching, theme_petel{{/str}}">
+                    <div class="d-flex justify-content-between policies">
                         {{#policies}}
-                        <a href="{{url}}" rel="nofollow" target="_blank" class="py-2 bg-white text-primary">{{name}}</a>
+                        <a href="{{url}}" rel="nofollow" target="_blank" class="d-inline-flex align-items-center">{{name}}</a>
+                        <div class="policies-divider"></div>
                         {{/policies}}
                     </div>
                 </div>

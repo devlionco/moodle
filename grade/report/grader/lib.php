@@ -1302,8 +1302,12 @@ class grade_report_grader extends grade_report {
             $row->cells = array_merge($row->cells, $rightrows[$key]->cells);
             $fulltable->data[] = $row;
         }
-        $html .= html_writer::table($fulltable);
-        return $OUTPUT->container($html, 'gradeparent');
+
+        $table = html_writer::table($fulltable);
+        $tablecontainer = html_writer::tag('div', $table, array('class' => 'gradeparent'));
+        $html .= html_writer::tag('div', $tablecontainer, array('class' => 'overflow-auto', 'style' => 'max-height: 50vh;'));
+        
+        return $OUTPUT->container($html, '');
     }
 
     /**

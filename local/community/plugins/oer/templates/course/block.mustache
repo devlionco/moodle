@@ -76,7 +76,7 @@
 
                 {{#course_shared_disabled}}
                     <div class="copy-activity-dropdown-wrapper">
-                        <div class="text-primary copy-course-info-tooltip position-relative mr-3" >
+                        <div class="text-primary copy-course-info-tooltip position-relative" >
 
                             <button class="copy-course-btn btn btn--white rounded mb-3 w-100" disabled
                                     type="button" id="copy_corse_btn_{{cid}}" data-cid="{{cid}}" data-error-category="{{error_category}}">
@@ -136,33 +136,7 @@
 {{/blocks}}
 
 {{#enable_pagination}}
-    <nav class="d-flex justify-content-center align-items-center">
-        <ul class="pagination">
-
-            <li class="page-item {{#prev_pagination_disable}}disabled{{/prev_pagination_disable}}">
-                <a class="page-link" data-plugin="course" data-area="paging" data-value="previus" data-page="{{default_page}}" href="javascript:void(0)">
-                    {{#str}}previous{{/str}}
-                </a>
-            </li>
-
-            {{#pagination}}
-                {{#show}}
-                    <li class="page-item {{#active}}active{{/active}}">
-                        <a class="page-link" data-plugin="course" data-area="paging" data-value="{{value}}" {{#active}}data-selected="1"{{/active}} href="javascript:void(0)">
-                            {{value}}
-                        </a>
-                    </li>
-                {{/show}}
-            {{/pagination}}
-
-            <li class="page-item {{#next_pagination_disable}}disabled{{/next_pagination_disable}}">
-                <a class="page-link" data-plugin="course" data-area="paging" data-value="next" data-page="{{default_page}}" href="javascript:void(0)">
-                    {{#str}}next{{/str}}
-                </a>
-            </li>
-
-        </ul>
-    </nav>
+    {{> community_oer/pagination }}
 {{/enable_pagination}}
 
 {{#js}}

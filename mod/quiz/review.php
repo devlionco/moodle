@@ -141,7 +141,7 @@ if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $U
 
     // PTL-9577.
     $anon = false;
-    if (class_exists('\anonymousanonymous\quizdata')) {
+    if (class_exists('\quiz_advancedoverview\quizdata')) {
         $quizdata = new \quiz_advancedoverview\quizdata($attemptobj->get_cm()->id);
         $quizdata->prepare_questions();
         $quizdata->prepare_charts();

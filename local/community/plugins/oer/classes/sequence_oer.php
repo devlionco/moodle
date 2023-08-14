@@ -788,8 +788,11 @@ class sequence_help {
                     }
 
                     if ($data['section'] != 0 && $data['visible'] == 1 && $data['parent'] == 0) {
-                        $sectionname = course_get_format($course)->get_section_name($data['section']);
-                        $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
+                        $sequences = $sequence->query()->compare('sectionid', $data['id'])->compare('visible', '1')->get();
+                        if (!empty($sequences)) {
+                            $sectionname = course_get_format($course)->get_section_name($data['section']);
+                            $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
+                        }
                     }
                 }
 
