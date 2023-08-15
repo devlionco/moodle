@@ -248,3 +248,8 @@ $string['regeneratewarning'] = 'Warning! Generating a new certificate will overw
 $string['regeneratepath'] = 'Certificate path path: {$a}';
 $string['regenerateheader'] = 'Regenerate Private Key and Certificate';
 $string['regeneratesuccess'] = 'Private Key and Certificate successfully regenerated';
+
+$string['error_page_moe_user_title'] = 'Welcome to the Petel environment';
+$string['error_page_moe_user_label'] = 'If you have a registration key, please enter the key';
+$string['error_page_moe_user_text'] = 'If you do not have a registration key, you are invited to go to the Patel website and get to know a different teaching and learning experience.
+Are you intrigued? Fill out the joining form available on the website and we will get back to you.';

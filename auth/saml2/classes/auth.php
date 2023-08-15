@@ -378,6 +378,23 @@ class auth extends \auth_plugin_base {
     }
 
     /**
+     * Shows an error page for various authentication issues.
+     *
+     * @param string $msg The error message.
+     */
+    public function error_page_moe_user_notfound($user) {
+        global $PAGE, $OUTPUT, $SESSION;
+        unset($SESSION->wantsurl);
+        $PAGE->set_context(\context_system::instance());
+        $PAGE->set_url('/auth/saml2/error.php');
+        $PAGE->set_title(get_string('error_page_moe_user_title', 'auth_saml2'));
+        $PAGE->set_heading(get_string('error_page_moe_user_title', 'auth_saml2'));
+        echo $OUTPUT->header();
+        echo $OUTPUT->render_from_template('auth_saml2/error_page_moe_user_notfound', $user);
+        echo $OUTPUT->footer();
+        exit(1);
+    }
+    /**
      * All the checking happens before the login page in this hook
      */
     public function pre_loginpage_hook() {
@@ -553,7 +570,6 @@ class auth extends \auth_plugin_base {
      */
     public function saml_login() {
         global $CFG, $SESSION;
-
         require_once(__DIR__.'/../setup.php');
         require_once("$CFG->dirroot/login/lib.php");
 
@@ -736,7 +752,12 @@ class auth extends \auth_plugin_base {
                     'reason' => AUTH_LOGIN_NOUSER]]);
                 $event->trigger();
                 $this->log(__FUNCTION__ . " user '$uid' is not in moodle so error");
-                $this->error_page(get_string('nouser', 'auth_saml2', $uid));
+                $user = new stdClass();
+                $this->update_user_record_from_attribute_map($user, $attributes, true);
+                $user->email = $this->get_email_from_attributes($attributes);
+                $user->username = strtolower($uid);
+                $user->idnumber = strtolower($uid);
+                $this->error_page_moe_user_notfound($user);
             }
         } else {
             // Prevent access to users who are suspended.
