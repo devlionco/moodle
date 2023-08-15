@@ -32,7 +32,7 @@ class custom_navigation {
      * Custom secondary navigation.
      */
     public static function secondary_navigation(): void {
-        global $PAGE, $COURSE;
+        global $PAGE, $COURSE, $USER;
 
         // PTL-9713. PTL-9383.
         $coursecontext = \context_course::instance($COURSE->id);
@@ -87,6 +87,32 @@ class custom_navigation {
                 }
             }
         }
+
+        // PTL-9730.
+        // Exclude links from menu (מורה צופה או כמורה עמית).
+        $context = \context_course::instance($COURSE->id);
+        $roles = get_user_roles($context, $USER->id);
+
+        $flagpermission = false;
+        $rolespermitted = ['browsingteacher', 'teachercolleague'];
+        foreach ($roles as $role) {
+            if (in_array($role->shortname, $rolespermitted)) {
+                $flagpermission = true;
+            }
+        }
+
+        if ($flagpermission) {
+            $lists = $PAGE->secondarynav->get_children_key_list();
+            if (isset($lists[0])) {
+                foreach ($lists as $key) {
+                    if ($key != $lists[0]) {
+                        $PAGE->secondarynav->children->remove($key);
+                    }
+                }
+            }
+        }
+
+
 
     }
 }
