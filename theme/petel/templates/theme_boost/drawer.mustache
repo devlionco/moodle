@@ -72,6 +72,11 @@ require(['jquery','theme_boost/drawers'], function ($, drawers) {
         if(!$(".drawer-right").hasClass("show")) {
             $(".page-aside-switch-lg ").prependTo(".drawer-right-toggle .btn")
         }
+
+        $("[data-toggler=drawers]").on("mouseover", () => {
+            $("[data-toggler=drawers]").removeAttr("data-original-title")
+        })
+
       
         $(document).on('click', '.drawer-right-toggle .btn', function(){
             setTimeout(() => {$(".page-aside-switch-lg ").prependTo(".drawer-right .page-quiz-aside ")}, 100);
