@@ -16,7 +16,7 @@
 /**
  * Javascript for collapse button.
  *
- * @package    format_flexsections
+ * @package
  * @copyright  2020 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,63 +26,84 @@ define(
         'jquery',
         'core/str'
     ],
-    function ($, Str ){
-
-        const openHash = () => {
-            let queryString = window.location;
-            let urlParams = new URLSearchParams(queryString);
-            let hash = urlParams.get('hash');
-
-            if(hash.length > 0){
-                collapseAction('close');
-
-                let number = hash.match(/\d+/)[0];
-                if(number > 0){
-                    let id = '#collapssesection' + number;
-                    let status = $(id).attr("aria-expanded");
-                    $(id).click();
-                }
-            }
-        };
+    function($, Str) {
 
         const collapseAction = (type) => {
-            $('.course-section').each(function( index ) {
+            $('.course-section').each(function() {
                 let number = $(this).data('number');
 
-                if(number > 0){
+                if (number > 0) {
                     let id = '#collapssesection' + number;
                     let status = $(id).attr("aria-expanded");
 
-                    if((type === 'open' && status === 'false') || (type === 'close' && status === 'true')){
+                    if ((type === 'open' && status === 'false') || (type === 'close' && status === 'true')) {
                         $(id).click();
                     }
                 }
             });
         };
 
-        return {
-            init: function (callback) {
+        const getHashNumber = () => {
+            let queryString = window.location;
+            let urlParams = new URLSearchParams(queryString);
+            let hash = urlParams.get('hash');
 
-                // Default state close.
+            if (hash.length > 0) {
+                return hash.match(/\d+/)[0];
+            } else {
+                return false;
+            }
+        };
+
+        const openHash = () => {
+            let number = getHashNumber();
+            if (number !== false) {
+                let id = '#collapssesection' + number;
+                let status = $(id).attr("aria-expanded");
+
+                $('.course-section').each(function() {
+                    let number2 = $(this).data('number');
+
+                    let id2 = '#collapssesection' + number2;
+                    let status2 = $(id2).attr("aria-expanded");
+
+                    if (id !== id2 && status2 === 'true') {
+                        $(id2).click();
+                    }
+
+                    if (id === id2 && status === 'false') {
+                        $(id2).click();
+                    }
+                });
+            }
+        };
+
+        return {
+            init: function() {
+
+                // Default state.
                 setTimeout(function() {
-                    collapseAction('close');
+                    if (getHashNumber() !== false) {
+                        openHash();
+                    } else {
+                        collapseAction('close');
+                    }
+                }, 700);
+
+                // Change in url string. Hash.
+                window.addEventListener('hashchange', function() {
                     openHash();
-                }, 500);
+                });
 
                 Str.get_strings([
-                    { key: 'collapsebuttonopen', component: 'format_flexsections' },
-                    { key: 'collapsebuttonclose', component: 'format_flexsections' }
-                ]).done(function (strings) {
+                    {key: 'collapsebuttonopen', component: 'format_flexsections'},
+                    {key: 'collapsebuttonclose', component: 'format_flexsections'}
+                ]).done(function(strings) {
 
-                    // Change in url string. Hash.
-                    window.addEventListener('hashchange', function(){
-                        openHash();
-                    });
-
-                    $('#collapse_button').on( "click", function() {
+                    $('#collapse_button').on("click", function() {
                         let action = $(this).data('action');
 
-                        switch(action) {
+                        switch (action) {
                             case 'close':
                                 $(this).data('action', 'open').text(strings[1]);
                                 collapseAction('open');
