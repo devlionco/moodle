@@ -117,6 +117,13 @@ class login_signup_form extends moodleform implements renderable, templatable {
 
         // Hook for plugins to extend form definition.
         core_login_extend_signup_form($mform);
+        //PTL-9338
+        $firstname = optional_param('firstname', '', PARAM_RAW);
+        $mform->setDefault('firstname', $firstname);
+        $lastname = optional_param('lastname', '', PARAM_RAW);
+        $mform->setDefault('lastname', $lastname);
+        $idnumber = optional_param('idnumber', '', PARAM_RAW);
+        $mform->setDefault('idnumber', $idnumber);
 
         // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but
         // it can be implemented differently in custom sitepolicy handlers.
