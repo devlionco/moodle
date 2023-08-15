@@ -349,7 +349,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 if (array_intersect(array_keys($cohorts), $allowedcohorts)) {
                     $PAGE->requires->js_call_amd('local_diagnostic/main', 'init', ['.popup-trigger', $COURSE->id, [$CFG->wwwroot]]);
                     $title = get_string('analytics', 'local_diagnostic');
-                    $icon = $OUTPUT->pix_icon('i/network', '', 'local_diagnostic', array('class' => 'm-1'));
+                    $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-chart-network'));
                     $html .= html_writer::tag('a', $icon, array('href' => '', 'class' => $btnclass . ' popup-trigger',
                         'role'=>'button', 'title' => $title));
                 }
