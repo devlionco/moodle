@@ -1,0 +1,59 @@
+<div class="general-question-scroll">
+<div class="question-list-title">{{#str}}globalview, local_diagnostic{{/str}}</div>
+{{#tabledata}}
+    <div data-id="{{name}}" class="question-list-title">
+        {{name}}
+    </div>
+    <div data-select="{{name}}" class="question-scroll-table">
+        <table class="question-table">
+            <tr>
+                <th>
+                    {{#str}}questionstitle, local_diagnostic{{/str}}
+                </th>
+                {{#clusters}}
+                    <th
+                            class="list-table-p-tooltip"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="{{#str}}avggrade, local_diagnostic, {{prc}}{{/str}}">
+                        {{name}}<br/>{{prc}}%
+                    </th>
+                {{/clusters}}
+            </tr>
+            {{#rows}}
+                <tr>
+                    <td
+                            class="list-table-p-tooltip"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="{{qname}}">
+                        {{question}}
+                    </td>
+                    {{#value}}
+                        <td class="{{color}}">
+                            {{prc}}
+                        </td>
+                    {{/value}}
+                </tr>
+            {{/rows}}
+        </table>
+    </div>
+{{/tabledata}}
+</div>
+<div class="question-desc-border">
+    <div class="question-desc-title">{{#str}}average_percent_of_success, local_diagnostic{{/str}}</div>
+    <div class="question-description">
+        <div class="question-desc-block">
+            <div>0-{{#averagePercent}}{{mediumlevel}}{{/averagePercent}}%</div>
+            <div class="label red"></div>
+        </div>
+        <div class="question-desc-block">
+            <div>{{#averagePercent}}{{mediumlevel}}{{/averagePercent}}-{{#averagePercent}}{{hightlevel}}{{/averagePercent}}%</div>
+            <div class="label yellow"></div>
+        </div>
+        <div class="question-desc-block">
+            <div>{{#averagePercent}}{{hightlevel}}{{/averagePercent}}-100%</div>
+            <div class="label green"></div>
+        </div>
+    </div>
+</div>
