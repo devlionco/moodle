@@ -253,10 +253,10 @@ class vpl_editor_util {
     }
 
     public static function get_filerecord($questionid) {
-        global $DB;
-
-        $contextid = $DB->get_field_sql("SELECT contextid FROM {question_categories} qc 
-        JOIN {question} q ON (q.category = qc.id) WHERE q.id = ?", [$questionid]);
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+        $qbentry = get_question_bank_entry($questionid);
+        $contextid = $DB->get_field_sql("SELECT contextid FROM {question_categories} qc WHERE qc.id = ?", [$qbentry->questioncategoryid]);
 
         $filerecord = (object) [
             'contextid' => $contextid,
