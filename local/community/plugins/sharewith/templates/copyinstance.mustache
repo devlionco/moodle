@@ -9,7 +9,7 @@
     </button>
 </div>
 
-<div class="modal-body">
+<div class="modal-body p-3">
     {{#copyCourse}}
         {{#showAllCategories}}
         <p class="mb-2">{{#str}}selectioncategories, community_sharecourse{{/str}}</p>
@@ -32,7 +32,7 @@
         {{/showAllCategories}}
     {{/copyCourse}}
     {{^copyCourse}}
-        <p class="mb-2">{{#str}}selectcourse, community_sharewith{{/str}}</p>
+        <p class="mb-2 mr-3">{{#str}}selectcourse, community_sharewith{{/str}}</p>
         <select
                 {{#copyActivity}}data-handler="selectSection"{{/copyActivity}}
                 class="courses form-control mb-4 smartselect2"

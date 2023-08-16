@@ -1,37 +1,3 @@
-#modalSharewith {
-
-
-    .modal-header {
-        h5 {
-            font-family: $primary-font;
-        }
-    }
-
-    .sharewith-btn {
-
-        .circle {
-            outline: .0625rem solid $secondary;
-            color: $secondary;
-        }
-
-        .text {
-            font-family: $primary-font;
-            color: $body-color;
-        }
-
-        &:hover {
-            .circle {
-                background-color: $light;
-            }
-        }
-
-        &:active {
-            background-color: $light;
-            color: $primary;
-            outline-color: $primary;
-        }
-    }
-}
 
 .sharebtn {
     margin-left: 1rem;
