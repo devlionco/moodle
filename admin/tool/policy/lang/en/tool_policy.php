@@ -113,6 +113,7 @@ $string['policydocaudience'] = 'User consent';
 $string['policydocaudience0'] = 'All users';
 $string['policydocaudience1'] = 'Authenticated users';
 $string['policydocaudience2'] = 'Guests';
+$string['policydocaudience3'] = 'Cohorts';
 $string['policydoccontent'] = 'Full policy';
 $string['policydochdrpolicy'] = 'Policy';
 $string['policydochdrversion'] = 'Document version';
