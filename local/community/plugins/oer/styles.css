@@ -206,7 +206,7 @@
   padding-left: 0.875rem;
   padding-right: 0.875rem;
   line-height: 2rem;
-  font-size: 0.75rem;
+  /*font-size: 0.75rem;*/
 }
 
 .activity-text {
@@ -230,7 +230,7 @@
 .activity-info .activity-info-blocks .activity-info-block p {
   color: #000;
   padding-left: 2rem;
-  font-size: 0.5625rem;
+  /*font-size: 0.5625rem;*/
   font-style: normal;
   font-weight: 400;
   line-height: 0.75rem;
@@ -334,10 +334,11 @@ button.back {
   display: flex;
   align-items: center;
 }
+/*
 #oer_btn_container button span {
   font-size: 0.75rem;
 }
-
+*/
 .oer-tooltip {
   background-color: transparent;
 }
