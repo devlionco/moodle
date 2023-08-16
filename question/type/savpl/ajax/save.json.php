@@ -41,7 +41,7 @@ try {
         throw new Exception( get_string( 'loggedinnot' ) );
     }
 
-    $id = required_param( 'id', PARAM_INT );
+    $id = required_param( 'qid', PARAM_INT );
     $userid = $USER->id;
     $answer = required_param( 'answer', PARAM_RAW );
     $filestype = required_param( 'filestype', PARAM_RAW );

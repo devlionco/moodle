@@ -133,6 +133,8 @@ define(['jquery', 'core/url'], function($, url) {
         setupQuestionEditor: function(theme, $textarea, $setTextButtons, lineOffset, callback) {
             aceTheme = theme;
             loadAce().done(function() {
+                console.log('TEXTAREA');
+                console.log($textarea);
                 // Setup question editor.
                 var aceEditor = setupAceEditors($textarea, '200px', $textarea.data('templatelang'));
                 // Set first line number to match compilation messages.
