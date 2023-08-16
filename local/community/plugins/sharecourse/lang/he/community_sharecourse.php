@@ -53,11 +53,11 @@ $string['menupopuptitle'] = 'בחירת פעולה רצויה';
 $string['cancel'] = 'ביטול';
 $string['buttonshare'] = 'שיתוף קורס';
 $string['menucoursenode'] = 'שיכפול הקורס';
-$string['courseuploadtocatalog'] = 'שיתוף למאגר המשותף';
+$string['courseuploadtocatalog'] = 'למאגר המשותף';
 $string['coursereuploadtocatalog'] = 'שכפול קורס';
 $string['copycoursetoteacher'] = 'צירוף מורה עמית';
 $string['sharecoursecommunity'] = 'שיתוף לקהילה';
-$string['copycoursetocategory'] = 'שכפול קורס';
+$string['copycoursetocategory'] = 'לקורס אחר שלי';
 $string['couse_copied_from_catalog'] =
         'אנא שים לב, קורס זה שותף למאגר. האם ברצונך לשתף את הקורס החדש שיוצר, במקום הקורס הישן הנוכחי?';
 

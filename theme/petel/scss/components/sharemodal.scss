@@ -1,0 +1,89 @@
+.sharemodal {
+    font-family: $primary-font;
+    .modal-content {
+        min-width: 18.25rem;
+        width: auto;
+        margin: 0 auto;
+    }
+    .modal-dialog {
+        max-width: 40rem;
+        min-width: 18.25rem;
+    }
+
+    .modal-header {
+        min-height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .25rem;
+        background-color: $secondary;
+        h5 {
+            font-size: .75rem;
+            line-height: 1;
+            padding: 0 .375rem;
+        color: $white;
+
+        }
+
+        .close {
+            padding: .125rem .25rem;
+            opacity: 1;
+            color: $white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            i {
+                font-size: .75rem;
+            }
+        }
+    }
+    .modal-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: .5rem 0;
+    }
+    .sharemodal-btn {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: .5rem;
+
+        .circle {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            outline: .0625rem solid $secondary;
+            color: $secondary;
+        }
+
+        .text {
+            font-size: .75rem;
+            line-height: 1.125rem;
+            font-weight: 400;
+            font-family: $primary-font;
+            color: $body-color;
+        }
+
+        &:hover {
+            .circle {
+                outline-width: .125rem;
+                box-shadow: 0 .375rem .75rem rgba(0, 0, 0, 0.2);
+                background-color: $light;
+            }
+        }
+
+        &:active {
+            outline-width: .125rem;
+            background-color: $light;
+            color: $primary;
+            outline-color: $primary;
+        }
+    }
+}

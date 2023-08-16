@@ -113,7 +113,8 @@ define(['jquery', 'qtype_vplquestion/codeeditors',
     function setup(questionId, vplId, userId, aceTheme, textareaName, vplVersion) {
         // This is the textarea that will recieve student's answer.
         var $textarea = $('textarea[name="' + textareaName + '"]');
-
+        console.log('TEXTAREANAME');
+        console.log(textareaName);
         var $resetAndCorrectionButtons = $('#qvpl_reset_q' + questionId + ', #qvpl_correction_q' + questionId);
 
         // Setup ace editor THEN buttons (so Run and Check correctly take current ace text).

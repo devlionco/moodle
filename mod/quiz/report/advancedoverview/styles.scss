@@ -71,7 +71,11 @@
 	max-width: 100% !important;
 }
 .block_advancedoverview_report {
-
+    .dropdown-menu.show {
+		display: flex;
+		flex-direction: column;
+		width: fit-content;
+	}
 	.top-block {
 		padding-bottom: 2rem;
 	}

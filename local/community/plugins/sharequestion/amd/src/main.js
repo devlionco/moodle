@@ -82,7 +82,7 @@ define([
                     Templates.render('community_sharequestion/selector', self.context_template)
                         .done(function(html) {
                             var modalPromise = ModalFactory.create({
-                                type: ModalFactory.types.ALERT,
+                                type: ModalFactory.types.DEFAULT,
                                 large: self.large,
                                 title: strings[0],
                                 body: html
@@ -90,6 +90,8 @@ define([
 
                             $.when(modalPromise).then(function (modal) {
                                 modal.setButtonText('cancel', strings[1]);
+                                modal.getRoot()[0].classList.add('sharemodal');
+                                $(modal.getRoot()[0]).find('.modal-header .close').html('<i class="fa-light fa-circle-xmark"></i>');
                                 modal.show();
 
                                 modal.body.find('button').on( "click", function(e) {

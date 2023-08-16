@@ -17,7 +17,7 @@
 /**
  * savpl renderer class.
  * @package    qtype_savpl
- * @copyright  Astor Bizard, 2019
+ * @copyright  2023 Devlion.co <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_login();
 
 /**
  * Generates HTML output for savpl.
- * @copyright  Astor Bizard, 2019
+ * @copyright  2023 Devlion.co <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_savpl_renderer extends qtype_renderer {
@@ -42,7 +42,6 @@ class qtype_savpl_renderer extends qtype_renderer {
         global $USER, $COURSE, $CFG;
         $userid = $USER->id;
         $qid = $question->id;
-        $vplid = $question->templatevpl;
 
         $inputname = $qa->get_qt_field_name('answer');
         $lastanswer = $qa->get_last_qt_var('answer');
@@ -61,10 +60,10 @@ class qtype_savpl_renderer extends qtype_renderer {
         unset($plugin);
 
         $this->output->page->requires->strings_for_js(
-                array('compilation', 'evaluation', 'evaluationerror', 'execerror', 'execerrordetails', 'execution'),
-                SAQVPL);
+            array('compilation', 'evaluation', 'evaluationerror', 'execerror', 'execerrordetails', 'execution'),
+            SAQVPL);
         $this->output->page->requires->js_call_amd(SAQVPL.'/studentanswer', 'setup',
-                array($qid, $vplid, $userid, $acetheme, $inputname, $vplversion));
+            array($qid, $userid, $acetheme, $inputname, $vplversion));
 
         // Find the line where the {{ANSWER}} tag is located, to offset line numbers on Ace editor.
         // This offset is useful for compilation errors, so that error line will match editor line.
@@ -81,7 +80,7 @@ class qtype_savpl_renderer extends qtype_renderer {
         $templatecontext->lineoffset = $lineoffset;
         $templatecontext->templatelang = $question->templatelang;
         $templatecontext->lastanswer = $lastanswer;
-        $templatecontext->run = true;
+        $templatecontext->run = true; //TODO
         $templatecontext->precheck = $question->precheckpreference != 'none';
         $templatecontext->precheckaction = $question->precheckpreference == 'dbg' ? 'debug' : 'evaluate';
         $templatecontext->answertemplate = $question->answertemplate;
@@ -99,8 +98,8 @@ class qtype_savpl_renderer extends qtype_renderer {
         $feedback = '';
         if ($qa->get_state()->is_finished()) {
             $feedback = '<div class="correctness '.$qa->get_state_class(true).' badge text-white">'.
-                            $qa->get_state()->default_string(true).
-                        '</div>';
+                $qa->get_state()->default_string(true).
+                '</div>';
         }
         if ($qa->get_state()->is_graded()) {
             $evaldata = $qa->get_last_qt_var('_evaldata', null);
@@ -127,6 +126,6 @@ class qtype_savpl_renderer extends qtype_renderer {
             return '';
         }
         return '<h5>'.get_string('possiblesolution', SAQVPL).'</h5>'.
-               '<pre class="line-height-3">'.htmlspecialchars($qa->get_question()->teachercorrection).'</pre>';
+            '<pre class="line-height-3">'.htmlspecialchars($qa->get_question()->teachercorrection).'</pre>';
     }
 }

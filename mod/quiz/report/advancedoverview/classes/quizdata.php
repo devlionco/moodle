@@ -1162,6 +1162,8 @@ class quizdata {
         $data['anonymous_mode'] = $this->config->anonymous_mode;
         $data['config'] = $this->config;
 
+        $data['dir_rtl'] = right_to_left() == 'rtl' ? true : false;
+
         return $data;
     }
 

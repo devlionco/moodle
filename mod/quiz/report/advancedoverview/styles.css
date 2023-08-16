@@ -70,6 +70,12 @@
   		width: 9rem;
   	} */
 }
+.block_advancedoverview_report .dropdown-menu.show {
+  display: flex;
+  flex-direction: column;
+  width: -moz-fit-content;
+  width: fit-content;
+}
 .block_advancedoverview_report .top-block {
   padding-bottom: 2rem;
 }
