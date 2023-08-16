@@ -137,3 +137,7 @@ $string['statuscmfailed'] = 'פעילויות בהן תלמידים נכשלו';
 // Collapse button.
 $string['collapsebuttonopen'] = 'תצוגה מלאה';
 $string['collapsebuttonclose'] = 'תצוגה מצומצמת';
+
+// Task.
+$string['taskrecentlyviewedsections'] = 'צפית ביחידה לאחרונה';
+

@@ -138,3 +138,6 @@ $string['statuscmfailed'] = 'activities were students failed';
 // Collapse button.
 $string['collapsebuttonopen'] = 'Full view';
 $string['collapsebuttonclose'] = 'Collapse all';
+
+// Task.
+$string['taskrecentlyviewedsections'] = 'Recently viewed sections';

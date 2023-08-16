@@ -48,6 +48,11 @@ Example context (json):
             </span>
         </h3>
         <div class="card-main-content d-flex flex-column justify-content-between position-relative" >
+            {{#recentlyviewed}}
+            <div class="recently-viewed d-flex align-items-center justify-content-center">
+                <i class="fa-light fa-users"></i>
+            </div>
+            {{/recentlyviewed}}
             <div class="card-img-top" id="section-image-{{id}}" role="presentation"
                 {{#image}}style="background: url('{{{image}}}'){{^imggenerated}} no-repeat center/contain {{/imggenerated}} {{#imggenerated}}  center/cover {{/imggenerated}}"{{/image}}>
             </div>

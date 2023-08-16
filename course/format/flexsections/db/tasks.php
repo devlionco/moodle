@@ -15,18 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Local plugin "oer" - Oer Tasks
  *
  * @package    format_flexsections
- * @copyright  2022 Marina Glancy
+ * @copyright  2023 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023062303;             // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022041900.00;          // Requires Moodle 4.0 or above.
-$plugin->release   = "4.0.1";
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->component = 'format_flexsections';  // Full name of the plugin (used for diagnostics).
-$plugin->supported = [400, 400];
+$tasks = array(
+        array(
+                'classname' => 'format_flexsections\task\schedule_recently_viewed_sections',
+                'blocking' => 0,
+                'minute' => '0',
+                'hour' => '1',
+                'day' => '*',
+                'dayofweek' => '*',
+                'month' => '*',
+        ),
+);

@@ -780,3 +780,167 @@ function format_flexsections_has_teacher_course_capability($courseid) {
 
     return false;
 }
+
+function format_flexsections_get_sub_sections_cmids(&$cmids, $sectionid): void {
+    global $DB;
+
+    if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
+        $cmids = array_merge($cmids, explode(',', $obj->sequence));
+        $modinfo = get_fast_modinfo($obj->course);
+
+        // Subsections.
+        foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+            if ($subsection->parent == $obj->section && $num != $obj->section) {
+                format_flexsections_get_sub_sections_cmids($cmids, $subsection->id);
+            }
+        }
+
+        $cmids = array_filter($cmids);
+        $cmids = array_unique($cmids);
+    }
+}
+
+function format_flexsections_recently_viewed_section($sectionid) {
+    global $COURSE, $DB;
+
+    $cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, 'format_flexsections_cache', 'recently_viewed_sections');
+    $cachekey = 'data';
+
+    // Get from cache.
+    if (($result = $cache->get($cachekey)) === false) {
+        if ($obj = $DB->get_record('config', ['name' => 'format_flexsections_recently_viewed_sections'])) {
+            $result =json_decode($obj->value, true);
+        } else {
+            $result = [];
+        }
+
+        $cache->set($cachekey, $result);
+    }
+
+    $context = \context_course::instance($COURSE->id);
+    if (is_siteadmin() || has_capability('moodle/course:update', $context)) {
+        if (isset($result[$sectionid]) && $result[$sectionid] >= 5) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function format_flexsections_prepare_recently_viewed_section() {
+    global $DB;
+
+    $userspersections = [];
+    $cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, 'format_flexsections_cache', 'recently_viewed_sections');
+    $cachekey = 'data';
+
+    $cache->delete($cachekey);
+
+    $delta = time() - 7*24*60*60;
+
+    // Prepare data for user submit.
+    $sql = "
+        SELECT gg.`id`, gg.`userid`, gi.`courseid`, gi.`itemtype`, gi.`itemmodule`,gi.`iteminstance`
+        FROM {grade_grades} gg
+        LEFT JOIN {grade_items} gi ON (gi.id = gg.itemid)
+        WHERE gg.`timecreated` > ?
+    ";
+
+    foreach ($DB->get_records_sql($sql, [$delta]) as $mod) {
+
+        // Check user role.
+        $context = \context_course::instance($mod->courseid);
+        $roles = get_user_roles($context, $mod->userid);
+
+        $ifstudent = false;
+        $rolespermitted = ['student'];
+        foreach ($roles as $role) {
+            if (in_array($role->shortname, $rolespermitted)) {
+                $ifstudent = true;
+            }
+        }
+
+        if ($ifstudent && $mod->itemtype == 'mod') {
+            $cm = get_coursemodule_from_instance($mod->itemmodule, $mod->iteminstance);
+            $userspersections[$cm->section][] = $mod->userid;
+        }
+    }
+
+    // Prepare data for user last acces in to section.
+    $sql = "
+        SELECT *
+        FROM {logstore_standard_log}
+        WHERE `component`='core' AND `action`='viewed' AND `target`='course' AND `timecreated` > ?
+    ";
+
+    foreach ($DB->get_records_sql($sql, [$delta]) as $item) {
+        if ($item->other != 'null') {
+            $other = json_decode($item->other);
+
+            // Check user role.
+            $context = \context_course::instance($item->courseid);
+            $roles = get_user_roles($context, $item->userid);
+
+            $ifstudent = false;
+            $rolespermitted = ['student'];
+            foreach ($roles as $role) {
+                if (in_array($role->shortname, $rolespermitted)) {
+                    $ifstudent = true;
+                }
+            }
+
+            if (isset($other->coursesectionnumber) && !empty($other->coursesectionnumber) && $ifstudent) {
+                $section = $DB->get_record('course_sections', ['course' => $item->courseid, 'section' => $other->coursesectionnumber]);
+                $userspersections[$section->id][] = $item->userid;
+            }
+        }
+    }
+
+    // Prepare result.
+    $data = [];
+    foreach ($userspersections as $sectionid => $userids) {
+        $newdata = [];
+        format_flexsections_get_sub_sections_data($newdata, $sectionid, $userspersections);
+
+        $data[$sectionid] = $newdata;
+    }
+
+    $result = [];
+    foreach ($data as $sectionid => $userids) {
+        $userids = array_unique($userids);
+        $result[$sectionid] = count($userids);
+    }
+
+    // Update DB and cache.
+    if ($obj = $DB->get_record('config', ['name' => 'format_flexsections_recently_viewed_sections'])) {
+        $obj->value = json_encode($result);
+        $DB->update_record('config', $obj);
+    } else {
+        $obj = new \StdClass();
+        $obj->name = 'format_flexsections_recently_viewed_sections';
+        $obj->value = json_encode($result);
+        $DB->insert_record('config', $obj);
+    }
+
+    $cache->set($cachekey, $result);
+
+    return true;
+}
+
+function format_flexsections_get_sub_sections_data(&$newdata, $sectionid, $data): void {
+    global $DB;
+
+    if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
+        if (isset($data[$sectionid])) {
+            $newdata = array_merge($newdata, $data[$sectionid]);
+        }
+        $modinfo = get_fast_modinfo($obj->course);
+
+        // Subsections.
+        foreach ($modinfo->get_section_info_all() as $num => $subsection) {
+            if ($subsection->parent == $obj->section && $num != $obj->section) {
+                format_flexsections_get_sub_sections_data($newdata, $subsection->id, $data);
+            }
+        }
+    }
+}

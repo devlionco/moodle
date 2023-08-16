@@ -117,6 +117,11 @@ Example context (json):
         <div class="section-header d-flex">
             <div class="singlesection-card card-main-content mt-1 d-flex flex-column justify-content-between position-relative
                 {{^showsectionstatus}}w-100{{/showsectionstatus}}" >
+                {{#recentlyviewed}}
+                <div class="recently-viewed d-flex align-items-center justify-content-center">
+                    <i class="fa-light fa-users"></i>
+                </div>
+                {{/recentlyviewed}}
                 <div class="card-img" role="presentation" {{#image}}style="background: url('{{{image}}}'){{^imggenerated}} no-repeat center/contain {{/imggenerated}} {{#imggenerated}}  center/cover {{/imggenerated}}"{{/image}}></div>
 
                 <div class="card-header-fade p-1">
