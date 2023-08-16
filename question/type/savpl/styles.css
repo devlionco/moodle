@@ -152,3 +152,35 @@ body#page-question-type-savpl li.execfilename span.unused:not(.currentfile) {
     background-color: #cef;
     border: 1px solid #acd;
 }
+
+.vplquestion pre {
+    direction: ltr;
+    text-align: left;
+}
+div .que.vplquestion .outcome {
+    background-color: #fff3cd;
+}
+#vpl_tr {
+    height: 450px;
+}
+#vpl_tabs {
+    height: 400px;
+}
+#vpl_filelist,
+#vpl_filelist_content,
+.vpl_ide_file {
+    height: 360px;
+}
+.savpl .formulation pre {
+    direction: ltr;
+    text-align: left;
+}
+.que.savpl .ui-dialog-titlebar {
+    top: -45px;
+    width: 14em;
+}
+.dir-rtl .que.savpl .close-terminal {
+    right: auto;
+    left: 1em;
+    top: 10px;
+}
