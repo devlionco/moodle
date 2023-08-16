@@ -135,11 +135,13 @@ class qtype_geogebra_renderer extends qtype_renderer {
         $forcedimensions = $question->forcedimensions ?: 0;
         $width = $question->width ?: 0;
         $height = $question->height ?: 0;
+        $configuredcodebase = get_config('qtype_geogebra', 'codebase');
+        $codebase = !empty($configuredcodebase) ? $configuredcodebase : '""';
         $applet = <<<EOD
 <article id=$appletparametersid
   data-parameters=$question->ggbparameters
   data-views=$question->ggbviews
-  data-codebase=$question->ggbcodebaseversion
+  data-codebase=$codebase
   data-html5NoWebSimple=true
   data-div=$ggbdivname
   data-vars=$currentvals
@@ -222,6 +224,24 @@ EOD;
                             $qa, 'question', 'answerfeedback', $answer->id);
                     }
                     $i++;
+                }
+            }
+        }
+        if ('' === $feedback || '<br>' === $feedback || str_replace('<br>', '', $feedback) === "") {
+            $feedback .= html_writer::div($qa->get_state_string(true), 'feedback');
+            $laststep = $qa->get_last_step();
+            if ($laststep->has_behaviour_var('_try')) {
+                $state = question_state::graded_state_for_fraction(
+                    $laststep->get_behaviour_var('_rawfraction'));
+                global $OUTPUT;
+                if ($state->is_correct()) {
+                    $feedback .= $OUTPUT->pix_icon('i/grade_correct', get_string('correct', 'question'));
+                }
+                if ($state->is_partially_correct()) {
+                    $feedback .= $OUTPUT->pix_icon('i/grade_partiallycorrect', get_string('partiallycorrect', 'question'));
+                }
+                if ($state->is_incorrect()) {
+                    $feedback .= $OUTPUT->pix_icon('i/grade_incorrect', get_string('incorrect', 'question'));
                 }
             }
         }
