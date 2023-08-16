@@ -162,30 +162,6 @@ class section extends \core_courseformat\output\local\content\section {
     }
 
     /**
-     * Recursion for grab subsections.
-     *
-     * @return array
-     */
-    private function get_sub_sections_cmids(&$cmids, $section): void {
-        global $DB;
-
-        $modinfo = $this->section->modinfo;
-
-        if ($obj = $DB->get_record('course_sections', ['course' => $this->format->get_course()->id, 'section' => $section])) {
-            $cmids = array_merge($cmids, explode(',', $obj->sequence));
-
-            // Subsections.
-            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
-                if ($subsection->parent == $obj->section && $num != $obj->section) {
-                    $this->get_sub_sections_cmids($cmids, $subsection->section);
-                }
-            }
-
-            $cmids = array_filter($cmids);
-        }
-    }
-
-    /**
      * Grabs the completion info for this section
      *
      * @return array
@@ -221,7 +197,7 @@ class section extends \core_courseformat\output\local\content\section {
                 $sectioncmids = array_merge($sectioncmids, $arr);
             }
         } else {
-            $this->get_sub_sections_cmids($sectioncmids, $currentsection);
+            format_flexsections_get_sub_sections_cmids($sectioncmids, $this->section->id);
         }
 
         $total = $completed = 0;

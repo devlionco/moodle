@@ -263,30 +263,6 @@ class format_flexsections_external extends external_api {
     }
 
     /**
-     * Recursion for grab subsections.
-     *
-     * @return array
-     */
-    private static function get_sub_sections_cmids(&$cmids, $sectionid): void {
-        global $DB;
-
-        if ($obj = $DB->get_record('course_sections', ['id' => $sectionid])) {
-            $cmids = array_merge($cmids, explode(',', $obj->sequence));
-            $modinfo = get_fast_modinfo($obj->course);
-
-            // Subsections.
-            foreach ($modinfo->get_section_info_all() as $num => $subsection) {
-                if ($subsection->parent == $obj->section && $num != $obj->section) {
-                    self::get_sub_sections_cmids($cmids, $subsection->id);
-                }
-            }
-
-            $cmids = array_filter($cmids);
-            $cmids = array_unique($cmids);
-        }
-    }
-
-    /**
      * Returns welcome message
      * @param int $sectionid
      * @return string
@@ -295,7 +271,7 @@ class format_flexsections_external extends external_api {
         global $DB;
 
         $data = $cmids = [];
-        self::get_sub_sections_cmids($cmids, $sectionid);
+        format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
 
         $section = $DB->get_record('course_sections', ['id' => $sectionid]);
         $modinfo = get_fast_modinfo($section->course);
