@@ -97,6 +97,9 @@ class header extends \core_courseformat\output\local\content\section\header {
         }
 
         $data->headerdisplaymultipage = !empty($data->headerdisplaymultipage);
+
+        $data->recentlyviewed = format_flexsections_recently_viewed_section($this->section->id);
+
         return $data;
     }
     /**
