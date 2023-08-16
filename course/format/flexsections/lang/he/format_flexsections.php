@@ -35,7 +35,7 @@ $string['editsection'] = 'עריכת יחידת הוראה';
 $string['editsectionname'] = 'עריכת שם יחידת הוראה';
 $string['hidefromothers'] = 'הסתרת יחידת הוראה';
 $string['mergeup'] = 'שילוב יחידה זו ביחידה הראשית';
-$string['moveassubsection'] = 'As a subsection of \'{$a}\'';
+$string['moveassubsection'] = 'כתת יחידה של \'{$a}\'';
 $string['movebeforecm'] = 'לפני פעילות \'{$a}\'';
 $string['movebeforesection'] = 'לפני \'{$a}\'';
 $string['movecmendofsection'] = 'בסוף יחידת ההוראה \'{$a}\'';
@@ -49,7 +49,7 @@ $string['pluginname'] = 'יחידות ותתי יחידות בתמונות';
 $string['privacy:metadata'] = 'The Flexible sections format plugin does not store any personal data.';
 $string['section0name'] = 'מבוא';
 $string['sectionname'] = 'יחידת הוראה';
-$string['showcollapsed'] = 'תצוגה כקישור';
+$string['showcollapsed'] = 'תצוגה כקישור לעמוד עצמאי';
 $string['showexpanded'] = 'תצוגה באופן מלא';
 $string['showfromothers'] = 'תצוגת יחידת הוראה';
 
@@ -68,7 +68,7 @@ $string['editimage:resizefailed'] = 'Failed to resize the selected image. The ca
 $string['settings:name'] = 'Flexsections format settings';
 $string['form:course:usedefault'] = 'בררת מחדל ({$a})';
 
-$string['form:course:hiddensections'] = 'הסתרת יחידותהוראה';
+$string['form:course:hiddensections'] = 'הסתרת יחידות הוראה';
 $string['form:course:hiddensections_help'] = 'Whether hidden sections are displayed to students as not available (perhaps for a course in weekly format to indicate holidays) or are completely hidden.';
 
 $string['form:course:showprogress'] = 'מעקב השלמה';
@@ -87,13 +87,13 @@ $string['form:course:cardorientation:horizontal'] = 'מאוזן';
 $string['form:course:showsummary'] = 'תקציר יחידת הוראה';
 $string['form:course:showsummary:show'] = 'מוצג';
 $string['form:course:showsummary:hide'] = 'מוסתר';
-$string['form:course:showsummary_help'] = 'Whether to show the section summary on cards';
+$string['form:course:showsummary_help'] = 'האם להציג את תקציר היחידה על התמונה';
 $string['form:course:section0'] = 'יחידת מבוא';
 $string['form:course:section0_help'] = 'The general section is the first section in your course, which usually contains the course\'s announcements page. You can choose to have this visible either only on the course\'s main page, on top of the card deck, or visible on the main page and each individual section page.';
 $string['form:course:section0:coursepage'] = 'תוצג בעמוד קורס הראשי בלבד';
 $string['form:course:section0:allpages'] = 'תוצג בכל עמודי ותת עמודי הקורס';
 
-$string['form:course:sectionview:cards'] = 'כרטיסים';
+$string['form:course:sectionview:cards'] = 'כרטיסים (תמונות)';
 $string['form:course:sectionview:list'] = 'רשימה';
 $string['form:course:sectionviewoption'] = 'תצוגת יחידת הוראה';
 
@@ -124,7 +124,6 @@ $string['cut_of_date_less_days_label'] = '<span>להגיש תוך {$a} <i class=
 $string['no_submission_date'] = 'ללא תאריך הגשה';
 $string['complete'] = 'הושלם';
 $string['waitgrade'] = 'הוגש וטרם נבדק';
-
 $string['editimage'] = 'עריכת תמונה';
 
 // Student status.
