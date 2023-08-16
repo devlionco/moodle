@@ -1,30 +1,42 @@
-<div class="modal-body d-flex justify-content-center pr-5 pl-5">
+<div class="modal-body d-flex justify-content-center align-items-start px-4 py-0">
 
     {{#questionupload}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-center pt-3" data-handler= "uploadQuestionsToMaagar">
-        <i aria-hidden="true" title="{{#str}}eventquestionupload, community_sharequestion{{/str}}" class="fa-light fa-upload fa-5x mb-2"></i>
-        <div class = "">{{#str}}eventquestionupload, community_sharequestion{{/str}}</div>
+    <button type="button" class="sharemodal-btn align-self-start" data-handler="uploadQuestionsToMaagar">
+        <div class="circle mb-2">
+            <i aria-hidden="true" title="{{#str}}eventquestionupload, community_sharequestion{{/str}}"
+            class="fa-light fa-cloud-arrow-up fa-2x"></i>
+        </div>
+        <span class="text">{{#str}}eventquestionupload, community_sharequestion{{/str}}</span>
     </button>
     {{/questionupload}}
 
     {{#copyquestionstoteacher}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-center pt-3 mx-3" data-handler="copyQuestionsToTeacher">
-        <i aria-hidden="true" title="{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}"  class="fa-light fa-user fa-5x mb-2"></i>
-        <div class = "">{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}</div>
+    <button type="button" class="sharemodal-btn align-self-start" data-handler="copyQuestionsToTeacher">
+        <div class="circle mb-2">
+            <i aria-hidden="true" title="{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}"
+            class="fa-light fa-user-graduate fa-2x"></i>
+        </div>
+        <span class="text">{{#str}}copyquestionstoteacher, community_sharequestion{{/str}}</span>
     </button>
     {{/copyquestionstoteacher}}
 
     {{#copyquestionstocategory}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-center pt-3 mx-3" data-handler="copyQuestionsToCategory">
-        <i aria-hidden="true" title="{{#str}}copyquestionstocategory, community_sharequestion{{/str}}"  class="fa-light fa-folder-tree fa-5x mb-2"></i>
-        <div class = "">{{#str}}copyquestionstocategory, community_sharequestion{{/str}}</div>
+    <button type="button" class="sharemodal-btn align-self-start" data-handler="copyQuestionsToCategory">
+        <div class="circle mb-2">
+            <i aria-hidden="true" title="{{#str}}copyquestionstocategory, community_sharequestion{{/str}}"
+            class="fa-light fa-file-import fa-2x"></i>
+        </div>
+        <span class="text">{{#str}}copyquestionstocategory, community_sharequestion{{/str}}</span>
     </button>
     {{/copyquestionstocategory}}
 
     {{#copyquestionstoquiz}}
-    <button type="button" class="btn btn-outline-primary rounded align-self-center pt-3" data-handler="copyQuestionsToQuiz">
-        <i aria-hidden="true" title="{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}"  class="fa-light fa-file-import fa-5x mb-2"></i>
-        <div class = "">{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}</div>
+    <button type="button" class="sharemodal-btn align-self-start" data-handler="copyQuestionsToQuiz">
+        <div class="circle mb-2">
+            <i aria-hidden="true" title="{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}"
+            class="fa-light fa-copy fa-2x"></i>
+        </div>
+        <span class="text">{{#str}}copyquestionstoquiz, community_sharequestion{{/str}}</span>
     </button>
     {{/copyquestionstoquiz}}
 

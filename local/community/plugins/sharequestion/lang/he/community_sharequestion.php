@@ -34,14 +34,14 @@ $string['back'] = 'חזרה';
 $string['end'] = 'סיום';
 $string['sharingbutton'] = 'שיתוף';
 $string['menupopuptitle'] = 'בחירת פעולה רצויה';
-$string['copyquestionstoquiz'] = 'העתקה למשימה אחרת';
+$string['copyquestionstoquiz'] = 'העתקה למשימה<br/>נוספת';
 $string['copyquestionstoquizsuccess'] = 'שימו לב! פעולות מסוימות דורשות מספר רגעים להשלמה.';
 $string['selectcourse'] = 'בחירת קורס ' . '<span style="font-size: 12px;">(ניתן להקליד את שם הקורס)</span>';
 $string['selectquiz'] =
         'בחירת משימה ללא ניסיונות מענה ' . '<span style="font-size: 12px;">(הקלידו את שם המשימה או בחרו מהרשימה)</span>';
 $string['selectquizerror'] = 'נא לבחור משימה';
 
-$string['copyquestionstocategory'] = 'העתקה לקטגוריה אחרת';
+$string['copyquestionstocategory'] = 'העתקה לקטגוריה<br/>אחרת';
 $string['selectcategory'] = 'בחירת קטגוריה ' . '<span style="font-size: 12px;">(ניתן להקליד את שם הקטגוריה)</span>';
 $string['settingsshowncompetencysection'] = 'הצגת מיומנויות לפי תת-נושא';
 $string['settingssshowncompetencysectiondesc'] = 'הצגת מיומנויות השייכות לפעילויות ביחידת הוראה (נושא) אשר נבחרה';
@@ -57,7 +57,7 @@ $string['sharequestion:questioncopy'] = 'Question Copy';
 // Upload to catalog.
 $string['advanced_catalog_options'] = 'אפשרויות קטלוג מתקדמות';
 $string['share_national_shared'] = 'שיתוף למאגר המשותף';
-$string['eventquestionupload'] = 'שיתוף למאגר המשותף';
+$string['eventquestionupload'] = 'למאגר המשותף';
 $string['question_upload_to_mr'] = 'השאלה נשלחה למאגר המשותף, ותהיה זמינה לכלל המורים בהקדם
 תודה על השיתוף!';
 $string['error'] = 'שגיאה';
@@ -92,7 +92,7 @@ $string['enter_subject_name'] = 'נא להזין את שם הפריט';
 $string['write_tags_here'] = "נא להקליד שם תג";
 
 // Share to teacher.
-$string['copyquestionstoteacher'] = "שליחה למורה";
+$string['copyquestionstoteacher'] = "למורה";
 $string['send'] = "שליחה";
 $string['sharewithteacher'] = "שיתוף עם מורה";
 $string['enterteacherhere'] = "יש להקליד כאן את שם המורה...";
