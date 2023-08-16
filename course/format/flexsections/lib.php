@@ -718,7 +718,11 @@ class format_flexsections extends core_courseformat\base {
             if ($currentsectionnum) {
                 $sectioninfo = $this->get_modinfo()->get_section_info($currentsectionnum);
                 if (!$sectioninfo || !$sectioninfo->collapsed) {
-                    redirect(course_get_url($this->get_course(), $sectioninfo ? $this->find_collapsed_parent($sectioninfo) : null));
+
+                    // PTL-9606.
+                    if ($this->get_format_option('sectionviewoption') != FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS) {
+                        redirect(course_get_url($this->get_course(), $sectioninfo ? $this->find_collapsed_parent($sectioninfo) : null));
+                    }
                 }
             }
 
