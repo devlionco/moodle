@@ -19,6 +19,11 @@
     Section complition/submission status.
 }}
 
+{{#cmlastaccess}}
+    <span class="cmlastaccess">{{#str}} cmlastaccess, format_flexsections {{/str}}</span>
+    <a class="cmlastaccess-link ml-2" href="{{{cmurl}}}">{{cmname}}</a>
+{{/cmlastaccess}}
+
 {{#firstrow}}
 <div class="d-flex align-items-center mb-3" id="firstrow">
     <i class="fa-light fa-hourglass-start info-block-icon text-primary d-flex align-items-center justify-content-center"></i>

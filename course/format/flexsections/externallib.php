@@ -268,13 +268,36 @@ class format_flexsections_external extends external_api {
      * @return string
      */
     public static function get_section_status($sectionid) {
-        global $DB;
+        global $DB, $USER;
 
         $data = $cmids = [];
         format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
 
         $section = $DB->get_record('course_sections', ['id' => $sectionid]);
         $modinfo = get_fast_modinfo($section->course);
+
+        // Get last access activity. PTL-9737.
+        if (!empty($cmids)) {
+            $sql = "
+                SELECT *
+                FROM {logstore_standard_log}
+                WHERE `action`='viewed' AND `target`='course_module' AND `contextinstanceid` IN (".implode(',', $cmids).") AND userid=?
+                ORDER BY `timecreated` DESC
+                LIMIT 1
+                ;
+            ";
+
+            if ($log = $DB->get_record_sql($sql, [$USER->id])) {
+
+                $cm = $modinfo->get_cm($log->contextinstanceid);
+
+                $data['cmlastaccess'] = [
+                        'cmid' => $log->contextinstanceid,
+                        'cmname' => $cm->name,
+                        'cmurl' => $cm->url->out(),
+                ];
+            }
+        }
 
         // Teacher.
         if(format_flexsections_has_teacher_course_capability($section->course)){
