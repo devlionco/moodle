@@ -94,6 +94,7 @@
     {{> core_courseformat/local/content/section/header }}
 {{/ core_courseformat/local/content/section/header }}
 {{/header}}
+
 {{#restrictionlock}}
     <div class="align-self-center ml-2">
         {{#pix}}t/unlock, core{{/pix}}
@@ -180,11 +181,13 @@
         {{> core_courseformat/local/content/section/cmsummary }}
     {{/ core_courseformat/local/content/section/cmsummary }}
 {{/cmsummary}}
+<div data-cmlistid = "{{id}}">
 {{#cmlist}}
     {{$ format_flexsections/local/content/section/cmlist }}
         {{> format_flexsections/local/content/section/cmlist }}
     {{/ format_flexsections/local/content/section/cmlist }}
 {{/cmlist}}
+</div>
 {{{cmcontrols}}}
 {{#insertafter}}
     {{#numsections}}
