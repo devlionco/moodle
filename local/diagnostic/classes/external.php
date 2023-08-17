@@ -2380,7 +2380,7 @@ class local_diagnostic_external extends external_api {
 
         $cmsql = "SELECT qv.id, q.stamp as idnumber
                                 FROM {quiz_slots} qs
-                                JOIN {question_references} qr ON qr.itemid = qs.id AND qr.component = :modquiz AND qr.questionarea = :slot
+                                JOIN {question_references} qr ON qr.itemid = qs.id AND qr.usingcontextid = :modulecontextid AND qr.component = :modquiz AND qr.questionarea = :slot
                                 JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
                                 JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
                                 JOIN {question} q ON q.id = qv.questionid
@@ -2395,9 +2395,10 @@ class local_diagnostic_external extends external_api {
         foreach ($qids as $qid => $qiddata) {
 
             $stampexcludedparams['quizid'] = $qid;
+            $stampexcludedparams['modulecontextid'] = (\context_module::instance($qiddata->instanceid))->id;
 
-            $allquizquestions = [];
             $allquizquestionswithqv = $DB->get_records_sql($cmsql, $stampexcludedparams);
+            $allquizquestions = [];
 
             foreach ($allquizquestionswithqv as $questionwithqv) {
                 $allquizquestions[] = $questionwithqv->idnumber;
