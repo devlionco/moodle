@@ -101,7 +101,7 @@ class custom_navigation {
             }
         }
 
-        if ($flagpermission) {
+        if ($flagpermission && !is_siteadmin()) {
             $lists = $PAGE->secondarynav->get_children_key_list();
             if (isset($lists[0])) {
                 foreach ($lists as $key) {
