@@ -3,55 +3,15 @@
     font-family: $primary-font, sans-serif;
 
     // Main
-    .main-title {
-        // font-family: $font-family-headers;
-        // font-size: $h2-font-size;
-    }
-
     .main-filter-block {
-        .main-filter-nav {
-            // font-family: $font-family-text;
-        }
-
-        .main-filter-form {
-            button {
-                // font-size: $h4-font-size;
-            }
-        }
-
         .main-search-input {
             background-color: $light;
             color: $body-color;
             border-color: $secondarymedium;
         }
-
-        // .nav-item {
-        //     .nav-link {
-        //         // font-family: $font-family-text;
-        //         font-weight: $font-weight-normal;
-        //         background-color: $secondarylight;
-        //         border-color: $secondarylight;
-        //         color: $body-color;
-        //         &:hover {
-        //             background-color: $light;
-        //             border-color: $secondarymedium;
-        //         }
-        //         &.active {
-        //             background-color: $secondary;
-        //             border-color: $secondary;
-        //             // font-weight: $font-weight-medium;
-        //             color: $white;
-        //         }
-        //         &.disabled {
-        //             // background-color: $lightgray;
-        //             // border-color: $lightgray;
-        //         }
-        //     }
-        // }
     }
 
     // Activity.
-
     .activity-aside-menu {
         font-family: $primary-font, sans-serif;
         background-color: $gray-100;
@@ -63,14 +23,14 @@
         }
 
         .activity-aside-menu-block {
+            border-bottom-color: $secondary;
+
             .coll i {
                 color: $secondarymedium;
             }
         }
 
         .menu-heading {
-            // font-size: $h4-font-size;
-            // font-family: $font-family-headers;
             color: $body-color;
         }
 
@@ -82,59 +42,64 @@
         .sub-sub-menu-item {
             color: $body-color;
 
-            // font-family: $font-family-text;
-            // font-weight: $font-weight-light;
-            &:hover {
-                // font-weight: $font-weight-normal;
-            }
-        }
-
-        .heading-wrapp {
-            border-bottom-color: $secondarymedium;
-
             &:hover {
                 text-decoration: none;
+                color: $secondary;
+                background-color: $light;
+            }
+
+            &:active {
+                text-decoration: none;
+                color: $secondary;
+                background-color: $light;
+                -webkit-text-stroke: .02rem $secondary;
+                outline: .0625rem solid $secondarymedium;
                 background-color: $secondarylight;
             }
 
-            .fa-sharp.fa-solid.fa-triangle {
-                color: $secondary;
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+        .heading-wrapp,
+        .submenu-heading-wrapp {
+            border-bottom-color: $secondarymedium;
+
+            &:hover,
+            &:active {
+                text-decoration: none;
+                background-color: $light;
+                &>a,
+                .collapse-btn i {
+                    text-decoration: none;
+                    color: $secondary;
+                    background-color: $light;
+                }
+
+                &>a {
+                    -webkit-text-stroke: .02rem $secondary;
+                }
+            }
+
+            &:active {
+                outline: .125rem solid $secondarymedium;
+                background-color: $secondarylight;
+                border-bottom-color: transparent;
+
+                &>a,
+                .collapse-btn i {
+                    background-color: $secondarylight;
+                }
             }
         }
 
         .submenu-heading-wrapp {
-
-            .fa-sharp.fa-solid.fa-triangle {
-                color: $secondarymedium;
-            }
-
-        }
-
-        li {
-            &.active a:not(.sub-sub-menu-item) {
-                // font-weight: $font-weight-normal;
-            }
-
-            .sub-sub-menu-item {
-
-                // font-weight: $font-weight-light;
-                &.active {
-                    // font-weight: $font-weight-normal;
-                }
-            }
-
-            a {
-                &:hover {
-                    text-decoration: none;
-                    background-color: $secondarylight;
-                    box-shadow: none;
-                }
-
-                &:focus {
-                    box-shadow: none;
-                }
+            &:active {
+                outline: .0625rem solid $secondarymedium;
             }
         }
+
     }
 
     .activity-img {
@@ -556,12 +521,11 @@
                     border-color: $primary;
                     box-shadow: none;
                     outline: none;
-                }            
-                
+                }
+
                 &:active:not(.prev-btn),
-                &:focus:not(.next-btn)
-                &:active:not(.prev-btn),
-                &:focus:not(.next-btn){
+                &:focus:not(.next-btn) &:active:not(.prev-btn),
+                &:focus:not(.next-btn) {
                     color: $white;
                     background-color: $secondary;
                     border-color: $secondary;
@@ -571,6 +535,7 @@
             }
 
             &.active {
+
                 .page-link:not(.prev-btn),
                 .page-link:not(.next-btn) {
                     color: $white;
@@ -609,10 +574,12 @@
                     border-color: transparent;
                     box-shadow: none;
                     outline: none;
+
                     .circle {
                         background-color: $white;
                         border: .0625rem solid $primary;
                         position: relative;
+
                         i {
                             color: $white;
                             -webkit-text-stroke: .0625rem $primary;
@@ -636,6 +603,7 @@
             }
 
             &.disabled {
+
                 .page-link.prev-btn,
                 .page-link.next-btn {
                     .circle {
@@ -654,12 +622,15 @@
         }
     }
 }
+
 html[dir="rtl"] {
+
     .path-local-community-plugins-oer .pagination .page-item .page-link.prev-btn,
     .path-local-community-plugins-oer .pagination .page-item .page-link.next-btn {
         transform: scaleX(-1);
     }
 }
+
 .oer-popup-list-title-icon {
     background-image: attr(title);
     height: 1.5rem;

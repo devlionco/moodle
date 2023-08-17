@@ -51,6 +51,9 @@
   font-weight: 400;
   line-height: 2.125rem;
 }
+.activity-aside-menu .heading-wrapp .menu-heading:hover {
+  text-decoration: none;
+}
 .activity-aside-menu .heading-wrapp .submenu-heading {
   font-size: 1rem;
   font-weight: 500;
@@ -59,16 +62,23 @@
   display: flex;
   align-items: center;
 }
-.activity-aside-menu .heading-wrapp .collapse-btn .fa-sharp.fa-solid.fa-triangle {
-  transition: all 0.25s ease;
-  font-size: 1rem;
+.activity-aside-menu .heading-wrapp .collapse-btn .fa-solid.fa-caret-left {
+  transition: transform 0.25s ease;
+  font-size: 1.5rem;
 }
-.activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
-  transform: rotate(90deg);
-  transition: all 0.25s ease;
+.activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=true] .fa-solid.fa-caret-left {
+  transform: rotate(-90deg);
+  transition: transform 0.25s ease;
+}
+.activity-aside-menu .submenu-heading-wrapp {
+  border-bottom: none;
+}
+.activity-aside-menu .submenu-heading-wrapp .collapse-btn .fa-solid.fa-caret-left {
+  font-size: 1.25rem;
 }
 .activity-aside-menu .activity-aside-menu-block {
   font-size: 1.125rem;
+  border-bottom: 0.0625rem solid;
 }
 .activity-aside-menu .activity-aside-menu-block > li .collapse-btn {
   padding-left: 1rem;
@@ -78,9 +88,12 @@
   width: 100%;
 }
 .activity-aside-menu .activity-aside-menu-block > li .sub-menu-item {
-  padding-left: 2.5rem;
+  padding-left: 3rem;
   font-weight: 300;
   font-size: 1rem;
+}
+.activity-aside-menu .activity-aside-menu-block > li .sub-menu-item:hover {
+  box-shadow: none;
 }
 
 .activity-filters .card-body {
@@ -206,7 +219,7 @@
   padding-left: 0.875rem;
   padding-right: 0.875rem;
   line-height: 2rem;
-  /*font-size: 0.75rem;*/
+  font-size: 0.75rem;
 }
 
 .activity-text {
@@ -230,7 +243,7 @@
 .activity-info .activity-info-blocks .activity-info-block p {
   color: #000;
   padding-left: 2rem;
-  /*font-size: 0.5625rem;*/
+  font-size: 0.5625rem;
   font-style: normal;
   font-weight: 400;
   line-height: 0.75rem;
@@ -334,11 +347,10 @@ button.back {
   display: flex;
   align-items: center;
 }
-/*
 #oer_btn_container button span {
   font-size: 0.75rem;
 }
-*/
+
 .oer-tooltip {
   background-color: transparent;
 }
