@@ -698,7 +698,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
 
             $returnstr .= html_writer::span(
                 $output,
-                $attributes['class']
+                $attributes['class'],
+                ['title' => fullname($userpicture->user, $canviewfullnames), 'data-toggle' => 'tooltip']
             );
 
             $divider = new action_menu_filler();
