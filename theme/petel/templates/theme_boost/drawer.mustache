@@ -32,6 +32,8 @@
         data-state="{{$drawerstate}}{{/drawerstate}}"
         data-forceopen="{{$forceopen}}0{{/forceopen}}"
         data-close-on-resize="{{$drawercloseonresize}}0{{/drawercloseonresize}}">
+
+    {{#buttonvloseblockdrawer}}
     <div class="drawerheader d-flex align-items-center justify-content-between">
         <div class="d-flex d-md-none px-3 px-md-0">
             <svg width="106" height="36" viewBox="0 0 58 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,6 +63,8 @@
             <i class="fa-light fa-circle-xmark"></i>
         </button>
     </div>
+    {{/buttonvloseblockdrawer}}
+
     <div class="drawercontent drag-container" data-usertour="scroller">
         {{$drawercontent}}{{/drawercontent}}
     </div>

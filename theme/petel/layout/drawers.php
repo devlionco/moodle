@@ -110,6 +110,14 @@ if(strpos($PAGE->pagetype, 'mod-') !== false){
     $headercontent = $header->export_for_template($renderer);
 }
 
+$buttonvloseblockdrawer = true;
+
+// Open block drawer on page my. PTL-9459.
+if ($PAGE->pagetype == 'my-index') {
+    $forceblockdraweropen = true;
+    $buttonvloseblockdrawer = false;
+}
+
 $abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
 $policies = theme_petel_get_policies();
 $templatecontext = [
@@ -134,6 +142,7 @@ $templatecontext = [
     'addblockbutton' => $addblockbutton,
     'abouturl' => $abouturl,
     'policies' => $policies,
+    'buttonvloseblockdrawer' => $buttonvloseblockdrawer,
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
