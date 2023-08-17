@@ -418,4 +418,67 @@ class format_flexsections_external extends external_api {
         return new external_value(PARAM_RAW, 'Answer to section status');
     }
 
+    // Update
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_section_content_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                'sectionid' => new external_value(PARAM_INT, 'Section id'),
+            )
+        );
+    }
+
+    /**
+     * Returns section data
+     * @param int $courseid
+     * @param int $sectionid
+     * @return array
+     */
+    public static function get_section_content($courseid, $sectionid) {
+        global $PAGE;
+
+        self::validate_context(context_course::instance($courseid));
+
+        $params = self::validate_parameters(self::get_section_content_parameters(),
+            array(
+                'courseid' => $courseid,
+                'sectionid' => $sectionid,
+            )
+        );
+
+        $course = get_course($params['courseid']);
+        $format = course_get_format($params['courseid']);
+
+        $modinfo = get_fast_modinfo($course);
+        $sections = $modinfo->get_section_info_all();
+        foreach($sections as $section){
+            if($section->id == $params['sectionid']){
+                $thissection = $section;
+                break;
+            }
+        }
+
+        $sectionclass = $format->get_output_classname('content\\section');
+        $renderer = $PAGE->get_renderer('format_flexsections');
+        $widget = new $sectionclass($format, $thissection);
+        $section = $widget->export_for_template($renderer, true);
+
+        return ['result' => true, 'data' => json_encode($section)];
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_section_content_returns() {
+        return new external_single_structure([
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'data' => new external_value(PARAM_RAW, 'Section content'),
+        ]);
+    }
+
 }

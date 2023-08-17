@@ -57,6 +57,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'format_flexsections_get_section_content' => array(
+        'classname' => 'format_flexsections_external',
+        'methodname' => 'get_section_content',
+        'classpath' => 'course/format/flexsections/externallib.php',
+        'description' => 'Get section content',
+        'type' => 'read',
+        'ajax' => true,
+    ),
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.

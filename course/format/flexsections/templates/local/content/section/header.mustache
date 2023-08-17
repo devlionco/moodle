@@ -31,7 +31,10 @@ Example context (json):
 }
 }}
 
-<div class="d-flex align-items-center position-relative course-section-header-inner">
+<div
+    class="d-flex align-items-center position-relative course-section-header-inner"
+    {{#lazyload}}data-for = "inview"{{/lazyload}}
+    >
     {{#headerdisplaymultipage}}
     {{#indenttitle}}
     <span class="icon-no-margin p-2 dimmed_text mr-1" style="color: #dee2e6">

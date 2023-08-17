@@ -20,6 +20,10 @@ import CmItem from 'core_courseformat/local/content/section/cmitem';
 import Mutations from "format_flexsections/local/courseeditor/mutations";
 import FlexsectionsActions from 'format_flexsections/local/content/actions';
 import Exporter from "format_flexsections/local/courseeditor/exporter";
+import inView from "format_flexsections/inview";
+import Ajax from 'core/ajax';
+import Templates from 'core/templates';
+import Notification from 'core/notification';
 
 /**
  * Course format component
@@ -68,6 +72,8 @@ export default class FlexsectionComponent extends Component {
         // Optional component name for debugging.
         this.name = 'course_format_flexsections';
         this.selectors.COURSE_SUBSECTIONLIST = `[data-for='course_subsectionlist']`;
+        this.selectors.COURSE_SECTION = `[data-for='section']`;
+        this.selectors.SECTION_INVIEW_HEADER = `[data-for='inview']`;
     }
 
     /**
@@ -83,6 +89,7 @@ export default class FlexsectionComponent extends Component {
                 new FlexsectionsActions(this);
             }
         }
+        this._inView(state);
     }
 
     /**
@@ -244,5 +251,53 @@ export default class FlexsectionComponent extends Component {
             }
         );
         return displayedSections;
+    }
+
+    /**
+     * Update a content section using the inview.
+     * @param {Object} state The state data
+     *
+     */
+    _inView(state) {
+        const self = this;
+        inView(this.selectors.SECTION_INVIEW_HEADER).on('enter', async function(target) {
+
+            if (target.dataset.for !== 'inview') {
+                return;
+            }
+
+            const section = target.closest(self.selectors.COURSE_SECTION);
+            const sectionId = section.getAttribute('data-id');
+            target.dataset.for = 'viwed';
+
+            const template = 'format_flexsections/local/content/section/cmlist'; //Update section cmlist
+            const sectionToReplace = `[data-cmlistid="${sectionId}"]`;
+
+            const request = {
+                methodname: 'format_flexsections_get_section_content',
+                args: {
+                    courseid: state.course.id,
+                    sectionid: sectionId
+                }
+            };
+
+            try {
+                const response = await Ajax.call([request])[0];
+
+                if (response.result) {
+                    const data = JSON.parse(response.data);
+                    const {html, js} = await Templates.renderForPromise(template, data.cmlist);
+                    await Templates.replaceNodeContents(sectionToReplace, html, js);
+                    self.reactive.dispatch('sectionState', [sectionId]);
+                } else {
+                    Notification.addNotification({
+                        type: 'error',
+                        message: 'No valid response'
+                    });
+                }
+            } catch (e) {
+                Notification.exception(e);
+            }
+        });
     }
 }

@@ -48,12 +48,42 @@ class section extends \core_courseformat\output\local\content\section {
      * Data exporter
      *
      * @param \renderer_base $output
+     * @param bool $lazyload
      * @return stdClass
      */
-    public function export_for_template(\renderer_base $output): stdClass {
+    public function export_for_template(\renderer_base $output, bool $lazyload = false): stdClass {
         global $USER, $PAGE;
 
-        $data = parent::export_for_template($output);
+        $format = $this->format;
+        $course = $format->get_course();
+        $section = $this->section;
+
+        $summary = new $this->summaryclass($format, $section);
+
+        $data = (object)[
+            'num' => $section->section ?? '0',
+            'id' => $section->id,
+            'sectionreturnid' => $format->get_section_number(),
+            'insertafter' => false,
+            'summary' => $summary->export_for_template($output),
+            'highlightedlabel' => $format->get_section_highlighted_name(),
+            'sitehome' => $course->id == SITEID,
+            'editing' => $PAGE->user_is_editing(),
+            'lazyload' => $course->sectionviewoption == 2, // Turn on for list section view only
+        ];
+        $haspartials = [];
+        $haspartials['header'] = $this->add_header_data($data, $output);
+
+            $haspartials['availability'] = $this->add_availability_data($data, $output);
+            $haspartials['visibility'] = $this->add_visibility_data($data, $output);
+            $haspartials['editor'] = $this->add_editor_data($data, $output);
+            $haspartials['header'] = $this->add_header_data($data, $output);
+
+        if ($lazyload || !$data->lazyload){ // Lazy load
+            $haspartials['cm'] = $this->add_cm_data($data, $output);
+        }
+        $this->add_format_data($data, $haspartials, $output);
+
 
         // For sections that are displayed as a link do not print list of cms or controls.
         $showaslink = $this->section->collapsed == FORMAT_FLEXSECTIONS_COLLAPSED
