@@ -319,11 +319,13 @@ class quizdata {
                     $groupeddata = $item;
                     $maindata = false;
                     $item['usermenubtn'] = $maindata;
+                    $item['child'] = false;
                 } else {
                     // Remove some info for nested rows.
                     $item['fullname'] = '';
                     $item['usermenubtn'] = $maindata;
                     $item['state'] = '';
+                    $item['child'] = true;
                     $children[] = $item;
                 }
             }
@@ -624,7 +626,7 @@ class quizdata {
         ";
 
         $userids = [];
-        $context = \context_course::instance($this->course->id);
+        $context = context_course::instance($this->course->id);
         foreach ($DB->get_records_sql($sql, [$context->id]) as $item) {
             if ($item->count > 1) {
                 unset($participants[$item->userid]);
@@ -994,7 +996,7 @@ class quizdata {
 
             $record = $DB->get_record_sql("$select $from $where", $params);
         } else {
-            $record = new \StdClass();
+            $record = new StdClass();
             $record->numgrades = 0;
             $record->averagegrade = 0;
             $record->maxgrade = 0;
@@ -1094,9 +1096,9 @@ class quizdata {
         $data['groups'] = $groups;
 
         // Buttons.
-        $data['href_edit_question'] = new \moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cm->id]);
+        $data['href_edit_question'] = new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cm->id]);
         $data['href_preview_question'] =
-                new \moodle_url('/mod/quiz/startattempt.php', ['cmid' => $this->cm->id, 'sesskey' => sesskey()]);
+                new moodle_url('/mod/quiz/startattempt.php', ['cmid' => $this->cm->id, 'sesskey' => sesskey()]);
 
         // Build users and questions table.
 
@@ -1114,7 +1116,7 @@ class quizdata {
             $qname = str_replace("'", '', $q->name);
             $url = quiz_advancedoverview_get_question_link($q, $this->cm->id);
             $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->slot .
-                    "</span><span class=description>" . $qname . "</span></a>"; // TODO: insert $url;
+                    "</span><span class=description>" . $qname . "</span></a>";
             $tablequestion[] = [
                     '#' => $q->slot,
                     $questiontitle => $questionlink,
