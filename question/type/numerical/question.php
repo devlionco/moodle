@@ -299,7 +299,6 @@ class qtype_numerical_question extends question_graded_automatically {
                     return $answer;
                 }
 
-                return $answer;
             }
 
 //            if ($answer->within_tolerance($scaledvalue)) {
