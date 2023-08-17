@@ -15,23 +15,6 @@
     margin-bottom: 2rem;
 }
 
-// .main-filter-block {
-//     .main-filter-nav {
-//         .nav-tabs {
-//             border-bottom: 0.0625rem solid #bbb;
-//         }
-//         .nav.nav-tabs .nav-item {
-//             height: 2.5rem;
-//             font-size: 1.125rem;
-//         }
-//     }
-//     .main-filter-form {
-//         min-width: 18.5rem;
-//         button {
-//             right: 0;
-//         }
-//     }
-// }
 .inner-copy-question-btn {
     display: flex !important;
     align-items: center;
@@ -80,6 +63,9 @@
             font-size: 1.5rem;
             font-weight: 400;
             line-height: 2.125rem;
+            &:hover {
+                text-decoration: none;
+            }
         }
 
         .submenu-heading {
@@ -91,23 +77,28 @@
             display: flex;
             align-items: center;
 
-            .fa-sharp.fa-solid.fa-triangle {
-                transition: all 0.25s ease;
-                font-size: 1rem;
+            .fa-solid.fa-caret-left {
+                transition: transform 0.25s ease;
+                font-size: 1.5rem;
             }
         }
 
-        .collapse-btn[aria-expanded="false"] {
-            .fa-sharp.fa-solid.fa-triangle {
-                transform: rotate(90deg);
-                transition: all 0.25s ease;
+        .collapse-btn[aria-expanded="true"] {
+            .fa-solid.fa-caret-left {
+                transform: rotate(-90deg);
+                transition: transform 0.25s ease;
             }
         }
     }
-
+    .submenu-heading-wrapp {
+        border-bottom: none;
+        .collapse-btn  .fa-solid.fa-caret-left {
+            font-size: 1.25rem;
+        }
+    }
     .activity-aside-menu-block {
         font-size: 1.125rem;
-
+        border-bottom: .0625rem solid;
         &>li {
             .collapse-btn {
                 padding-left: 1rem;
@@ -119,9 +110,12 @@
             }
 
             .sub-menu-item {
-                padding-left: 2.5rem;
+                padding-left: 3rem;
                 font-weight: 300;
                 font-size: 1rem;
+                &:hover {
+                    box-shadow: none;
+                }
             }
         }
     }
