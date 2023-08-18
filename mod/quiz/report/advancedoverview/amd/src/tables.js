@@ -112,8 +112,8 @@ export const initquestionstable = function(data) {
  */
 function attemptNumberSorter(aRow, bRow, dir) {
   const isChildRow = aRow._row.data.child || bRow._row.data.child;
-  let a = aRow._row.data.attempt_number;
-  let b = bRow._row.data.attempt_number;
+  let a = "" + aRow._row.data.attempt_number;
+  let b = "" + bRow._row.data.attempt_number;
 
   if (isChildRow) {
     return dir === "asc" ? b.localeCompare(a) : a.localeCompare(b);
