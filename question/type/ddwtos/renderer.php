@@ -115,6 +115,9 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $content = str_replace('-', '&#x2011;', $choice->text);
             $content = str_replace(' ', '&#160;', $content);
 
+            // PTL-9676.
+            $content = '<div style="direction: ltr;">'.$content.'</div>';
+
             $infinite = '';
             if ($choice->infinite) {
                 $infinite = ' infinite';
