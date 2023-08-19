@@ -3,6 +3,9 @@
     padding: 0 0.7em;
     background: #fff3bf;
 }
+#responseform .answer .answer-inner p{
+    margin-bottom: 0;
+}
 .que.oumultiresponse .answer div.r0,
 .que.oumultiresponse .answer div.r1 {
     display: flex;

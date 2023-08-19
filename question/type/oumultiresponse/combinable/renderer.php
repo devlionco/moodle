@@ -68,6 +68,9 @@ class qtype_oumultiresponse_embedded_renderer extends qtype_renderer
 
             $choice = html_writer::div($question->format_text($ans->answer, $ans->answerformat, $qa,
                 'question', 'answer', $ansid), 'flex-fill ml-1');
+
+
+            // PTL-9653. TODO:
             $checkboxes[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) .
                 html_writer::div(html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering),
                 'answernumber') . $choice, 'd-flex w-auto',
@@ -80,7 +83,7 @@ class qtype_oumultiresponse_embedded_renderer extends qtype_renderer
             } else {
                 $feedbackimg[] = '';
             }
-            $classes[] = $class;
+            $classes[] = $class . ' inline-flex align-items-center answer-inner';
         }
 
         $cbhtml = '';
