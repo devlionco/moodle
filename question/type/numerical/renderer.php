@@ -46,7 +46,7 @@ class qtype_numerical_renderer extends qtype_renderer {
         $currentanswer = str_replace(' ', '', $currentanswer);
 
         // Correct answer for question preview page.
-        if($options instanceof question_preview_options) {
+        if($options instanceof \qbank_previewquestion\question_preview_options) {
             foreach($question->answers as $item){
                 if(trim($currentanswer) == trim($item->answer) && isset($item->unit) && !empty($item->unit)){
                     $currentanswer .= ' '.$item->unit;

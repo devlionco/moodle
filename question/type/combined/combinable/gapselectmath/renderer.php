@@ -76,7 +76,7 @@ class qtype_combined_gapselectmath_embedded_renderer extends qtype_renderer
         $mathlive = new \form_mathlive();
 
         // Correct answer for question preview page.
-        if(($options instanceof question_preview_options && !empty($selectoptions[$value])) || $options->correctness) {
+        if(($options instanceof \qbank_previewquestion\question_preview_options && !empty($selectoptions[$value])) || $options->correctness) {
             $attributes['disabled'] = 'disabled';
         }
 
