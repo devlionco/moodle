@@ -87,7 +87,7 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
         $output .= html_writer::end_tag('div');
 
         $output .= html_writer::start_div('d-flex justify-content-between flex-wrap mb-1');
-        $output .= html_writer::start_div('mod_quiz-edit-action-buttons btn-group edit-toolbar', ['role' => 'group']);
+        $output .= html_writer::start_div('mod_quiz-edit-action-buttons edit-toolbar d-flex align-items-center', ['role' => 'group']);
         $output .= $this->repaginate_button($structure, $pageurl, $disablebutton);
         $output .= $this->selectmultiple_button($structure);
 
@@ -113,7 +113,7 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
         if($disablebutton) $buttoncanceloptions['disabled'] = 'disabled';
 
         $groupoptions = array(
-                'class' => 'btn-group selectmultiplecommand actions m-1',
+                'class' => 'selectmultiplecommand actions m-1',
                 'role' => 'group'
         );
 

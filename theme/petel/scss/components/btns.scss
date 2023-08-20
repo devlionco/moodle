@@ -39,7 +39,7 @@
       outline: none;
     }
   }
-  &.btn-secondary {
+  &.btn-secondary:not(.disabled):not(:disabled) {
     background-color: $secondarylight;
     border-color: $secondarylight;
     color: $primary;
@@ -60,7 +60,6 @@
       outline: .125rem $secondary;
     }
   }
-
   &.btn-warning:not(:disabled):not(.disabled):active,
   &.btn-warning {
     color: $primary;
@@ -194,5 +193,12 @@
       border-color: $primary;
       outline: solid .125rem $primary !important;
     }
+  }
+  &.disabled, &:disabled {
+    background-color: $gray-300;
+    border-color: $gray-300;
+    color: $body-color;
+    box-shadow: none !important;
+    opacity: 1;
   }
 }

@@ -269,13 +269,19 @@ echo html_writer::end_tag('div');
 
 echo html_writer::end_tag('div');
 
-echo html_writer::start_tag('div', array('class' => 'd-flex justify-content-between align-items-center'));
+echo html_writer::start_tag('div', array('class' => 'd-flex justify-content-between align-items-center position-relative'));
 echo html_writer::tag('input', '', [
-    'class' => 'form-control',
+    'class' => 'form-control main-search-input',
     'id' => 'search-participiants',
     'value' => '',
     'placeholder' => get_string('searchplaceholder', 'local_petel')
 ]);
+
+echo html_writer::start_tag('div', ['class' => 'position-absolute border-0 petel-search-btn']);
+echo html_writer::tag('i', '', ['class' => 'fa-sharp fa-solid fa-magnifying-glass','id' => 'search-participiants',]);
+echo html_writer::end_tag('div');
+
+
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 $urlparams = $PAGE->url->params();

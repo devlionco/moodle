@@ -547,10 +547,15 @@
 				text-align: center;
 				height: 100%;
 				vertical-align: middle;
-
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
 				&:first-of-type {
 					padding: 0 1rem;
 					text-align: left;
+				}
+				&:nth-child(3) {
+					justify-content: start;
 				}
 			}
 		}
