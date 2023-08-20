@@ -172,7 +172,9 @@ div .que.vplquestion .outcome {
     height: 360px;
 }
 .savpl .formulation pre {
+    /*rtl:ignore*/
     direction: ltr;
+    /*rtl:ignore*/
     text-align: left;
 }
 .que.savpl .ui-dialog-titlebar {
@@ -184,3 +186,9 @@ div .que.vplquestion .outcome {
     left: 1em;
     top: 10px;
 }
+/* use to fix preview dialog
+.dir-rtl .savpl .formulation pre[id*=vpl_result] {
+    direction: ltr !important;
+    text-align: left !important;
+}
+*/
