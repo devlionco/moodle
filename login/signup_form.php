@@ -42,7 +42,7 @@ class login_signup_form extends moodleform implements renderable, templatable {
 
         $mform = $this->_form;
 
-        $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
+        //$mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
 
         $mform->addElement('static', 'usernamerestrictions', '', get_string('usernamerestrictions', 'theme_petel'));
 
@@ -61,7 +61,7 @@ class login_signup_form extends moodleform implements renderable, templatable {
         $mform->setType('password', core_user::get_property_type('password'));
         $mform->addRule('password', get_string('missingpassword'), 'required', null, 'client');
 
-        $mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
+        //$mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
 
         $mform->addElement('static', 'mustgiveemailorphone', '', get_string('mustgiveemailorphone', 'theme_petel'));
 
