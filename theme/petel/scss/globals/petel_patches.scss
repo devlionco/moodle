@@ -113,6 +113,6 @@ body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 
 }
 
 /* PTL-9689 Right align ggb geogebra applet in quiz question, in RTL mode */
-html[dir=rtl] .applet_scaler.ggbTransform {
-  float:left;
+.applet_scaler.ggbTransform {
+  float:right;
 }
