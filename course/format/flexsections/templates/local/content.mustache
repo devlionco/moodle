@@ -257,9 +257,9 @@ Example context (json):
         {{/initialsection}}
 
         {{#showsimplecards}}
-            <li class="card-deck dashboard-card-deck {{format}} px-2 pt-3" role="list" data-for="course_sectionlist">
+            <li class="card-deck dashboard-card-deck {{format}} px-2 pt-3" role="list">
                 {{#sections}}
-                    {{> format_flexsections/local/content/section-card }}
+                    {{> format_flexsections/local/content/simplesection-card }}
                 {{/sections}}
             </li>
         {{/showsimplecards}}
