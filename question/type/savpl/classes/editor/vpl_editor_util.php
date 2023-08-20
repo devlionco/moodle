@@ -37,7 +37,7 @@ class vpl_editor_util {
     public static function generate_requires_evaluation() {
         global $PAGE;
         self::generate_jquery();
-        $PAGE->requires->css( new moodle_url( '/mod/vpl/editor/VPLIDE.css' ) );
+        $PAGE->requires->css( new moodle_url( '/question/type/savpl/editor/VPLIDE.css' ) );
     }
     public static function generate_requires($options) {
         global $PAGE, $COURSE;
@@ -58,12 +58,12 @@ class vpl_editor_util {
         $options['isGroupActivity'] = false;
         $options['isTeacher'] = has_capability('moodle/course:update', $coursecontext);
         self::generate_jquery();
-        $PAGE->requires->js( new moodle_url( '/mod/vpl/editor/zip/inflate.js' ) );
-        $PAGE->requires->js( new moodle_url( '/mod/vpl/editor/zip/unzip.js' ) );
-        $PAGE->requires->js( new moodle_url( '/mod/vpl/editor/xterm/term.js' ) );
-        $PAGE->requires->js( new moodle_url( '/mod/vpl/editor/noVNC/include/util.js' ) );
-        $PAGE->requires->css( new moodle_url( '/mod/vpl/editor/VPLIDE.css' ) );
-        $PAGE->requires->js_call_amd('mod_vpl/vplide', 'init', array($tagid, $options));
+        $PAGE->requires->js( new moodle_url( '/question/type/savpl/editor/zip/inflate.js' ) );
+        $PAGE->requires->js( new moodle_url( '/question/type/savpl/editor/zip/unzip.js' ) );
+        $PAGE->requires->js( new moodle_url( '/question/type/savpl/editor/xterm/term.js' ) );
+        $PAGE->requires->js( new moodle_url( '/question/type/savpl/editor/noVNC/include/util.js' ) );
+        $PAGE->requires->css( new moodle_url( '/question/type/savpl/editor/VPLIDE.css' ) );
+        $PAGE->requires->js_call_amd('qtype_savpl/vplide', 'init', array($tagid, $options));
     }
     public static function print_js_i18n() {
         global $CFG;
