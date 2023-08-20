@@ -453,10 +453,16 @@
   text-align: center;
   height: 100%;
   vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .block_advancedoverview_report #questions-table .tabulator-row .tabulator-cell:first-of-type {
   padding: 0 1rem;
   text-align: left;
+}
+.block_advancedoverview_report #questions-table .tabulator-row .tabulator-cell:nth-child(3) {
+  justify-content: start;
 }
 .block_advancedoverview_report #questions-table .qname {
   min-width: 9rem;
@@ -569,29 +575,21 @@
   height: 0;
   right: 0;
 }
-
 .block_advancedoverview_report #students-table .fname.active::after,
 .block_advancedoverview_report #students-table .lname.active::after {
   display: block;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  color: white; /* Change color to white */
+  color: #666;
 }
-
 .block_advancedoverview_report #students-table .fname.active[data-sort=desc]::after,
 .block_advancedoverview_report #students-table .lname.active[data-sort=desc]::after {
   border-bottom: none;
-  border-top: 6px solid white; /* Change color to white */
+  border-top: 6px solid #666;
 }
-
 .block_advancedoverview_report #students-table .fname.active[data-sort=asc]::after,
 .block_advancedoverview_report #students-table .lname.active[data-sort=asc]::after {
-  border-bottom: 6px solid white; /* Change color to white */
-}
-
-.block_advancedoverview_report #questions-table.tabulator .tabulator-header .tabulator-col .tabulator-col-sorter i,
-.block_advancedoverview_report #students-table.tabulator .tabulator-header .tabulator-col .tabulator-col-sorter i {
-  color: white;
+  border-bottom: 6px solid #666;
 }
 
 #studentsActionsBlock #downloadXlsTable {

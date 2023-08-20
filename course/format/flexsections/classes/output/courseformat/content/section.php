@@ -69,7 +69,7 @@ class section extends \core_courseformat\output\local\content\section {
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
-            'lazyload' => $course->sectionviewoption == 2 || $PAGE->user_is_editing(), // Turn on for list section view only
+            'lazyload' => $this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
         ];
         $haspartials = [];
         $haspartials['header'] = $this->add_header_data($data, $output);
