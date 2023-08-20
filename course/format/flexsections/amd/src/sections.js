@@ -71,7 +71,7 @@ define(['jquery', 'core/ajax'],
                 let flagmutation = 0;
                 let observerNodeTargets = document.querySelectorAll('.flexsections'),
                     observerConfig = {attributes: false, childList: true, subtree: false};
-
+                //TODO update do we realy need observer here ?
                 observerNodeTargets.forEach(function(target) {
                     new MutationObserver(function(type) {
                         var addednodes = type[0].addedNodes;
