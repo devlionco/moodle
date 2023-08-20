@@ -336,37 +336,46 @@ class form_mathlive implements renderable {
         $html .= '
             <style>
                 #page-question-preview  .custom-options,
+                #page-mod-quiz-report .custom-options,
                 #page-mod-quiz-attempt .custom-options {
                     z-index: 1;
                 }
                 #page-question-preview .custom-select.select-trigger,
+                #page-mod-quiz-report .custom-select.select-trigger,
                 #page-mod-quiz-attempt .custom-select.select-trigger {
                     cursor: pointer;
                 }
                 #page-question-preview .custom-select.select-trigger span,
+                #page-mod-quiz-report .custom-select.select-trigger span,
                 #page-mod-quiz-attempt .custom-select.select-trigger span {
                     white-space: nowrap;
                 }
                 #page-question-preview .custom-option,
+                #page-mod-quiz-report .custom-option,
                 #page-mod-quiz-attempt .custom-option  {
                     position: relative;
                 }
                 #page-question-preview .custom-option math-field,
+                #page-mod-quiz-report .custom-option math-field, 
+                #page-mod-quiz-report .custom-select math-field
                 #page-mod-quiz-attempt .custom-option math-field, 
                 #page-mod-quiz-attempt .custom-select math-field {
                     font-size: 22px !important;
                     border-radius: 0 !important;
                     border: none !important;
                 }
+                #page-mod-quiz-report .custom-option:hover,
                 #page-question-preview .custom-option:hover,
                 #page-mod-quiz-attempt .custom-option:hover {
                     background-color: #016de1 !important;
                 }
+                #page-mod-quiz-report .custom-option:hover math-field,
                 #page-question-preview .custom-option:hover math-field,
                 #page-mod-quiz-attempt .custom-option:hover math-field {
                     background-color: #016de1 !important;
                     color: #fff;
                 }
+                #page-mod-quiz-report .custom-option::after,
                 #page-question-preview .custom-option::after,
                 #page-mod-quiz-attempt .custom-option::after  {
                     content: "";
@@ -378,10 +387,12 @@ class form_mathlive implements renderable {
                     left: 0;
                     z-index: 10;
                 }
+                #page-mod-quiz-report .custom-option.selected,
                 #page-question-preview .custom-option.selected,
                 #page-mod-quiz-attempt .custom-option.selected {
                     border: 2px solid #eee;
                 }
+                html[dir="rtl"] #page-mod-quiz-report .custom-options,
                 html[dir="rtl"] #page-question-preview .custom-options,
                 html[dir="rtl"] #page-mod-quiz-attempt .custom-options {
                     left: 0;
@@ -397,6 +408,11 @@ class form_mathlive implements renderable {
      
                 .custom-options.selectmathlive-options {
                     z-index: 1000 !important;
+                }
+                #page-question-preview math-field::part(virtual-keyboard-toggle),
+                #page-mod-quiz-report math-field::part(virtual-keyboard-toggle),
+                #page-mod-quiz-attempt math-field::part(virtual-keyboard-toggle) {
+                    display: none;
                 }
             </style>
         ';
@@ -450,7 +466,7 @@ class form_mathlive implements renderable {
                     select.find("span").hide();
                     $(this).closest(".select").find(".select-trigger").find("math-field").remove();
     
-                    let cloned = `<math-field
+                    let cloned = `<math-field virtual-keyboard-mode=auto
                         style="
                             background-color: white;
                             border: none;
