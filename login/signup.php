@@ -85,6 +85,13 @@ if ($mform_signup->is_cancelled()) {
 } else if ($user = $mform_signup->get_data()) {
     // Add missing required fields.
     $user = signup_setup_new_user($user);
+    $user->policyagreed = 1; // Students do not need to agree to site policy.
+    $user->confirmed = 1; // We skip email confirmation.
+    // PTL-818 In case user is using phone1 instead of email.
+    if (empty($user->email)) {
+        $user->email = 'noemail@petel.weizmann.ac.il';
+        $user->emailstop = 1;
+    }
 
     // Plugins can perform post sign up actions once data has been validated.
     core_login_post_signup_requests($user);
