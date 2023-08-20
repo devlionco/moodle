@@ -23,6 +23,8 @@ use moodle_url;
 use section_info;
 use stored_file;
 
+require_once $CFG->dirroot . "/course/format/flexsections/locallib.php";
+
 /**
  * Contains the section header output class.
  *
