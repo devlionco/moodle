@@ -86,7 +86,7 @@ define(
                     if (getHashNumber() !== false) {
                         openHash();
                     } else {
-                        collapseAction('close');
+                        collapseAction('open');
                     }
                 }, 700);
 
