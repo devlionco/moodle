@@ -69,8 +69,9 @@ define([
          *
          * @method addShareButtonActivity
          * @param {Object} attr additional attr for node.
+         * @param {string} node selector for parent node element.
          */
-        addShareActivityButton: function(attr = null) {
+        addShareActivityButton: function(attr = null, node = '') {
 
             let self = this;
 
@@ -82,8 +83,7 @@ define([
                 shareBtn
                     .attr('data-handler', 'openDialog')
                     .attr('data-cmid', cmid)
-                    .attr('data-cmlink', cmlink)
-                    .attr('data-inview', 'done');
+                    .attr('data-cmlink', cmlink);
 
                 for (const prop in attr) {
                     shareBtn.attr(`data-${prop}`, attr[prop]);
@@ -93,15 +93,8 @@ define([
             };
 
             // On load.
-            $('*[data-region="' + SELECTORS.shareActivityButton + '"]').each(function() {
+            $(`${node} [data-region="${SELECTORS.shareActivityButton}"]`).each(function() {
                 renderButton($(this));
-            });
-
-            // Inview.
-            inView('*[data-region="' + SELECTORS.shareActivityButton + '"]').on("enter", function(e) {
-                if ($(e).find('button').data('inview') !== 'done') {
-                    renderButton($(e));
-                }
             });
 
             // Observer on action.
