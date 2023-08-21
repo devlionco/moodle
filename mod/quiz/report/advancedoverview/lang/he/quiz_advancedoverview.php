@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Advanced overview';
-$string['advancedoverview'] = 'Advanced overview';
+$string['pluginname'] = 'ציונים ומשוב מורחב';
+$string['advancedoverview'] = 'ציונים ומשוב מורחב';
 $string['privacy:metadata'] = 'Advanced overview does not store any personal data';
 $string['separategroups'] = 'קבוצות נפרדות';
 $string['allparticipants'] = 'כל המשתתפים';
@@ -49,7 +49,7 @@ $string['usehint'] = 'השתמשו ברמז';
 $string['usechat'] = 'פנו בצ׳אט';
 $string['answered'] = 'ענו';
 
-$string['studentsintotal'] = 'סכ"ה {$a} תלמידים';
+$string['studentsintotal'] = 'סה"כ {$a} תלמידים';
 
 $string['notstarted'] = 'לא התחילו';
 $string['inprogress'] = 'בתהליך';
@@ -63,14 +63,14 @@ $string['anonymous_lastname'] = 'Username';
 
 $string['viewingprofile'] = 'צפייה בפרויפל';
 $string['passwordreset'] = 'אתחול סיסמא';
-$string['loginasthisstudent'] = 'התחבר כתלמיד זה';
+$string['loginasthisstudent'] = 'התחברות כתלמיד זה';
 $string['allcoursereport'] = 'דוח קורס מלא';
 $string['courseobservationreport'] = 'דוח צפיה בקורס';
 $string['sendingmessage'] = 'שליחת הודעה';
 $string['recalculategrades'] = 'חישוב ציונים מחדש';
-$string['advancedoverviewreport'] = 'Advanced Overview Report';
+$string['advancedoverviewreport'] = 'דוח ציונים ומשוב מורחב';
 $string['deletingattempts'] = 'מחיקת נסיונות';
-$string['selectanaction'] = 'בחרו פעולה…';
+$string['selectanaction'] = 'בחירת פעולה…';
 $string['selectedstudents'] = 'נבחרו {$a} תלמידים';
 $string['closingresponseattempts'] = 'סגירת נסיונות מענה';
 
@@ -90,7 +90,6 @@ $string['scoredisplay'] = 'הצגת ניקוד';
 $string['extendedview'] = 'תצוגה מורחבת';
 $string['scoreranges'] = 'טווחי ציונים';
 $string['responseattempts'] = 'נסיונות מענה';
-$string['responseattempts'] = 'נסיונות מענה';
 $string['attempt1'] = 'נסיון 1';
 $string['attempt2'] = 'נסיון 2';
 $string['attempt3andmore'] = 'נסיון 3 ומעלה';
@@ -101,7 +100,7 @@ $string['numofstudents'] = 'לפי תלמידים ';
 $string['averagegrade'] = 'ציון ממוצע';
 $string['highestscore'] = 'הציון הגבוה ביותר';
 $string['lowestscore'] = 'הציון הנמוך ביותר';
-$string['classstatus'] = 'סטטוס כיתתי';
+$string['classstatus'] = 'מצב כיתתי';
 $string['sendingmassage'] = 'שליחת הודעה';
 $string['scoredistribution'] = 'התפלגות ציונים';
 
@@ -109,12 +108,12 @@ $string['empty'] = 'אין נתונים להצגה';
 $string['anon_user'] = 'תלמיד/ה';
 $string['areyoushure'] = 'האם לבצע את פעולה?';
 $string['execute'] = 'לבצע';
-$string['selecteditemswrong'] = 'הבחירה שלך לא מתימה לפעולה הזות';
+$string['selecteditemswrong'] = 'הבחירה שלך לא מתאימה לפעולה הזו';
 $string['filter'] = 'סינון';
-$string['cleareverything'] = 'נקה הכל';
+$string['cleareverything'] = 'ניקוי הכל';
 
-$string['task'] = 'Task advanced overview';
-$string['cachedef_advancedoverview'] = 'Advanced overview';
+$string['task'] = 'משימת שיקלול ציונים ומשוב מורחב';
+$string['cachedef_advancedoverview'] = 'ציונים ומשוב מורחב';
 
 $string['regradingattemptxofy'] = 'חישוב מחדש של ניסיון ({$a->done}/{$a->count})';
 $string['submitted'] = 'הגישו';
