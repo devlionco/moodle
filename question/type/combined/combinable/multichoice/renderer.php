@@ -90,7 +90,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
             } else {
                 $feedbackimg[] = '';
             }
-            $classes[] = $class;
+            $classes[] = $class . ' inline-flex align-items-center answer-inner pr-3';
         }
 
         if ('h' === $subq->get_layout()) {
