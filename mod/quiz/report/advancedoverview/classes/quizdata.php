@@ -350,13 +350,14 @@ class quizdata {
     }
 
     public static function get_item_with_max_value($array) {
-        $maxvalue = 0;
+        $maxvalueattempt = new stdClass;
+        $maxvalueattempt->attempt = 0;
         foreach ($array as $item => $data) {
-            if ($maxvalue === null || $data->attempt > $maxvalue) {
-                $maxvalue = $data->attempt;
+            if ($maxvalueattempt->attempt == 0 || $data->attempt > $maxvalueattempt->attempt) {
+                $maxvalueattempt = $data;
             }
         }
-        return $maxvalue;
+        return $maxvalueattempt;
     }
 
     public function table_data_user($attempts, $userid) {
@@ -372,17 +373,16 @@ class quizdata {
         $completereportlink = $this->get_completereport_link($userid);
         $outlinereportlink = $this->get_outlinereport_link($userid);
 
+        // Count only last attempts.
         $lastattempt = static::get_item_with_max_value($attempts);
-        foreach ($attempts as $attempt) {
-
-            $state = $attempt->state ?: 'notstarted';
-
-            foreach ($this->options['participants']['states'] as $key => $item) {
-                if ($item['name'] == $state) {
-                    $this->options['participants']['states'][$key]['value']++;
-                }
+        $state = $lastattempt->state ?: 'notstarted';
+        foreach ($this->options['participants']['states'] as $key => $item) {
+            if ($item['name'] == $state) {
+                $this->options['participants']['states'][$key]['value']++;
             }
+        }
 
+        foreach ($attempts as $attempt) {
             $continue = false;
             foreach ($this->config->participants->attempts_range as $k => $arange) {
                 switch ($arange) {
@@ -402,7 +402,7 @@ class quizdata {
                         }
                         break;
                     case 'last':
-                        if ($lastattempt === $attempt->attempt) {
+                        if ($lastattempt->attempt === $attempt->attempt) {
                             $continue = true;
                         }
                         break;
