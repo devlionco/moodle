@@ -24,6 +24,7 @@ import inView from "format_flexsections/inview";
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
+import sharewith from 'community_sharewith/modal';
 
 /**
  * Course format component
@@ -289,6 +290,7 @@ export default class FlexsectionComponent extends Component {
                     const {html, js} = await Templates.renderForPromise(template, data.cmlist);
                     await Templates.replaceNodeContents(sectionToReplace, html, js);
                     self.reactive.dispatch('sectionState', [sectionId]);
+                    sharewith.addShareActivityButton(null, `[data-cmlistid="${sectionId}"]`);
                 } else {
                     Notification.addNotification({
                         type: 'error',
