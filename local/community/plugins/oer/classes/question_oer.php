@@ -123,8 +123,7 @@ class question_oer {
                 qbe.questioncategoryid AS qcatid,
                 q.name AS qname,
                 q.questiontext AS questiontext,
-                q.qtype AS qtype,
-                #q.idnumber AS qidnumber,
+                q.qtype AS qtype,                
                 qbe.idnumber AS qidnumber,
                 q.timecreated AS qtimecreated,
                 q.timemodified AS qtimemodified,
@@ -326,14 +325,21 @@ class question_oer {
         list($structure, $categorieslist) = $this->structure_question_categories();
 
         foreach ($categorieslist as $catid) {
-            $sql = "
-                SELECT * 
-                FROM {question} q
-                LEFT JOIN {question_bank_entries} qbe ON qbe.id = q.id
-                WHERE qbe.questioncategoryid = ? ;
-            ";
 
-            foreach ($DB->get_records_sql($sql, [$catid]) as $item) {
+            $sql = "
+                    SELECT 
+                        q.*        
+                    FROM {question_bank_entries} qbe
+                    JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id AND qv.version = (
+                        SELECT MAX(version) 
+                        FROM {question_versions}
+                        WHERE questionbankentryid = qbe.id AND status = :ready
+                    )
+                    JOIN {question} q ON q.id = qv.questionid                                                                    
+                    WHERE qbe.questioncategoryid = :category";
+
+            foreach ($DB->get_records_sql($sql, ['ready' => \core_question\local\bank\question_version_status::QUESTION_STATUS_READY,
+                    'category' => $catid]) as $item) {
                 $this->question_recalculate_in_db($item->id);
             }
         }
