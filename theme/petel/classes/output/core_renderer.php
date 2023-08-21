@@ -749,8 +749,14 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                 }
             }
 
+            if (right_to_left() == 'rtl') {
+                $html = str_replace('dropdown-menu-left', 'dropdown-menu-right', $this->render($am));
+            } else {
+                $html = $this->render($am);
+            }
+
             return html_writer::div(
-                $this->render($am)
+                $html
             );
         }
     }

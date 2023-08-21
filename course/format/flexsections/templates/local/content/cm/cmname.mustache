@@ -62,8 +62,16 @@
                     {{/activityname}}
                 </div>
                 {{#pluginname}}
-                <div class="text-uppercase small">
-                    {{{pluginname}}}
+                <div class="d-flex">
+
+                    <div class="text-uppercase small">
+                        {{{pluginname}}}    
+                    </div>
+                    {{#afterlink}}
+                    <div class="afterlink d-flex align-items-center ml-2">
+                        {{{afterlink}}}
+                    </div>
+                    {{/afterlink}}
                 </div>
                 {{/pluginname}}
             </div>

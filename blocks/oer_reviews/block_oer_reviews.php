@@ -157,10 +157,6 @@ class block_oer_reviews extends block_base {
 
                 $activity = html_writer::link($activityurl, $activityinfo->oername,
                         ['aria-label' => $activityinfo->oername . ' ' . strip_tags($feedbacktooltip)]);
-                
-                if (right_to_left() == 'rtl') {
-                    $userpicture = str_replace('dropdown-menu-left', 'dropdown-menu-right', $userpicture);
-                }
 
                 $text .= html_writer::tag('div',
                         "<div class='row mb-3'>
