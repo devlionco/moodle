@@ -783,6 +783,10 @@ class sequence_help {
                 foreach ($modinfo->get_section_info_all() as $item) {
                     $data = $item->getIterator()->getArrayCopy();
 
+                    if (!$data['visible']) {
+                        continue;
+                    }
+
                     if (!isset($data['parent'])) {
                         $data['parent'] = 0;
                     }

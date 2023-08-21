@@ -68,6 +68,12 @@ $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
 
+if ($section = $DB->get_record('course_sections', ['id' => $sectionid])) {
+    if (!$section->visible) {
+        $sectionid = 0;
+    }
+}
+
 if ($categoryid || $courseid || $sectionid) {
     if ($categoryid) {
         $type = 'category';
