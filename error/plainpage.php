@@ -49,14 +49,15 @@ body {
     font-weight: 400;
     line-height: 1.5;
     color: #343a40;
-    text-align: left;
+    text-align: right;
+    direction: rtl;
     background-color: #f2f2f2;
 }
 #page {
     margin-top: 15px;
     background: white;
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 1600px;
+    margin: 2em;
     padding: 15px;
 }
 #region-main {
@@ -71,6 +72,10 @@ h1 {
     font-weight: 300;
     line-height: 1.2;
 }
+img {
+    max-width: 100%;
+    height: auto;
+}
 .alert-danger {
     color: #6e211e;
     background-color: #f6d9d8;
@@ -82,9 +87,16 @@ h1 {
     <body>
         <div id="page">
             <div id="region-main">
+                <!--
                 <h1><?php echo $title ?></h1>
                 <?php echo $content ?>
+                -->
+                <div id="banner-img">
+                    <img src="<?php echo $CFG->wwwroot."/error/"; ?>PeTeL_banner_banner_before_upgrade_aug23.png">
+                </div>
+                <!--
                 <?php echo $footer ?>
+                -->
             </div>
         </div>
     </body>
