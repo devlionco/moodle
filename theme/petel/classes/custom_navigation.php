@@ -56,8 +56,10 @@ class custom_navigation {
         }
 
         // PTL-9414.
-        if ($PAGE->pagetype == 'mod-quiz-view') {
-            if ($cmid = optional_param('id', 0, PARAM_INT)) {
+        if (in_array($PAGE->pagetype,
+            ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report'])) {
+            $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
+            if ($cmid) {
                 $context = \context_module::instance($cmid);
 
                 if (has_capability('mod/quiz:manage', $context)) {
@@ -77,7 +79,8 @@ class custom_navigation {
                     'backup',
                     'restore',
                     'metadata',
-                    'questionbank',
+                    //'questionbank',
+                    'quiz_report',
             ];
 
             $lists = $PAGE->secondarynav->get_children_key_list();
@@ -85,6 +88,18 @@ class custom_navigation {
                 if (in_array($key, $lists)) {
                     $PAGE->secondarynav->children->remove($key);
                 }
+            }
+        }
+
+        // Move some menu items to "others" menu listbox for all users.
+        $movetootherlist = [
+            'quiz_report',
+            'questionbank'
+        ];
+        $lists = $PAGE->secondarynav->get_children_key_list();
+        foreach ($movetootherlist as $key) {
+            if (in_array($key, $lists)) {
+                $PAGE->secondarynav->get($key)->set_force_into_more_menu(true);
             }
         }
 
