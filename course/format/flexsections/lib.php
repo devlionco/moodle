@@ -1583,6 +1583,36 @@ class format_flexsections extends core_courseformat\base {
         return $defaults->$name;
     }
 
+    public function get_custom_sections_preferences(): array {
+        global $USER;
+
+        $course = $this->get_course();
+        $result = get_user_preferences('flexsectionscoursesectionspreferences_' . $course->id, json_encode([]), $USER->id);
+
+        return json_decode($result);
+    }
+
+    /**
+     * Return the format section preferences.
+     *
+     * @param string $preferencename preference name
+     * @param int[] $sectionids affected section ids
+     *
+     */
+    public function set_sections_preference(string $preferencename, array $sectionids) {
+        global $USER;
+        $course = $this->get_course();
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
+        $sectionpreferences[$preferencename] = $sectionids;
+        set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
+
+        // PTL-9728.
+        set_user_preference('flexsectionscoursesectionspreferences_' . $course->id, json_encode($sectionpreferences['indexcollapsed']), $USER->id);
+
+        // Invalidate section preferences cache.
+        $coursesectionscache = cache::make('core', 'coursesectionspreferences');
+        $coursesectionscache->delete($course->id);
+    }
 }
 
 /**
