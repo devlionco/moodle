@@ -117,20 +117,35 @@ class copy_from_mycourses {
                 " AND ( q.questiontext LIKE('%" . $search . "%') OR CONCAT(u.firstname, ' ', u.lastname) LIKE('%" . $search .
                 "%') )" : '';
 
-        $sql = "SELECT 
-                   q.id as qid, 
-                   q.name, 
-                   q.questiontext, 
-                   q.qtype, 
-                   q.idnumber, 
-                   CONCAT(u.firstname, ' ', u.lastname) as createdby,                   
-                   q.timecreated,
-                   q.timemodified
-                FROM {question} q
-                LEFT JOIN {user} u ON (q.createdby = u.id)            
-                WHERE q.category = ? " . $like;
+        $sql = "
+                    SELECT 
+                        q.id as qid, 
+                        q.name, 
+                        q.questiontext, 
+                        q.qtype,      
+                        CONCAT(u.firstname, ' ', u.lastname) as createdby,
+                        q.timecreated,
+                        q.timemodified,
+                        qbe.idnumber, 
+                        qbe.questioncategoryid AS category,
+                        qv.id AS versionid, 
+                        qv.version, 
+                        qv.questionbankentryid
+                    
+                    FROM {question_bank_entries} qbe
+                    JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id AND qv.version = (
+                        SELECT MAX(version) 
+                        FROM {question_versions}
+                        WHERE questionbankentryid = qbe.id AND status = :ready
+                    )
+                    JOIN {question} q ON q.id = qv.questionid
+                    JOIN {user} u ON (q.createdby = u.id)
+                                                
+                    WHERE qbe.questioncategoryid = :category  ".$like;
 
-        return $DB->get_records_sql($sql, [$catid]);
+
+        return $DB->get_records_sql($sql, ['ready' => \core_question\local\bank\question_version_status::QUESTION_STATUS_READY,
+                        'category' => $catid]);
     }
 
     public static function get_courses_for_current_user($search) {
