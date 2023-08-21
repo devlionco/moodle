@@ -77,10 +77,12 @@ class cm extends \core_courseformat\output\local\content\cm {
         global $CFG;
 
         require_once $CFG->dirroot . "/course/format/flexsections/locallib.php";
-        
+
         $data = parent::export_for_template($output);
         // JS parser compatability
-        $data->url = $data->url ?? $data->url->out();
+        if (isset($data->url)){
+            $data->url = $data->url->out();
+        }
 
         // Has share button.
         $data->hassharebutton = true;
