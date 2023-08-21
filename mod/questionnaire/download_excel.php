@@ -35,25 +35,25 @@ if ($instance === false) {
     if (!empty($SESSION->instance)) {
         $instance = $SESSION->instance;
     } else {
-        print_error('requiredparameter', 'questionnaire');
+        throw new \moodle_exception('requiredparameter', 'questionnaire');
     }
 }
 $SESSION->instance = $instance;
 $usergraph = get_config('questionnaire', 'usergraph');
 
 if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $instance))) {
-    print_error('incorrectquestionnaire', 'questionnaire');
+    throw new \moodle_exception('incorrectquestionnaire', 'questionnaire');
 }
 if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 require_course_login($course, true, $cm);
 
-$questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
+$questionnaire = new questionnaire($course, $cm, $questionnaire->id, $questionnaire);
 
 // Add renderer and page objects to the questionnaire object for display use.
 $questionnaire->add_renderer($PAGE->get_renderer('mod_questionnaire'));
@@ -64,7 +64,7 @@ $context = context_module::instance($cm->id);
 if (!has_capability('mod/questionnaire:readallresponseanytime', $context) &&
   !($questionnaire->capabilities->view && $questionnaire->can_view_response($rid))) {
     // Should never happen, unless called directly by a snoop...
-    print_error('nopermissions', 'moodle', $CFG->wwwroot.'/mod/questionnaire/view.php?id='.$cm->id);
+    throw new \moodle_exception('nopermissions', 'moodle', $CFG->wwwroot.'/mod/questionnaire/view.php?id='.$cm->id);
 }
 
 $questionnaire->canviewallgroups = has_capability('moodle/site:accessallgroups', $context);
