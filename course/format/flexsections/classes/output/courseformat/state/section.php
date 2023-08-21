@@ -61,14 +61,18 @@ class section extends \core_courseformat\output\local\state\section {
 
         // PTL-9728.
         if (!empty($preferences)) {
-            $data->indexcollapsed = true;
-            if (isset($preferences[$this->section->id])) {
-                $sectionpreferences = $preferences[$this->section->id];
 
-                if (!isset($sectionpreferences->indexcollapsed)) {
-                    $data->indexcollapsed = false;
-                }
-            }
+            //$data->indexcollapsed = true;
+            //if (isset($preferences[$this->section->id])) {
+            //    $sectionpreferences = $preferences[$this->section->id];
+            //
+            //    if (!isset($sectionpreferences->indexcollapsed)) {
+            //        $data->indexcollapsed = false;
+            //    }
+            //}
+
+            $collapsedsections = $format->get_custom_sections_preferences();
+            $data->indexcollapsed = in_array($this->section->id, $collapsedsections) ? true : false;
         }else{
             $count = 0;
             $arropened = [];
