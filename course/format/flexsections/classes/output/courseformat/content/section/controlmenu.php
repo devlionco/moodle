@@ -73,7 +73,7 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
                 'name' => get_string('addsubsection', 'format_flexsections'),
                 'pixattr' => ['class' => ''],
                 'attr' => [
-                    'class' => 'editing_addsubsection',
+                    'class' => '',
                     'data-action-flexsections' => 'addSubSection',
                     'data-parentid' => $section->id,
                 ],
@@ -230,7 +230,7 @@ class controlmenu extends \core_courseformat\output\local\content\section\contro
                         'name' => get_string('copysection', 'community_sharewith'),
                         'pixattr' => ['class' => ''],
                         'attr' => [
-                            'class' => 'editing_addsubsection',
+                            'class' => '',
                             'data-handler' => 'selectCourseForSection',
                             'data-sectionid' => $section->id,
                         ],
