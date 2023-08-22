@@ -124,3 +124,8 @@ body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 
 .geogebra div[id*=ggbdiv] {
   border: 1px solid gray;
 }
+
+/* PTL-9680 Question type algebra, always display f(x) on left side, even in RTL mode */
+.que.algebra .answer {
+  unicode-bidi: plaintext;
+}
