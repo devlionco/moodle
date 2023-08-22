@@ -84,19 +84,17 @@ img {
 }
     </style>
     </head>
-    <body>
+    <body class="errorpage">
         <div id="page">
             <div id="region-main">
-                <!--
                 <h1><?php echo $title ?></h1>
                 <?php echo $content ?>
-                -->
+                <!--
                 <div id="banner-img">
                     <img src="<?php echo $CFG->wwwroot."/error/"; ?>PeTeL_banner_banner_before_upgrade_aug23.png">
                 </div>
-                <!--
-                <?php echo $footer ?>
                 -->
+                <?php echo $footer ?>
             </div>
         </div>
     </body>
