@@ -304,7 +304,8 @@ button#triggerModalSharewith {
   bottom: 0;
 }
 
-.sharebtn {
+.sharebtn,
+.editing_addsubsection {
   width: 2rem;
   height: 2rem;
   border: 0.0625rem solid transparent;
@@ -315,10 +316,13 @@ button#triggerModalSharewith {
   background: none;
   box-shadow: none;
 }
-.sharebtn i {
+.sharebtn i,
+.editing_addsubsection i {
   font-size: 1rem;
 }
-.sharebtn:focus, .sharebtn:hover {
+.sharebtn:focus, .sharebtn:hover,
+.editing_addsubsection:focus,
+.editing_addsubsection:hover {
   box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.2);
 }
 
