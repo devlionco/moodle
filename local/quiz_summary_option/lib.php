@@ -306,7 +306,7 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
             }
         }
 
-        if ($objdefault->summary_hideall === 1) {
+        if (isset($objdefault->summary_hideall) && $objdefault->summary_hideall === 1) {
             $objdefault->summary_numbering = $objdefault->summary_state = $obj->summary_teamwork =
             $objdefault->summary_grade = $objdefault->summary_mark = $objdefault->summary_teacherdialog =
             $objdefault->summary_questionname = 1;
