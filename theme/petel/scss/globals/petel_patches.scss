@@ -129,3 +129,13 @@ body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 
 .que.algebra .answer {
   unicode-bidi: plaintext;
 }
+
+/* Quiz settings - highlight headers of question feedback options */
+#fgroup_id_closedoptionsgrp_label,
+#fgroup_id_openoptionsgrp_label,
+#fgroup_id_immediatelyoptionsgrp_label,
+#fgroup_id_duringoptionsgrp_label {
+  font-size: 1.3em;
+  font-weight: 500;
+  text-decoration: underline;
+}
