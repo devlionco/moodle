@@ -668,11 +668,16 @@ class course_help {
                     }
 
                     if ($data['section'] != 0 && $data['visible'] == 1 && $data['parent'] == 0) {
-                        $courses = $course->query()->compare('sectionid', $data['id'])->compare('visible', '1')->get();
-                        if (!empty($courses)) {
-                            $sectionname = course_get_format($objcourse)->get_section_name($data['section']);
-                            $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
-                        }
+
+                        // If no courses in section.
+                        //$courses = $course->query()->compare('sectionid', $data['id'])->compare('visible', '1')->get();
+                        //if (!empty($courses)) {
+                        //    $sectionname = course_get_format($objcourse)->get_section_name($data['section']);
+                        //    $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
+                        //}
+
+                        $sectionname = course_get_format($objcourse)->get_section_name($data['section']);
+                        $sections[] = ['sectionid' => $data['id'], 'section_name' => $sectionname];
                     }
                 }
 

@@ -636,15 +636,23 @@ class question_help {
                             }
                         }
 
-                        $questions = $question->query()->compare('sectionid', $data['id'])->compare('metadata_qhidden', '0')->get();
-                        if (!empty($questions)) {
-                            $sections[] = [
-                                    'sectionid' => $data['id'],
-                                    'section_name' => $sectionname,
-                                    'if_child_category_present' => !empty($childcategory) ? true : false,
-                                    'child_category' => $childcategory
-                            ];
-                        }
+                        // If no questions in section.
+                        //$questions = $question->query()->compare('sectionid', $data['id'])->compare('metadata_qhidden', '0')->get();
+                        //if (!empty($questions)) {
+                        //    $sections[] = [
+                        //            'sectionid' => $data['id'],
+                        //            'section_name' => $sectionname,
+                        //            'if_child_category_present' => !empty($childcategory) ? true : false,
+                        //            'child_category' => $childcategory
+                        //    ];
+                        //}
+
+                        $sections[] = [
+                            'sectionid' => $data['id'],
+                            'section_name' => $sectionname,
+                            'if_child_category_present' => !empty($childcategory) ? true : false,
+                            'child_category' => $childcategory
+                        ];
                     }
                 }
 
