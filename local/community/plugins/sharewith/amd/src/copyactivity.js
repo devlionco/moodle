@@ -220,7 +220,7 @@ define([
                     template = modal.template.confirm;
                     context.text = M.util.get_string('section_copied_to_course', 'community_sharewith');
                 }
-                modal.render(template, context);
+                modal.render(template, context).done(()=>{$('#modalSharewith .modal-body span').addClass('px-3 text-center mx-auto')});
             };
 
             Ajax.call([{
