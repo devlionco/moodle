@@ -138,3 +138,55 @@
 .eupopup-container {
     font-size: 1rem;
 }
+
+#ministry_statement {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+
+    //animation-name: slide-right;
+    //animation-duration: 2s;
+}
+#statement {
+    background: $petel-light+A6;
+    padding: 0.7rem;
+    font-family: $font-family-sans-serif;
+    width: 100%;
+    line-height: 1;
+    font-size: 0.875rem;
+}
+#statement_title{
+    color: $petel-primary;
+    font-weight: bold;
+}
+
+#ministry_statement_mobile{
+    margin-top: 2rem;
+    height: 8rem;
+    overflow: scroll;
+}
+
+@media only screen and (max-width: 600px) {
+    #ministry_statement{
+        display: none;
+    }
+    #statement{
+        padding: 0px;
+        background: unset;
+        font-size: .675rem;
+    }
+
+    #page-login-index .petel-login-page .shadow-image{
+        margin-top: 2rem;
+        max-height: 110px;
+    }
+    #page-login-index .lang{
+        margin-bottom: 0rem;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    #ministry_statement_mobile{
+        display: none;
+    }
+}
