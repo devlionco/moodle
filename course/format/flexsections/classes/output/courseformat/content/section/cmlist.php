@@ -58,6 +58,7 @@ class cmlist extends \core_courseformat\output\local\content\section\cmlist {
 
         $data = new stdClass();
         $data->cms = [];
+        $data->sectionid = $section->id;
 
         // By default, non-ajax controls are disabled but in some places like the frontpage
         // it is necessary to display them. This is a temporal solution while JS is still
