@@ -43,14 +43,14 @@
     .potentialidp a {
         height: 2.5rem;
         padding: .5rem 1rem;
-        font-size: 1rem;
+        font-size: 1.125rem;
         font-style: normal;
         font-weight: 400;
         line-height: normal;
         color: $body-color;
         background-color: $white;
         border: .0625rem solid $gray-300;
-
+        border-radius: .5rem;
         &:placeholder-shown {
             color: $gray-600;
         }
@@ -65,6 +65,7 @@
     }
 
     .passeye {
+        font-size: 1.125rem;
         color: $gray-600;
         margin-top: -1.875rem;
     }
@@ -82,19 +83,11 @@
     }
 
     .forgetpass {
-        font-size: 0.75rem;
+        font-size: 1rem;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
         color: $link-color;
-    }
-
-    #loginbtn,
-    #signupbtn {
-        font-size: 0.75rem;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
     }
 
     #termsandconditions {
@@ -115,11 +108,11 @@
     }
 
     .policies a {
-        font-size: 0.75rem;
+        font-size: 1rem;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
-        color: $link-color;
+        color: $secondary;
     }
 }
 
