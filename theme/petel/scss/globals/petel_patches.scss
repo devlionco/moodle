@@ -113,6 +113,14 @@ body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 
 }
 
 /* PTL-9689 Right align ggb geogebra applet in quiz question, in RTL mode */
-.applet_scaler.ggbTransform {
+/* .applet_scaler.ggbTransform { */
+/*
+.geogebra .applet_scaler {
   float:right;
+}
+*/
+
+/* PTL-9689 Add border around ggb applets question type geogebra */
+.geogebra div[id*=ggbdiv] {
+  border: 1px solid gray;
 }
