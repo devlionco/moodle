@@ -413,6 +413,13 @@ class community_oer_observer {
      * @return void
      */
     public static function question_created(\core\event\question_created $event) {
+        global $DB;
+
+        $obj = $DB->get_record('question_versions', ['questionid' => $event->objectid]);
+        if ($oldversion = $obj->version - 1) {
+            $prevq = $DB->get_record('question_versions', ['version' => $oldversion, 'questionbankentryid' => $obj->questionbankentryid]);
+            $DB->delete_records('community_oer_question', ['qid' => $prevq->questionid]);
+        }
 
         // Question module.
         $question = new \community_oer\question_oer;

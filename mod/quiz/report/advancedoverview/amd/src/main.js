@@ -1,3 +1,6 @@
+/* eslint-disable no-debugger */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable no-console */
 import $ from 'jquery';
 import * as Str from 'core/str';
 import ModalFactory from 'core/modal_factory';

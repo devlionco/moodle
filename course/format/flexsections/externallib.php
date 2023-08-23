@@ -268,7 +268,7 @@ class format_flexsections_external extends external_api {
      * @return string
      */
     public static function get_section_status($sectionid) {
-        global $DB, $USER;
+        global $DB, $USER, $COURSE;
 
         $data = $cmids = [];
         format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
@@ -281,13 +281,13 @@ class format_flexsections_external extends external_api {
             $sql = "
                 SELECT *
                 FROM {logstore_standard_log}
-                WHERE `action`='viewed' AND `target`='course_module' AND `contextinstanceid` IN (".implode(',', $cmids).") AND userid=?
+                WHERE userid=? AND courseid=? AND `action`='viewed' AND `target`='course_module' AND `contextinstanceid` IN (".implode(',', $cmids).") 
                 ORDER BY `timecreated` DESC
                 LIMIT 1
                 ;
             ";
 
-            if ($log = $DB->get_record_sql($sql, [$USER->id])) {
+            if ($log = $DB->get_record_sql($sql, [$COURSE->id,$USER->id])) {
 
                 $cm = $modinfo->get_cm($log->contextinstanceid);
 

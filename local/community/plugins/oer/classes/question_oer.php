@@ -136,9 +136,10 @@ class question_oer {
                 qc.parent AS catparent,
                 qc.idnumber AS catidnumber
                         
-            FROM {question} q
-            LEFT JOIN {question_bank_entries} qbe ON qbe.id = q.id
-            LEFT JOIN {question_categories} qc ON qbe.questioncategoryid = qc.id            
+            FROM {question} q               
+            JOIN {question_versions} qv ON qv.questionid = q.id
+            JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+            JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
             WHERE q.id = ?;
         ";
 
@@ -327,8 +328,7 @@ class question_oer {
         foreach ($categorieslist as $catid) {
 
             $sql = "
-                    SELECT 
-                        q.*        
+                    SELECT q.id
                     FROM {question_bank_entries} qbe
                     JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id AND qv.version = (
                         SELECT MAX(version) 
@@ -455,7 +455,7 @@ class question_oer {
             if (has_capability('moodle/category:manage', $context)) {
                 $obj->data[$key]->enable_edit_question = true;
                 $obj->data[$key]->link_edit_question =
-                        $CFG->wwwroot . '/question/question.php?courseid=' . $item->courseid . '&id=' . $item->qid;
+                        $CFG->wwwroot . '/question/bank/editquestion/question.php?courseid=' . $item->courseid . '&id=' . $item->qid;
             } else {
                 $obj->data[$key]->enable_edit_question = false;
                 $obj->data[$key]->link_edit_question = '';
