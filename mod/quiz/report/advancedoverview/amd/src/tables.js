@@ -634,6 +634,18 @@ export const initstudentstable = function(data, anon = 0) {
       });
 
       studentsTableActions.setAnonToggl(anon);
+
+      const page = document.getElementById('page');
+      let storedScrollPosition = +sessionStorage.getItem("scrollPosition") || 0;
+
+      $(document).ready(()=> {
+          $(page).scrollTop(storedScrollPosition);
+        });
+
+      window.addEventListener('beforeunload', function () {
+          sessionStorage.setItem("scrollPosition", page.scrollTop);
+      });
+
     })
     .fail(Notification.exception);
 };
