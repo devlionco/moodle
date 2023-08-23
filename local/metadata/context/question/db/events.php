@@ -30,4 +30,8 @@ $observers = [
         'eventname' => '\core\event\question_deleted',
         'callback' => '\metadatacontext_question\observer::question_deleted'
     ],
+    [
+            'eventname' => '\core\event\question_created',
+            'callback' => '\metadatacontext_question\observer::question_created',
+    ],
 ];

@@ -38,6 +38,37 @@ class observer {
      * @return bool true on success
      */
     public static function question_deleted(\core\event\question_deleted $event) {
-        return \local_metadata\observer::delete_metadata(CONTEXT_QUESTION, $event->objectid);
+        global $DB;
+
+        $obj = $DB->get_record('question_versions', ['questionid' => $event->objectid]);
+        foreach ($DB->get_records('question_versions', ['questionbankentryid' => $obj->questionbankentryid]) as $item) {
+            \local_metadata\observer::delete_metadata(CONTEXT_QUESTION, $item->questionid);
+        }
+
+        return true;
+    }
+
+    /**
+     * Triggered via question_deleted event.
+     * - Removes question metadata
+     *
+     * @param \core\event\question_created $event
+     * @return bool true on success
+     */
+    public static function question_created(\core\event\question_created $event) {
+        global $DB;
+
+        $obj = $DB->get_record('question_versions', ['questionid' => $event->objectid]);
+        if ($oldversion = $obj->version - 1) {
+            $prevq = $DB->get_record('question_versions', ['version' => $oldversion, 'questionbankentryid' => $obj->questionbankentryid]);
+
+            foreach (\local_metadata\mcontext::question()->getFields() as $field) {
+                if ($oldvalue = \local_metadata\mcontext::question()->get($prevq->questionid, $field->shortname)){
+                    \local_metadata\mcontext::question()->save($event->objectid, $field->shortname, $oldvalue);
+                }
+            }
+        }
+
+        return true;
     }
 }
