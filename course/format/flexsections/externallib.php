@@ -271,6 +271,11 @@ class format_flexsections_external extends external_api {
         global $DB, $USER, $COURSE;
 
         $data = $cmids = [];
+
+        // PTL-9806 Improve performance (disable all section statistics)
+        // TODO: fix last access activity calculation time
+        return json_encode($data);
+
         format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
 
         $section = $DB->get_record('course_sections', ['id' => $sectionid]);
@@ -281,7 +286,8 @@ class format_flexsections_external extends external_api {
             $sql = "
                 SELECT *
                 FROM {logstore_standard_log}
-                WHERE userid=? AND courseid=? AND `action`='viewed' AND `target`='course_module' AND `contextinstanceid` IN (".implode(',', $cmids).") 
+                WHERE userid=? AND courseid=? AND `action`='viewed' AND `target`='course_module' 
+                        AND `contextinstanceid` IN (".implode(',', $cmids).")
                 ORDER BY `timecreated` DESC
                 LIMIT 1
                 ;
