@@ -1350,7 +1350,6 @@ class checklist_class {
                         $table->head[] = $headertext;
                     }
                 }
-                $table->head[] = format_string($item->displaytext).$this->output->item_grouping($item);
                 $table->level[] = ($item->indent < 3) ? $item->indent : 2;
                 $table->size[] = '80px';
                 $table->skip[] = (!$reportsettings->showoptional) && ($item->itemoptional == CHECKLIST_OPTIONAL_YES);
