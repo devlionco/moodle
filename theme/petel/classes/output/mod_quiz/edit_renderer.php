@@ -927,6 +927,7 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
         if ($structure->can_be_edited() && $structure->has_use_capability($slot)) {
             $questionicons .= $this->question_remove_icon($structure, $slot, $pageurl);
             $questionicons .= $this->question_duplicate_icon($structure, $slot, $pageurl);
+            $questionicons .= $this->question_metadata_icon($structure, $slot, $pageurl);
         }
         $questionicons .= $this->marked_out_of_field($structure, $slot);
 
@@ -1031,8 +1032,8 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
                 // exit
             }
         }
-        //$returnurl = new \moodle_url('/mod/quiz/edit.php', $pageurl->params());
-        $url = new \moodle_url('/question/duplicate_question.php',
+
+        $url = new \moodle_url('/theme/petel/duplicate_question.php',
                 array('sesskey' => sesskey(), 'cmid' => $pageurl->get_param('cmid')
                 , 'id' => $qid, 'addonpage' => $qpage));
         $strduplicate = get_string('duplicate');
