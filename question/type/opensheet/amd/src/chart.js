@@ -3,17 +3,17 @@ define([
     'core/str',
     'core/notification',
     'core/chartjs-lazy'
-], function ($, Str, Notification, ChartJS) {
+], function($, Str, Notification, ChartJS) {
     `use strict`;
 
     return {
-        init: function (id) {
+        init: function(id) {
 
             let refresh = $('#' + id + '_refreshChart');
 
             // Event input change title.
-            $('#' + id + '_titleChart').keyup(function(e){
-                if(e.keyCode === 13){
+            $('#' + id + '_titleChart').keyup(function(e) {
+                if (e.keyCode === 13) {
                     refresh.val('1');
                 }
             });
@@ -30,7 +30,7 @@ define([
 
             setInterval(function() {
 
-                if(refresh.val() === '1'){
+                if (refresh.val() === '1') {
 
                     refresh.val(0);
                     $('#' + id + '_defaultImage').hide();
@@ -38,7 +38,7 @@ define([
 
                     let data = JSON.parse($('#' + id + '_dataChart').val());
 
-                    var barColors = ["red", "green","blue","orange","brown", "#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145"];
+                    var barColors = ["red", "green", "blue", "orange", "brown", "#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145"];
 
                     let type = $('#' + id + '_typeChart').val();
                     let charttype = "bar";
@@ -49,13 +49,13 @@ define([
                     var xValues = [];
                     let labelXenable = false;
                     let labelX = '';
-                    $(data.labels).each(function (index) {
-                        if(index === 0 && (type === 'LINECHART' || type === 'SCATTERCHART' || type === 'BARCHART')){
-                            if(data.labels[index].length > 0){
+                    $(data.labels).each(function(index) {
+                        if (index === 0 && (type === 'LINECHART' || type === 'SCATTERCHART' || type === 'BARCHART')) {
+                            if (data.labels[index].length > 0) {
                                 labelXenable = true;
                                 labelX = data.labels[index];
                             }
-                        }else {
+                        } else {
                             xValues.push(data.labels[index]);
                         }
                     });
@@ -63,13 +63,13 @@ define([
                     var yValues = [];
                     let labelYenable = false;
                     let labelY = '';
-                    $(data.values).each(function (index) {
-                        if(index === 0 && (type === 'LINECHART' || type === 'SCATTERCHART' || type === 'BARCHART')){
-                            if(data.values[index].length > 0){
+                    $(data.values).each(function(index) {
+                        if (index === 0 && (type === 'LINECHART' || type === 'SCATTERCHART' || type === 'BARCHART')) {
+                            if (data.values[index].length > 0) {
                                 labelYenable = true;
                                 labelY = data.values[index];
                             }
-                        }else {
+                        } else {
                             yValues.push(data.values[index]);
                         }
                     });
@@ -79,35 +79,42 @@ define([
                         legend: {display: false},
                     };
 
+                    // Build title.
                     var title = $('#' + id + '_titleChart').val();
-                    if(title.length > 0){
-                        options.title = {display: true, text: title};
-                    }else{
-                        options.title = {display: false, text: ''};
+                    let titledisplay;
+
+                    if (title.length > 0) {
+                        titledisplay = true;
+                    } else {
+                        titledisplay = false;
+                        title = '';
                     }
+
+                    options.plugins = {
+                            title: {
+                                display: titledisplay,
+                                text: title
+                            }
+                        };
+
 
                     // Build scales.
                     let scales = {
-                        yAxes: [{
-                            display: true,
-                            ticks: {
-                                beginAtZero: true
-                            },
-                            scaleLabel: {
-                                display: labelYenable,
-                                labelString: labelY
-                            }
-                        }],
-                        xAxes: [{
-                            display: true,
-                            ticks: {
-                                beginAtZero: true
-                            },
-                            scaleLabel: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
                                 display: labelXenable,
-                                labelString: labelX
+                                text: labelX
                             }
-                        }]
+                        },
+
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: labelYenable,
+                                text: labelY
+                            }
+                        }
                     };
 
                     switch (type) {
@@ -144,11 +151,11 @@ define([
                         }]
                     };
 
-                    if(type === 'SCATTERCHART'){
+                    if (type === 'SCATTERCHART') {
 
                         var xyValues = [];
 
-                        $(xValues).each(function (index) {
+                        $(xValues).each(function(index) {
                             xyValues.push({'x': xValues[index], 'y': yValues[index]});
                         });
 
@@ -165,7 +172,7 @@ define([
 
                     let classname = 'myChart' + id;
 
-                    if( window[classname] !== undefined) {
+                    if (window[classname] !== undefined) {
                         window[classname].destroy();
                     }
 
@@ -180,5 +187,5 @@ define([
 
         },
 
-    }
+    };
 });
