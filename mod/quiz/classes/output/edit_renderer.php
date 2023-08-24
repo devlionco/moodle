@@ -840,7 +840,6 @@ class edit_renderer extends \plugin_renderer_base {
         }
         if ($structure->can_be_edited() && $structure->has_use_capability($slot)) {
             $questionicons .= $this->question_remove_icon($structure, $slot, $pageurl);
-            $questionicons .= $this->question_duplicate_icon($structure, $slot, $pageurl);
         }
         $questionicons .= $this->marked_out_of_field($structure, $slot);
 
@@ -859,35 +858,6 @@ class edit_renderer extends \plugin_renderer_base {
             $this->pix_icon('i/dragdrop', get_string('move'), 'moodle', array('class' => 'iconsmall', 'title' => '')),
             array('class' => 'editing_move', 'data-action' => 'move')
         );
-    }
-
-    /**
-     * Render the duplicate icon.
-     *
-     * @param structure $structure object containing the structure of the quiz.
-     * @param int $slot the first slot on the page we are outputting.
-     * @param \moodle_url $pageurl the canonical URL of the edit page.
-     * @return string HTML to output.
-     */
-    public function question_duplicate_icon(structure $structure, $slot, $pageurl) {
-        $qid = 0;
-        $qpage = 0;
-        foreach ($structure->get_slots() as $slotitems) {
-            if ($slotitems->slot == $slot) {
-                $qid = $slotitems->questionid;
-                $qpage = $slotitems->page;
-            }
-        }
-        //$returnurl = new \moodle_url('/mod/quiz/edit.php', $pageurl->params());
-        $url = new \moodle_url('/question/duplicate_question.php',
-                array('sesskey' => sesskey(), 'cmid' => $pageurl->get_param('cmid')
-                , 'id' => $qid, 'addonpage' => $qpage));
-        $strduplicate = get_string('duplicate');
-
-        $image = $this->pix_icon('t/copy', $strduplicate);
-
-        return $this->action_link($url, $image, null, array('title' => $strduplicate,
-                'class' => 'cm-edit-action editing_duplicate', 'data-action' => 'duplicate'));
     }
 
     /**
