@@ -139,6 +139,7 @@ $string['cmlastaccess'] = 'Last activity you watched in this unit:';
 // Collapse button.
 $string['collapsebuttonopen'] = 'Full view';
 $string['collapsebuttonclose'] = 'Collapse all';
+$string['loading'] = 'Loading activity list...';
 
 // Task.
 $string['taskrecentlyviewedsections'] = 'Recently viewed sections';

@@ -137,6 +137,7 @@ $string['cmlastaccess'] = 'פעילות אחרונה בה צפיתם ביחיד�
 // Collapse button.
 $string['collapsebuttonopen'] = 'תצוגה מלאה';
 $string['collapsebuttonclose'] = 'תצוגה מצומצמת';
+$string['loading'] = 'תוכן היחידה והפעילויות בטעינה...';
 
 // Task.
 $string['taskrecentlyviewedsections'] = 'צפית ביחידה לאחרונה';
