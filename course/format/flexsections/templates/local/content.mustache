@@ -143,12 +143,15 @@ Example context (json):
                     {{/summary}}
 
                 </div>
-                <div class="card-header p-2">
-                    {{> core_courseformat/local/content/section/availability }}
-                    {{$ format_flexsections/local/content/completion }}
-                        {{> format_flexsections/local/content/completion }}
-                    {{/ format_flexsections/local/content/completion }}
-                </div>
+
+                {{#hasblockavailabilityandcompletion}}
+                    <div class="card-header p-2">
+                        {{> core_courseformat/local/content/section/availability }}
+                        {{$ format_flexsections/local/content/completion }}
+                            {{> format_flexsections/local/content/completion }}
+                        {{/ format_flexsections/local/content/completion }}
+                    </div>
+                {{/hasblockavailabilityandcompletion}}
             </div>
 
             {{#showsectionstatus}}
