@@ -103,12 +103,7 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 
 $header = $PAGE->activityheader;
 
-// PTL-9578.
-if(strpos($PAGE->pagetype, 'mod-') !== false){
-    $headercontent = false;
-} else {
-    $headercontent = $header->export_for_template($renderer);
-}
+$headercontent = $header->export_for_template($renderer);
 
 $buttonvloseblockdrawer = true;
 
