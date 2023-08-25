@@ -216,8 +216,6 @@ class content extends \core_courseformat\output\local\content {
 
         $data->allowedediting = has_capability('moodle/course:viewhiddensections', $coursecontext);
 
-        $data->hasblockavailabilityandcompletion = $data->hasavailability || $data->completion;
-
         return $data;
     }
 
