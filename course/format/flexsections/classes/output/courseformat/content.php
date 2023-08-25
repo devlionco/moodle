@@ -144,9 +144,12 @@ class content extends \core_courseformat\output\local\content {
             }
         }
 
-        // courselinks
+        // Course links.
         $iscoursepage = preg_match("/course-view/", $PAGE->pagetype);
         $data->courselinks = $iscoursepage ? \theme_petel\output\core_renderer::course_links() : '';
+
+        // Course search.
+        $data->coursesearch = $iscoursepage ? \theme_petel\output\core_renderer::course_search() : '';;
 
         // Button disable shared course.
         if (has_capability('community/sharecourse:coursecopy', \context_course::instance($COURSE->id), $USER->id)){

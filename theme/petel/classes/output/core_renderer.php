@@ -359,14 +359,14 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
         return $html;
     }
 
-    public function course_search() {
-        global $COURSE;
+    public static function course_search() {
+        global $COURSE, $OUTPUT;
 
         $html = '';
         if ($COURSE->id > 1) {
             $data = new stdClass();
             $data->courseid = $COURSE->id;
-            $html .= $this->render_from_template('core/course_search', $data);
+            $html .= $OUTPUT->render_from_template('theme_petel/core/course_search', $data);
         }
 
         return $html;

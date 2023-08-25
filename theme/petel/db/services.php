@@ -50,6 +50,14 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true,
     ),
+    'theme_petel_course_search' => array(
+            'classname' => 'theme_petel_external',
+            'methodname' => 'course_search',
+            'classpath' => 'theme/petel/externallib.php',
+            'description' => 'Search activity in a course',
+            'type' => 'read',
+            'ajax' => true,
+    ),
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -59,6 +67,7 @@ $services = array(
             'theme_petel_quiz_student_question_message',
             'theme_petel_quiz_set_timer_preferences',
             'theme_petel_quiz_get_timer_preferences',
+            'theme_petel_course_search',
             ),
         'restrictedusers' => 0,
         'enabled' => 1,
