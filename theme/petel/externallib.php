@@ -91,7 +91,67 @@ class theme_petel_external extends external_api
      * @return external_description
      */
     public static function student_question_message_returns() {
-
         return new external_value(PARAM_RAW, 'Status');
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function course_search_parameters() {
+        return new external_function_parameters(
+                array(
+                        'courseid' => new external_value(PARAM_INT, 'Course ID'),
+                        'term' => new external_value(PARAM_RAW, 'Search term'),
+                )
+        );
+    }
+
+    /**
+     */
+    public static function course_search($courseid, $term) {
+        $params = self::validate_parameters(self::course_search_parameters(),
+                array(
+                        'courseid' => (int)$courseid,
+                        'term' => (string)$term,
+                )
+        );
+        return self::search_activity($params['courseid'], $params['term']);
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function course_search_returns() {
+        return new external_value(PARAM_RAW, 'Search result');
+    }
+
+    private static function search_activity($courseid, $term) {
+
+        $modinfo = get_fast_modinfo($courseid);
+        $modules = array();
+        $response = 0;
+        foreach($modinfo->cms as $cm) {
+            // Exclude activities which are not visible or have no link (=label)
+            if (!$cm->uservisible or !$cm->has_view()) {
+                continue;
+            }
+
+            if (substr(strtolower($cm->name), 0, strlen($term)) === strtolower($term)) {
+                $response++;
+                $modules[] = array(
+                        'id' => $cm->id,
+                        'name' => $cm->name,
+                        'url' => $cm->url->out(),
+                        'modname' => $cm->modname,
+                        'term' => $term,
+                );
+                if ($response == 10) {
+                    break;
+                }
+            }
+        }
+        return json_encode(array('response' => $response, 'data' => $modules));
     }
 }

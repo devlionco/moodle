@@ -25,9 +25,15 @@
 
     Page header.
 }}
-<div id="course_activity_search" class="form-inline" style="width: fit-content">
-    <input id="course_activity_search-input" class="form-control" type="text"
+<div id="course_activity_search" class="form-inline mr-3 position-relative" style="width: fit-content">
+    <input id="course_activity_search-input" class="form-control main-search-input" type="text" data-courseid="{{courseid}}"
            placeholder="{{#str}} searchcourse, theme_petel {{/str}}" role="search"
            aria-label="{{#str}} searchcourse, theme_petel {{/str}}"/>
-    <input type="hidden" id="course_activity_search_count" value="$count" />
+    <div class="position-absolute border-0 petel-search-btn">
+        <i class="fa-sharp fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    </div>
 </div>
+
+{{#js}}
+    require(['theme_petel/course_search'], function(search) {search.init();});
+{{/js}}
