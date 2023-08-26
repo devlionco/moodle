@@ -300,3 +300,4 @@ $string['ministry_statement_text'] = '
 מומלץ להפעיל שיקול דעת בהחלטה כיצד לעשות שימוש בתכנים השונים ולקרוא בעיון את <a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_policy.pdf">תנאי השימוש</a> באתר.
 לצורך קידום הוראת המדעים בישראל, חוקרי המחלקה להוראת המדעים עושים שימוש מחקרי בנתונים המצטברים בסביבת פטל {$a} והכל בהתאם לכללי אתיקה רלוונטיים ו<a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_privacy_policy.pdf">מדיניות הפרטיות</a> של האתר.
 ';
+$string['movetopage'] = 'בחירת עמוד תצוגה: ';

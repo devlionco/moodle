@@ -310,3 +310,4 @@ $string['timeisup'] = 'Time is up';
 $string['advancedoverviewlink'] = 'Grades and extended feedback';
 $string['ministry_statement_title'] = ' ';
 $string['ministry_statement_text'] = ' ';
+$string['movetopage'] = 'Change page to: ';
