@@ -57,7 +57,8 @@ class custom_navigation {
 
         // PTL-9414.
         if (in_array($PAGE->pagetype,
-            ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report'])) {
+            ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
+             'question-edit', 'mod-quiz-override', ''])) {
             $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
             if ($cmid) {
                 $context = \context_module::instance($cmid);
@@ -94,7 +95,8 @@ class custom_navigation {
         // Move some menu items to "others" menu listbox for all users.
         $movetootherlist = [
             'quiz_report',
-            'questionbank'
+            'questionbank',
+            'metadata'
         ];
         $lists = $PAGE->secondarynav->get_children_key_list();
         foreach ($movetootherlist as $key) {
