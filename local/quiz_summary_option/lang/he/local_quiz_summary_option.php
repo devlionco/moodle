@@ -38,4 +38,4 @@ $string['summaryoption_grade'] = 'הסתרת ניקוד השאלה';
 $string['summaryoption_mark'] = 'הסתרת "סימון" השאלה';
 $string['summaryoption_teacherdialog'] = 'הסתרת רב-שיח בין תלמיד למורה אודות שאלה';
 $string['summaryoption_question_name'] = 'הסתרת "שם השאלה"';
-$string['summaryoption_teamwork'] = 'הסתרת עבודה בקבוצות';
+$string['summaryoption_teamwork'] = 'הסתרת כפתור עבודה בצוות';
