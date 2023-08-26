@@ -1607,7 +1607,12 @@ class format_flexsections extends core_courseformat\base {
         set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
 
         // PTL-9728.
-        set_user_preference('flexsectionscoursesectionspreferences_' . $course->id, json_encode($sectionpreferences['indexcollapsed']), $USER->id);
+        $json_indexcollapsed = json_encode($sectionpreferences['indexcollapsed']);
+        if ($json_indexcollapsed === 'null') {
+            $json_indexcollapsed = '[]';
+        }
+        set_user_preference('flexsectionscoursesectionspreferences_' . $course->id,
+            $json_indexcollapsed, $USER->id);
 
         // Invalidate section preferences cache.
         $coursesectionscache = cache::make('core', 'coursesectionspreferences');
