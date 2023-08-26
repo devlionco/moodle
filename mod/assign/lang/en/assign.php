@@ -672,3 +672,4 @@ $string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submis
 $string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
 $string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
 $string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
+$string['grading'] = 'Grades';

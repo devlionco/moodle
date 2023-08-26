@@ -28,3 +28,4 @@ $string['addattempt_custom'] = 'האם לאפשר הגשה חוזרת לכל ה�
 $string['sendmessage'] = 'שליחת הודעה';
 
 $string['attachmentlist'] = 'רשימת קבצים מצורפים:';
+$string['grading'] = 'ציונים';
