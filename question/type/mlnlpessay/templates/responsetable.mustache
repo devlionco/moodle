@@ -13,8 +13,8 @@
             <tr class="table-{{#correct}}success{{/correct}}{{^correct}}danger{{/correct}}">
                 <td class="col-6">{{description}}</td>
                 <td>{{type}}</td>
-                <td>{{#correct}}<i class="fa-pro fa-check text-success"></i>{{/correct}}
-                    {{^correct}}<i class="fa-pro fa-times text-danger"></i>{{/correct}}
+                <td>{{#correct}}<i class="fas fa-check text-success"></i>{{/correct}}
+                    {{^correct}}<i class="fas fa-times text-danger"></i>{{/correct}}
                 </td>
                 {{#showoverridden}}
                     <td><input type="checkbox" data-categoryid="{{id}}" data-questionid="{{questionid}}" data-questionattemptid="{{questionattemptid}}" class="override-trigger-{{questionid}}" {{#overridden}}checked{{/overridden}}/></td>
