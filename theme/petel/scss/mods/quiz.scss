@@ -428,6 +428,14 @@
 
             input {
                 font-size: 0;
+                &.disabled,
+                &:disabled,
+                &:focus {
+                    background-color: transparent;
+                    box-shadow: none;
+                    outline: none;
+                    border: none;
+                }
             }
 
             &.arr-left {
