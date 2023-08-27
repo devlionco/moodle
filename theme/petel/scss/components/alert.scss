@@ -70,6 +70,15 @@
     }
 }
 
+.que .outcome,
+.que .comment {
+    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), $body-color); /* stylelint-disable-line max-line-length */
+    // Darken link colour inside comments for better colour contrast against regular text.
+    a {
+        color: darken($link-color, 30%);
+    }
+}
+
 
 // Alternate styles
 //
