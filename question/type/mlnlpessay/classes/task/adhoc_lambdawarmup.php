@@ -55,6 +55,7 @@ class adhoc_lambdawarmup extends \core\task\adhoc_task {
                                 'secret' => $secret,
                         ),
                         'region' => 'eu-west-1',
+                        'version' => 'latest',
                 ));
 
                 $result = $client->invoke(array(
