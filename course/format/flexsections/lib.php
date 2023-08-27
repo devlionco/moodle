@@ -42,7 +42,8 @@ define('FORMAT_FLEXSECTIONS_HIDDENSECTION_COLLAPSED', 0);
 define('FORMAT_FLEXSECTIONS_HIDDENSECTION_VISIBLE', 1);
 define('FORMAT_FLEXSECTIONS_ORIENTATION_VERTICAL', 1);
 define('FORMAT_FLEXSECTIONS_ORIENTATION_HORIZONTAL', 2);
-define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW', 1);
+define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOWFULL', 1);
+define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW', 3);
 define('FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE', 2);
 define('FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE', 1);
 define('FORMAT_FLEXSECTIONS_SECTION0_ALLPAGES', 2);
@@ -1505,7 +1506,8 @@ class format_flexsections extends core_courseformat\base {
 
         $summaryoptions = [
             FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW => new lang_string('form:course:showsummary:show', 'format_flexsections'),
-            FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE => new lang_string('form:course:showsummary:hide', 'format_flexsections')
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE => new lang_string('form:course:showsummary:hide', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOWFULL => new lang_string('form:course:showsummary:showfull', 'format_flexsections')
         ];
 
         $options['showsummary'] = $createselect('showsummary', $summaryoptions, $defaults->showsummary);

@@ -85,6 +85,7 @@ $string['form:course:cardorientation'] = 'Card orientation';
 $string['form:course:cardorientation:vertical'] = 'Vertical';
 $string['form:course:cardorientation:horizontal'] = 'Horizontal';
 $string['form:course:showsummary'] = 'Section summary';
+$string['form:course:showsummary:showfull'] = 'Shown fully';
 $string['form:course:showsummary:show'] = 'Shown';
 $string['form:course:showsummary:hide'] = 'Hidden';
 $string['form:course:showsummary_help'] = 'Whether to show the section summary on cards';

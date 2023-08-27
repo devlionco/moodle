@@ -50,7 +50,8 @@ if ($hassiteconfig) {
         FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW,
         [
             FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW => get_string('form:course:showsummary:show', 'format_flexsections'),
-            FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE => get_string('form:course:showsummary:hide', 'format_flexsections')
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_HIDE => get_string('form:course:showsummary:hide', 'format_flexsections'),
+            FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOWFULL => get_string('form:course:showsummary:showfull', 'format_flexsections')
         ]
     ));
 
