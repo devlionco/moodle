@@ -60,6 +60,11 @@ class section extends \core_courseformat\output\local\content\section {
 
         $summary = new $this->summaryclass($format, $section);
 
+        if ($section->section === '0') {
+            $lazyload = false;
+        } else {
+            $lazyload = true;
+        }
         $data = (object)[
             'num' => $section->section ?? '0',
             'id' => $section->id,
@@ -70,7 +75,7 @@ class section extends \core_courseformat\output\local\content\section {
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
             // PTL-9806 Improve performance (lazyload was FALSE)
-            'lazyload' => true, //$this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
+            'lazyload' => $lazyload, //$this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
         ];
         $haspartials = [];
         $haspartials['header'] = $this->add_header_data($data, $output);
@@ -80,11 +85,10 @@ class section extends \core_courseformat\output\local\content\section {
             $haspartials['editor'] = $this->add_editor_data($data, $output);
             $haspartials['header'] = $this->add_header_data($data, $output);
 
-        if ($lazyload || !$data->lazyload){ // Lazy load
+        if ($lazyload) { // || !$data->lazyload){ // Lazy load
             $haspartials['cm'] = $this->add_cm_data($data, $output);
         }
         $this->add_format_data($data, $haspartials, $output);
-
 
         // For sections that are displayed as a link do not print list of cms or controls.
         $showaslink = $this->section->collapsed == FORMAT_FLEXSECTIONS_COLLAPSED
@@ -124,6 +128,7 @@ class section extends \core_courseformat\output\local\content\section {
         }
 
         // Shorten the card's summary text, if applicable.
+        // TODO: read settings from course and not from system defaults
         if (!empty($data->summary->summarytext)) {
             if ($this->format->get_format_option('showsummary', $this->section) == FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOW) {
                 if ($this->section->summaryformat == FORMAT_MARKDOWN) {
@@ -137,6 +142,16 @@ class section extends \core_courseformat\output\local\content\section {
                     300,
                     true,
                     '&hellip;');
+                // PTL-9551 Show full summary, as it is, including HTML tags.
+            } elseif ($this->format->get_format_option('showsummary', $this->section) == FORMAT_FLEXSECTIONS_SHOWSUMMARY_SHOWFULL) {
+                if ($this->section->summaryformat == FORMAT_MARKDOWN) {
+                    $data->summary->summarytext = markdown_to_html($data->summary->summarytext);
+                    // And remove TAGs
+                    $data->summary->summarytext = strip_tags(
+                        $data->summary->summarytext,
+                        '<b><i><u><strong><em><a>'
+                    );
+                }
             } else {
                 $data->summary->summarytext = '';
             }
