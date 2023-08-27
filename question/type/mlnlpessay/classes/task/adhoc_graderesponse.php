@@ -50,7 +50,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
             return;
         }
         mtrace('question_attempt');
-        mtrace(json_encode(json_decode($question_attempt), JSON_UNESCAPED_UNICODE));
+        mtrace(print_r($question_attempt, 1));
 
         if ($answertext != '') {
             $categories = get_enabled_categories($questionid);
@@ -149,9 +149,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                     break;
                 case '2': // AWS Lambda
                     mtrace('AWS Lambda mode');
-
                     $awsvendorpath = $CFG->vendor_aws_path;
-                    mtrace($awsvendorpath);
 
                     try {
                         mtrace($awsvendorpath . '/autoload.php');
@@ -175,26 +173,24 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                                   "num_models": "' . $models_number . '"
                                 }';
 
-                        mtrace($payload);
-
                         $client = \Aws\Lambda\LambdaClient::factory(array(
                                 'credentials' => array(
                                         'key' => $key,
                                         'secret' => $secret,
                                 ),
                                 'region' => $region,
+                                'version' => 'latest',
+
                         ));
 
                         $result = $client->invoke(array(
                                 'FunctionName' => $functionname,
                                 'Payload' => $payload,
                         ));
-                        mtrace($result);
-                        $resboby = $result['Payload'];
                         mtrace('Lambda response body');
-                        mtrace(json_encode(json_decode($resboby), JSON_UNESCAPED_UNICODE));
-                        $output = json_decode($resboby);
-
+                        $output = json_decode($result['Payload'])->body;
+                        mtrace(print_r(json_decode($output), 1));
+                        $output = json_decode($output);
                     } catch (\moodle_exception $e) {
                         mtrace($e->getMessage());
                     }
@@ -223,9 +219,9 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         mtrace(json_encode($quizattempt));
 
         $mlnlpresponseparams = [
-            'questionid' => $questionid,
-            'questionattemptid' => $question_attempt_id,
-            'quizattemptid' => $quizattempt->id,
+                'questionid' => $questionid,
+                'questionattemptid' => $question_attempt_id,
+                'quizattemptid' => $quizattempt->id,
         ];
 
         $overriddenpythonresponse = [];
@@ -237,9 +233,11 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
             }
         }
 
+        mtrace('Run for each category');
         foreach ($categoriesweight as $catid => $category) {
             $tag = get_config('qtype_mlnlpessay', 'tag' . ($catid + 1) . 'name');
             $catgrade = $output->$tag;
+            mtrace('for cat '.$catid.' result '.$output->$tag);
             $overridden = 0;
             if (isset($overriddenpythonresponse[$catid])) {
                 $catgrade = $overriddenpythonresponse[$catid];
@@ -248,17 +246,17 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
 
             $fraction += (int) $category->weight * (int) $catgrade / 100;
             $feedback[] = [
-                'name' => $category->name,
-                'id' => $category->id,
-                'sortorder' => $category->sortorder,
-                'type' => $category->type,
-                'correct' => trim($catgrade),
-                'overriden' => $overridden
+                    'name' => $category->name,
+                    'id' => $category->id,
+                    'sortorder' => $category->sortorder,
+                    'type' => $category->type,
+                    'correct' => trim($catgrade),
+                    'overriden' => $overridden
             ];
         }
 
-        mtrace('Feedback');
-        mtrace(json_encode(json_decode($feedback), JSON_UNESCAPED_UNICODE));
+        mtrace('Feedback: ');
+        mtrace(print_r($feedback, 1));
 
         $mlnlpessay_response = new stdClass();
         $mlnlpessay_response->questionid = $questionid;
@@ -268,17 +266,15 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         $mlnlpessay_response->timemodified = time();
         $mlnlpessay_response->timecreated = time();
         mtrace('mlnlpessay_response');
-        mtrace(json_encode(json_decode($mlnlpessay_response), JSON_UNESCAPED_UNICODE));
+        mtrace(print_r($mlnlpessay_response, 1));
 
         if ($mlnlpresponse = $DB->get_record('qtype_mlnlpessay_response', $mlnlpresponseparams)) {
             $mlnlpessay_response->id = $mlnlpresponse->id;
             $mlnlpresponseupdated = $DB->update_record('qtype_mlnlpessay_response', $mlnlpessay_response);
             mtrace('qtype_mlnlpessay_response updated');
-            mtrace(json_encode(json_decode($mlnlpresponseupdated), JSON_UNESCAPED_UNICODE));
         } else {
             $inserted = $DB->insert_record('qtype_mlnlpessay_response', $mlnlpessay_response);
             mtrace('qtype_mlnlpessay_response inserted');
-            mtrace(json_encode(json_decode($inserted), JSON_UNESCAPED_UNICODE));
         }
 
         static::regrade_attempt_by_questionattempt($question_attempt_id, $fraction);
@@ -291,10 +287,10 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
 
         //update grade for question after giving feedback.
         $question_attempt_step =
-            $DB->get_record_select(
-                'question_attempt_steps',
-                'questionattemptid = ? AND fraction IS NOT NULL',
-                [$questionattemptid]);
+                $DB->get_record_select(
+                        'question_attempt_steps',
+                        'questionattemptid = ? AND fraction IS NOT NULL',
+                        [$questionattemptid]);
         mtrace('question_attempt_step');
         mtrace(json_encode($question_attempt_step));
 
@@ -308,19 +304,17 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         $questionattempt = $DB->get_record('question_attempts', ['id' => $questionattemptid]);
         $quba = \question_engine::load_questions_usage_by_activity($questionattempt->questionusageid);
         mtrace('question_attempt updated');
-        mtrace(json_encode(json_decode($questionattempt), JSON_UNESCAPED_UNICODE));
+        mtrace(print_r($questionattempt, 1));
 
         $quizattempt = $DB->get_record('quiz_attempts', ['uniqueid' => $questionattempt->questionusageid]);
         mtrace('quiz_attempts');
         $student_user = $DB->get_record('user', ['id' => $quizattempt->userid]);
         mtrace('Student (user): ' . fullname($student_user));
-        mtrace(json_encode(json_decode($quizattempt), JSON_UNESCAPED_UNICODE));
 
         $quizattempt->sumgrades = $quba->get_total_mark();
         $quizattempt->timemodified += 1;
         $updated2 = $DB->update_record('quiz_attempts', $quizattempt);
         mtrace('quiz_attempts updated');
-        mtrace(json_encode(json_decode($updated2), JSON_UNESCAPED_UNICODE));
 
         //DO NOT SAVE HISTORY REGRADED fraction for mlnlpessay question
         $DB->delete_records('quiz_overview_regrades', ['questionusageid' => $questionattempt->questionusageid]);
