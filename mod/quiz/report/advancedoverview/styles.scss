@@ -717,16 +717,16 @@
 					display: block;
 					border-left: 6px solid transparent;
 					border-right: 6px solid transparent;
-					color: #666;
+					color: #bbb;
 				}
 
 				&[data-sort="desc"]::after {
 					border-bottom: none;
-					border-top: 6px solid #666;
+					border-top: 6px solid #bbb;
 				}
 
 				&[data-sort="asc"]::after {
-					border-bottom: 6px solid #666;
+					border-bottom: 6px solid #bbb;
 				}
 			}
 		}

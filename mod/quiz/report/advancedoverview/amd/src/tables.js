@@ -10,6 +10,8 @@ import Tabulator from "report/advancedoverview/js/tabulator.min.js";
 import * as Main from "quiz_advancedoverview/main";
 import * as studentsTableActions from "quiz_advancedoverview/studentsTableActions";
 
+const locale = getLocale();
+
 export let QLENGTH = 0;
 const SELECTORS = {};
 export const TEMPCONFIG = {};
@@ -29,6 +31,8 @@ export const initquestionstable = function(data) {
   let tabledata = JSON.parse(data);
   QLENGTH = tabledata.length;
 
+  var wrongTitle = locale == 'he-IL' ? "שגו" : "Wrong";
+
   let content = {
     headerSortElement: function(column, dir) {
       switch (dir) {
@@ -40,6 +44,7 @@ export const initquestionstable = function(data) {
           return "<i class='fas fa-sort'>";
       }
     },
+    locale: locale,
     data: tabledata,
     autoColumns: true,
     movableRows: false,
@@ -93,13 +98,42 @@ export const initquestionstable = function(data) {
       row.getElement().style.height = "48px";
     },
     initialSort: [
-      {column: "Wrong", dir: "desc"},
-      {column: "שגו", dir: "desc"},
+      {column: wrongTitle, dir: "desc"},
     ],
   };
 
   TABLES.questionsTable = new Tabulator("#questions-table", content);
 };
+
+/**
+ * Retrieves the current 'lang' attribute from the HTML tag and returns
+ * the corresponding locale based on the provided mappings.
+ *
+ * Mappings:
+ * 'he' => 'he-IL'
+ * 'en' => 'en-GB'
+ *
+ * If no mapping is found, it returns the original 'lang' value.
+ *
+ * @returns {string} - The locale string corresponding to the 'lang' attribute of the HTML tag.
+ *                     If no specific mapping is found, returns the 'lang' value directly.
+ */
+function getLocale() {
+  let lang = document.documentElement.getAttribute("lang");
+  let locale;
+  switch (lang) {
+    case "he":
+      locale = "he-IL";
+      break;
+    case "en":
+      locale = "en-GB";
+      break;
+    default:
+      locale = lang;
+  }
+
+  return locale;
+}
 
 /**
  * Compares and sorts two rows based on the attempt number.
@@ -116,9 +150,9 @@ function attemptNumberSorter(aRow, bRow, dir) {
   let b = "" + bRow._row.data.attempt_number;
 
   if (isChildRow) {
-    return dir === "asc" ? b.localeCompare(a) : a.localeCompare(b);
+    return dir === "asc" ? b.localeCompare(a, locale) : a.localeCompare(b, locale);
   } else {
-    return a.localeCompare(b);
+    return a.localeCompare(b, locale);
   }
 }
 
@@ -294,7 +328,7 @@ export const initstudentstable = function(data, anon = 0) {
               return "<i class='fas fa-sort'>";
           }
         },
-        locale: true,
+        locale: locale,
         data: tabledata,
         autoColumns: true,
         movableRows: false,
