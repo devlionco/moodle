@@ -120,7 +120,12 @@ function community_oer_render_navbar_output() {
  */
 
 function community_oer_get_primarynav_output() {
-    global $PAGE;
+    global $PAGE, $USER;
+
+    // Should only be available to teachers
+    if (!social_has_permission($USER->id)) {
+        return [];
+    }
 
     return [
         'title' => get_string('oerrepository', 'community_oer'),
