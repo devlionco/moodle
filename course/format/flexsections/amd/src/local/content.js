@@ -292,13 +292,6 @@ export default class FlexsectionComponent extends Component {
                     self.reactive.dispatch('sectionState', [sectionId]);
                     sharewith.addShareActivityButton(null, `[data-cmlistid="${sectionId}"]`);
 
-                    // Select the div element with the class 'loading' and attribute data-cmlistid
-                    var div_loading = document.querySelector(`[data-cmlistid="${sectionId}"]`);
-                    // Check if the div exists and remove the 'loading' class
-                    if (div_loading) {
-                        div_loading.classList.remove('loading');
-                    }
-
                 } else {
                     Notification.addNotification({
                         type: 'error',
@@ -309,5 +302,6 @@ export default class FlexsectionComponent extends Component {
                 Notification.exception(e);
             }
         });
+
     }
 }

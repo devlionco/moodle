@@ -181,12 +181,15 @@
         {{> core_courseformat/local/content/section/cmsummary }}
     {{/ core_courseformat/local/content/section/cmsummary }}
 {{/cmsummary}}
-<div data-cmlistid = "{{id}}" class="loading"><i class="fa-solid fa-sync fa-spin"></i>
-    <style>
-        div.loading[data-cmlistid]::after {
-            content: ' {{#str}} loading, format_flexsections {{/str}} ';
-        }
-    </style>
+<div data-cmlistid = "{{id}}" class="">
+    {{#lazyload}}
+    <div class="loading">
+        <i class="fa-solid fa-sync fa-spin"></i>
+        <span class="pl-2">
+            {{#str}} loading, format_flexsections {{/str}}
+        </span>
+    </div>
+    {{/lazyload}}
 {{#cmlist}}
     {{$ format_flexsections/local/content/section/cmlist }}
         {{> format_flexsections/local/content/section/cmlist }}
