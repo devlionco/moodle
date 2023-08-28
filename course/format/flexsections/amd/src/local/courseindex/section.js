@@ -51,4 +51,18 @@ export default class Component extends BaseSection {
         sectionitem.draggable = false; // <---- my modification - disable drag&drop of sections for now.
         super.configDragDrop(sectionitem);
     }
+
+    /**
+     * Initial state ready method.
+     *
+     * @param {Object} state the state data
+     */
+    stateReady(state) {
+        super.stateReady(state);
+        let id = this.element.dataset.id;
+        let target = document.querySelector(`[data-cmlistid="${id}"] .loading`);
+        if (target) {
+            target.remove();
+        }
+    }
 }

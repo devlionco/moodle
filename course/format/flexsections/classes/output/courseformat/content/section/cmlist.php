@@ -95,7 +95,6 @@ class cmlist extends \core_courseformat\output\local\content\section\cmlist {
 
         if (!empty($data->cms)) {
             $data->hascms = true;
-            $PAGE->requires->js_call_amd('format_flexsections/statusloader', 'inview');
         }
 
         return $data;
