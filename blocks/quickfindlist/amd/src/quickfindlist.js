@@ -1,6 +1,6 @@
 define(
-    ['jquery'],
-    function($) {
+    ['jquery', 'core/str',],
+    function($, Str) {
         var priv = {
             sesskey: null,
             instances: []
@@ -48,39 +48,57 @@ define(
                 var instance = priv.instances[roleid];
 
                 var url = M.cfg.wwwroot+'/blocks/quickfindlist/quickfind.php';
-                if (instance.xhr !== null) {
-                    instance.xhr.abort();
-                }
-                instance.progress.css('visibility', 'visible');
-                instance.xhr = $.ajax({
-                    url: url,
-                    data: {
-                        role: roleid,
-                        name: searchstring,
-                        courseformat: instance.courseformat,
-                        courseid: instance.courseid,
-                        sesskey: priv.sesskey
+                var urlloginas = M.cfg.wwwroot+'/course/loginas.php?id=1&sesskey='+M.cfg.sesskey;
+
+                Str.get_strings([
+                    { key: 'loginas' },
+                ]).done(function (strings) {
+
+                    if (instance.xhr !== null) {
+                        instance.xhr.abort();
                     }
-                }).done(function(response) {
-                    var list = $('<ul />');
-                    for (var p in response.people) {
-                        var userstring = instance.userfields.replace('[[firstname]]', response.people[p].firstname);
-                        userstring = userstring.replace('[[lastname]]', response.people[p].lastname);
-                        userstring = userstring.replace('[[username]]', response.people[p].username);
-                        var li = $('<li><a href="'+instance.url+'&id='+response.people[p].id+'">'+userstring+'</a></li>');
-                        list.append(li);
-                    }
-                    $('#quickfindlist'+roleid).replaceWith(list);
-                    list.attr('id', 'quickfindlist'+roleid);
-                }).fail(function(jqXHR, status) {
-                    if (status !== 'abort') {
-                        if (status !== undefined) {
-                            instance.listcontainer.html(status);
+                    instance.progress.css('visibility', 'visible');
+                    instance.xhr = $.ajax({
+                        url: url,
+                        data: {
+                            role: roleid,
+                            name: searchstring,
+                            courseformat: instance.courseformat,
+                            courseid: instance.courseid,
+                            sesskey: priv.sesskey
                         }
-                    }
-                }).always(function() {
-                    instance.progress.css('visibility', 'hidden');
-                    M.util.js_complete('quickfindlist' + roleid);
+                    }).done(function(response) {
+                        var list = $('<ul />');
+                        for (var p in response.people) {
+                            var userstring = instance.userfields.replace('[[firstname]]', response.people[p].firstname);
+                            userstring = userstring.replace('[[lastname]]', response.people[p].lastname);
+                            userstring = userstring.replace('[[username]]', response.people[p].username);
+
+                            // PTL-9892.
+                            var li = '';
+                            if (response.people[p].loginas) {
+                                li = $('<li class="d-flex"><a class="mr-3" href="' + instance.url+'&id='+response.people[p].id +'">'
+                                    + userstring+'</a>' + '<a href="' + urlloginas + '&user=' + response.people[p].id + '">'
+                                    + '<i class="fa-light fa-right-to-bracket" title="' + strings[0] + '"></i></a></li>');
+                            } else {
+                                li = $('<li><a href="'+instance.url + '&id=' + response.people[p].id + '">'
+                                + userstring + '</a></li>');
+                            }
+
+                            list.append(li);
+                        }
+                        $('#quickfindlist'+roleid).replaceWith(list);
+                        list.attr('id', 'quickfindlist'+roleid);
+                    }).fail(function(jqXHR, status) {
+                        if (status !== 'abort') {
+                            if (status !== undefined) {
+                                instance.listcontainer.html(status);
+                            }
+                        }
+                    }).always(function() {
+                        instance.progress.css('visibility', 'hidden');
+                        M.util.js_complete('quickfindlist' + roleid);
+                    });
                 });
             }
         };
