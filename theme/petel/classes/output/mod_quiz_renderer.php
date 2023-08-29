@@ -883,4 +883,48 @@ class mod_quiz_renderer extends \mod_quiz_renderer {
         $output .= $this->footer();
         return $output;
     }
+
+    public function view_page_tertiary_nav(\mod_quiz_view_object $viewobj): string {
+        global $USER, $CFG;
+
+        $content = '';
+
+        if ($viewobj->buttontext) {
+            $attemptbtn = $this->start_attempt_button($viewobj->buttontext,
+                    $viewobj->startattempturl, $viewobj->preflightcheckform,
+                    $viewobj->popuprequired, $viewobj->popupoptions);
+            $content .= $attemptbtn;
+
+            // PTL-9889. Add start new preview button.
+            $unfinished = false;
+            if (isset($viewobj->attemptobjs) && isset($viewobj->attemptobjs[0])) {
+                if ($unfinishedattempt = quiz_get_user_attempt_unfinished($viewobj->attemptobjs[0]->get_quiz()->id, $USER->id)) {
+                    $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
+                            $unfinishedattempt->state == quiz_attempt::OVERDUE;
+                }
+            }
+
+            if ($unfinished) {
+                $content .= '
+                    <form method="post" action="'.$CFG->wwwroot.'/mod/quiz/startattempt.php">
+                        <input type="hidden" name="cmid" value="'.$viewobj->attemptobjs[0]->get_cmid().'">
+                        <input type="hidden" name="sesskey" value="'.sesskey().'">
+                        <input type="hidden" name="forcenew" value="1">
+                        <button type="submit" class="btn btn-primary">'.get_string('startnewpreview', 'mod_quiz').'</button>
+                    </form>                
+                ';
+            }
+        }
+
+        if ($viewobj->canedit && !$viewobj->quizhasquestions) {
+            $content .= html_writer::link($viewobj->editurl, get_string('addquestion', 'quiz'),
+                    ['class' => 'btn btn-secondary']);
+        }
+
+        if ($content) {
+            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid tertiary-navigation');
+        } else {
+            return '';
+        }
+    }
 }
