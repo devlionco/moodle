@@ -540,7 +540,7 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
             $interface = self::instance('interface');
             $interface->getUploadedH5pFolderPath($localfolder);
             $interface->getUploadedH5pPath($stream);
-
+            $streamfilepath = $stream;
             $stream                  = fopen($stream, 'w');
             $options['CURLOPT_FILE'] = $stream;
         }
@@ -562,7 +562,7 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
 
         if ($stream !== null) {
             fclose($stream);
-            @chmod($stream, $CFG->filepermissions);
+            @chmod($streamfilepath, $CFG->filepermissions);
         }
 
         $errorno = $curl->get_errno();

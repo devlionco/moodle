@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question type class for the hvp question type.
  *
@@ -24,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use qtype_hvp\framework;
 use qtype_hvp_library\H5PCore as H5PCore;
 
 defined('MOODLE_INTERNAL') || die();
@@ -37,45 +37,6 @@ require_once($CFG->dirroot . '/question/type/hvp/classes/framework.php');
  *
  */
 class qtype_hvp extends question_type {
-    public function save_question($question, $form) {
-        $result = parent::save_question($question, $form);
-        if ($form->h5paction === 'upload') {
-            $form->uploaded = true;
-            $h5pstorage = \qtype_hvp\framework::instance('storage');
-            $h5pstorage->savePackage((array)$form);
-            $hvpid = $h5pstorage->contentId;
-        } else {
-            $core = \qtype_hvp\framework::instance();
-            $editor = \qtype_hvp\framework::instance('editor');
-
-            if (!empty($question->id)) {
-                $content = $core->loadContent($question->id);
-                if (!empty($content)) {
-                    $form->id = $content['id'];
-                    $oldlib = $content['library'];
-                    $oldparams = json_decode($content['params']);
-                } else {
-                    $form->id = null;
-                }
-            }
-            $form->library = H5PCore::libraryFromString($form->h5plibrary);
-
-            $form->library['libraryId'] = $core->h5pF->getLibraryId($form->library['machineName'],
-                $form->library['majorVersion'],
-                $form->library['minorVersion']);
-
-            $form->question = $result->id;
-            $core->saveContent((array)$form);
-
-            $params = json_decode($form->params);
-
-            $editor->processParameters($form, $form->library, $params,
-                isset($oldlib) ? $oldlib : null,
-                isset($oldparams) ? $oldparams : null);
-        }
-        $form->id = $result->id;
-        return $result;
-    }
 
     protected function patch_filenames($hvpid) {
         global $DB;
@@ -101,5 +62,96 @@ class qtype_hvp extends question_type {
                 $this->patch_content_filenames($value);
             }
         }
+    }
+
+    public function export_to_xml($question, qformat_xml $format, $extra = null) {
+        $content = $question->options->hvp;
+        $expout = '';
+        if (!empty($content)) {
+            $expout .= "    <title>{$content['title']}</title>\n";
+            $expout .= "    <params>" . $format->writetext($content['params'], 1) . "</params>\n";
+            $expout .= "    <embed_type>{$content['embedType']}</embed_type>\n";
+            $expout .= "    <h5plibrary>" .
+                "{$content['library']['name']} {$content['library']['majorVersion']}.{$content['library']['minorVersion']}" .
+                "</h5plibrary>\n";
+            $expout .= "    <metadata>\n";
+            foreach ($content['metadata'] as $key => $value) {
+                $expout .= "        <$key>$value</$key>\n";
+            }
+            $expout .= "    </metadata>\n";
+            $expout .= "    <disable>{$content['disable']}</disable>\n";
+            $expout .= "    <slug>{$content['slug']}</slug>\n";
+        }
+        return $expout;
+    }
+
+    public function save_question_options($question) {
+        if ($question->h5paction === 'upload') {
+            $question->uploaded = true;
+            $h5pstorage = framework::instance('storage');
+            $h5pstorage->savePackage((array) $question);
+            $hvpid = $h5pstorage->contentId;
+        } else {
+            $core = framework::instance();
+            $editor = framework::instance('editor');
+
+            if (!empty($question->id)) {
+                $content = $core->loadContent($question->id);
+                if (!empty($content)) {
+                    $question->id = $content['id'];
+                    $oldlib = $content['library'];
+                    $oldparams = json_decode($content['params']);
+                } else {
+                    $question->question = $question->id;
+                    $question->id = null;
+                }
+            }
+            $question->library = H5PCore::libraryFromString($question->h5plibrary);
+
+            $question->library['libraryId'] = $core->h5pF->getLibraryId($question->library['machineName'],
+                $question->library['majorVersion'],
+                $question->library['minorVersion']);
+            $core->saveContent((array) $question);
+            $params = json_decode($question->params);
+
+            $editor->processParameters($question, $question->library, $params,
+                isset($oldlib) ? $oldlib : null,
+                isset($oldparams) ? $oldparams : null);
+        }
+        $question->id = $question->question;
+        parent::save_question_options($question);
+    }
+
+    public function get_question_options($question) {
+        if (!parent::get_question_options($question)) {
+            return false;
+        }
+        $core = framework::instance();
+        $question->options->hvp = $core->loadContent($question->id);
+    }
+
+    public function import_from_xml($data, $question, qformat_xml $format, $extra = null) {
+        if (!array_key_exists('@', $data)) {
+            return false;
+        }
+        if (!array_key_exists('type', $data['@'])) {
+            return false;
+        }
+        if ($data['@']['type'] == 'hvp') {
+            $qo = $format->import_headers($data);
+            $qo->qtype = 'hvp';
+            $qo->title = $format->getpath($data, array('#', 'title', 0, '#'), '', true);
+            $qo->embed_type = $format->getpath($data, array('#', 'embed_type', 0, '#'), 'div');
+            $qo->params = $format->getpath($data, array('#', 'params', 0, '#', 'text', 0, '#'), '', true);
+            $qo->h5plibrary = $format->getpath($data, array('#', 'h5plibrary', 0, '#'), '');
+            $qo->h5paction = 'create';
+            $qo->metadata = [
+                'license' => $format->getpath($data, ['#', 'metadata', 0, '#', 'license', 0, '#'], '', true),
+                'title' => $format->getpath($data, ['#', 'metadata', 0, '#', 'title', 0, '#'], '', true),
+                'defaultLanguage' => $format->getpath($data, ['#', 'metadata', 0, '#', 'defaultLanguage', 0, '#'], '', true),
+            ];
+            return $qo;
+        }
+        return false;
     }
 }
