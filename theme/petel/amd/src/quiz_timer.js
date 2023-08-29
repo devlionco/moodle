@@ -125,7 +125,7 @@ const updateTimer = () => {
         case 'withoutWarnings':
             break;
         case 'every30Min':
-            if (Math.floor(minutesBeenPassed / 30) != 0) {
+            if (Math.floor(minutesBeenPassed / 30) !== 0) {
                 showReminder(hours + ':' + +twoDigit(minutes) + 1);
             }
             break;
@@ -286,7 +286,7 @@ export const checkState = () => {
 
     let text;
     for (const [key, value] of Object.entries(STRINGS)) {
-        if (key == REMINDER.type) {
+        if (key === REMINDER.type) {
             text = value;
         }
     }
@@ -294,7 +294,7 @@ export const checkState = () => {
     SELECTORS.reminderTypeInfo.innerText = STRINGS.alert + text;
 
     SELECTORS.setAlertTimer.forEach((el) => {
-        if (el.id == REMINDER.type) {
+        if (el.id === REMINDER.type) {
             el.checked = true;
         } else {
             el.checked = false;
@@ -308,7 +308,14 @@ export const init = function (start, timeleft, timelimit,
     ispreview, progress, attemptid, cmid, userid, answered, totalquestions, timerEnabled, active) {
 
     TIMER.timerEnabled = timerEnabled;
-    TIMER.lang = document.documentElement.lang || 'en';
+
+    let lang = document.documentElement.lang;
+
+    if (lang === 'he-kids') {
+        lang = 'he';
+    }
+
+    TIMER.lang = lang || 'en';
 
     const strings = [
         {
