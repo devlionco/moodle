@@ -99,6 +99,22 @@ if (isloggedin() && has_capability('block/quickfindlist:use', $context) && confi
         $order = 'ORDER BY lastname';
 
         if ($people = $DB->get_records_sql($select . $from . $where . $order, $params)) {
+
+            // PTL-9892.
+            $systemcontext = context_system::instance();
+
+            foreach ($people as $key => $user) {
+                $loginas = false;
+                if (has_capability('moodle/user:loginas', $systemcontext)) {
+                    if (!is_siteadmin($user->id)) {
+                        $loginas = true;
+                    }
+                }
+
+                $user->loginas = $loginas;
+                $people[$key] = $user;
+            }
+
             $output->people = $people;
         }
     }
