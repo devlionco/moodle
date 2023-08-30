@@ -84,6 +84,12 @@ class renderer extends section_renderer {
      * @return String the course index HTML.
      */
     public function course_index_drawer(course_format $format): ?String {
+        global $PAGE, $COURSE;
+
+        // PTL-9913.
+        $courseurl = (new \moodle_url('/course/view.php', ['id' => $COURSE->id]))->out(false);
+        $PAGE->requires->js_init_code("M.course = {id: `".$COURSE->id."`, name: `".$COURSE->fullname."`, url: `".$courseurl."`}");
+
         if ($format->uses_course_index()) {
             include_course_editor($format);
             return $this->render_from_template('format_flexsections/local/courseindex/drawer', []);
