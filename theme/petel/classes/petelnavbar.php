@@ -168,6 +168,24 @@ class petelnavbar extends \theme_boost_union\boostnavbar {
             }
         }
 
+        // Remove 'myhome'. PTL-9913.
+        $homenode = $this->get_item('myhome');
+        if (!is_null($homenode)) {
+            $this->remove($homenode->key);
+        }
+
+        // Change name of course. PTL-9913.
+        $coursenode = $this->get_item($this->page->course->id);
+        if (!is_null($coursenode)) {
+            $coursenode->text = course_get_format($this->page->course)->get_course()->fullname;
+            $coursenode->action = (new \moodle_url('/course/view.php', ['id' => $this->page->course->id]))->out(false);
+        }
+
+        // PTL-9913.
+        if ($this->item_count() == 1) {
+            $this->clear_items();
+        }
+
         // Make sure that the last item is not a link. Not sure if this is always a good idea.
         // Except, leave it when categorybreadcrumbs are desired.
         if (get_config('theme_boost_union', 'categorybreadcrumbs') != THEME_BOOST_UNION_SETTING_SELECT_YES) {
