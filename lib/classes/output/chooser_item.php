@@ -107,7 +107,11 @@ class chooser_item implements renderable, templatable {
         $usercontext = \context_user::instance($USER->id);
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $favorite = $ufservice->count_favourites_by_type('core_question', $this->id);
-        $recommended = $ufservice->count_favourites_by_type('core_question', $itemtype);
+
+        $admin = get_admin();
+        $usercontextrecomended = \context_user::instance($admin->id);
+        $ufservicerecomended = \core_favourites\service_factory::get_service_for_user_context($usercontextrecomended);
+        $recommended = $ufservicerecomended->count_favourites_by_type('core_question', $itemtype);
 
         if($favorite > 0) {
             $data->favourite = true;

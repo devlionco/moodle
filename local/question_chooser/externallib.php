@@ -93,19 +93,21 @@ class local_question_chooser_external extends external_api {
      * @return array some warnings or something.
      */
     public static function toggle_qtypes_recommendation($name) {
-        global $USER;
 
         $params = self::validate_parameters(self::toggle_qtypes_recommendation_parameters(),
                 array('name' => $name));
 
-        $usercontext = context_user::instance($USER->id);
+        $admin = get_admin();
+        $userid = $admin->id;
+
+        $usercontext = context_user::instance($userid);
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $recommend = $ufservice->count_favourites_by_type('core_question', 'recommend_' . $params['name']);
 
         if ($recommend > 0) {
-            $ufservice->delete_favourite('core_question', 'recommend_' . $params['name'], $USER->id, $usercontext);
+            $ufservice->delete_favourite('core_question', 'recommend_' . $params['name'], $userid, $usercontext);
         } else {
-            $ufservice->create_favourite('core_question', 'recommend_' . $params['name'], $USER->id, $usercontext);
+            $ufservice->create_favourite('core_question', 'recommend_' . $params['name'], $userid, $usercontext);
         }
 
         return ['name' => $name];
