@@ -418,7 +418,15 @@ class quizdata {
                 continue;
             }
 
-            $attemptgrade = $attempt->sumgrades ? $attempt->sumgrades / $this->quiz->sumgrades * $this->quiz->grade : '0';
+            if ($attempt->sumgrades) {
+                if ($this->quiz->sumgrades == 0) {
+                    $attemptgrade = '0';
+                }else {
+                    $attemptgrade = $attempt->sumgrades / $this->quiz->sumgrades * $this->quiz->grade;
+                }
+            } else {
+                $attemptgrade = '0';
+            }
 
             $range = $this->get_grade_range($attemptgrade);
 
@@ -477,7 +485,11 @@ class quizdata {
                     $question = $this->questions[$questionid];
                     $mark = $att ? $this->quiz_get_user_question_info($question, $att) : null;
 
-                    $questionmaxgrade = $question->maxmark / $this->quiz->sumgrades * $this->quiz->grade;
+                    if ($this->quiz->sumgrades == 0) {
+                        $questionmaxgrade = 0;
+                    } else {
+                        $questionmaxgrade = $question->maxmark / $this->quiz->sumgrades * $this->quiz->grade;
+                    }
 
                     $qindex = "Q " . $question->slot . " / " . round($questionmaxgrade);
 
@@ -492,8 +504,16 @@ class quizdata {
     }
 
     public function quiz_get_user_question_info($question, $attempt) {
-        $grade = $attempt->get_question_mark($question->slot) ?
-                $attempt->get_question_mark($question->slot) * $this->quiz->grade / $this->quiz->sumgrades : 0;
+
+        if ($attempt->get_question_mark($question->slot)) {
+            if ($this->quiz->sumgrades == 0) {
+                $grade = 0;
+            }else {
+                $grade = $attempt->get_question_mark($question->slot) * $this->quiz->grade / $this->quiz->sumgrades;
+            }
+        } else {
+            $grade = 0;
+        }
 
         // Prepare questionlist requiresgrading.
         $this->add_to_openquestions($attempt, $question);
