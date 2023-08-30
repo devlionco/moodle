@@ -75,7 +75,7 @@ class section extends \core_courseformat\output\local\content\section {
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
             // PTL-9806 Improve performance (lazyload was FALSE)
-            'lazyload' => ($section->section != 0) ? true : false, //$this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
+            'lazyload' => $lazyload, //$this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
         ];
         $haspartials = [];
         $haspartials['header'] = $this->add_header_data($data, $output);
