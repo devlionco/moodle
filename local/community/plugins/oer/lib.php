@@ -40,7 +40,7 @@ function community_oer_render_navbar_output() {
 
     // Not for forgot password.
     if ($_SERVER['REQUEST_URI'] !== '/login/forgot_password.php') {
-        $menu = \community_oer\main_oer::structure_main_catalog(true);
+        $menu = \community_oer\main_oer::structure_main_catalog();
 
         $data['user_access'] = \community_oer\main_oer::check_if_user_admin_or_teacher() && count($menu);
         $data['user_editing'] = $PAGE->user_is_editing() && is_siteadmin();

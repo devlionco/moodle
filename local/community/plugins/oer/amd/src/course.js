@@ -30,6 +30,7 @@ define([
     let prev_search_course = {};
     let default_filters_course = {};
     let if_iframe = false;
+    let if_scroll_up = false;
 
     return {
         init: function (callback) {
@@ -168,6 +169,8 @@ define([
                 });
 
                 $(object).data("selected", "1");
+
+                if_scroll_up = true;
             }
 
             if (data.area !== 'paging') {
@@ -312,6 +315,13 @@ define([
                         Templates.render('community_oer/course/block', result)
                             .done(function (html, js) {
                                 Templates.replaceNodeContents(SELECTORS.blockContent, html, js);
+
+                                if (if_scroll_up) {
+                                    const element = document.querySelector('.activity-block-header');
+                                    element.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+                                    if_scroll_up = false;
+                                }
+
                                 callback();
                             })
                             .fail(Notification.exception);
