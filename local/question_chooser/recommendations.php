@@ -47,7 +47,8 @@ $renderer = $PAGE->get_renderer('local_question_chooser', 'recommendations');
 echo $renderer->header();
 echo $renderer->heading(get_string('questionchooserrecommendations', 'local_question_chooser'));
 
-$usercontext = context_user::instance($USER->id);
+$admin = get_admin();
+$usercontext = context_user::instance($admin->id);
 $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
 
 $result = [];
