@@ -2,16 +2,12 @@
   @author: GeoGebra - Dynamic Mathematics for Everyone, http://www.geogebra.org
   @license: This file is subject to the GeoGebra Non-Commercial License Agreement, see http://www.geogebra.org/license. For questions please write us at office@geogebra.org.
 */
-var latestVersion = "5.0.426.0";
 var isRenderGGBElementEnabled = false;
 var scriptLoadStarted = false;
 var html5AppletsToProcess = null;
 var ggbHTML5LoadedCodebaseIsWebSimple = false;
 var ggbHTML5LoadedCodebaseVersion = null;
 var ggbHTML5LoadedScript = null;
-var ggbCompiledResourcesLoadFinished = false;
-var ggbCompiledResourcesLoadInProgress = false;
-var ggbCompiledAppletsLoaded = false;
 var GGBApplet = function () {
     "use strict";
     var applet = {};
@@ -28,24 +24,24 @@ var GGBApplet = function () {
         var p = arguments[i];
         if (p !== null) {
             switch (typeof p) {
-                case"number":
+                case "number":
                     ggbVersion = p.toFixed(1);
                     break;
-                case"string":
+                case "string":
                     if (p.match(new RegExp("^[0-9]\\.[0-9]+$"))) {
                         ggbVersion = p
                     } else {
                         appletID = p
                     }
                     break;
-                case"object":
+                case "object":
                     if (typeof p.is3D !== "undefined") {
                         views = p
                     } else {
                         parameters = p
                     }
                     break;
-                case"boolean":
+                case "boolean":
                     html5NoWebSimple = p;
                     html5NoWebSimpleParamExists = true;
                     break
@@ -85,9 +81,6 @@ var GGBApplet = function () {
     var previewPlayPath = null;
     var fonts_css_url = null;
     var jnlpBaseDir = null;
-    var preCompiledScriptPath = null;
-    var preCompiledResourcePath = null;
-    var preCompiledScriptVersion = null;
     if (parameters.height !== undefined) {
         parameters.height = Math.round(parameters.height)
     }
@@ -101,12 +94,12 @@ var GGBApplet = function () {
         html5OverwrittenCodebase = codebase;
         setHTML5CodebaseInternal(codebase, offline)
     };
-    applet.setJavaCodebaseVersion = function (version) {
+    applet.setJavaCodebase = applet.setJavaCodebaseVersion = applet.isCompiledInstalled = applet.setPreCompiledScriptPath = applet.setPreCompiledResourcePath = function () {
     };
     applet.setHTML5CodebaseVersion = function (version, offline) {
         var numVersion = parseFloat(version);
         if (numVersion !== NaN && numVersion < 5) {
-            console.log("The GeoGebra HTML5 codebase version " + numVersion + " is deprecated. Using version " + latestVersion + " instead.");
+            console.log("The GeoGebra HTML5 codebase version " + numVersion + " is deprecated. Using version latest instead.");
             return
         }
         html5OverwrittenCodebaseVersion = version;
@@ -117,8 +110,6 @@ var GGBApplet = function () {
     };
     applet.getParameters = function () {
         return parameters
-    };
-    applet.setJavaCodebase = function (codebase, offline) {
     };
     applet.setFontsCSSURL = function (url) {
         fonts_css_url = url
@@ -143,7 +134,7 @@ var GGBApplet = function () {
             var p = arguments[i];
             if (typeof p === "string") {
                 p = p.toLowerCase();
-                if (p === "preferjava" || p === "preferhtml5" || p === "java" || p === "html5" || p === "auto" || p === "screenshot" || p === "prefercompiled" || p === "compiled") {
+                if (p.match(/^(prefer)?(java|html5|compiled|auto|screenshot)$/)) {
                     type = p
                 } else {
                     container_ID = arguments[i]
@@ -181,8 +172,6 @@ var GGBApplet = function () {
             loadedAppletType = type;
             if (type === "screenshot") {
                 injectScreenshot(appletElem, parameters)
-            } else if (type === "compiled") {
-                injectCompiledApplet(appletElem, parameters, true)
             } else {
                 var playButton = false;
                 if (parameters.hasOwnProperty("playButton") && parameters.playButton || parameters.hasOwnProperty("clickToLoad") && parameters.clickToLoad) {
@@ -223,153 +212,59 @@ var GGBApplet = function () {
     applet.isJavaInstalled = function () {
         return false
     };
-
-    function pluginEnabled(name) {
-        var plugins = navigator.plugins, i = plugins.length, regExp = new RegExp(name, "i");
-        while (i--) {
-            if (regExp.test(plugins[i].name)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    var getTubeURL = function () {
-        var tubeurl, protocol;
-        if (parameters.tubeurl !== undefined) {
-            tubeurl = parameters.tubeurl
-        } else if (window.location.host.indexOf("www.geogebra.org") > -1 || window.location.host.indexOf("www-beta.geogebra.org") > -1 || window.location.host.indexOf("www-test.geogebra.org") > -1 || window.location.host.indexOf("alpha.geogebra.org") > -1 || window.location.host.indexOf("groot.geogebra.org") > -1 || window.location.host.indexOf("pool.geogebra.org") > -1 || window.location.host.indexOf("strange.geogebra.org") > -1 || window.location.host.indexOf("marvl.geogebra.org") > -1 || window.location.host.indexOf("beta.geogebra.org") > -1 || window.location.host.indexOf("tube.geogebra.org") > -1 || window.location.host.indexOf("tube-beta.geogebra.org") > -1 || window.location.host.indexOf("cloud.geogebra.org") > -1 || window.location.host.indexOf("cloud-beta.geogebra.org") > -1 || window.location.host.indexOf("cloud-stage.geogebra.org") > -1 || window.location.host.indexOf("stage.geogebra.org") > -1 || window.location.host.indexOf("tube-test.geogebra.org") > -1) {
-            tubeurl = window.location.protocol + "//" + window.location.host
-        } else {
-            if (window.location.protocol.substr(0, 4) === "http") {
-                protocol = window.location.protocol
-            } else {
-                protocol = "http:"
-            }
-            tubeurl = protocol + "//www.geogebra.org"
-        }
-        return tubeurl
-    };
-    var fetchParametersFromTube = function (successCallback, materialsApiURL) {
-        var tubeurl = materialsApiURL ? materialsApiURL.substring(0, materialsApiURL.indexOf("/", 8)) : getTubeURL();
-        var api_request = {
-            request: {
-                "-api": "1.0.0",
-                login: {"-type": "cookie", "-getuserinfo": "false"},
-                task: {
-                    "-type": "fetch",
-                    fields: {field: [{"-name": "id"}, {"-name": "geogebra_format"}, {"-name": "width"}, {"-name": "height"}, {"-name": "toolbar"}, {"-name": "menubar"}, {"-name": "inputbar"}, {"-name": "reseticon"}, {"-name": "labeldrags"}, {"-name": "shiftdragzoom"}, {"-name": "rightclick"}, {"-name": "ggbbase64"}, {"-name": "preview_url"}]},
-                    filters: {field: [{"-name": "id", "#text": "" + parameters.material_id + ""}]},
-                    order: {"-by": "id", "-type": "asc"},
-                    limit: {"-num": "1"}
-                }
-            }
-        }, success = function () {
-            var text = xhr.responseText;
-            var jsondata = JSON.parse(text);
-            var item = null;
-            for (i = 0; i < jsondata.responses.response.length; i++) {
-                if (jsondata.responses.response[i].item !== undefined) {
-                    item = jsondata.responses.response[i].item
-                }
-            }
-            if (item === null) {
+    var fetchParametersFromApi = function (successCallback) {
+        var onSuccess = function (text) {
+            var jsonData = JSON.parse(text);
+            var isGeoGebra = function (element) {
+                return element.type == "G" || element.type == "E"
+            };
+            var item = jsonData.elements ? jsonData.elements.filter(isGeoGebra)[0] : jsonData;
+            if (!item || !item.url) {
                 onError();
                 return
             }
-            if (item.geogebra_format !== "") {
-                ggbVersion = item.geogebra_format
-            }
-            if (parameters.ggbBase64 === undefined) {
-                parameters.ggbBase64 = item.ggbBase64
-            }
-            if (parameters.width === undefined) {
-                parameters.width = item.width
-            }
-            if (parameters.height === undefined) {
-                parameters.height = item.height
-            }
-            if (parameters.showToolBar === undefined) {
-                parameters.showToolBar = item.toolbar === "true"
-            }
-            if (parameters.showMenuBar === undefined) {
-                parameters.showMenuBar = item.menubar === "true"
-            }
-            if (parameters.showAlgebraInput === undefined) {
-                parameters.showAlgebraInput = item.inputbar === "true"
-            }
-            if (parameters.showResetIcon === undefined) {
-                parameters.showResetIcon = item.reseticon === "true"
-            }
-            if (parameters.enableLabelDrags === undefined) {
-                parameters.enableLabelDrags = item.labeldrags === "true"
-            }
-            if (parameters.enableShiftDragZoom === undefined) {
-                parameters.enableShiftDragZoom = item.shiftdragzoom === "true"
-            }
-            if (parameters.enableRightClick === undefined) {
-                parameters.enableRightClick = item.rightclick === "true"
-            }
-            if (parameters.showToolBarHelp === undefined) {
-                parameters.showToolBarHelp = parameters.showToolBar
-            }
-            if (parseFloat(item.geogebra_format) >= 5) {
-                views.is3D = true
-            }
-            var previewUrl = item.previewUrl === undefined ? tubeurl + "/files/material-" + item.id + ".png" : item.previewUrl;
-            applet.setPreviewImage(previewUrl, tubeurl + "/images/GeoGebra_loading.png", tubeurl + "/images/applet_play.png");
+            parameters.fileName = item.url;
+            updateAppletSettings(item.settings || {});
+            views.is3D = true;
+            var imageDir = "https://www.geogebra.org/images/";
+            applet.setPreviewImage(previewImagePath || item.previewUrl, imageDir + "GeoGebra_loading.png", imageDir + "applet_play.png");
             successCallback()
         };
-        var url = tubeurl + "/api/json.php";
-        var xhr = createCORSRequest("POST", url);
         var onError = function () {
-            log("Error: The request for fetching material_id " + parameters.material_id + " from tube was not successful.")
+            parameters.onError && parameters.onError();
+            log("Error: Fetching material (id " + parameters.material_id + ") failed.", parameters)
         };
-        if (!xhr) {
-            onError();
-            return
-        }
-        xhr.onload = success;
-        xhr.onerror = onError;
-        xhr.onprogress = function () {
-        };
-        if (xhr.setRequestHeader) {
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-        }
-        xhr.send(JSON.stringify(api_request))
+        var host = location.host.match(/(www|stage|beta|groot|alpha).geogebra.(org|net)/) ? location.host : "www.geogebra.org";
+        var path = "/materials/" + parameters.material_id + "?scope=basic";
+        sendCorsRequest("https://" + host + "/api/proxy.php?path=" + encodeURIComponent(path), onSuccess, onError)
     };
 
-    function createCORSRequest(method, url) {
-        var xhr = new XMLHttpRequest;
-        if ("withCredentials" in xhr) {
-            xhr.open(method, url, true)
-        } else if (typeof XDomainRequest !== "undefined") {
-            xhr = new XDomainRequest;
-            xhr.open(method, url)
-        } else {
-            xhr = null
+    function updateAppletSettings(settings) {
+        var parameterNames = ["width", "height", "showToolBar", "showMenuBar", "showAlgebraInput", "allowStyleBar", "showResetIcon", "enableLabelDrags", "enableShiftDragZoom", "enableRightClick", "appName"];
+        ["enableLabelDrags", "enableShiftDragZoom", "enableRightClick"].forEach((function (name) {
+            settings[name] = !!settings[name]
+        }));
+        parameterNames.forEach((function (name) {
+            if (parameters[name] === undefined && settings[name] !== undefined) {
+                parameters[name] = settings[name]
+            }
+        }));
+        if (parameters.showToolBarHelp === undefined) {
+            parameters.showToolBarHelp = parameters.showToolBar
         }
-        return xhr
+    }
+
+    function sendCorsRequest(url, onSuccess, onError) {
+        var xhr = new XMLHttpRequest;
+        xhr.open("GET", url);
+        xhr.onload = function () {
+            onSuccess(xhr.responseText)
+        };
+        xhr.onerror = onError;
+        xhr.send()
     }
 
     applet.isHTML5Installed = function () {
-        if (isInternetExplorer()) {
-            if ((views.is3D || html5CodebaseScript === "web3d.nocache.js") && getIEVersion() < 11) {
-                return false
-            } else if (getIEVersion() < 10) {
-                return false
-            }
-        }
-        return true
-    };
-    applet.isCompiledInstalled = function () {
-        if (isInternetExplorer()) {
-            if (views.is3D && getIEVersion() < 11) {
-                return false
-            } else if (getIEVersion() < 9) {
-                return false
-            }
-        }
         return true
     };
     applet.getLoadedAppletType = function () {
@@ -385,45 +280,29 @@ var GGBApplet = function () {
         if (typeof appletParent === "string") {
             appletParent = document.getElementById(appletParent)
         }
-        if (loadedAppletType === "compiled" && window[parameters.id] !== undefined) {
-            if (typeof window[parameters.id].stopAnimation === "function") {
-                window[parameters.id].stopAnimation()
-            }
-            if (typeof window[parameters.id].remove === "function") {
-                window[parameters.id].remove()
-            }
-            if (ggbApplets !== undefined) {
-                for (i = 0; i < ggbApplets.length; i++) {
-                    if (ggbApplets[i] === window[parameters.id]) {
-                        ggbApplets.splice(i, 1)
-                    }
-                }
-            }
-            window[parameters.id] = undefined
-        }
         loadedAppletType = null;
+        var removedID = null;
         for (i = 0; i < appletParent.childNodes.length; i++) {
-            var tag = appletParent.childNodes[i].tagName;
-            var className = appletParent.childNodes[i].className;
-            if (appletParent.childNodes[i].className === "applet_screenshot") {
+            var currentChild = appletParent.childNodes[i];
+            var className = currentChild.className;
+            if (className === "applet_screenshot") {
                 if (showScreenshot) {
-                    appletParent.childNodes[i].style.display = "block";
+                    currentChild.style.display = "block";
                     loadedAppletType = "screenshot"
                 } else {
-                    appletParent.childNodes[i].style.display = "none"
+                    currentChild.style.display = "none"
                 }
-            } else if ((tag === "APPLET" || tag === "ARTICLE" || tag === "DIV" || loadedAppletType === "compiled" && (tag === "SCRIPT" || tag === "STYLE")) && className !== "applet_scaler prerender") {
-                appletParent.removeChild(appletParent.childNodes[i]);
+            } else if (className !== "applet_scaler prerender") {
+                appletParent.removeChild(currentChild);
+                removedID = className && className.indexOf("appletParameters") != -1 ? currentChild.id : null;
                 i--
             }
         }
-        var appName = parameters.id !== undefined ? parameters.id : "ggbApplet";
+        var appName = parameters.id !== undefined ? parameters.id : removedID;
         var app = window[appName];
-        if (app) {
-            if (typeof app === "object" && typeof app.getBase64 === "function") {
-                app.remove();
-                window[appName] = null
-            }
+        if (app && typeof app.getBase64 === "function") {
+            app.remove();
+            window[appName] = null
         }
     };
     applet.refreshHitPoints = function () {
@@ -459,16 +338,6 @@ var GGBApplet = function () {
         }
         return false
     };
-    applet.setPreCompiledScriptPath = function (path, version) {
-        preCompiledScriptPath = path;
-        if (preCompiledResourcePath === null) {
-            preCompiledResourcePath = preCompiledScriptPath
-        }
-        preCompiledScriptVersion = version
-    };
-    applet.setPreCompiledResourcePath = function (path) {
-        preCompiledResourcePath = path
-    };
     applet.getAppletObject = function () {
         var appName = parameters.id !== undefined ? parameters.id : "ggbApplet";
         return window[appName]
@@ -494,9 +363,11 @@ var GGBApplet = function () {
             isRenderGGBElementEnabled = false;
             scriptLoadStarted = false
         }
-        var article = document.createElement("article");
+        var article = document.createElement("div");
+        article.classList.add("appletParameters", "notranslate");
         var oriWidth = parameters.width;
         var oriHeight = parameters.height;
+        parameters.disableAutoScale = parameters.disableAutoScale === undefined ? GGBAppletUtils.isFlexibleWorksheetEditor() : parameters.disableAutoScale;
         if (parameters.width !== undefined) {
             if (parseVersion(html5CodebaseVersion) <= 4.4) {
                 if (valBoolean(parameters.showToolBar)) {
@@ -523,33 +394,22 @@ var GGBApplet = function () {
                 }
             }
         }
-        article.className = "notranslate";
         article.style.border = "none";
         article.style.display = "inline-block";
         for (var key in parameters) {
-            if (parameters.hasOwnProperty(key) && key !== "appletOnLoad" && key !== "scale") {
+            if (parameters.hasOwnProperty(key) && key !== "appletOnLoad") {
                 article.setAttribute("data-param-" + key, parameters[key])
             }
+        }
+        if (fonts_css_url) {
+            article.setAttribute("data-param-fontscssurl", fonts_css_url)
         }
         applet.resize = function () {
             GGBAppletUtils.responsiveResize(appletElem, parameters)
         };
-        if (typeof jQuery === "function") {
-            jQuery(window).resize(function () {
-                applet.resize()
-            })
-        } else {
-            var oldOnResize = null;
-            if (window.onresize !== undefined && typeof window.onresize === "function") {
-                oldOnResize = window.onresize
-            }
-            window.onresize = function () {
-                applet.resize();
-                if (typeof oldOnResize === "function") {
-                    oldOnResize()
-                }
-            }
-        }
+        window.addEventListener("resize", (function (evt) {
+            applet.resize()
+        }));
         var oriAppletOnload = typeof parameters.appletOnLoad === "function" ? parameters.appletOnLoad : function () {
         };
         if (!noPreview && parameters.width !== undefined) {
@@ -583,8 +443,6 @@ var GGBApplet = function () {
                     }
                     if (window.GGBT_wsf_view) {
                         $(window).trigger("resize")
-                    } else {
-                        window.onresize()
                     }
                     oriAppletOnload(api)
                 };
@@ -598,9 +456,9 @@ var GGBApplet = function () {
             if (!preRendered) {
                 appletElem.appendChild(previewPositioner)
             }
-            setTimeout(function () {
+            setTimeout((function () {
                 applet.resize()
-            }, 1)
+            }), 1)
         } else {
             var appletScaler = document.createElement("div");
             appletScaler.className = "applet_scaler";
@@ -628,13 +486,16 @@ var GGBApplet = function () {
                 if (html5AppletsToProcess === null) {
                     html5AppletsToProcess = []
                 }
-                html5AppletsToProcess.push({article: a, params: parameters});
+                html5AppletsToProcess.push({
+                    article: a,
+                    params: parameters
+                });
                 window.renderGGBElementReady = function () {
                     isRenderGGBElementEnabled = true;
                     if (html5AppletsToProcess !== null && html5AppletsToProcess.length) {
-                        html5AppletsToProcess.forEach(function (obj) {
+                        html5AppletsToProcess.forEach((function (obj) {
                             renderGGBElementWithParams(obj.article, obj.params)
-                        });
+                        }));
                         html5AppletsToProcess = null
                     }
                 };
@@ -648,24 +509,6 @@ var GGBApplet = function () {
 
         if (loadScript) {
             scriptLoadStarted = true;
-            if (parseVersion(html5CodebaseVersion) >= 4.4) {
-                var f_c_u;
-                if (fonts_css_url === null) {
-                    f_c_u = html5Codebase + "css/fonts.css"
-                } else {
-                    f_c_u = fonts_css_url
-                }
-                var fontscript1 = document.createElement("script");
-                fontscript1.type = "text/javascript";
-                fontscript1.innerHTML = "\n" + "//<![CDATA[\n" + "WebFontConfig = {\n" + "   loading: function() {},\n" + "   active: function() {},\n" + "   inactive: function() {},\n" + "   fontloading: function(familyName, fvd) {},\n" + "   fontactive: function(familyName, fvd) {},\n" + "   fontinactive: function(familyName, fvd) {},\n" + "   custom: {\n" + '       families: ["geogebra-sans-serif", "geogebra-serif"],\n' + '           urls: [ "' + f_c_u + '" ]\n' + "   }\n" + "};\n" + "//]]>\n" + "\n";
-                appletElem.appendChild(fontscript1);
-                if (!html5Codebase.requirejs) {
-                    var fontscript2 = document.createElement("script");
-                    fontscript2.type = "text/javascript";
-                    fontscript2.src = html5Codebase + "js/webfont.js";
-                    appletElem.appendChild(fontscript2)
-                }
-            }
             for (var i = 0; i < article.childNodes.length; i++) {
                 var tag = article.childNodes[i].tagName;
                 if (tag === "TABLE") {
@@ -683,16 +526,22 @@ var GGBApplet = function () {
             var scriptLoaded = function () {
                 renderGGBElementOnTube(article, parameters)
             };
-            log(html5Codebase);
             script.src = html5Codebase + html5CodebaseScript;
-            script.onload = scriptLoaded;
             ggbHTML5LoadedCodebaseIsWebSimple = html5CodebaseIsWebSimple;
             ggbHTML5LoadedCodebaseVersion = html5CodebaseVersion;
             ggbHTML5LoadedScript = script.src;
             log("GeoGebra HTML5 codebase loaded: '" + html5Codebase + "'.", parameters);
-            if (html5Codebase.requirejs) {
+            if (!html5OverwrittenCodebase && (!html5OverwrittenCodebaseVersion || html5OverwrittenCodebaseVersion == "5.0")) {
+                if (html5CodebaseIsWebSimple) {
+                    webSimple.succeeded = webSimple.succeeded || webSimple()
+                } else {
+                    web3d.succeeded = web3d.succeeded || web3d()
+                }
+                scriptLoaded()
+            } else if (html5Codebase.requirejs) {
                 require(["geogebra/runtime/js/web3d/web3d.nocache"], scriptLoaded)
             } else {
+                script.onload = scriptLoaded;
                 appletElem.appendChild(script)
             }
         } else {
@@ -700,125 +549,6 @@ var GGBApplet = function () {
         }
         parameters.height = oriHeight;
         parameters.width = oriWidth
-    };
-    var injectCompiledApplet = function (appletElem, parameters, noPreview) {
-        var appletObjectName = parameters.id;
-        var viewContainer = document.createElement("div");
-        viewContainer.id = "view-container-" + appletObjectName;
-        viewContainer.setAttribute("width", parameters.width);
-        viewContainer.setAttribute("height", parameters.height);
-        viewContainer.style.width = parameters.width + "px";
-        viewContainer.style.height = parameters.height + "px";
-        if (parameters.showSplash === undefined) {
-            parameters.showSplash = true
-        }
-        var oldOnResize = null;
-        if (window.onresize !== undefined && typeof window.onresize === "function") {
-            oldOnResize = window.onresize
-        }
-        window.onresize = function () {
-            var scale = GGBAppletUtils.getScale(parameters, appletElem);
-            var scaleElem = null;
-            for (var i = 0; i < appletElem.childNodes.length; i++) {
-                if (appletElem.childNodes[i].className.match(/^applet_scaler/)) {
-                    scaleElem = appletElem.childNodes[i];
-                    break
-                }
-            }
-            if (scaleElem !== null) {
-                scaleElem.parentNode.style.transform = "";
-                if (!isNaN(scale) && scale !== 1) {
-                    GGBAppletUtils.scaleElement(scaleElem, scale);
-                    scaleElem.parentNode.style.width = (parameters.width + 2) * scale + "px";
-                    scaleElem.parentNode.style.height = (parameters.height + 2) * scale + "px"
-                } else {
-                    GGBAppletUtils.scaleElement(scaleElem, 1);
-                    scaleElem.parentNode.style.width = parameters.width + 2 + "px";
-                    scaleElem.parentNode.style.height = parameters.height + 2 + "px"
-                }
-            }
-            var appName = parameters.id !== undefined ? parameters.id : "ggbApplet";
-            var app = window[appName];
-            if (app !== undefined && app !== null && typeof app.recalculateEnvironments === "function") {
-                app.recalculateEnvironments()
-            }
-            if (oldOnResize !== null) {
-                oldOnResize()
-            }
-        };
-        var viewImages = document.createElement("div");
-        viewImages.id = "__ggb__images";
-        var appletScaler;
-        if (!noPreview && previewImagePath !== null && parseVersion(html5CodebaseVersion) >= 4.4 && parameters.width !== undefined) {
-            var previewContainer = createScreenShotDiv(parameters.width, parameters.height, parameters.borderColor, false);
-            var previewPositioner = document.createElement("div");
-            previewPositioner.style.position = "relative";
-            previewPositioner.className = "applet_scaler";
-            previewPositioner.style.display = "block";
-            previewPositioner.style.width = parameters.width + "px";
-            previewPositioner.style.height = parameters.height + "px";
-            previewPositioner.appendChild(previewContainer);
-            appletElem.appendChild(previewPositioner);
-            appletScaler = previewPositioner;
-            setTimeout(function () {
-                window.onresize()
-            }, 1);
-            if (typeof window.GGBT_ws_header_footer === "object") {
-                window.GGBT_ws_header_footer.setWsScrollerHeight()
-            }
-        } else {
-            appletScaler = document.createElement("div");
-            appletScaler.className = "applet_scaler";
-            appletScaler.style.position = "relative";
-            appletScaler.style.display = "block";
-            appletElem.appendChild(appletScaler);
-            window.onresize()
-        }
-        if (!ggbCompiledResourcesLoadFinished && !ggbCompiledResourcesLoadInProgress) {
-            var resource4 = document.createElement("script");
-            resource4.type = "text/javascript";
-            resource4.innerHTML = "\n" + "WebFontConfig = {\n" + "   loading: function() {},\n" + "   active: function() {},\n" + "   inactive: function() {},\n" + "   fontloading: function(familyName, fvd) {},\n" + "   fontactive: function(familyName, fvd) {" + "       if (!ggbCompiledAppletsLoaded) {" + "           ggbCompiledAppletsLoaded = true;" + "           " + "           setTimeout(function() {" + "               ggbCompiledResourcesLoadFinished = true;" + "               ggbCompiledResourcesLoadInProgress = false;" + "               if (window.ggbApplets != undefined) {" + "                   for (var i = 0 ; i < window.ggbApplets.length ; i++) {" + '                       window.ggbApplets[i].init({scale:window.ggbApplets[i].scaleParameter, url:window.ggbApplets[i].preCompiledScriptPath+"/", ss:' + (parameters.showSplash ? "true" : "false") + ", sdz:" + (parameters.enableShiftDragZoom ? "true" : "false") + ", rc:" + (parameters.enableRightClick ? "true" : "false") + ", sri:" + (parameters.showResetIcon ? "true" : "false") + "});" + "                   }" + "               }" + '               if (typeof window.ggbCompiledAppletsOnLoad == "function") {' + "                   window.ggbCompiledAppletsOnLoad();" + "               }" + "           },1);" + "       }" + "   },\n" + "   fontinactive: function(familyName, fvd) {},\n" + "   custom: {\n" + '       families: ["geogebra-sans-serif", "geogebra-serif"],\n' + '           urls: [ "' + preCompiledResourcePath + "/fonts/fonts.css" + '" ]\n' + "   }\n" + "};\n" + "\n";
-            var resource5 = document.createElement("script");
-            resource5.type = "text/javascript";
-            resource5.src = preCompiledResourcePath + "/fonts/webfont.js";
-            ggbCompiledResourcesLoadInProgress = true;
-            appletScaler.appendChild(resource4);
-            appletScaler.appendChild(resource5)
-        }
-        var appletStyle = document.createElement("style");
-        appletStyle.innerHTML = "\n" + ".view-frame {\n" + "    border: 1px solid black;\n" + "    display: inline-block;\n" + "}\n" + "#tip {\n" + "    background-color: yellow;\n" + "    border: 1px solid blue;\n" + "    position: absolute;\n" + "    left: -200px;\n" + "    top: 100px;\n" + "};\n";
-        appletScaler.appendChild(appletStyle);
-        var script = document.createElement("script");
-        var scriptLoaded = function () {
-            window[appletObjectName].preCompiledScriptPath = preCompiledScriptPath;
-            window[appletObjectName].scaleParameter = parameters.scale;
-            if (!noPreview) {
-                appletScaler.querySelector(".ggb_preview").remove()
-            }
-            appletScaler.appendChild(viewContainer);
-            appletScaler.appendChild(viewImages);
-            if (ggbCompiledResourcesLoadFinished) {
-                window[appletObjectName].init({
-                    scale: parameters.scale,
-                    url: preCompiledScriptPath + "/",
-                    ss: parameters.showSplash,
-                    sdz: parameters.enableShiftDragZoom,
-                    rc: parameters.enableRightClick,
-                    sri: parameters.showResetIcon
-                });
-                if (typeof window.ggbAppletOnLoad === "function") {
-                    window.ggbAppletOnLoad(appletElem.id)
-                }
-                if (typeof parameters.appletOnLoad === "function") {
-                    parameters.appletOnLoad(appletElem.id)
-                }
-            }
-        };
-        var scriptFile = preCompiledScriptPath + "/applet.js" + (preCompiledScriptVersion !== null && preCompiledScriptVersion !== null ? "?v=" + preCompiledScriptVersion : "");
-        script.src = scriptFile;
-        script.onload = scriptLoaded;
-        log("GeoGebra precompiled applet injected. Script=" + scriptFile + ".");
-        appletScaler.appendChild(script)
     };
     var injectScreenshot = function (appletElem, parameters, showPlayButton) {
         var previewContainer = createScreenShotDiv(parameters.width, parameters.height, parameters.borderColor, showPlayButton);
@@ -849,26 +579,13 @@ var GGBApplet = function () {
         applet.resize = function () {
             resizeScreenshot(appletElem, previewContainer, previewPositioner, showPlayButton)
         };
-        if (typeof jQuery === "function") {
-            jQuery(window).resize(function () {
-                applet.resize()
-            })
-        } else {
-            var oldOnResize = null;
-            if (window.onresize !== undefined && typeof window.onresize === "function") {
-                oldOnResize = window.onresize
-            }
-            window.onresize = function () {
-                applet.resize();
-                if (typeof oldOnResize === "function") {
-                    oldOnResize()
-                }
-            }
-        }
+        window.addEventListener("resize", (function (evt) {
+            applet.resize()
+        }));
         applet.resize()
     };
 
-    function resizeScreenshot(appletElem, previewContainer, previewPositioner, showPlayButton, oldOnResize) {
+    function resizeScreenshot(appletElem, previewContainer, previewPositioner, showPlayButton) {
         if (!appletElem.contains(previewContainer)) {
             return
         }
@@ -896,9 +613,6 @@ var GGBApplet = function () {
         if (typeof window.GGBT_ws_header_footer === "object") {
             window.GGBT_ws_header_footer.setWsScrollerHeight()
         }
-        if (typeof oldOnResize === "function") {
-            oldOnResize()
-        }
     }
 
     applet.onExitFullscreen = function (fullscreenContainer, appletElem) {
@@ -919,7 +633,7 @@ var GGBApplet = function () {
                     content.remove();
                     oldcontent.attr("id", "fullscreencontent").show();
                     jQuery(container).append(oldcontent);
-                    window.onresize()
+                    window.dispatchEvent(new Event("resize"))
                 } else {
                     injectHTML5Applet(content, parameters, false)
                 }
@@ -950,7 +664,7 @@ var GGBApplet = function () {
         var playButtonContainer = document.createElement("div");
         playButtonContainer.className = "ggb_preview_play icon-applet-play";
         if (!window.GGBT_wsf_view) {
-            var css = "" + ".icon-applet-play {" + "   width: 100%;" + "   height: 100%;box-sizing: border-box;position: absolute;z-index: 1001;cursor: pointer;border-width: 0px;" + "   background-color: transparent;background-repeat: no-repeat;left: 0;top: 0;background-position: center center;" + '   background-image: url("' + getTubeURL() + '/images/worksheet/icon-start-applet.png");' + "}" + ".icon-applet-play:hover {" + 'background-image: url("' + getTubeURL() + '/images/worksheet/icon-start-applet-hover.png");' + "}";
+            var css = "" + ".icon-applet-play {" + "   width: 100%;" + "   height: 100%;box-sizing: border-box;position: absolute;z-index: 1001;cursor: pointer;border-width: 0px;" + "   background-color: transparent;background-repeat: no-repeat;left: 0;top: 0;background-position: center center;" + '   background-image: url("https://www.geogebra.org/images/worksheet/icon-start-applet.png");' + "}" + ".icon-applet-play:hover {" + 'background-image: url("https://www.geogebra.org/images/worksheet/icon-start-applet-hover.png");' + "}";
             var style = document.createElement("style");
             if (style.styleSheet) {
                 style.styleSheet.cssText = css
@@ -1019,26 +733,10 @@ var GGBApplet = function () {
     };
     var detectAppletType = function (preferredType) {
         preferredType = preferredType.toLowerCase();
-        if (preferredType === "html5" || preferredType === "screenshot" || preferredType === "compiled") {
+        if (preferredType === "html5" || preferredType === "screenshot") {
             return preferredType
         }
-        if (preferredType === "prefercompiled" && preCompiledScriptPath !== null) {
-            if (applet.isCompiledInstalled()) {
-                return "compiled"
-            }
-        }
         return "html5"
-    };
-    var getIEVersion = function () {
-        var a = navigator.appVersion;
-        if (a.indexOf("Trident/7.0") > 0) {
-            return 11
-        } else {
-            return a.indexOf("MSIE") + 1 ? parseFloat(a.split("MSIE")[1]) : 999
-        }
-    };
-    var isInternetExplorer = function () {
-        return getIEVersion() !== 999
     };
     var modules = ["web", "webSimple", "web3d", "tablet", "tablet3d", "phone"];
     var setDefaultHTML5CodebaseForVersion = function (version, offline) {
@@ -1066,7 +764,7 @@ var GGBApplet = function () {
         } else if (index === 0) {
             codebase = protocol + html5CodebaseVersion
         } else {
-            codebase = "https://cdn.geogebra.org/apps/" + latestVersion + "/"
+            codebase = "https://www.geogebra.org/apps/5.0.775.0/"
         }
         for (var key in modules) {
             if (html5CodebaseVersion.slice(modules[key].length * -1) === modules[key] || html5CodebaseVersion.slice((modules[key].length + 1) * -1) === modules[key] + "/") {
@@ -1074,7 +772,7 @@ var GGBApplet = function () {
                 return
             }
         }
-        if (!GGBAppletUtils.isFlexibleWorksheetEditor() && hasWebSimple && !views.is3D && !views.AV && !views.SV && !views.CV && !views.EV2 && !views.CP && !views.PC && !views.DA && !views.FI && !views.PV && !valBoolean(parameters.showToolBar) && !valBoolean(parameters.showMenuBar) && !valBoolean(parameters.showAlgebraInput) && !valBoolean(parameters.enableRightClick)) {
+        if (!GGBAppletUtils.isFlexibleWorksheetEditor() && hasWebSimple && !views.is3D && !views.AV && !views.SV && !views.CV && !views.EV2 && !views.CP && !views.PC && !views.DA && !views.FI && !views.PV && !valBoolean(parameters.showToolBar) && !valBoolean(parameters.showMenuBar) && !valBoolean(parameters.showAlgebraInput) && !valBoolean(parameters.enableRightClick) && (!parameters.appName || parameters.appName == "classic")) {
             codebase += "webSimple/"
         } else {
             codebase += "web3d/"
@@ -1114,7 +812,7 @@ var GGBApplet = function () {
         }
         var numVersion = parseFloat(html5CodebaseVersion);
         if (numVersion !== NaN && numVersion < 5) {
-            console.log("The GeoGebra HTML5 codebase version " + numVersion + " is deprecated. Using version " + latestVersion + " instead.");
+            console.log("The GeoGebra HTML5 codebase version " + numVersion + " is deprecated. Using version latest instead.");
             setDefaultHTML5CodebaseForVersion("5.0", offline)
         }
     };
@@ -1126,7 +824,7 @@ var GGBApplet = function () {
         }
     };
     if (parameters.material_id !== undefined) {
-        fetchParametersFromTube(continueInit, parameters.materialsApi)
+        fetchParametersFromApi(continueInit)
     } else {
         continueInit()
     }
@@ -1178,7 +876,7 @@ var GGBAppletUtils = function () {
         }
     }
 
-    function getWidthHeight(appletElem, appletWidth, allowUpscale, noBorder, scaleContainerClass) {
+    function getWidthHeight(appletElem, appletWidth, allowUpscale, autoHeight, noBorder, scaleContainerClass) {
         var container = null;
         if (scaleContainerClass != undefined && scaleContainerClass != "") {
             var parent = appletElem.parentNode;
@@ -1191,27 +889,25 @@ var GGBAppletUtils = function () {
                 }
             }
         }
-        var myWidth = 0, myHeight = 0, windowWidth = 0, border = 0, borderRight = 0, borderLeft = 0, borderTop = 0;
+        var myWidth = 0,
+            myHeight = 0,
+            windowWidth = 0,
+            border = 0,
+            borderRight = 0,
+            borderLeft = 0,
+            borderTop = 0;
         if (container) {
             myWidth = container.offsetWidth;
-            myHeight = container.offsetHeight
+            myHeight = Math.max(autoHeight ? container.offsetWidth : 0, container.offsetHeight)
         } else {
             if (window.innerWidth && document.documentElement.clientWidth) {
                 myWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
                 myHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
                 windowWidth = myWidth
-            } else if (typeof window.innerWidth === "number") {
+            } else {
                 myWidth = window.innerWidth;
                 myHeight = window.innerHeight;
                 windowWidth = window.innerWidth
-            } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
-                myWidth = document.documentElement.clientWidth;
-                myHeight = document.documentElement.clientHeight;
-                windowWidth = document.documentElement.clientWidth
-            } else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
-                myWidth = document.body.clientWidth;
-                myHeight = document.body.clientHeight;
-                windowWidth = document.documentElement.clientWidth
             }
             if (appletElem) {
                 var rect = appletElem.getBoundingClientRect();
@@ -1249,7 +945,10 @@ var GGBAppletUtils = function () {
                 myHeight -= borderTop
             }
         }
-        return {width: myWidth, height: myHeight}
+        return {
+            width: myWidth,
+            height: myHeight
+        }
     }
 
     function calcScale(parameters, appletElem, allowUpscale, showPlayButton, scaleContainerClass) {
@@ -1258,15 +957,19 @@ var GGBAppletUtils = function () {
         }
         var ignoreHeight = showPlayButton !== undefined && showPlayButton;
         var noScaleMargin = parameters.noScaleMargin != undefined && parameters.noScaleMargin;
-        var windowSize = getWidthHeight(appletElem, parameters.width, allowUpscale, ignoreHeight && window.GGBT_wsf_view || noScaleMargin, scaleContainerClass);
+        var valBoolean = function (value) {
+            return value && value !== "false"
+        };
+        var autoHeight = valBoolean(parameters.autoHeight);
+        var windowSize = getWidthHeight(appletElem, parameters.width, allowUpscale, autoHeight, ignoreHeight && window.GGBT_wsf_view || noScaleMargin, scaleContainerClass);
         var windowWidth = parseInt(windowSize.width);
         var appletWidth = parameters.width;
         var appletHeight = parameters.height;
         if (appletWidth === undefined) {
-            var articles = appletElem.getElementsByTagName("article");
-            if (articles.length === 1) {
-                appletWidth = articles[0].offsetWidth;
-                appletHeight = articles[0].offsetHeight
+            var article = appletElem.querySelector(".appletParameters");
+            if (article) {
+                appletWidth = article.offsetWidth;
+                appletHeight = article.offsetHeight
             }
         }
         var xscale = windowWidth / appletWidth;
@@ -1279,7 +982,8 @@ var GGBAppletUtils = function () {
     }
 
     function getScale(parameters, appletElem, showPlayButton) {
-        var scale = 1, autoScale, allowUpscale = false;
+        var scale = 1,
+            autoScale, allowUpscale = false;
         if (parameters.hasOwnProperty("allowUpscale")) {
             allowUpscale = parameters.allowUpscale
         }
@@ -1295,7 +999,7 @@ var GGBAppletUtils = function () {
         if (appletElem && typeof window.GGBT_wsf_view === "object" && window.GGBT_wsf_view.isFullscreen()) {
             allowUpscale = true
         }
-        if (!isFlexibleWorksheetEditor() && !(parameters.hasOwnProperty("disableAutoScale") && parameters.disableAutoScale)) {
+        if (!(parameters.hasOwnProperty("disableAutoScale") && parameters.disableAutoScale)) {
             autoScale = calcScale(parameters, appletElem, allowUpscale, showPlayButton, parameters.scaleContainerClass)
         } else {
             return scale
@@ -1335,11 +1039,10 @@ var GGBAppletUtils = function () {
     }
 
     function responsiveResize(appletElem, parameters) {
-        var article = appletElem.getElementsByTagName("article")[0];
+        var article = appletElem.querySelector(".appletParameters");
         if (article) {
             if (typeof window.GGBT_wsf_view === "object" && window.GGBT_wsf_view.isFullscreen()) {
-                var articles = appletElem.getElementsByTagName("article");
-                if (articles.length > 0 && parameters.id !== articles[0].getAttribute("data-param-id")) {
+                if (parameters.id !== article.getAttribute("data-param-id")) {
                     return
                 }
                 window.GGBT_wsf_view.setCloseBtnPosition(appletElem)
@@ -1348,9 +1051,6 @@ var GGBAppletUtils = function () {
                 return
             }
             var scale = getScale(parameters, appletElem);
-            article.removeAttribute("data-param-scale");
-            article.setAttribute("data-scalex", scale);
-            article.setAttribute("data-scaley", scale);
             if (isFlexibleWorksheetEditor()) {
                 article.setAttribute("data-param-scale", scale)
             }
@@ -1364,7 +1064,9 @@ var GGBAppletUtils = function () {
             if (scaleElem !== null && scaleElem.querySelector(".noscale") !== null) {
                 return
             }
-            if (scaleElem !== null && !scaleElem.className.match(/fullscreen/)) {
+            var appName = parameters.id !== undefined ? parameters.id : "ggbApplet";
+            var app = window[appName];
+            if ((app == null || !app.recalculateEnvironments) && scaleElem !== null && !scaleElem.className.match(/fullscreen/)) {
                 scaleElem.parentNode.style.transform = "";
                 if (!isNaN(scale) && scale !== 1) {
                     scaleElem.parentNode.style.width = parameters.width * scale + "px";
@@ -1378,11 +1080,6 @@ var GGBAppletUtils = function () {
             }
             if (typeof window.GGBT_wsf_view === "object" && window.GGBT_wsf_view.isFullscreen()) {
                 positionCenter(appletElem)
-            }
-            var appName = parameters.id !== undefined ? parameters.id : "ggbApplet";
-            var app = window[appName];
-            if (app !== undefined && app !== null && typeof app.recalculateEnvironments === "function") {
-                app.recalculateEnvironments()
             }
             if (window.GGBT_wsf_view && !window.GGBT_wsf_view.isFullscreen()) {
                 window.GGBT_wsf_general.adjustContentToResize($(article).parents(".content-added-content"))
@@ -1399,7 +1096,504 @@ var GGBAppletUtils = function () {
     }
 }();
 if (typeof define === "function" && define.amd) {
-    define([], function () {
+    define([], (function () {
         return GGBApplet
-    })
+    }))
 }
+GGBAppletUtils.makeModule = function (name, permutation) {
+    function webModule() {
+        var I = "bootstrap",
+            J = "begin",
+            K = "gwt.codesvr." + name + "=",
+            L = "gwt.codesvr=",
+            M = name,
+            N = "startup",
+            O = "DUMMY",
+            P = 0,
+            Q = 1,
+            R = "iframe",
+            S = "position:absolute; width:0; height:0; border:none; left: -1000px;",
+            T = " top: -1000px;",
+            U = "CSS1Compat",
+            V = "<!doctype html>",
+            W = "",
+            X = "<html><head></head><body></body></html>",
+            Y = "undefined",
+            Z = "readystatechange",
+            $ = 10,
+            _ = "Chrome",
+            ab = 'eval("',
+            bb = '");',
+            cb = "script",
+            db = "javascript",
+            eb = "moduleStartup",
+            fb = "moduleRequested",
+            gb = "Failed to load ",
+            hb = "head",
+            ib = "meta",
+            jb = "name",
+            kb = name + "::",
+            lb = "::",
+            mb = "gwt:property",
+            nb = "content",
+            ob = "=",
+            pb = "gwt:onPropertyErrorFn",
+            qb = 'Bad handler "',
+            rb = '" for "gwt:onPropertyErrorFn"',
+            sb = "gwt:onLoadErrorFn",
+            tb = '" for "gwt:onLoadErrorFn"',
+            ub = "#",
+            vb = "?",
+            wb = "/",
+            xb = "img",
+            yb = "clear.cache.gif",
+            zb = "baseUrl",
+            Ab = name + ".nocache.js",
+            Bb = "base",
+            Cb = "//",
+            Db = "user.agent",
+            Eb = "webkit",
+            Fb = "safari",
+            Gb = "msie",
+            Hb = 11,
+            Ib = "ie10",
+            Jb = 9,
+            Kb = "ie9",
+            Lb = 8,
+            Mb = "ie8",
+            Nb = "gecko",
+            Ob = "gecko1_8",
+            Pb = 2,
+            Qb = 3,
+            Rb = 4,
+            Sb = "selectingPermutation",
+            Tb = "" + name + ".devmode.js",
+            Ub = permutation,
+            Vb = ":1",
+            Wb = ":2",
+            Xb = ":3",
+            Yb = ":",
+            Zb = ".cache.js",
+            $b = "loadExternalRefs",
+            _b = "end";
+        var o = window;
+        var p = document;
+        r(I, J);
+
+        function q() {
+            var a = o.location.search;
+            return a.indexOf(K) != -1 || a.indexOf(L) != -1
+        }
+
+        function r(a, b) {
+        }
+
+        webModule.__sendStats = r;
+        webModule.__moduleName = M;
+        webModule.__errFn = null;
+        webModule.__moduleBase = O;
+        webModule.__softPermutationId = P;
+        webModule.__computePropValue = null;
+        webModule.__getPropMap = null;
+        webModule.__installRunAsyncCode = function () {
+        };
+        webModule.__gwtStartLoadingFragment = function () {
+            return null
+        };
+        webModule.__gwt_isKnownPropertyValue = function () {
+            return false
+        };
+        webModule.__gwt_getMetaProperty = function () {
+            return null
+        };
+        var s = null;
+        var t = o.__gwt_activeModules = o.__gwt_activeModules || {};
+        t[M] = {
+            moduleName: M
+        };
+        webModule.__moduleStartupDone = function (e) {
+            var f = t[M].bindings;
+            t[M].bindings = function () {
+                var a = f ? f() : {};
+                var b = e[webModule.__softPermutationId];
+                for (var c = P; c < b.length; c++) {
+                    var d = b[c];
+                    a[d[P]] = d[Q]
+                }
+                return a
+            }
+        };
+        var u;
+
+        function v() {
+            w();
+            return u
+        }
+
+        function w() {
+            if (u) {
+                return
+            }
+            var a = p.createElement(R);
+            a.id = M;
+            a.style.cssText = S + T;
+            a.tabIndex = -1;
+            p.body.appendChild(a);
+            u = a.contentWindow.document;
+            u.open();
+            var b = document.compatMode == U ? V : W;
+            u.write(b + X);
+            u.close()
+        }
+
+        function A(k) {
+            function l(a) {
+                function b() {
+                    if (typeof p.readyState == Y) {
+                        return typeof p.body != Y && p.body != null
+                    }
+                    return /loaded|complete/.test(p.readyState)
+                }
+
+                var c = b();
+                if (c) {
+                    a();
+                    return
+                }
+
+                function d() {
+                    if (!c) {
+                        if (!b()) {
+                            return
+                        }
+                        c = true;
+                        a();
+                        if (p.removeEventListener) {
+                            p.removeEventListener(Z, d, false)
+                        }
+                        if (e) {
+                            clearInterval(e)
+                        }
+                    }
+                }
+
+                if (p.addEventListener) {
+                    p.addEventListener(Z, d, false)
+                }
+                var e = setInterval((function () {
+                    d()
+                }), $)
+            }
+
+            function m(c) {
+                function d(a, b) {
+                    a.removeChild(b)
+                }
+
+                var e = v();
+                var f = e.body;
+                var g;
+                if (navigator.userAgent.indexOf(_) > -1 && window.JSON) {
+                    var h = e.createDocumentFragment();
+                    h.appendChild(e.createTextNode(ab));
+                    for (var i = P; i < c.length; i++) {
+                        var j = window.JSON.stringify(c[i]);
+                        h.appendChild(e.createTextNode(j.substring(Q, j.length - Q)))
+                    }
+                    h.appendChild(e.createTextNode(bb));
+                    g = e.createElement(cb);
+                    g.language = db;
+                    g.appendChild(h);
+                    f.appendChild(g);
+                    d(f, g)
+                } else {
+                    for (var i = P; i < c.length; i++) {
+                        g = e.createElement(cb);
+                        g.language = db;
+                        g.text = c[i];
+                        f.appendChild(g);
+                        d(f, g)
+                    }
+                }
+            }
+
+            webModule.onScriptDownloaded = function (a) {
+                l((function () {
+                    m(a)
+                }))
+            };
+            var n = p.createElement(cb);
+            n.src = k;
+            if (webModule.__errFn) {
+                n.onerror = function () {
+                    webModule.__errFn(M, new Error(gb + code))
+                }
+            }
+            p.getElementsByTagName(hb)[P].appendChild(n)
+        }
+
+        webModule.__startLoadingFragment = function (a) {
+            return D(a)
+        };
+        webModule.__installRunAsyncCode = function (a) {
+            var b = v();
+            var c = b.body;
+            var d = b.createElement(cb);
+            d.language = db;
+            d.text = a;
+            c.appendChild(d);
+            c.removeChild(d)
+        };
+
+        function B() {
+            var c = {};
+            var d;
+            var e;
+            var f = p.getElementsByTagName(ib);
+            for (var g = P, h = f.length; g < h; ++g) {
+                var i = f[g],
+                    j = i.getAttribute(jb),
+                    k;
+                if (j) {
+                    j = j.replace(kb, W);
+                    if (j.indexOf(lb) >= P) {
+                        continue
+                    }
+                    if (j == mb) {
+                        k = i.getAttribute(nb);
+                        if (k) {
+                            var l, m = k.indexOf(ob);
+                            if (m >= P) {
+                                j = k.substring(P, m);
+                                l = k.substring(m + Q)
+                            } else {
+                                j = k;
+                                l = W
+                            }
+                            c[j] = l
+                        }
+                    } else if (j == pb) {
+                        k = i.getAttribute(nb);
+                        if (k) {
+                            try {
+                                d = eval(k)
+                            } catch (a) {
+                                alert(qb + k + rb)
+                            }
+                        }
+                    } else if (j == sb) {
+                        k = i.getAttribute(nb);
+                        if (k) {
+                            try {
+                                e = eval(k)
+                            } catch (a) {
+                                alert(qb + k + tb)
+                            }
+                        }
+                    }
+                }
+            }
+            __gwt_getMetaProperty = function (a) {
+                var b = c[a];
+                return b == null ? null : b
+            };
+            s = d;
+            webModule.__errFn = e
+        }
+
+        function C() {
+            function e(a) {
+                var b = a.lastIndexOf(ub);
+                if (b == -1) {
+                    b = a.length
+                }
+                var c = a.indexOf(vb);
+                if (c == -1) {
+                    c = a.length
+                }
+                var d = a.lastIndexOf(wb, Math.min(c, b));
+                return d >= P ? a.substring(P, d + Q) : W
+            }
+
+            function f(a) {
+                if (a.match(/^\w+:\/\//)) {
+                } else {
+                    var b = p.createElement(xb);
+                    b.src = a + yb;
+                    a = e(b.src)
+                }
+                return a
+            }
+
+            function g() {
+                var a = __gwt_getMetaProperty(zb);
+                if (a != null) {
+                    return a
+                }
+                return W
+            }
+
+            function h() {
+                var a = p.getElementsByTagName(cb);
+                for (var b = P; b < a.length; ++b) {
+                    if (a[b].src.indexOf(Ab) != -1) {
+                        return e(a[b].src)
+                    }
+                }
+                return W
+            }
+
+            function i() {
+                var a = p.getElementsByTagName(Bb);
+                if (a.length > P) {
+                    return a[a.length - Q].href
+                }
+                return W
+            }
+
+            function j() {
+                var a = p.location;
+                return a.href == a.protocol + Cb + a.host + a.pathname + a.search + a.hash
+            }
+
+            var k = g();
+            if (k == W) {
+                k = h()
+            }
+            if (k == W) {
+                k = i()
+            }
+            if (k == W && j()) {
+                k = e(p.location.href)
+            }
+            k = f(k);
+            return k
+        }
+
+        function D(a) {
+            if (a.match(/^\//)) {
+                return a
+            }
+            if (a.match(/^[a-zA-Z]+:\/\//)) {
+                return a
+            }
+            return webModule.__moduleBase + a
+        }
+
+        function F() {
+            var f = [];
+            var g = P;
+
+            function h(a, b) {
+                var c = f;
+                for (var d = P, e = a.length - Q; d < e; ++d) {
+                    c = c[a[d]] || (c[a[d]] = [])
+                }
+                c[a[e]] = b
+            }
+
+            var i = [];
+            var j = [];
+
+            function k(a) {
+                var b = j[a](),
+                    c = i[a];
+                if (b in c) {
+                    return b
+                }
+                var d = [];
+                for (var e in c) {
+                    d[c[e]] = e
+                }
+                if (s) {
+                    s(a, d, b)
+                }
+                throw null
+            }
+
+            j[Db] = function () {
+                var a = navigator.userAgent.toLowerCase();
+                var b = p.documentMode;
+                if (function () {
+                    return a.indexOf(Eb) != -1
+                }()) return Fb;
+                if (function () {
+                    return a.indexOf(Gb) != -1 && (b >= $ && b < Hb)
+                }()) return Ib;
+                if (function () {
+                    return a.indexOf(Gb) != -1 && (b >= Jb && b < Hb)
+                }()) return Kb;
+                if (function () {
+                    return a.indexOf(Gb) != -1 && (b >= Lb && b < Hb)
+                }()) return Mb;
+                if (function () {
+                    return a.indexOf(Nb) != -1 || b >= Hb
+                }()) return Ob;
+                return Fb
+            };
+            i[Db] = {
+                gecko1_8: P,
+                ie10: Q,
+                ie8: Pb,
+                ie9: Qb,
+                safari: Rb
+            };
+            __gwt_isKnownPropertyValue = function (a, b) {
+                return b in i[a]
+            };
+            webModule.__getPropMap = function () {
+                var a = {};
+                for (var b in i) {
+                    if (i.hasOwnProperty(b)) {
+                        a[b] = k(b)
+                    }
+                }
+                return a
+            };
+            webModule.__computePropValue = k;
+            o.__gwt_activeModules[M].bindings = webModule.__getPropMap;
+            if (q()) {
+                return D(Tb)
+            }
+            var l;
+            try {
+                h([Ob], Ub);
+                h([Ib], Ub + Vb);
+                h([Kb], Ub + Wb);
+                h([Fb], Ub + Xb);
+                l = f[k(Db)];
+                var m = l.indexOf(Yb);
+                if (m != -1) {
+                    g = parseInt(l.substring(m + Q), $);
+                    l = l.substring(P, m)
+                }
+            } catch (a) {
+            }
+            webModule.__softPermutationId = g;
+            return D(l + Zb)
+        }
+
+        function G() {
+            if (!o.__gwt_stylesLoaded) {
+                o.__gwt_stylesLoaded = {}
+            }
+        }
+
+        B();
+        webModule.__moduleBase = "https://www.geogebra.org/apps/5.0.775.0/" + name + "/";
+        t[M].moduleBase = webModule.__moduleBase;
+        var H = F();
+        G();
+        A(H);
+        return true
+    }
+
+    return webModule
+};
+if (typeof window.web3d !== "function") {
+    window.web3d = GGBAppletUtils.makeModule("web3d", "9113C549FCFC3F8F9F06980FCCFD73B4")
+}
+if (typeof window.webSimple !== "function") {
+    window.webSimple = GGBAppletUtils.makeModule("webSimple", "DF1BE307DA7F5BEEF48044F667BC6ECE")
+}
+window.GGBApplet = GGBApplet

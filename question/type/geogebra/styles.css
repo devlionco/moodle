@@ -13,3 +13,10 @@
 .ggb_preview {
     z-index: 0 !important;
 }
+.highlightDraggers{
+    min-height: 765px !important;
+}
+
+html[dir=rtl] .ggbcontainer{
+    direction: rtl;
+}
