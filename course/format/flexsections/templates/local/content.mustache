@@ -161,19 +161,14 @@ Example context (json):
         {{/header}}
            {{#showsingleuploadsection}}
                     <div class="uploadsectionimage">
-                        <form id="uploadsectionimageform">
-                            <input type="hidden" class="sectionid" id="sectionid" name="sectionid" value="{{id}}" />
-                            <label data-toggle="tooltip" data-placement="bottom" title="{{#str}}resolution_must, theme_petel{{/str}}"
-                                   for="uploadsectionimage" id="uploadsectionimagelabel"
-                                   class="btn btn-sm btn-link d-flex align-items-center mb-0 px-0 d-inline-flex">
-                                <i class="fa-light fa-pencil" aria-hidden="true"></i>
-                                <span class="btn-text ml-2">{{#str}} editimage, format_flexsections {{/str}}</span>
-                            </label>
+                        <label data-toggle="tooltip" data-placement="bottom" title="{{#str}}resolution_must, theme_petel{{/str}}"
+                               for="uploadsectionimage" id="uploadsectionimagelabel"
+                               class="btn btn-sm btn-link d-flex align-items-center mb-0 px-0 d-inline-flex">
+                            <i class="fa-light fa-pencil" aria-hidden="true"></i>
+                            <span class="btn-text ml-2">{{#str}} editimage, format_flexsections {{/str}}</span>
+                        </label>
 
-                            <input type="file" class="form-control-file" id="uploadsectionimage"
-                                   style="visibility:hidden; width: 0; height: 0">
-
-                        </form>
+                        <input class="form-control-file" id="uploadsectionimage" data-sectionid="{{id}}" data-contextid="{{contextid}}" style="visibility:hidden; width: 0; height: 0">
                     </div>
                 {{/showsingleuploadsection}}
     {{/singlesection}}
@@ -181,21 +176,20 @@ Example context (json):
 {{/hasnavigation}}
 {{^hasnavigation}}
     <div id="courseheaderimage" class="course-image mb-3" style="background-image: url({{courseimageurl}});">
+
         {{#showuploadcourseimage}}
-            <div class="uploadcourseimage"> <!--TODO: check is this classes needed - col-12 mb-1 mr-md-0 mb-md-0 -->
-                <form id="uploadcourseimageform">
-                    <input type="hidden" id="courseid" name="courseid" value="{{courseid}}" />
-                    <label data-toggle="tooltip" data-placement="bottom" title="{{#str}}resolution_must, theme_petel{{/str}}"
-                           for="uploadcourseimage" id="uploadcourseimagelabel"
-                           class="btn btn-sm btn-outline-secondary d-flex align-items-center mb-0 px-3">
-                        <i class="fa-light fa-pencil" aria-hidden="true"></i>
-                        <span class="btn-text ml-2">{{#str}} editimage, format_flexsections {{/str}}</span>
-                    </label>
-                    <input type="file" class="form-control-file" id="uploadcourseimage"
-                           style="visibility:hidden; width: 0; height: 0">
-                </form>
+            <div class="uploadcourseimage">
+                <label data-toggle="tooltip" data-placement="bottom" title="{{#str}}resolution_must, theme_petel{{/str}}"
+                       for="uploadcourseimage" id="uploadcourseimagelabel"
+                       class="btn btn-sm btn-outline-secondary d-flex align-items-center mb-0 px-3">
+                    <i class="fa-light fa-pencil" aria-hidden="true"></i>
+                    <span class="btn-text ml-2">{{#str}} editimage, format_flexsections {{/str}}</span>
+                </label>
+
+                <input class="form-control-file" id="uploadcourseimage" data-courseid="{{courseid}}" data-contextid="{{contextid}}" style="visibility:hidden; width: 0; height: 0">
             </div>
         {{/showuploadcourseimage}}
+
         {{#coursecompletion}}
             {{#modecircle}}
                 <div class="chart-wrapper p-2">

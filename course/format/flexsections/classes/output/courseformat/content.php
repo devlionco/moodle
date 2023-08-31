@@ -102,13 +102,17 @@ class content extends \core_courseformat\output\local\content {
         }
         $data->courseimageurl = $courseimage;
 
-        // Uploadcourseimage.
+        // Upload course image.
         $showuploadcourseimage = false;
-        if ($PAGE->user_is_editing() && $COURSE->id > 1 && (substr($PAGE->pagetype, 0, strlen('course-view')) === 'course-view')) {
+        if ($PAGE->user_is_editing() && $this->format->get_courseid() > 1 &&
+                (substr($PAGE->pagetype, 0, strlen('course-view')) === 'course-view')) {
             $showuploadcourseimage = true;
-            $PAGE->requires->js_call_amd('format_flexsections/courseimage', 'init');
+            $PAGE->requires->js_call_amd('format_flexsections/uploadimage', 'course');
             $data->sesskey  = sesskey();
-            $data->courseid = $COURSE->id;
+            $data->courseid = $this->format->get_courseid();
+
+            $context = \context_course::instance($this->format->get_courseid());
+            $data->contextid = $context->id;
         }
         $data->showuploadcourseimage = $showuploadcourseimage;
 
@@ -193,7 +197,7 @@ class content extends \core_courseformat\output\local\content {
             ($this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONVIEW_CARDS) && !isset($data->singlesection);
         if($data->showsimplecards){
             // Update section images.
-            $PAGE->requires->js_call_amd('format_flexsections/sections', 'initCoursePage');
+            $PAGE->requires->js_call_amd('format_flexsections/uploadimage', 'multiSections');
         }
 
         // Show collapse button.
@@ -207,7 +211,7 @@ class content extends \core_courseformat\output\local\content {
 
         $data->showsingleuploadsection = $PAGE->user_is_editing() && isset($data->singlesection);
         if($data->showsingleuploadsection){
-            $PAGE->requires->js_call_amd('format_flexsections/sections', 'initSectionPage');
+            $PAGE->requires->js_call_amd('format_flexsections/uploadimage', 'singleSection');
         }
 
         // Student status area.

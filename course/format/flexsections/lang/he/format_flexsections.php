@@ -143,3 +143,7 @@ $string['loading'] = 'תוכן היחידה והפעילויות בטעינה...
 // Task.
 $string['taskrecentlyviewedsections'] = 'צפית ביחידה לאחרונה';
 
+// Popup upload image.
+$string['uploadimage'] = 'העלאת תמונה';
+$string['cancel'] = 'ביטול';
+$string['upload'] = 'העלה';

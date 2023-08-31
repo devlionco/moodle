@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot. '/course/format/lib.php');
+require_once($CFG->dirroot . '/lib/formslib.php');
 
 use core\output\inplace_editable;
 use format_flexsections\forms\editcard_form;
@@ -1726,7 +1727,7 @@ function format_flexsections_lastseen($courseid, $sectionid, $userid) {
  * Get course summary image
  * @param core_course_list_element $courseid
  * @param bool $islist
- * @return obj
+ * @return string
  */
 function format_flexsections_get_course_image($course, $islist = false) {
     global $CFG, $OUTPUT, $PAGE;
@@ -1753,5 +1754,140 @@ function format_flexsections_get_course_image($course, $islist = false) {
         return $courseimage;
     } else {
         return $OUTPUT->image_url($CFG->instancename . '_placeholder', 'theme');
+    }
+}
+
+
+function format_flexsections_output_fragment_upload_image($args) {
+    global $OUTPUT;
+
+    $args = (object) $args;
+
+    $type = isset($args->type) ? $args->type : '';
+    $courseid = isset($args->courseid) ? $args->courseid : 0;
+    $sectionid = isset($args->sectionid) ? $args->sectionid : 0;
+
+    // Upload form.
+    $uploadmform = new upload_image(null, ['type' => $type, 'courseid' => $courseid, 'sectionid' => $sectionid],
+            'post', '', null, true, []);
+
+    $uploadhtml = '';
+    ob_start();
+    $uploadmform->display();
+    $uploadhtml .= ob_get_contents();
+    ob_end_clean();
+
+    $uploadhtml = str_replace('col-md-3', '', $uploadhtml);
+    $uploadhtml = str_replace('col-md-9', 'col-md-12', $uploadhtml);
+    $uploadhtml = str_replace('<form ', '<div ', $uploadhtml);
+    $uploadhtml = str_replace('</form>', '</div>', $uploadhtml);
+
+    $data = array(
+            'uploadhtml' => $uploadhtml,
+            'uniqueid' => time(),
+            'type' => $type,
+            'courseid' => $courseid,
+            'sectionid' => $sectionid,
+    );
+
+    return $OUTPUT->render_from_template('format_flexsections/upload_image_form', $data);
+}
+
+class upload_image extends \moodleform {
+
+    /**
+     * Definition of the form
+     */
+    public function definition() {
+        global $DB, $USER;
+
+        $mform =& $this->_form;
+        $customdata = $this->_customdata;
+
+        $filemanageroptions = array(
+                'accepted_types' => array('.jpg', '.png', '.svg'),
+                'maxbytes' => 0,
+                'maxfiles' => 1,
+                'subdirs' => 0,
+                'areamaxbytes' => 10485760,
+                'return_types' => FILE_INTERNAL | FILE_EXTERNAL
+        );
+
+        $mform->addElement('filemanager', 'uploadedimage', null, null, $filemanageroptions);
+
+        // Default for section.
+        if (in_array($customdata['type'], ['singlesection', 'multisection'])) {
+            $fs = get_file_storage();
+            $sectionid = $customdata['sectionid'];
+
+            $obj = $DB->get_record('course_sections', ['id' => $sectionid]);
+            $context = context_course::instance($obj->course);
+
+            $files = $fs->get_area_files($context->id, 'format_flexsections', 'image', $sectionid);
+            foreach ($files as $f) {
+                if ($f->is_valid_image()) {
+                    $draftitemid = file_get_unused_draft_itemid();
+
+                    $usercontext = \context_user::instance($USER->id);
+                    $draft = new \StdClass();
+                    $draft->contextid = $usercontext->id;
+                    $draft->component = 'user';
+                    $draft->filearea = 'draft';
+                    $draft->itemid = $draftitemid;
+                    $draft->userid = $USER->id;
+                    $draft->filepath = '/';
+                    $draft->filename = $f->get_filename();
+                    $draft->source = $f->get_filename();
+                    $fs->create_file_from_string($draft, $f->get_content());
+
+                    $mform->setDefault('uploadedimage', $draftitemid);
+
+                    break;
+                }
+            }
+        }
+
+        // Default for course.
+        if (in_array($customdata['type'], ['course'])) {
+            $fs = get_file_storage();
+            $courseid = $customdata['courseid'];
+            $context = context_course::instance($courseid);
+
+            $files = $fs->get_area_files($context->id, 'course', 'overviewfiles');
+            foreach ($files as $f) {
+                if ($f->is_valid_image()) {
+                    $draftitemid = file_get_unused_draft_itemid();
+
+                    $usercontext = \context_user::instance($USER->id);
+                    $draft = new \StdClass();
+                    $draft->contextid = $usercontext->id;
+                    $draft->component = 'user';
+                    $draft->filearea = 'draft';
+                    $draft->itemid = $draftitemid;
+                    $draft->userid = $USER->id;
+                    $draft->filepath = '/';
+                    $draft->filename = $f->get_filename();
+                    $draft->source = $f->get_filename();
+                    $fs->create_file_from_string($draft, $f->get_content());
+
+                    $mform->setDefault('uploadedimage', $draftitemid);
+
+                    break;
+                }
+            }
+        }
+    }
+
+    public function definition_after_data() {
+        $mform = $this->_form;
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
+    }
+
+    public function get_editor_options() {
+        return $this->_customdata['editoroptions'];
     }
 }

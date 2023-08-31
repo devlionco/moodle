@@ -144,3 +144,8 @@ $string['loading'] = 'Loading activity list...';
 
 // Task.
 $string['taskrecentlyviewedsections'] = 'Recently viewed sections';
+
+// Popup upload image.
+$string['uploadimage'] = 'Upload image';
+$string['cancel'] = 'Cancel';
+$string['upload'] = 'Upload';

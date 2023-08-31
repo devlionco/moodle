@@ -21,6 +21,7 @@
  * @copyright  2019 Devlion.co
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->libdir . "/externallib.php";
@@ -43,63 +44,69 @@ class format_flexsections_external extends external_api {
     public static function change_courseimage_parameters() {
         return new external_function_parameters(
             array(
-                'img'      => new external_value(PARAM_TEXT, 'image in base64'),
+                'fileitemid' => new external_value(PARAM_INT, 'file itemid'),
                 'courseid' => new external_value(PARAM_INT, 'course id'),
-                'filename' => new external_value(PARAM_TEXT, 'filename'),
             )
         );
     }
 
     /**
      * Returns welcome message
-     * @param string $img
-     * @param int $sectionid
-     * @param string $filename
+     * @param int $fileitemid
+     * @param int $courseid
      * @return string
      */
-    public static function change_courseimage($img, $courseid, $filename) {
+    public static function change_courseimage($fileitemid, $courseid) {
+        global $DB, $OUTPUT;
 
-        $filename = str_replace(' ', '_', $filename);
+        $fileitemid = trim($fileitemid);
 
-        preg_match('/^data:image\/(\w+);base64,/', $img, $type);
-        $img  = substr($img, strpos($img, ',') + 1);
-        $type = strtolower($type[1]); // jpg, png, gif
+        $data['type'] = 'course';
+        $data['courseid'] = $courseid;
 
-        if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
-            throw new \Exception('invalid image type');
-        }
-        $img = str_replace(' ', '+', $img);
-        $img = base64_decode($img);
-
-        if ($img === false) {
-            return json_encode(['url' => '']);
-        }
-
-        $context = context_course::instance($courseid);
+        // Default image.
+        $data['imageurl'] = $OUTPUT->get_generated_image_for_id($courseid);
 
         $fs = get_file_storage();
-
-        // Prepare file record object
-        $fileinfo = array(
-            'contextid' => $context->id,
-            'component' => 'course',
-            'filearea'  => 'overviewfiles',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        );
-
-        $fs->delete_area_files($context->id, 'course', 'overviewfiles');
-        $fs->create_file_from_string($fileinfo, $img);
-
         $course = get_course($courseid);
+        $context = context_course::instance($courseid);
 
+        // Delete old images.
+        $fs->delete_area_files($context->id, 'course', 'overviewfiles');
+
+        // Clear cache.
         $image = \cache::make('core', 'course_image');
         $image->delete($course->id);
 
-        $courseimage  = format_flexsections_get_course_image($course);
+        $draftfiles = file_get_drafarea_files($fileitemid, '/');
+        if (!empty($draftfiles->list)) {
 
-        $data['url'] = $courseimage;
+            $sql = "SELECT * FROM {files} WHERE filename != '.' AND component = 'user' AND filearea = 'draft' AND itemid = ?";
+
+            if ($draft = $DB->get_record_sql($sql, array($fileitemid))) {
+                $files = $fs->get_area_files($draft->contextid, $draft->component, $draft->filearea, $draft->itemid);
+                foreach ($files as $f) {
+                    if ($f->is_valid_image()) {
+                        $filename = str_replace(' ', '_', $f->get_filename());
+                        $fileinfo = array(
+                                'contextid' => $context->id,
+                                'component' => 'course',
+                                'filearea' => 'overviewfiles',
+                                'itemid' => 0,
+                                'filepath' => '/',
+                                'filename' => $filename,
+                        );
+
+                        // Save file.
+                        $fs->create_file_from_string($fileinfo, $f->get_content());
+
+                        break;
+                    }
+                }
+
+                $data['imageurl'] = format_flexsections_get_course_image($course);
+            }
+        }
 
         return json_encode($data);
     }
@@ -119,63 +126,74 @@ class format_flexsections_external extends external_api {
     public static function change_sectionimage_parameters() {
         return new external_function_parameters(
             array(
-                'img'      => new external_value(PARAM_TEXT, 'image in base64'),
+                'type' => new external_value(PARAM_TEXT, 'type'),
                 'sectionid' => new external_value(PARAM_INT, 'section id'),
-                'filename' => new external_value(PARAM_TEXT, 'filename'),
+                'fileitemid' => new external_value(PARAM_INT, 'file itemid'),
             )
         );
     }
 
     /**
      * Returns welcome message
-     * @param string $img
      * @param int $sectionid
-     * @param string $filename
+     * @param int fileitemid
      * @return string
      */
-    public static function change_sectionimage($img, $sectionid, $filename) {
-        global $DB, $CFG;
+    public static function change_sectionimage($type, $sectionid, $fileitemid) {
+        global $DB, $OUTPUT, $CFG;
 
-        $filename = str_replace(' ', '_', $filename);
+        $fileitemid = trim($fileitemid);
 
-        $row = $DB->get_record('course_sections', ['id' => $sectionid]);
+        $data['type'] = $type;
+        $data['sectionid'] = $sectionid;
 
-        preg_match('/^data:image\/(\w+);base64,/', $img, $type);
-        $img  = substr($img, strpos($img, ',') + 1);
-        $type = strtolower($type[1]); // jpg, png, gif
+        // Default image.
+        $data['imageurl'] = $OUTPUT->get_generated_image_for_id($sectionid);
 
-        if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
-            throw new \Exception('invalid image type');
-        }
+        //$pattern = new core_geopattern();
+        //$pattern->setColor(self::get_course_colour($sectionid));
+        //$pattern->patternbyid($sectionid);
+        //$data['imageurl'] = $pattern->datauri();
 
-        $img = str_replace(' ', '+', $img);
-        $img = base64_decode($img);
-
-        if ($img === false) {
-            return json_encode(['url' => '']);
-        }
-
-        $context = context_course::instance($row->course);
+        $obj = $DB->get_record('course_sections', ['id' => $sectionid]);
 
         $fs = get_file_storage();
+        $context = context_course::instance($obj->course);
 
-        // Prepare file record object.
-        $fileinfo = array(
-            'contextid' => $context->id,
-            'component' => 'format_flexsections',
-            'filearea'  => 'image',
-            'itemid'    => $sectionid,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        );
-
+        // Delete old images.
         $fs->delete_area_files($context->id, 'format_flexsections', 'image', $sectionid);
-        $file = $fs->create_file_from_string($fileinfo, $img);
 
-        $url = $CFG->wwwroot . "/pluginfile.php/". $file->get_contextid() . '/' . $file->get_component() . '/' .
-            $file->get_filearea() . '/' . $file->get_itemid() . $file->get_filepath() . $file->get_filename();
+        $draftfiles = file_get_drafarea_files($fileitemid, '/');
+        if (!empty($draftfiles->list)) {
 
-        $data['url'] = $url;
+            $sql = "SELECT * FROM {files} WHERE filename != '.' AND component = 'user' AND filearea = 'draft' AND itemid = ?";
+
+            if ($draft = $DB->get_record_sql($sql, array($fileitemid))) {
+                $files = $fs->get_area_files($draft->contextid, $draft->component, $draft->filearea, $draft->itemid);
+                foreach ($files as $f) {
+                    if ($f->is_valid_image()) {
+
+                        $filename = str_replace(' ', '_', $f->get_filename());
+                        $fileinfo = array(
+                                'contextid' => $context->id,
+                                'component' => 'format_flexsections',
+                                'filearea'  => 'image',
+                                'itemid'    => $sectionid,
+                                'filepath'  => '/',
+                                'filename'  => $filename,
+                        );
+
+                        // Save file.
+                        $file = $fs->create_file_from_string($fileinfo, $f->get_content());
+
+                        $data['imageurl'] = $CFG->wwwroot . "/pluginfile.php/". $file->get_contextid() . '/' . $file->get_component() . '/' .
+                                $file->get_filearea() . '/' . $file->get_itemid() . $file->get_filepath() . $file->get_filename();
+
+                        break;
+                    }
+                }
+            }
+        }
 
         return json_encode($data);
     }
@@ -485,6 +503,16 @@ class format_flexsections_external extends external_api {
             'result' => new external_value(PARAM_BOOL, 'The processing result'),
             'data' => new external_value(PARAM_RAW, 'Section content'),
         ]);
+    }
+
+    private static function get_course_colour($id): string {
+        // The colour palette is hardcoded for now. It would make sense to combine it with theme settings.
+        $basecolours = [
+                '#81ecec', '#74b9ff', '#a29bfe', '#dfe6e9', '#00b894',
+                '#0984e3', '#b2bec3', '#fdcb6e', '#fd79a8', '#6c5ce7'
+        ];
+
+        return $basecolours[$id % 10];
     }
 
 }
