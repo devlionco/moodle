@@ -272,6 +272,7 @@ class content extends \core_courseformat\output\local\content {
      * @return array data context for a mustache template
      */
     protected function export_sections(\renderer_base $output): array{
+        global $DB;
 
         $format  = $this->format;
         $course  = $format->get_course();
@@ -309,7 +310,20 @@ class content extends \core_courseformat\output\local\content {
             $sections = array_merge($sections, $stealthsections);
         }
 
-        return $sections;
+        // PTL-9923.
+        if (has_capability('moodle/course:viewhiddensections', \context_course::instance($course->id))) {
+            return $sections;
+        } else {
+            foreach ($sections as $key => $section) {
+
+                $obj = $DB->get_record('course_sections', ['id' => $section->id]);
+                if ($obj && !$obj->visible) {
+                    unset($sections[$key]);
+                }
+            }
+
+            return array_values($sections);
+        }
     }
 
     /**
