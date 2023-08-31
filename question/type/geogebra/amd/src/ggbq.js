@@ -9,8 +9,7 @@
  * @copyright  (c) International GeoGebra Institute 2018
  * @license        http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-//define(['jquery', 'https://www.geogebra.org/apps/deployggb.js'], function ($, GGBApplet) {
-define(['jquery', 'qtype_geogebra/deployggb_5_0_426_0'], function ($, GGBApplet) {
+define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
     /**
      * Created by Christoph on 25.08.19.
      */
@@ -24,15 +23,15 @@ define(['jquery', 'qtype_geogebra/deployggb_5_0_426_0'], function ($, GGBApplet)
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(
             () => Object.values(scalingContainers).forEach((containerClass) => {
-                    // We need to use getElementsByClassName because colons are not allowed for jquery and Vanilla JS querySelector.
-                    const scalingContainer = document.getElementsByClassName(containerClass)[0];
-                    // We retrieve the formulation div container, because this gives us the correct width to adapt
-                    // the scaling container to.
-                    const formulationDivStyle = window.getComputedStyle(
-                        scalingContainer.querySelector('.qtext').parentElement.parentElement);
-                    scalingContainer.style.width = parseInt(formulationDivStyle.width)
-                        - parseInt(formulationDivStyle.paddingLeft) - parseInt(formulationDivStyle.paddingRight) + 'px';
-                }), 250);
+                // We need to use getElementsByClassName because colons are not allowed for jquery and Vanilla JS querySelector.
+                const scalingContainer = document.getElementsByClassName(containerClass)[0];
+                // We retrieve the formulation div container, because this gives us the correct width to adapt
+                // the scaling container to.
+                const formulationDivStyle = window.getComputedStyle(
+                    scalingContainer.querySelector('.qtext').parentElement.parentElement);
+                scalingContainer.style.width = parseInt(formulationDivStyle.width)
+                    - parseInt(formulationDivStyle.paddingLeft) - parseInt(formulationDivStyle.paddingRight) + 'px';
+            }), 250);
     };
 
     return {
@@ -57,6 +56,7 @@ define(['jquery', 'qtype_geogebra/deployggb_5_0_426_0'], function ($, GGBApplet)
             scalingContainers[slot] = ggbDataset.scalingcontainerclass;
 
             window.ggbAppletOnLoad = function (ggbAppletId) {
+                $('#ggbloading').hide();
                 if (ggbAppletId != -1) {
                     document.querySelector('article').onkeydown = this.checkEnter;
                     var id = ggbAppletId.substring(9);
@@ -107,7 +107,7 @@ define(['jquery', 'qtype_geogebra/deployggb_5_0_426_0'], function ($, GGBApplet)
             // Check if width and height have been manually set. The default would be "no", so we use the scaling container feature.
             if (!ggbDataset.forcedimensions || ggbDataset.forcedimensions === '0') {
                 parameters.scaleContainerClass = scalingContainers[slot];
-                parameters.autoHeight = true;
+                parameters.autoHeight = false;
             } else {
                 // Width and height are specified in this case, so we use the given fixed width and height settings
                 // of the plugin instance. Form validation of the settings asserts that both width and height are being set.
