@@ -1133,7 +1133,7 @@ class quizdata {
             $questionchats = $this->get_question_chats($q->id);
 
             $questiontitle = get_string('question');
-            $qname = str_replace("'", '', $q->name);
+            $qname = addslashes($q->name);
             $url = quiz_advancedoverview_get_question_link($q, $this->cm->id);
             $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->slot .
                     "</span><span class=description>" . $qname . "</span></a>";
@@ -1151,8 +1151,7 @@ class quizdata {
 
         $data['count_according_questions'] = count($tablequestion);
         $data['enable_table_according_questions'] = count($tablequestion) > 0 ? true : false;
-        $data['data_table_according_questions'] = json_encode($tablequestion, JSON_NUMERIC_CHECK | JSON_HEX_APOS);
-
+        $data['data_table_according_questions'] = json_encode($tablequestion, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
         // Students table.
         $data = array_merge($data, $this->get_render_students_data());
 
@@ -1160,7 +1159,7 @@ class quizdata {
         $data['charts']['state'] = $this->chartstate;
         $data['charts']['grade'] = $this->chartgrade;
 
-        $data['charts'] = json_encode($data['charts'], JSON_NUMERIC_CHECK | JSON_HEX_APOS);
+        $data['charts'] = json_encode($data['charts'], JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         $data['charts_average_averagegrade'] = $this->chartaverage->averagegrade;
         $data['charts_average_maxgrade'] = $this->chartaverage->maxgrade;
@@ -1172,7 +1171,7 @@ class quizdata {
         $data['open_questions_count'] = count($this->openquestionslist);
         $data['enable_open_questions'] = count($this->openquestionslist) > 0 ? true : false;
 
-        $data['options'] = json_encode($this->options, JSON_NUMERIC_CHECK | JSON_HEX_APOS);
+        $data['options'] = json_encode($this->options, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         $data['cmid'] = $this->cm->id;
         $data['courseid'] = $this->course->id;
@@ -1195,7 +1194,7 @@ class quizdata {
 
         $data['count_according_students'] = count($tablestudent);
         $data['enable_table_according_students'] = count($tablestudent) > 0 ? true : false;
-        $data['data_table_according_students'] = json_encode($tablestudent, JSON_NUMERIC_CHECK | JSON_HEX_APOS);
+        $data['data_table_according_students'] = json_encode($tablestudent, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         $allkey = static::get_key_by_value($this->options['participants']['states'], 'name', 'all');
 
