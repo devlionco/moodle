@@ -970,7 +970,7 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
      * @param int $variant which question variant to preview (optional).
      * @return string HTML to output.
      */
-    public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null) {
+    public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null, $restartversion = null) {
         $question = clone($questiondata);
         if (isset($question->questionid)) {
 
