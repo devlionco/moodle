@@ -144,30 +144,6 @@ function local_petel_render_navbar_output() {
 
     $output = '';
 
-    if (has_capability('moodle/site:config', context_system::instance())) {
-        if (strpos($PAGE->url->get_path(), 'user/index.php') !== false) {
-
-            $defaultrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
-            $defaultrole->name = !empty($defaultrole->name) ? $defaultrole->name : get_string('defaultcourseteacher');
-
-            $defaults = [
-                    'categories_ac' => ['name' => '', 'value' => ''],
-                    'courses_ac' => ['name' => '', 'value' => ''],
-                    'roles_ac' => [
-                            'name' => $defaultrole->name,
-                            'value' => $defaultrole->id
-                    ],
-            ];
-
-            $data = array(
-                    $PAGE->course->id,
-                    $USER->id,
-                    $defaults
-            );
-            $PAGE->requires->js_call_amd('local_petel/action_participants', 'init', $data);
-        }
-    }
-
     if (!empty(get_config('local_petel', 'enabledemo'))) {
         $PAGE->requires->js_call_amd('local_petel/demo', 'init');
     }
