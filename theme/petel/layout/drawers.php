@@ -110,7 +110,7 @@ $buttonvloseblockdrawer = true;
 // Open block drawer on page my. PTL-9459.
 if ($PAGE->pagetype == 'my-index') {
     $forceblockdraweropen = true;
-    $buttonvloseblockdrawer = false;
+    //$buttonvloseblockdrawer = false;
 }
 
 $abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
