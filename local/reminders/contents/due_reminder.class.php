@@ -139,7 +139,9 @@ class due_reminder extends course_reminder {
      */
     public function get_message_html($user=null, $changetype=null, $ctxinfo=null) {
         $htmlmail = $this->get_html_header();
-        $htmlmail .= html_writer::start_tag('body', array('id' => 'email'));
+        $lang = empty($user->lang) ? 'en' : $user->lang;
+        $userlang = new lang_string('thisdirection', 'langconfig', '', $lang);
+        $htmlmail .= html_writer::start_tag('body', array('id' => 'email', 'dir' => $userlang));
         $htmlmail .= $this->get_reminder_header();
         $htmlmail .= html_writer::start_tag('div');
         $htmlmail .= html_writer::start_tag('table',
