@@ -129,6 +129,8 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             // Answer mathlive or normal.
             if(!empty($obj) && $obj->mathliveenable == 1){
                 $mathlive = new \form_mathlive();
+                $content = str_replace('-', '&#x2011;', $choice->text);
+                $content = str_replace(' ', '&#160;', $content);
                 $content = $mathlive->static_formula($content);
             }
 
