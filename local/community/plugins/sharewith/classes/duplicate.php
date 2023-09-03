@@ -545,6 +545,25 @@ class duplicate extends \external_api {
             }
         }
 
+        // Copy flexsections image.
+        $files = $fs->get_area_files($cc->id, 'format_flexsections', 'image', $sourcesection->id);
+        foreach ($files as $f) {
+            if ($f->is_valid_image()) {
+                $filename = str_replace(' ', '_', $f->get_filename());
+                $fileinfo = array(
+                    'contextid' => $ccnew->id,
+                    'component' => $f->get_component(),
+                    'filearea' => $f->get_filearea(),
+                    'itemid' => $newsection->id,
+                    'filepath' => $f->get_filepath(),
+                    'filename' => $f->get_filename()
+                );
+
+                // Save file.
+                $fs->create_file_from_string($fileinfo, $f->get_content());
+            }
+        }
+
         // Copy section image from source course_format grid.
         $fgisource = $DB->get_record('format_grid_icon', array('sectionid' => $sourcesection->id));
         if (!empty($fgisource)) {

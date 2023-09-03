@@ -177,7 +177,6 @@ class duplicate_course extends \external_api {
         }
 
         // Backup the course.
-
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
                 backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $userid);
 
@@ -257,11 +256,12 @@ class duplicate_course extends \external_api {
         // Delete the course backup file created by this WebService. Originally located in the course backups area.
         $file->delete();
 
-        // Copy BADGES from source course.
-        $newcourseid = $course->id;
-
-        $context = context_course::instance($courseid);
+        $oldcontext = context_course::instance($courseid);
         $newcontext = context_course::instance($newcourseid);
+
+        $fs = get_file_storage();
+
+        // Copy BADGES from source course.
         $badges = $DB->get_records('badge', array('courseid' => $courseid));
         foreach ($badges as $badge) {
             $newbadge = clone $badge;
@@ -272,8 +272,7 @@ class duplicate_course extends \external_api {
             $newbadgeid = $DB->insert_record('badge', $newbadge);
 
             // Copy badge file.
-            $fs = get_file_storage();
-            $files = $fs->get_area_files($context->id, 'badges', 'badgeimage', $badge->id);
+            $files = $fs->get_area_files($oldcontext->id, 'badges', 'badgeimage', $badge->id);
 
             // Create files.
             foreach ($files as $f) {
@@ -315,6 +314,40 @@ class duplicate_course extends \external_api {
                     }
 
                     $newcriteriaparamid = $DB->insert_record('badge_criteria_param', $newcriteriaparam);
+                }
+            }
+        }
+
+        // Copy flexsections image.
+        $oldsections = [];
+        foreach ($DB->get_records('course_sections', ['course' => $courseid]) as $item) {
+            $oldsections[] = $item->id;
+        }
+
+        $newsections = [];
+        foreach ($DB->get_records('course_sections', ['course' => $newcourseid]) as $item) {
+            $newsections[] = $item->id;
+        }
+
+        foreach ($oldsections as $key => $item) {
+
+            $files = $fs->get_area_files($oldcontext->id, 'format_flexsections', 'image', $oldsections[$key]);
+            foreach ($files as $f) {
+                if ($f->is_valid_image()) {
+                    $filename = str_replace(' ', '_', $f->get_filename());
+                    $fileinfo = array(
+                        'contextid' => $newcontext->id,
+                        'component' => $f->get_component(),
+                        'filearea'  => $f->get_filearea(),
+                        'itemid'    => $newsections[$key],
+                        'filepath'  => '/',
+                        'filename'  => $filename,
+                    );
+
+                    // Save file.
+                    $fs->create_file_from_string($fileinfo, $f->get_content());
+
+                    break;
                 }
             }
         }
