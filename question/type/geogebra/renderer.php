@@ -104,7 +104,7 @@ class qtype_geogebra_renderer extends qtype_renderer {
         $result .= html_writer::tag('div', $questiontext, ['class' => 'qtext']);
 
         $ggbdivname = $qa->get_qt_field_name('ggbdiv');
-        $result .= html_writer::div('<i class="fa-solid fa-sync fa-spin"></i>', '', ['id' => 'ggbloading']);
+        $result .= html_writer::div('<i class="fa-solid fa-sync fa-spin"></i>', '', ['class' => 'ggbloading']);
         $result .= html_writer::div('', 'ggbcontainer', array('id' => $ggbdivname));
 
         $responsevars = array();

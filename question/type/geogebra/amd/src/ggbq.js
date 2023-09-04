@@ -56,7 +56,7 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
             scalingContainers[slot] = ggbDataset.scalingcontainerclass;
 
             window.ggbAppletOnLoad = function (ggbAppletId) {
-                $('#ggbloading').hide();
+                $('.ggbloading').hide();
                 if (ggbAppletId != -1) {
                     document.querySelector('article').onkeydown = this.checkEnter;
                     var id = ggbAppletId.substring(9);
@@ -134,6 +134,7 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
             var views = JSON.parse(ggbDataset.views);
 
             var applet1 = new GGBApplet(parameters, views, ggbDataset.html5NoWebSimple);
+
             if (ggbDataset.codebase && ggbDataset.codebase !== '') {
                 applet1.setHTML5Codebase(ggbDataset.codebase);
             }
@@ -177,6 +178,13 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
                     }
 
                     window.GGBQ.answerinput[i].val(responsestring);
+                }
+            }
+
+            //TODO find function that cat catch event on close TabbedKeyBoard
+            if ($('.TabbedKeyBoard')) {
+                if ($('.TabbedKeyBoard').attr('aria-hidden')) {
+                    $("body").css("padding-bottom", '0px');
                 }
             }
         },
