@@ -61,16 +61,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($content['title']));
 echo '<div class="clearer"></div>';
 
-// Output introduction.
-if (trim(strip_tags($content['intro'], '<img>'))) {
-    echo $OUTPUT->box_start('mod_introbox', 'hvpintro');
-    echo format_module_intro('hvp', (object) array(
-        'intro'       => $content['intro'],
-        'introformat' => $content['introformat'],
-    ), $cm->id);
-    echo $OUTPUT->box_end();
-}
-
 $hashub = (has_capability('mod/hvp:share', $context) && !empty(get_config('mod_hvp', 'site_uuid')) && !empty(get_config('mod_hvp', 'hub_secret')));
 $isshared = $content['shared'] === '1';
 $huboptionsdata = array(

@@ -102,8 +102,6 @@ function pdfannotator_display_embed($pdfannotator, $cm, $course, $file, $page = 
     //pdfannotator_data_preprocessing($context, 'id_pdfannotator_content', "editor-commentlist-inputs");
     $PAGE->requires->js_init_call('checkOnlyOneCheckbox', null, true);
 
-    pdfannotator_print_intro($pdfannotator, $cm, $course);
-
     echo $OUTPUT->footer();
     die;
 }
@@ -764,7 +762,7 @@ function pdfannotator_print_filenotfound($pdfannotator, $cm, $course) {
 
     pdfannotator_print_header($pdfannotator, $cm, $course);
     // pdfannotator_print_heading($pdfannotator, $cm, $course);//TODO Method is not defined.
-    pdfannotator_print_intro($pdfannotator, $cm, $course);
+    
     echo $OUTPUT->notification(get_string('filenotfound', 'pdfannotator'));
 
     echo $OUTPUT->footer();

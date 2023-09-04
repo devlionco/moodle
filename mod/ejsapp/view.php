@@ -354,10 +354,6 @@ if (pathinfo($ejsapp->main_file,PATHINFO_EXTENSION) != 'jar' && $accessed) { // 
 echo $OUTPUT->header();
 
 if ($accessed) {
-    if ($ejsapp->intro) {
-        echo $OUTPUT->box(format_module_intro('ejsapp', $ejsapp, $cm->id), 'generalbox mod_introbox', 'ejsappintro');
-    }
-
     echo html_writer::div($renderer->ejsapp_lab($ejsapp, $remlabinfo, $datafiles, $collabinfo, $personalvarsinfo) .
         $chartsdiv, 'labchart');
     echo $experiments;

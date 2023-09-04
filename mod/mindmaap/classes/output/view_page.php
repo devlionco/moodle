@@ -93,12 +93,6 @@ class view_page implements renderable, templatable {
 
         $data->intro = '';
 
-        if (trim(strip_tags($this->moduleinstance->intro))) {
-            $data->intro = $OUTPUT->box_start('mod_introbox container', 'mindmapintro');
-            $data->intro .= format_module_intro('mindmaap', $this->moduleinstance, $this->cm->id);
-            $data->intro .= $OUTPUT->box_end();
-        }
-
         $url = $user['url'] . "&lang=" . current_language();
         $sessionurl = $mindmaap->getsessionurl($user['url_param'], $user['mindmap']['token']);
 

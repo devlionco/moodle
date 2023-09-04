@@ -161,11 +161,6 @@ if ($showrecreate) {
     echo $OUTPUT->notification($message, $style);
 }
 
-// Show intro.
-if ($zoom->intro && $CFG->branch < '400') {
-    echo $OUTPUT->box(format_module_intro('zoom', $zoom, $cm->id), 'generalbox mod_introbox', 'intro');
-}
-
 // Supplementary feature: Meeting capacity warning.
 // Only show if the admin did not disable this feature completely.
 if (!$showrecreate && $config->showcapacitywarning == true) {

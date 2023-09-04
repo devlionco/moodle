@@ -545,11 +545,6 @@ if ($CFG->branch < 400) {
         $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
         echo $OUTPUT->activity_information($cminfo, $cmcompletion, $activitydates);
     }
-    if (trim( strip_tags( $groupselect->intro ) )) {
-        echo $OUTPUT->box_start( 'mod_introbox', 'groupselectintro' );
-        echo format_module_intro( 'groupselect', $groupselect, $cm->id );
-        echo $OUTPUT->box_end();
-    }
 }
 
 // Too few members in my group-notification.

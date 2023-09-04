@@ -93,12 +93,6 @@ class view_page implements renderable, templatable {
 
         $data->intro = '';
 
-        if (trim(strip_tags($this->moduleinstance->intro))) {
-            $data->intro = $OUTPUT->box_start('mod_introbox container', 'sharedgeogebraintro');
-            $data->intro .= format_module_intro('sharedgeogebra', $this->moduleinstance, $this->cm->id);
-            $data->intro .= $OUTPUT->box_end();
-        }
-
         $url = $user['url'] . "&lang=" . current_language();
 
         $sessionurl = $sharedgeogebra->getsessionurl($user['url_param'], $user['geogebra']['token']);
