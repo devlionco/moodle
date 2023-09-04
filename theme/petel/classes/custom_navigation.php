@@ -31,8 +31,21 @@ class custom_navigation {
     /**
      * Custom secondary navigation.
      */
-    public static function secondary_navigation(): void {
+    public static function secondary_navigation(): bool {
         global $PAGE, $COURSE, $USER;
+
+        if (is_siteadmin()) {
+            return true;
+        }
+
+        $context = \context_course::instance($COURSE->id);
+        $roles = get_user_roles($context, $USER->id);
+
+        foreach ($roles as $role) {
+            if (in_array($role->shortname, ['manager'])) {
+                return true;
+            }
+        }
 
         // PTL-9713. PTL-9383.
         $coursecontext = \context_course::instance($COURSE->id);
@@ -107,18 +120,15 @@ class custom_navigation {
 
         // PTL-9730.
         // Exclude links from menu (מורה צופה או כמורה עמית).
-        $context = \context_course::instance($COURSE->id);
-        $roles = get_user_roles($context, $USER->id);
-
         $flagpermission = false;
-        $rolespermitted = ['browsingteacher', 'teachercolleague'];
+        $rolespermitted = ['browsingteacher', 'teachercolleague', 'manager'];
         foreach ($roles as $role) {
             if (in_array($role->shortname, $rolespermitted)) {
                 $flagpermission = true;
             }
         }
 
-        if ($flagpermission && !is_siteadmin() && !in_array('manager', $roles)) {
+        if ($flagpermission) {
             $lists = $PAGE->secondarynav->get_children_key_list();
             if (isset($lists[0])) {
                 foreach ($lists as $key) {
@@ -129,7 +139,6 @@ class custom_navigation {
             }
         }
 
-
-
+        return true;
     }
 }

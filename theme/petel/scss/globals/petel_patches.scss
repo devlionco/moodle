@@ -140,11 +140,6 @@ body#page-mod-hvp-view div#page-content div#region-main-box div[role="main"] h2 
   text-decoration: underline;
 }
 
-/* PTL-9964 Hide double intro in mod H5P */
-#hvpintro {
-  display: none;
-}
-
 /* page header right alignment on wide pages */
 #page-local-metadata-index #page-header.header-maxwidth,
 #page-question-edit #page-header.header-maxwidth,
