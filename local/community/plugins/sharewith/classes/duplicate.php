@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use format_tiles\tile_photo;
-
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/externallib.php");
@@ -522,17 +520,17 @@ class duplicate extends \external_api {
         }
 
         // Copy files.
-        $cc = $DB->get_record('context', array('instanceid' => $sourcesection->course, 'contextlevel' => 50));
-        $ccnew = $DB->get_record('context', array('instanceid' => $newsection->course, 'contextlevel' => 50));
+        $oldcontext = \context_course::instance($sourcesection->course);
+        $newcontext = \context_course::instance($newsection->course);
 
         $fs = get_file_storage();
-        $files = $fs->get_area_files($cc->id, 'course', 'section', $sourcesection->id);
+        $files = $fs->get_area_files($oldcontext->id, 'course', 'section', $sourcesection->id);
 
         // Create files.
         foreach ($files as $f) {
             if ($f->get_filesize() != 0 || $f->get_filename() != '.') {
                 $fileinfo = array(
-                        'contextid' => $ccnew->id,
+                        'contextid' => $newcontext->id,
                         'component' => $f->get_component(),
                         'filearea' => $f->get_filearea(),
                         'itemid' => $newsection->id,
@@ -546,46 +544,22 @@ class duplicate extends \external_api {
         }
 
         // Copy flexsections image.
-        $files = $fs->get_area_files($cc->id, 'format_flexsections', 'image', $sourcesection->id);
+        $files = $fs->get_area_files($oldcontext->id, 'format_flexsections', 'image', $sourcesection->id);
         foreach ($files as $f) {
-            if ($f->is_valid_image()) {
+            if ($f->get_filesize() != 0 || $f->get_filename() != '.') {
                 $filename = str_replace(' ', '_', $f->get_filename());
                 $fileinfo = array(
-                    'contextid' => $ccnew->id,
+                    'contextid' => $newcontext->id,
                     'component' => $f->get_component(),
                     'filearea' => $f->get_filearea(),
                     'itemid' => $newsection->id,
                     'filepath' => $f->get_filepath(),
-                    'filename' => $f->get_filename()
+                    'filename' => $filename
                 );
 
                 // Save file.
                 $fs->create_file_from_string($fileinfo, $f->get_content());
             }
-        }
-
-        // Copy section image from source course_format grid.
-        $fgisource = $DB->get_record('format_grid_icon', array('sectionid' => $sourcesection->id));
-        if (!empty($fgisource)) {
-            $fgisource->sectionid = $newsection->id;
-            $DB->insert_record('format_grid_icon', $fgisource);
-        }
-
-        // Copy section icon from source course_format tiles.
-        $fticonsource = $DB->get_record('course_format_options', array('sectionid' => $sourcesection->id, 'name' => 'tileicon'));
-        if (!empty($fticonsource)) {
-            $fticonsource->sectionid = $newsection->id;
-            $fticonsource->courseid = $courseid;
-            $DB->insert_record('course_format_options', $fticonsource);
-        }
-
-        // Copy section image from source course_format tiles.
-        $ftimagesource = $DB->get_record('course_format_options', array('sectionid' => $sourcesection->id, 'name' => 'tilephoto'));
-        if (!empty($ftimagesource)) {
-            $sourcetilephoto = new tile_photo($sourcesection->course, $sourcesection->id);
-            $sourcefile = $sourcetilephoto->get_file();
-            $tilephoto = new tile_photo($courseid, $newsection->id);
-            $file = $tilephoto->set_file_from_stored_file($sourcefile, $ftimagesource->value);
         }
 
         $arrcmids = [];

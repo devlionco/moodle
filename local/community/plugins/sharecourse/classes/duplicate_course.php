@@ -330,10 +330,9 @@ class duplicate_course extends \external_api {
         }
 
         foreach ($oldsections as $key => $item) {
-
             $files = $fs->get_area_files($oldcontext->id, 'format_flexsections', 'image', $oldsections[$key]);
             foreach ($files as $f) {
-                if ($f->is_valid_image()) {
+                if ($f->get_filesize() != 0 || $f->get_filename() != '.') {
                     $filename = str_replace(' ', '_', $f->get_filename());
                     $fileinfo = array(
                         'contextid' => $newcontext->id,
