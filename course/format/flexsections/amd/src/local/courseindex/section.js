@@ -14,6 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import BaseSection from "core_courseformat/local/courseindex/section";
+import jQuery from 'jquery';
 
 /**
  * Course index section component.
@@ -60,9 +61,9 @@ export default class Component extends BaseSection {
     stateReady(state) {
         super.stateReady(state);
         let id = this.element.dataset.id;
-        let target = document.querySelector(`[data-cmlistid="${id}"] .loading`);
-        if (target) {
-            target.remove();
-        }
+
+        setTimeout(function() {
+            jQuery('*[data-cmlistid="'+id+'"]').find('.loading').remove();
+        }, 300);
     }
 }
