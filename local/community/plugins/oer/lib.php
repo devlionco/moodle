@@ -123,7 +123,7 @@ function community_oer_get_primarynav_output() {
     global $PAGE, $USER;
 
     // Should only be available to teachers
-    if (!social_has_permission($USER->id)) {
+    if (!\community_oer\main_oer::check_if_user_admin_or_teacher()) {
         return [];
     }
 
