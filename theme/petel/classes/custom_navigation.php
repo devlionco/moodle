@@ -34,6 +34,38 @@ class custom_navigation {
     public static function secondary_navigation(): bool {
         global $PAGE, $COURSE, $USER;
 
+        // Add items.
+
+        // PTL-9414.
+        if (in_array($PAGE->pagetype,
+                ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
+                        'question-edit', 'mod-quiz-override', ''])) {
+            $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
+            if ($cmid) {
+                $context = \context_module::instance($cmid);
+
+                if (has_capability('mod/quiz:manage', $context)) {
+                    $advancedoverviewurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
+                    $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
+                }
+            }
+        }
+
+        // Move items.
+
+        // Move some menu items to "others" menu listbox for all users.
+        $movetootherlist = [
+                'quiz_report',
+                'questionbank',
+                'metadata'
+        ];
+        $lists = $PAGE->secondarynav->get_children_key_list();
+        foreach ($movetootherlist as $key) {
+            if (in_array($key, $lists)) {
+                $PAGE->secondarynav->get($key)->set_force_into_more_menu(true);
+            }
+        }
+
         if (is_siteadmin()) {
             return true;
         }
@@ -46,6 +78,8 @@ class custom_navigation {
                 return true;
             }
         }
+
+        // Remove items.
 
         // PTL-9713. PTL-9383.
         $coursecontext = \context_course::instance($COURSE->id);
@@ -64,21 +98,6 @@ class custom_navigation {
                     if ($key != $lists[0]) {
                         $PAGE->secondarynav->children->remove($key);
                     }
-                }
-            }
-        }
-
-        // PTL-9414.
-        if (in_array($PAGE->pagetype,
-            ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
-             'question-edit', 'mod-quiz-override', ''])) {
-            $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
-            if ($cmid) {
-                $context = \context_module::instance($cmid);
-
-                if (has_capability('mod/quiz:manage', $context)) {
-                    $advancedoverviewurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
-                    $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
                 }
             }
         }
@@ -105,23 +124,10 @@ class custom_navigation {
             }
         }
 
-        // Move some menu items to "others" menu listbox for all users.
-        $movetootherlist = [
-            'quiz_report',
-            'questionbank',
-            'metadata'
-        ];
-        $lists = $PAGE->secondarynav->get_children_key_list();
-        foreach ($movetootherlist as $key) {
-            if (in_array($key, $lists)) {
-                $PAGE->secondarynav->get($key)->set_force_into_more_menu(true);
-            }
-        }
-
         // PTL-9730.
         // Exclude links from menu (מורה צופה או כמורה עמית).
         $flagpermission = false;
-        $rolespermitted = ['browsingteacher', 'teachercolleague', 'manager'];
+        $rolespermitted = ['browsingteacher', 'teachercolleague'];
         foreach ($roles as $role) {
             if (in_array($role->shortname, $rolespermitted)) {
                 $flagpermission = true;
