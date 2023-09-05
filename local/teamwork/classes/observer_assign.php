@@ -64,7 +64,6 @@ class observer_assign {
         if (!\local_teamwork\common::is_assign_submission_enable($cm->instance)) {
             return false;
         }
-        $context = \context_module::instance($cm->id);
 
         $mainusercomments =
                 $DB->get_record('assignfeedback_comments', array('grade' => $mainusergradesid, 'assignment' => $cm->instance));
@@ -76,13 +75,6 @@ class observer_assign {
                 'latest' => 1
         );
         $sourceusersubmission = $DB->get_record('assign_submission', $obj);
-
-        // Get final from grade_grades.
-        $obj = array(
-                'itemid' => $event->get_assign()->get_grade_item()->id,
-                'userid' => $event->relateduserid
-        );
-        $gradegrade = $DB->get_record('grade_grades', $obj);
 
         // Main submission file.
         $mainusersubmissionfiles = $DB->get_records_sql("SELECT * FROM {files} WHERE component = 'assignsubmission_file' " .
@@ -108,8 +100,8 @@ class observer_assign {
         self::copy_history_edit_file($event, $pathnamehashesedit);
 
         // Assign class.
+        $context = \context_module::instance($cm->id);
         $assign = new \assign_custom($context, $cm, $course);
-        // Set main user's grade to all other team members.
 
         // Reopen attempt.
         if (isset($event->other['reopenattempt']) && $event->other['reopenattempt']) {
@@ -122,6 +114,16 @@ class observer_assign {
             return true;
         }
 
+        // Get final from grade_grades.
+        $obj = array(
+                'itemid' => $event->get_assign()->get_grade_item()->id,
+                'userid' => $event->relateduserid
+        );
+        $gradegrade = $DB->get_record('grade_grades', $obj);
+
+        // Get final from assign_grades
+        $assigngrades = $DB->get_record('assign_grades', ['assignment' => $cm->instance, 'userid' => $event->relateduserid]);
+
         foreach ($members as $member) {
             $memberid = $member->userid;
 
@@ -133,30 +135,32 @@ class observer_assign {
             $msubm = $assign->get_user_submission($memberid, 0);
 
             $usercontext = \context_user::instance($event->relateduserid);
+            try {
+                $obj = new \StdClass();
+                $obj->id = $event->contextinstanceid;
+                $obj->grade = $finalgrade->finalgrade;
+                $obj->assignfeedbackcomments_editor = array(
+                        'text' => (isset($mainusercomments->commenttext)) ? $mainusercomments->commenttext : '',
+                        'format' => FORMAT_HTML
+                );
 
-            $obj = new \StdClass();
-            $obj->id = $event->contextinstanceid;
-            $obj->grade = $finalgrade->finalgrade;
-            $obj->assignfeedbackcomments_editor = array(
-                    'text' => (isset($mainusercomments->commenttext)) ? $mainusercomments->commenttext : '',
-                    'format' => FORMAT_HTML
-            );
+                $obj->editpdf_source_userid = $event->relateduserid;
+                $obj->draftitemid = time();
+                $obj->assignfeedback_editpdf_haschanges = true;
 
-            $obj->editpdf_source_userid = $event->relateduserid;
-            $obj->draftitemid = time();
-            $obj->assignfeedback_editpdf_haschanges = true;
+                $obj->usercontextid = $usercontext->id;
+                $obj->poodllfeedback = '';
+                $obj->rownum = 0;
+                $obj->useridlistid = '';
+                $obj->attemptnumber = $msubm->attemptnumber;
+                $obj->ajax = 0;
+                $obj->userid = 0;
+                $obj->sendstudentnotifications = 0;
+                $obj->action = 'submitgrade';
 
-            $obj->usercontextid = $usercontext->id;
-            $obj->poodllfeedback = '';
-            $obj->rownum = 0;
-            $obj->useridlistid = '';
-            $obj->attemptnumber = $msubm->attemptnumber;
-            $obj->ajax = 0;
-            $obj->userid = 0;
-            $obj->sendstudentnotifications = 0;
-            $obj->action = 'submitgrade';
-
-            $assign->save_grade($memberid, $obj);
+                $assign->save_grade($memberid, $obj);
+            }catch(\Exception $e) {
+            }
 
             // Update final grade_grades.
             $obj = array(
@@ -173,6 +177,18 @@ class observer_assign {
                 unset($gradegrade->id);
                 $gradegrade->userid = $memberid;
                 $DB->insert_record('grade_grades', $gradegrade);
+            }
+
+            // Update final assign_grades.
+            $currentassigngrades = $DB->get_record('assign_grades', ['assignment' => $cm->instance, 'userid' => $memberid]);
+            if (!empty($currentassigngrades)) {
+                $assigngrades->id = $currentassigngrades->id;
+                $assigngrades->userid = $memberid;
+                $DB->update_record('assign_grades', $assigngrades);
+            } else {
+                unset($assigngrades->id);
+                $assigngrades->userid = $memberid;
+                $DB->insert_record('assign_grades', $assigngrades);
             }
 
             // Update comments.
@@ -264,8 +280,6 @@ class observer_assign {
             // Copy main feedback file to member.
             self::copy_files_to_member_assignfeedback($event, $pathnamehashesfeedback, $memberid);
         }
-
-        self::update_user_final_grades($event, $members);
 
         // Copy main submission file to member.
         self::add_completion_to_member($event, $memberid);
@@ -783,56 +797,6 @@ class observer_assign {
             foreach ($members as $member) {
                 $msubm = $assign->get_user_submission($member->userid, 0);
                 $DB->delete_records('assignsubmission_onlinetext', ['assignment' => $cm->instance, 'submission' => $msubm->id]);
-            }
-        }
-    }
-
-    private static function update_user_final_grades($event, $members): void {
-        global $DB;
-
-        list ($course, $cm) = get_course_and_cm_from_cmid($event->contextinstanceid, 'assign');
-
-        $sql = 'SELECT * FROM {assign_grades} WHERE userid = ? AND assignment = ? ORDER BY id DESC LIMIT 1';
-        $finalassigngrade = $DB->get_record_sql($sql, [$event->relateduserid, $cm->instance]);
-
-        foreach ($members as $member) {
-            $memberid = $member->userid;
-            $sql = 'SELECT * FROM {assign_grades} WHERE userid = ? AND assignment = ? ORDER BY id DESC LIMIT 1';
-            $currentassigngrade = $DB->get_record_sql($sql, [$memberid, $cm->instance]);
-
-            if (!empty($currentassigngrade)) {
-                $finalassigngrade->id = $currentassigngrade->id;
-                $finalassigngrade->userid = $memberid;
-                $DB->update_record('assign_grades', $finalassigngrade);
-            } else {
-                unset($finalassigngrade->id);
-                $finalassigngrade->userid = $memberid;
-                $DB->insert_record('assign_grades', $finalassigngrade);
-            }
-        }
-
-        $obj = [
-                'iteminstance' => $event->get_assign()->get_grade_item()->iteminstance,
-                'itemtype' => 'mod',
-                'itemmodule' => 'assign',
-                'courseid' => $course->id
-        ];
-        $gradeitem = $DB->get_record('grade_items', $obj);
-
-        $finalgradegrade = $DB->get_record('grade_grades', ['itemid' => $gradeitem->id, 'userid' => $event->relateduserid]);
-
-        foreach ($members as $member) {
-            $memberid = $member->userid;
-            $currentgradegrade = $DB->get_record('grade_grades', ['itemid' => $gradeitem->id, 'userid' => $memberid]);
-
-            if (!empty($currentgradegrade)) {
-                $finalgradegrade->id = $currentgradegrade->id;
-                $finalgradegrade->userid = $memberid;
-                $DB->update_record('grade_grades', $finalgradegrade);
-            } else {
-                unset($finalgradegrade->id);
-                $finalgradegrade->userid = $memberid;
-                $DB->insert_record('grade_grades', $finalgradegrade);
             }
         }
     }
