@@ -6,6 +6,8 @@
     </button>
 </div>
 <div class="modal-body d-flex justify-content-center sharewith-action-buttons flex-wrap py-2 px-0">
+
+    {{#haveviewlink}}
     <button type="button" class="sharewith-btn sharemodal-btn  align-self-center" data-handler="copyToClipboard">
         <div class="circle mb-2">
             <i aria-hidden="true" title="{{#str}}copytoclipboard, community_sharewith{{/str}}"
@@ -13,6 +15,8 @@
         </div>
         <span class="text">{{#str}}copytoclipboard, community_sharewith{{/str}}</span>
     </button>
+    {{/haveviewlink}}
+
     <button type="button" class="sharewith-btn sharemodal-btn  align-self-center" data-handler="petelMessage" data-dismiss="modal">
         <div class="circle mb-2">
             <i aria-hidden="true" title="{{#str}}petelmessage, community_sharewith{{/str}}"
@@ -63,6 +67,7 @@
         <span class="text">{{#str}}eventactivitycopy, community_sharewith{{/str}}</span>
     </button>
 
+    {{#haveviewlink}}
     <button type="button" class="sharewith-btn sharemodal-btn  align-self-center" data-handler="toWhatsapp" data-dismiss="modal">
         <div class="circle mb-2">
             <i aria-hidden="true" title="{{#str}}towhatsapp, community_sharewith{{/str}}"
@@ -70,6 +75,7 @@
         </div>
         <span class="text">{{#str}}towhatsapp, community_sharewith{{/str}}</span>
     </button>
+    {{/haveviewlink}}
 </div>
 
 <!--<div class="modal-footer">-->

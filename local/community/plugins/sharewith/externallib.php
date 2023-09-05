@@ -987,6 +987,7 @@ class community_sharewith_external extends external_api {
         return new external_single_structure(
                 array(
                         'cmstatus' => new external_value(PARAM_TEXT, 'mod status'),
+                        'haveviewlink' => new external_value(PARAM_BOOL, 'have view link'),
                         'data' => new external_value(PARAM_RAW, 'json'),
                 )
         );
@@ -1047,10 +1048,18 @@ class community_sharewith_external extends external_api {
             }
         }
 
-        $content = array(
+        $haveviewlink = true;
+        if ($modname == 'label') {
+            $haveviewlink = false;
+        }
+
+        $content = [
                 'cmstatus' => $result,
-                'data' => json_encode(array('chains' => $items))
-        );
+                'haveviewlink' => $haveviewlink,
+                'data' => json_encode([
+                        'chains' => $items
+                ])
+        ];
 
         return $content;
     }

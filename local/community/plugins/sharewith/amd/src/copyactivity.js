@@ -243,6 +243,7 @@ define([
             St.cmid = $(target).data('cmid');
             St.amit = $(target).data('amit') ? true : false;
             St.sequence = $(target).data('sequence') ? true : false;
+            St.haveviewlink = true;
 
             var methodname = 'community_sharewith_check_cm_status',
                 data = {cmid: St.cmid},
@@ -268,6 +269,12 @@ define([
                     context.text = data.data;
                     context.title = M.util.get_string('eventactivitycopy', 'community_sharewith');
                 }
+
+                if (data.cmstatus === '') {
+                    context.haveviewlink = data.haveviewlink;
+                    St.haveviewlink = data.haveviewlink;
+                }
+
                 modal.render(template, context)
                     .done(modal.triggerBtn.click());
             };

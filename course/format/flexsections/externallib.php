@@ -491,6 +491,23 @@ class format_flexsections_external extends external_api {
         $widget = new $sectionclass($format, $thissection);
         $section = $widget->export_for_template($renderer, true);
 
+        // Build js for mod_learningmap. PTL-9855.
+        if (isset($section->cmlist->cms)) {
+            foreach ($section->cmlist->cms as $key => $cm) {
+                if ($cm->cmitem->module == 'learningmap' && strlen($cm->cmitem->cmformat->altcontent) > 0) {
+                    $cm->cmitem->cmformat->altcontent .= "
+                        <script>
+                          require(['mod_learningmap/renderer'], function(renderer) {
+                            renderer.init(".$cm->cmitem->id.");
+                          });
+                        </script>                     
+                     ";
+
+                    $section->cmlist->cms[$key] = $cm;
+                }
+            }
+        }
+
         return ['result' => true, 'data' => json_encode($section)];
     }
 

@@ -468,7 +468,7 @@ define([
          * @method goBack
          */
         goBack: function() {
-            var context = {amit: St.amit};
+            var context = {amit: St.amit, haveviewlink: St.haveviewlink};
             this.render(this.template.selector, context);
         },
     };
