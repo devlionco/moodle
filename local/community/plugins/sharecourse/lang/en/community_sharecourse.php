@@ -57,7 +57,7 @@ $string['courseuploadtocatalog'] = 'Upload course to catalog';
 $string['coursereuploadtocatalog'] = 'Copy course';
 $string['copycoursetoteacher'] = 'Share to teacher';
 $string['sharecoursecommunity'] = 'Share to community';
-$string['copycoursetocategory'] = 'Copy course';
+$string['copycoursetocategory'] = 'To my environment';
 $string['couse_copied_from_catalog'] =
         'Please note, this course is a database partner. Do you want to share the new course created, instead of the current old course?';
 
@@ -92,7 +92,7 @@ $string['eventdublicatetoteacher'] = "Copy course";
 $string['subject_message_for_teacher'] = 'Teacher {$a->teachername} share to you course ';
 
 // Copy course.
-$string['selectioncategories'] = 'Copy course';
+$string['selectioncategories'] = 'Select category';
 $string['eventcoursecopy'] = 'Copy course';
 $string['course_copied_to_category'] = 'Course is copied to the category';
 $string['finish'] = 'Ok';

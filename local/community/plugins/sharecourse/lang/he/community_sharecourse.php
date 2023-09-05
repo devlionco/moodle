@@ -57,7 +57,7 @@ $string['courseuploadtocatalog'] = 'למאגר המשותף';
 $string['coursereuploadtocatalog'] = 'שכפול קורס';
 $string['copycoursetoteacher'] = 'צירוף מורה עמית';
 $string['sharecoursecommunity'] = 'שיתוף לקהילה';
-$string['copycoursetocategory'] = 'לקורס אחר שלי';
+$string['copycoursetocategory'] = 'לסביבה שלי';
 $string['couse_copied_from_catalog'] =
         'אנא שים לב, קורס זה שותף למאגר. האם ברצונך לשתף את הקורס החדש שיוצר, במקום הקורס הישן הנוכחי?';
 
@@ -90,7 +90,7 @@ $string['eventdublicatetoteacher'] = "העתקת קורס";
 $string['subject_message_for_teacher'] = 'המורה {$a->teachername} שיתף/פה איתך קורס ';
 
 // Copy course.
-$string['selectioncategories'] = 'העתקת הקורס';
+$string['selectioncategories'] = 'בחר קטגוריה';
 $string['eventcoursecopy'] = 'העתקת קורס';
 $string['course_copied_to_category'] = 'הקורס משוכפל כעת, ויהיה זמין עוד רגע בסביבה שלך';
 $string['finish'] = 'סיום';
