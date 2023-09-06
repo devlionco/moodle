@@ -64,6 +64,6 @@ export default class Component extends BaseSection {
 
         setTimeout(function() {
             jQuery('*[data-cmlistid="'+id+'"]').find('.loading').remove();
-        }, 300);
+        }, 500);
     }
 }
