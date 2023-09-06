@@ -2820,6 +2820,8 @@ abstract class quiz_nav_panel_base {
      * @return renderable[] the buttons, possibly interleaved with section headings.
      */
     public function get_question_buttons() {
+        global $CFG;
+
         $buttons = array();
 
         // PTL-6970
@@ -2869,7 +2871,11 @@ abstract class quiz_nav_panel_base {
                 if ($pages[$pagenum]['totalpointsinpage'] > 0 && !empty($lqsoptions->summary_grade)) {
                     $a = new stdClass();
                     $a->questionpoints = $pages[$pagenum]['totalpointsinpage'];
-                    $heading .= ' , '. get_string('questionpointstext', 'theme_petel', $a);
+
+                    // PTL-10052.
+                    if ($CFG->instancename != 'math') {
+                        $heading .= ' , '. get_string('questionpointstext', 'theme_petel', $a);
+                    }
                 }
 
                 // TODO: FE Insert section progerss.
