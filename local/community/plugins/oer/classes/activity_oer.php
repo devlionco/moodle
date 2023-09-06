@@ -204,7 +204,7 @@ class activity_oer {
         }
 
         // Metadata details.
-        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_MODULE]);
+        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_MODULE], '*', IGNORE_MULTIPLE);
 
         if (!empty($category)) {
             $query = "

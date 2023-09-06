@@ -232,7 +232,7 @@ class course_oer {
         $obj->sections_search = implode(',', $sections);
 
         // Metadata details.
-        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_COURSE]);
+        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_COURSE], '*', IGNORE_MULTIPLE);
 
         if (!empty($category)) {
             $query = "

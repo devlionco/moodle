@@ -229,7 +229,7 @@ class question_oer {
         $obj->qcategory = $qcategory;
 
         // Metadata details.
-        $category = $DB->get_record('local_metadata_category', ['contextlevel' => $this->contextlevel]);
+        $category = $DB->get_record('local_metadata_category', ['contextlevel' => $this->contextlevel], '*', IGNORE_MULTIPLE);
 
         if (!empty($category)) {
             $query = "

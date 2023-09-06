@@ -183,7 +183,7 @@ class sequence_oer {
         $obj->sequence = $data['sequence'];
 
         // Metadata details.
-        $category = $DB->get_record('local_metadata_category', ['contextlevel' => $this->contextlevel]);
+        $category = $DB->get_record('local_metadata_category', ['contextlevel' => $this->contextlevel], '*', IGNORE_MULTIPLE);
 
         if (!empty($category)) {
             $query = "
@@ -337,7 +337,7 @@ class sequence_oer {
         $obj->mod_intro = isset($tmp->intro) ? $tmp->intro : '';
 
         // Metadata details.
-        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_MODULE]);
+        $category = $DB->get_record('local_metadata_category', ['contextlevel' => CONTEXT_MODULE], '*', IGNORE_MULTIPLE);
 
         if (!empty($category)) {
             $query = "
