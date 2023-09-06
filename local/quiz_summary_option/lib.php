@@ -200,10 +200,8 @@ function local_quiz_summary_option_coursemodule_edit_post_actions($moduleinfo, $
             'summary_state' => isset($moduleinfo->summary_state) && $moduleinfo->summary_state === '1' ? '1' : '0',
             'summary_grade' => isset($moduleinfo->summary_grade) && $moduleinfo->summary_grade === '1' ? '1' : '0',
             'summary_mark' => isset($moduleinfo->summary_mark) && $moduleinfo->summary_mark === '1' ? '1' : '0',
-            'summary_teacherdialog' => isset($moduleinfo->summary_teacherdialog) && $moduleinfo->summary_teacherdialog === '1' ?
-                    '1' : '0',
-            'summary_questionname' => isset($moduleinfo->summary_questionname) && $moduleinfo->summary_questionname === '1' ? '1' :
-                    '0',
+            'summary_teacherdialog' => isset($moduleinfo->summary_teacherdialog) && $moduleinfo->summary_teacherdialog === '1' ? '1' : '0',
+            'summary_questionname' => isset($moduleinfo->summary_questionname) && $moduleinfo->summary_questionname === '1' ? '1' : '0',
             'summary_teamwork' => isset($moduleinfo->summary_teamwork) && $moduleinfo->summary_teamwork === '1' ? '1' : '0'
     ];
 
@@ -276,6 +274,9 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
         }
         if (array_key_exists('no-hideall', $CFG->quizquestiontitlepresets)) {
             $objdefault->summary_hideall = $CFG->quizquestiontitlepresets['no-hideall'];
+        }
+        if (array_key_exists('no-teamwork', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_teamwork = $CFG->quizquestiontitlepresets['no-teamwork'];
         }
     }
 
