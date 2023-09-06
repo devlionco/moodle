@@ -365,7 +365,7 @@ class quizdata {
 
         $firstname = $this->participants[$userid]->firstname;
         $lastname = $this->participants[$userid]->lastname;
-        $fullname = $firstname . ' ' . $lastname;
+        $fullname = htmlspecialchars($firstname . ' ' . $lastname, ENT_QUOTES, 'UTF-8');
 
         $resetpasswordlink = $this->get_resetpassword_link($userid);
         $userprofilelink = $this->get_userprofile_link($userid);
@@ -463,8 +463,8 @@ class quizdata {
                     'userid' => $userid,
                     'fullname' => $attempturl ? '<a target=`_blank` href=' . $attempturl->out(true) . '>' . $fullname . '</a>' :
                             $fullname,
-                    'firstname' => $this->participants[$userid]->firstname,
-                    'lastname' => $this->participants[$userid]->lastname,
+                    'firstname' =>  htmlspecialchars($this->participants[$userid]->firstname, ENT_QUOTES, 'UTF-8'),
+                    'lastname' => htmlspecialchars($this->participants[$userid]->lastname, ENT_QUOTES, 'UTF-8'),
                     'usermenubtn' => '',
                     'state' => get_string($state, 'quiz_advancedoverview'),
                     'attempt_number' => $attemptnumber,
@@ -1050,8 +1050,8 @@ class quizdata {
 
         foreach ($userids as $item) {
             $user = new stdClass;
-            $user->firstname = $this->participants[$item]->firstname;
-            $user->lastname = $this->participants[$item]->lastname;
+            $user->firstname = htmlspecialchars($this->participants[$item]->firstname, ENT_QUOTES, 'UTF-8');
+            $user->lastname = htmlspecialchars($this->participants[$item]->lastname, ENT_QUOTES, 'UTF-8');
             $user->disabled = false;
             $user->link = (new moodle_url('/user/profile.php', ['id' => $item]))->out();
             $list[] = $user;
@@ -1065,8 +1065,8 @@ class quizdata {
 
         foreach ($userids as $item) {
             $user = new stdClass;
-            $user->firstname = $this->participants[$item]->firstname;
-            $user->lastname = $this->participants[$item]->lastname;
+            $user->firstname = htmlspecialchars($this->participants[$item]->firstname, ENT_QUOTES, 'UTF-8');
+            $user->lastname = htmlspecialchars($this->participants[$item]->lastname, ENT_QUOTES, 'UTF-8');
             $user->disabled = true;
             $user->link = '';
             $list[] = $user;
@@ -1080,8 +1080,8 @@ class quizdata {
 
         foreach ($usersattempts as $uk => $ua) {
             $user = new stdClass;
-            $user->firstname = $this->participants[$uk]->firstname;
-            $user->lastname = $this->participants[$uk]->lastname;
+            $user->firstname = htmlspecialchars($this->participants[$uk]->firstname, ENT_QUOTES, 'UTF-8');
+            $user->lastname = htmlspecialchars($this->participants[$uk]->lastname, ENT_QUOTES, 'UTF-8');
             $user->link = (new moodle_url('/mod/quiz/review.php', ['attempt' => $ua->id]))->out();
             $list[] = $user;
         }
@@ -1133,7 +1133,7 @@ class quizdata {
             $questionchats = $this->get_question_chats($q->id);
 
             $questiontitle = get_string('question');
-            $qname = addslashes($q->name);
+            $qname = htmlspecialchars($q->name, ENT_QUOTES, 'UTF-8');
             $url = quiz_advancedoverview_get_question_link($q, $this->cm->id);
             $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->slot .
                     "</span><span class=description>" . $qname . "</span></a>";
@@ -1151,7 +1151,7 @@ class quizdata {
 
         $data['count_according_questions'] = count($tablequestion);
         $data['enable_table_according_questions'] = count($tablequestion) > 0 ? true : false;
-        $data['data_table_according_questions'] = json_encode($tablequestion, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $data['data_table_according_questions'] = json_encode($tablequestion, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         // Students table.
         $data = array_merge($data, $this->get_render_students_data());
 
@@ -1159,7 +1159,7 @@ class quizdata {
         $data['charts']['state'] = $this->chartstate;
         $data['charts']['grade'] = $this->chartgrade;
 
-        $data['charts'] = json_encode($data['charts'], JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $data['charts'] = json_encode($data['charts'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         $data['charts_average_averagegrade'] = $this->chartaverage->averagegrade;
         $data['charts_average_maxgrade'] = $this->chartaverage->maxgrade;
@@ -1171,7 +1171,7 @@ class quizdata {
         $data['open_questions_count'] = count($this->openquestionslist);
         $data['enable_open_questions'] = count($this->openquestionslist) > 0 ? true : false;
 
-        $data['options'] = json_encode($this->options, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $data['options'] = json_encode($this->options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         $data['cmid'] = $this->cm->id;
         $data['courseid'] = $this->course->id;
@@ -1194,7 +1194,7 @@ class quizdata {
 
         $data['count_according_students'] = count($tablestudent);
         $data['enable_table_according_students'] = count($tablestudent) > 0 ? true : false;
-        $data['data_table_according_students'] = json_encode($tablestudent, JSON_NUMERIC_CHECK | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $data['data_table_according_students'] = json_encode($tablestudent, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         $allkey = static::get_key_by_value($this->options['participants']['states'], 'name', 'all');
 
