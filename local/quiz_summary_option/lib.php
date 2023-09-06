@@ -33,7 +33,7 @@ define('SUMMARY_OPTION_SHOW', 'SHOW');
 define('SUMMARY_OPTION_HIDE', 'HIDE');
 
 function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mod $formwrapper, \MoodleQuickForm $mform) {
-    global $DB, $PAGE;
+    global $DB, $PAGE, $CFG;
 
     $modulename = $formwrapper->get_current()->modulename;
     if ($modulename !== 'quiz') {
@@ -61,6 +61,9 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
     $objdefault->summary_hideall = $objdefault->summary_numbering = $objdefault->summary_grade
             = $objdefault->summary_mark = $objdefault->summary_teacherdialog = 0;
     $objdefault->summary_state = $objdefault->summary_questionname = $objdefault->summary_teamwork = 1;
+
+    // Get question title elements presets from config.php.
+    $objdefault = update_quizquestiontitlepresets($objdefault);
 
     if ($row) {
         $obj = json_decode($row->show_elements);
@@ -120,6 +123,7 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
             let checkbox4 = $('#id_summary_mark');
             let checkbox5 = $('#id_summary_teacherdialog');
             let checkbox6 = $('#id_summary_questionname');
+            let checkbox7 = $('#id_summary_teamwork');
             
             $(document).on('click', 'input.summaryoption', function() {
                 let currentid = this.id;
@@ -132,6 +136,7 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
                         checkbox4.prop('checked', true);
                         checkbox5.prop('checked', true);
                         checkbox6.prop('checked', true);
+                        checkbox7.prop('checked', true);
                     }
                 }else{
                     if(currentid === allid){
@@ -141,6 +146,7 @@ function local_quiz_summary_option_coursemodule_standard_elements(\moodleform_mo
                         checkbox4.prop('checked', false);
                         checkbox5.prop('checked', false);
                         checkbox6.prop('checked', false);
+                        checkbox7.prop('checked', false);
                     }
                 }
                 
@@ -253,32 +259,7 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
     $objdefault = new \StdClass();
 
     // Get question title elements presets from config.php.
-    if (isset($CFG->quizquestiontitlepresets) && is_array($CFG->quizquestiontitlepresets)) {
-        if (array_key_exists('no-qname', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_questionname = $CFG->quizquestiontitlepresets['no-qname'];
-        }
-        if (array_key_exists('no-qstate', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_state = $CFG->quizquestiontitlepresets['no-qstate'];
-        }
-        if (array_key_exists('no-qnumbering', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_numbering = $CFG->quizquestiontitlepresets['no-qnumbering'];
-        }
-        if (array_key_exists('no-qgrade', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_grade = $CFG->quizquestiontitlepresets['no-qgrade'];
-        }
-        if (array_key_exists('no-qmark', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_mark = $CFG->quizquestiontitlepresets['no-qmark'];
-        }
-        if (array_key_exists('no-qchatwithteacher', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_teacherdialog = $CFG->quizquestiontitlepresets['no-qchatwithteacher'];
-        }
-        if (array_key_exists('no-hideall', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_hideall = $CFG->quizquestiontitlepresets['no-hideall'];
-        }
-        if (array_key_exists('no-teamwork', $CFG->quizquestiontitlepresets)) {
-            $objdefault->summary_teamwork = $CFG->quizquestiontitlepresets['no-teamwork'];
-        }
-    }
+    $objdefault = update_quizquestiontitlepresets($objdefault);
 
     if ($SCRIPT === '/mod/quiz/attempt.php' || $SCRIPT === '/mod/quiz/review.php') {
         $cmid = optional_param('cmid', null, PARAM_INT);
@@ -316,5 +297,43 @@ function local_quiz_summary_option_get_quiz_config($cmid = 0) {
 
     unset($objdefault->summary_hideall);
 
+    return $objdefault;
+}
+
+/**
+ * Get question title elements presets from config.php
+ * @param stdClass $objdefault
+ * @return stdClass
+ */
+function update_quizquestiontitlepresets(stdClass $objdefault) : stdClass {
+    global $CFG;
+
+    // Get question title elements presets from config.php.
+    if (isset($CFG->quizquestiontitlepresets) && is_array($CFG->quizquestiontitlepresets)) {
+        if (array_key_exists('no-qname', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_questionname = $CFG->quizquestiontitlepresets['no-qname'];
+        }
+        if (array_key_exists('no-qstate', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_state = $CFG->quizquestiontitlepresets['no-qstate'];
+        }
+        if (array_key_exists('no-qnumbering', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_numbering = $CFG->quizquestiontitlepresets['no-qnumbering'];
+        }
+        if (array_key_exists('no-qgrade', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_grade = $CFG->quizquestiontitlepresets['no-qgrade'];
+        }
+        if (array_key_exists('no-qmark', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_mark = $CFG->quizquestiontitlepresets['no-qmark'];
+        }
+        if (array_key_exists('no-qchatwithteacher', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_teacherdialog = $CFG->quizquestiontitlepresets['no-qchatwithteacher'];
+        }
+        if (array_key_exists('no-hideall', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_hideall = $CFG->quizquestiontitlepresets['no-hideall'];
+        }
+        if (array_key_exists('no-teamwork', $CFG->quizquestiontitlepresets)) {
+            $objdefault->summary_teamwork = $CFG->quizquestiontitlepresets['no-teamwork'];
+        }
+    }
     return $objdefault;
 }
