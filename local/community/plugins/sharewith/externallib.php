@@ -1016,11 +1016,17 @@ class community_sharewith_external extends external_api {
         $modinfo = get_fast_modinfo($activity->course);
         $modname = $modinfo->get_cm($cmid)->modname;
 
+        $haveviewlink = true;
+        if ($modname == 'label') {
+            $haveviewlink = false;
+        }
+
         if ($modname == 'quiz') {
             $sharewith = new sharewith();
             if (!$sharewith->check_quiz_category($cmid)) {
                 $content = array(
                         'cmstatus' => 'wrongquizcategory',
+                        'haveviewlink' => $haveviewlink,
                         'data' => get_string('error_quiz_category', 'community_sharewith')
                 );
                 return $content;
@@ -1046,11 +1052,6 @@ class community_sharewith_external extends external_api {
 
                 $items[] = $tmp;
             }
-        }
-
-        $haveviewlink = true;
-        if ($modname == 'label') {
-            $haveviewlink = false;
         }
 
         $content = [
