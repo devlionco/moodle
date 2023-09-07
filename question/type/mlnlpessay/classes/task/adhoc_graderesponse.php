@@ -40,6 +40,8 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
 
         // Checking for empty answer = Wrong answer immediately w/o any further checks.
         $answertext = trim(str_replace('&nbsp;', ' ', $answertext));
+        $answertext = trim(str_replace('"', ' ', $answertext));
+        $answertext = htmlspecialchars($answertext);
 
         // Checking for question attempt.
         $question_attempt_id = $question_attempt->id;
