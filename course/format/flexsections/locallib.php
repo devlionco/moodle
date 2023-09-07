@@ -198,28 +198,21 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
 
                     // Students failed.
                     $studentfailed = 0;
-                    if (class_exists('\quiz_advancedoverview\quizdata')) {
+
+                    $gi = $DB->get_record('grade_items', ['courseid' => $mod->course, 'itemmodule' => 'quiz', 'iteminstance' => $mod->instance]);
+                    $gradepass = isset($gi->gradepass) ? $gi->gradepass : 0;
+
+                    if (class_exists('\quiz_advancedoverview\quizdata') && ($gradepass > 0)) {
                         $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
                         $quizdata->prepare_questions();
                         $quizdata->prepare_charts();
                         $quizdata->prepare_students();
 
-                        $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
-
                         foreach ($quizdata->get_students_table() as $item) {
                             $grade = trim(strip_tags($item['grade']));
                             if (is_numeric($grade)) {
-                                switch ($quiz->grade) {
-                                    case 10:
-                                        if ($grade < 6) {
-                                            $studentfailed++;
-                                        }
-                                        break;
-                                    case 100:
-                                        if ($grade < 60) {
-                                            $studentfailed++;
-                                        }
-                                        break;
+                                if ($grade < $gradepass) {
+                                    $studentfailed++;
                                 }
                             }
                         }
