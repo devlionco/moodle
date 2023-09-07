@@ -145,18 +145,18 @@ function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $ta
     global $DB;
 
     $user = \core_user::get_user($userid);
-    $maincategory = \core_course_category::get($targetcategoryid);
     $maincourse = get_course($targetcourseid);
 
-    if (empty($user)) {
+    if (empty($user) || empty($maincourse)) {
         return false;
     }
-    if (empty($maincategory)) {
+
+    $categories = \core_course_category::get_all(['returnhidden' => true]);
+    if (!isset($categories[$targetcategoryid])) {
         return false;
     }
-    if (empty($maincourse)) {
-        return false;
-    }
+
+    $maincategory = $categories[$targetcategoryid];
 
     profile_load_data($user);
     $idnumber = $user->idnumber;
@@ -167,7 +167,6 @@ function local_petel_copy_course_to_new_category($userid, $targetcategoryid, $ta
 
     // Check category with idnumber.
     $categoryid = 0;
-    $maincategory = \core_course_category::get($targetcategoryid);
     foreach ($maincategory->get_all_children_ids() as $childrenid) {
         $children = \core_course_category::get($childrenid);
         if ($children->idnumber == $idnumber) {

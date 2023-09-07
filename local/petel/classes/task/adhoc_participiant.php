@@ -73,7 +73,9 @@ class adhoc_participiant extends \core\task\adhoc_task {
         $result = [];
         foreach (json_decode($data->userids) as $userid) {
             $res = local_petel_copy_course_to_new_category($userid, $data->categoryid, $data->courseid, null, $data->roleid);
-            $result[] = $res;
+            if ($res) {
+                $result[] = $res;
+            }
 
             // Remove enrol self method if not set in original course.
             if ($data->nullcheck) {

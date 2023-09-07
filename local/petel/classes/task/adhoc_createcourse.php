@@ -72,8 +72,7 @@ class adhoc_createcourse extends \core\task\adhoc_task {
         $result = local_petel_copy_course_to_new_category($data->currentuserid, $data->categoryid, $data->courseid,
                 $data->coursename);
 
-        if (!empty($result)) {
-
+        if ($result) {
             $smallmessage = $fullmessage = get_string('messagecoursectreate', 'local_petel', $result);
 
             // Send message to user.
