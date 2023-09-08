@@ -60,7 +60,7 @@ class reviews_oer {
         $options = array($userid, $userid);
         $newlogs = $DB->get_records_sql($sql, $options);
         if ($CFG->debugdeveloper) {
-            echo "UserID= $userid have new log reviews = " . count($newlogs) . PHP_EOL;
+            mtrace("UserID= $userid have new log reviews = " . count($newlogs));
         }
         $sql = "
             SELECT *
@@ -115,7 +115,7 @@ class reviews_oer {
                         $coursestudents[$log->newactivityid] = $currentcourseviewed;
                     }
                     if ($CFG->debugdeveloper) {
-                        echo "   Students submitted: $currentcourseviewed for {$log->newactivityid}" . PHP_EOL;
+                        mtrace("   Students submitted: $currentcourseviewed for {$log->newactivityid}");
                     }
                     if ((int) $currentcourseviewed >= (int) $activityviewed) {
                         $exist = array_search($log->id, $currentlogs);
@@ -145,7 +145,7 @@ class reviews_oer {
                                 if (isset($CFG->eladresearch_cohort_a)
                                         && isset($CFG->eladresearch_cohort_b)) {
                                     if ($CFG->debugdeveloper) {
-                                        echo "Checking cohorts..." . PHP_EOL;
+                                        mtrace("Checking cohorts...");
                                     }
                                     $cohortamembers = $DB->get_records_sql(
                                             "SELECT mcm.userid 
@@ -172,7 +172,7 @@ class reviews_oer {
                                     }
 
                                     if ($CFG->debugdeveloper) {
-                                        echo ' dynamic split ' . $userid . ' into cohort ' . $request['cohort'] . PHP_EOL;
+                                        mtrace(' dynamic split ' . $userid . ' into cohort ' . $request['cohort']);
                                     }
 
                                     // If already in one of the research cohorts, use that cohort.
@@ -184,7 +184,10 @@ class reviews_oer {
 
                                     if ($iscohortmember) {
                                         $request['cohort'] = (int) $iscohortmember->cid;
-                                        echo "Userid $userid already a cohort {$iscohortmember->cid} member" . PHP_EOL;
+
+                                        if ($CFG->debugdeveloper) {
+                                            mtrace("Userid $userid already a cohort {$iscohortmember->cid} member");
+                                        }
                                     }
                                 }
                                 if ($CFG->debugdeveloper) {
@@ -205,7 +208,7 @@ class reviews_oer {
                                 $DB->insert_record('community_oerctlg_rvw_rqsts', $request);
                                 $currentact[] = $log->activityid;
                                 if ($CFG->debugdeveloper) {
-                                    echo 'OK ' . $log->activityid . PHP_EOL;
+                                    mtrace('OK ' . $log->activityid);
                                 }
                             }
                         } else {
@@ -226,7 +229,7 @@ class reviews_oer {
         }*/
 
         if ($CFG->debugdeveloper) {
-            echo 'Current log reviews = ' . count($currentlogs) . PHP_EOL;
+            mtrace('Current log reviews = ' . count($currentlogs));
         }
     }
 
