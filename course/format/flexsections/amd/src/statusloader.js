@@ -16,7 +16,7 @@
 /**
  * Javascript for lazy load of statuses.
  *
- * @package    format_flexsections
+ * @package
  * @copyright  2020 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,23 +28,18 @@ define(
         'local_petel/inview',
         'core/notification'
     ],
-    function ($, Ajax, inView, Notification) {
+    function($, Ajax, inView, Notification) {
         var courseid = null;
 
-        let getStatus = function (cmids) {
-            //  courseid = $('#page-header').data('courseid');
+        let getStatus = function(cmids) {
             if (courseid) {
-                // debugger;
                 Ajax.call([{
                     methodname: 'format_flexsections_get_activity_grade_status',
                     args: {
                         cmids: cmids,
                         courseid: courseid
                     },
-                    done: function (resp) {
-
-                        // debugger;
-
+                    done: function(resp) {
                         let response = JSON.parse(resp);
                         response.result.forEach(function(item) {
                             $('#activity-row-grade-' + item.cmid).html(item.gradestatus);
@@ -55,11 +50,11 @@ define(
                 }]);
             }
         };
-        let inview = function () {
+        let inview = function() {
             let stack = [];
             inView('.inviewgrade')
-                .on('enter', function (e) {
-                    if(!$(e).hasClass('inview-done')){
+                .on('enter', function(e) {
+                    if (!$(e).hasClass('inview-done')) {
                         $(e).addClass('inview-done');
                         let cmid = $(e).attr("data-cmid");
                         courseid = $(e).attr("data-courseid");
@@ -68,8 +63,8 @@ define(
                     }
                 });
 
-            setInterval(function(){
-                if(stack.length > 0){
+            setInterval(function() {
+                if (stack.length > 0) {
                     let cmids = JSON.stringify(stack);
                     getStatus(cmids);
                     stack = [];
