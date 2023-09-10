@@ -857,31 +857,27 @@ function format_flexsections_prepare_recently_viewed_section() {
     // Prepare data for user last acces in to section.
     $sql = "
         SELECT *
-        FROM {logstore_standard_log}
-        WHERE `component`='core' AND `action`='viewed' AND `target`='course' AND `timecreated` > ?
+        FROM {flexsections_lastaccess}
+        WHERE sectionid > 0 AND timeaccess > ?        
     ";
 
     foreach ($DB->get_records_sql($sql, [$delta]) as $item) {
-        if ($item->other != 'null') {
-            $other = json_decode($item->other);
 
             // Check user role.
             $context = \context_course::instance($item->courseid);
             $roles = get_user_roles($context, $item->userid);
 
             $ifstudent = false;
-            $rolespermitted = ['student'];
             foreach ($roles as $role) {
-                if (in_array($role->shortname, $rolespermitted)) {
+                if (in_array($role->shortname, ['student'])) {
                     $ifstudent = true;
                 }
             }
 
-            if (isset($other->coursesectionnumber) && !empty($other->coursesectionnumber) && $ifstudent) {
-                $section = $DB->get_record('course_sections', ['course' => $item->courseid, 'section' => $other->coursesectionnumber]);
+            if ($ifstudent) {
+                $section = $DB->get_record('course_sections', ['id' => $item->sectionid]);
                 $userspersections[$section->id][] = $item->userid;
             }
-        }
     }
 
     // Prepare result.

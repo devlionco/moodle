@@ -1698,26 +1698,16 @@ function format_flexsections_lastseen($courseid, $sectionid, $userid) {
 
     $lastsection = false;
 
-    $params   = [];
-    $params[] = $courseid;
-    $params[] = $userid;
-    $params[] = '\\core\\event\\course_viewed';
-    $params[] = '%coursesectionnumber%';
+    $sql = "
+        SELECT *
+        FROM {flexsections_lastaccess}
+        WHERE userid=? AND courseid=? AND sectionid > 0
+        ORDER BY `timeaccess` DESC
+        LIMIT 1
+    ";
 
-    $sql = "SELECT *
-        FROM {logstore_standard_log} lsl
-        WHERE lsl.courseid = ?
-            AND lsl.userid = ?
-            AND lsl.eventname = ?
-            AND lsl.component = 'core'
-            AND lsl.action = 'viewed'
-            AND lsl.target = 'course'
-            AND lsl.other LIKE ?
-        ORDER BY lsl.timecreated DESC";
-
-    if ($events = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
-        $other       = json_decode($events->other);
-        $lastsection = $other->coursesectionnumber == $sectionid ?? false;
+    if ($obj = $DB->get_record_sql($sql, [$userid, $courseid])) {
+        $lastsection = $obj->sectionid == $sectionid ?? false;
     }
 
     return $lastsection;

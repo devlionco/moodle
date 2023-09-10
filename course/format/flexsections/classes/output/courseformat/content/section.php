@@ -158,10 +158,8 @@ class section extends \core_courseformat\output\local\content\section {
         }
 
         // Lastseen
-        // PTL-9806 Disabled by nadav (TODO: Improve performance)
-        //$lastseen = format_flexsections_lastseen($this->format->get_course()->id, $this->section->section, $USER->id);
-        //$data->lastseen = $lastseen;
-        $data->lastseen = false;
+        $lastseen = format_flexsections_lastseen($this->format->get_course()->id, $this->section->section, $USER->id);
+        $data->lastseen = $lastseen;
 
         // Has share button.
         $data->hassharebutton = $PAGE->user_is_editing() ? true : false;

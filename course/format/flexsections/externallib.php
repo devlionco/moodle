@@ -290,10 +290,6 @@ class format_flexsections_external extends external_api {
 
         $data = $cmids = [];
 
-        // PTL-9806 Improve performance (disable all section statistics)
-        // TODO: fix last access activity calculation time
-        return json_encode($data);
-
         format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
 
         $section = $DB->get_record('course_sections', ['id' => $sectionid]);
@@ -301,22 +297,19 @@ class format_flexsections_external extends external_api {
 
         // Get last access activity. PTL-9737.
         if (!empty($cmids)) {
+
             $sql = "
                 SELECT *
-                FROM {logstore_standard_log}
-                WHERE userid=? AND courseid=? AND `action`='viewed' AND `target`='course_module' 
-                        AND `contextinstanceid` IN (".implode(',', $cmids).")
-                ORDER BY `timecreated` DESC
+                FROM {flexsections_lastaccess}
+                WHERE userid=? AND courseid=? AND cmid > 0
+                ORDER BY `timeaccess` DESC
                 LIMIT 1
-                ;
             ";
 
-            if ($log = $DB->get_record_sql($sql, [$COURSE->id,$USER->id])) {
-
-                $cm = $modinfo->get_cm($log->contextinstanceid);
-
+            if ($recent = $DB->get_record_sql($sql, [$USER->id, $COURSE->id])) {
+                $cm = $modinfo->get_cm($recent->cmid);
                 $data['cmlastaccess'] = [
-                        'cmid' => $log->contextinstanceid,
+                        'cmid' => $recent->cmid,
                         'cmname' => $cm->name,
                         'cmurl' => $cm->url->out(),
                 ];
@@ -417,12 +410,15 @@ class format_flexsections_external extends external_api {
                         'label' => get_string('statuswaitingforsubmission', 'format_flexsections')
                 ];
             }
-            if($failed > 0){
-                $data['secondrow'] = [
-                        'value' => $failed,
-                        'label' => get_string('statusfailed', 'format_flexsections')
-                ];
-            }
+
+            // PTL-10090.
+            //if($failed > 0){
+            //    $data['secondrow'] = [
+            //            'value' => $failed,
+            //            'label' => get_string('statusfailed', 'format_flexsections')
+            //    ];
+            //}
+
             if($notsubmitted > 0){
                 $data['thirdrow'] = [
                         'value' => $notsubmitted,
