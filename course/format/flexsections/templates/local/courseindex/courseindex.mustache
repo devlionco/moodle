@@ -113,5 +113,11 @@ require(['jquery', 'format_flexsections/local/courseindex/courseindex'], functio
 
     // PTL-9913.
     $('#{{uniqid}}-courseindexcourselink').html('<a href="'+M.course.url+'" class="h3">'+M.course.name+'</a>');
+
+    // PTL-10105.
+    M.hidesections.forEach((sectionid) => {
+        $('#{{uniqid}}-course-index-section-' + sectionid).hide();
+    });
+
 });
 {{/js}}
