@@ -74,6 +74,42 @@ class controlmenu extends \core_courseformat\output\local\content\cm\controlmenu
             );
         }
 
+
+        // PTL-4771.
+        list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
+
+        $str = get_strings(array('delete', 'move', 'moveright', 'moveleft',
+                'editsettings', 'duplicate', 'modhide', 'makeavailable', 'makeunavailable', 'modshow'), 'moodle');
+
+        if(in_array($mod->id, $activities)){
+            $actions['duplicate'] = new action_menu_link_secondary(
+                    new moodle_url('javascript:void(0)'),
+                    new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
+                    $str->duplicate,
+                    array('class' => 'editing_duplicate', 'data-sharebtn' => 'true', 'data-handler' => 'openDialog', 'data-cmid' => $mod->id)
+            );
+        }else{
+            $actions['duplicate'] = new action_menu_link_secondary(
+                    new moodle_url($baseurl, array('duplicate' => $mod->id)),
+                    new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
+                    $str->duplicate,
+                    array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
+            );
+        }
+
+        // Editing_metadata.
+        if (is_siteadmin() || can_edit_in_category($this->mod->get_course()->category)) {
+            $actions['metadata'] = new action_menu_link_secondary(
+                    new moodle_url('/local/metadata/index.php', array('id' => $mod->id, 'action' => 'moduledata'
+                    ,'contextlevel' => $mod->context->contextlevel)),
+                    new pix_icon('t/edit', get_string('metadatatitle', 'metadatacontext_module'), 'moodle',
+                            array('class' => 'iconsmall', 'title' => '')),
+                    get_string('metadatatitle', 'metadatacontext_module'),
+                    array('class' => 'editing_metadata', 'data-action' => 'editing_metadata'
+                    ,'data-sectionreturn' => $sr, 'target'=>'_blank')
+            );
+        }
+
         return $actions;
     }
 }
