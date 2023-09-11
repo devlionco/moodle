@@ -52,6 +52,7 @@ class demo_users_cleanup_task extends \core\task\scheduled_task {
     public function execute() {
         global $CFG, $DB;
         require_once(__DIR__ . '/../../locallib.php');
+        require("$CFG->dirroot/user/lib.php");
 
         $bulkuserprefix = $CFG->local_petel_prefix_bulk_user ?? static::DEFAULT_BULK_USER_PREFIX;
         $params = ['username' => $DB->sql_like_escape($bulkuserprefix) . '%'];
@@ -70,7 +71,11 @@ class demo_users_cleanup_task extends \core\task\scheduled_task {
                 // If session exist or if seession have been killed.
                 if ($isexpired || (!empty($CFG->sessiontimeout) && $userenrolment->timemodified + $CFG->sessiontimeout < time())) {
                     $plugin->unenrol_user($instance, $userenrolment->userid);
-                    mtrace("Unenrol user id: " . $userenrolment->userid);
+                    mtrace("Unenrol user id: " . $user->username);
+                    user_delete_user($user);
+                    mtrace('User deleted: '.$user->username);
+                    user_create_user($user);
+                    mtrace('User created: '.$user->username);
                 }
             }
         }

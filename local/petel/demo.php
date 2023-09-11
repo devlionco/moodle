@@ -65,9 +65,10 @@ if ($formdata = $form->get_data()) {
 
     $params['username'] = $DB->sql_like_escape($bulkuserprefix) . '%';
 
+    $sql = 'select * from {user} where deleted = 0 ' . $sql . ' AND ' . $DB->sql_like('username', ':username', false, false) .
+            ' order by username limit 1';
     if (!$user =
-            $DB->get_record_select('user', 'deleted = 0' . $sql . ' AND ' . $DB->sql_like('username', ':username', false, false),
-                    $params, '*', IGNORE_MULTIPLE)) {
+            $DB->get_record_sql($sql, $params)) {
         throw new \moodle_exception('errordemocoursefull', 'local_petel');
     }
 
@@ -97,7 +98,7 @@ if ($formdata = $form->get_data()) {
 
     $roleid = get_config('local_petel', 'demorole') ?: $instance->roleid;
 
-    $enrol->enrol_user($instance, $USER->id, $roleid, $timestart, $timeend);
+    $enrol->enrol_user($instance, $USER->id, $roleid, $timestart, $timeend, null, false);
 
     $context = context_course::instance($instance->courseid);
     if (!is_enrolled($context, $user)) {
