@@ -298,7 +298,7 @@ class qtype_numerical_question extends question_graded_automatically {
                     $answer->unitisright = false;
                     return $answer;
                 }
-
+                return $answer;
             }
 
 //            if ($answer->within_tolerance($scaledvalue)) {
