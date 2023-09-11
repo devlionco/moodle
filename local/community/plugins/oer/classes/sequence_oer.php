@@ -312,7 +312,7 @@ class sequence_oer {
         ";
 
         $obj = $DB->get_record_sql($query, [$cmid]);
-        if (empty($obj->cmid)) {
+        if (empty($obj->cmid) || !($obj->instance > 0)) {
             return false;
         }
 
