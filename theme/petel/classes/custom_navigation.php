@@ -80,10 +80,26 @@ class custom_navigation {
         }
 
         // Remove items.
-
-        // PTL-9713. PTL-9383.
         $coursecontext = \context_course::instance($COURSE->id);
         $notteacher    = !has_capability('moodle/course:update', $coursecontext);
+
+        // PTL-9968.
+        $flagpermission = false;
+        foreach ($roles as $role) {
+            if ($role->shortname == 'teacher') {
+                $flagpermission = true;
+            }
+        }
+
+        if ($notteacher || $flagpermission) {
+            foreach ($PAGE->secondarynav->get_children_key_list() as $key) {
+                if ($key == 'participants') {
+                    $PAGE->secondarynav->children->remove($key);
+                }
+            }
+        }
+
+        // PTL-9713. PTL-9383.
         if ($notteacher && in_array($PAGE->pagetype, [
                         'mod-quiz-attempt',
                         'mod-quiz-review',
