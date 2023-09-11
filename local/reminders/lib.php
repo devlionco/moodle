@@ -352,7 +352,8 @@ function local_reminders_cron_pre($currtime, $timewindowstart) {
                 mtrace('[LOCAL_REMINDERS] Mail Result: '.$mailresult);
 
                 if (!$mailresult) {
-                    mtrace("Could not send out message for event#$event->id to user $eventdata->userto");
+                    $usertoid = isset($eventdata->userto->id) ? $eventdata->userto->id : '';
+                    mtrace("Could not send out message for event#$event->id to user $usertoid");
                 }
             } catch (\Exception $mex) {
                 $failedcount++;
