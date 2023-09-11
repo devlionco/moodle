@@ -256,14 +256,14 @@ function view_groups_select($courseid, $cmid) {
 
         array_unshift($groupallstudents, $obj);
 
-        if ($course && in_array($course->groupmode, [1, 2]) && $activegroup == 0) {
-            $obj = new \stdClass();
-            $obj->id = -1;
-            $obj->courseid = $courseid;
-            $obj->name = get_string('selectgroup', 'local_teamwork');
-
-            array_unshift($groupallstudents, $obj);
-        }
+        //if ($course && in_array($course->groupmode, [1, 2]) && $activegroup == 0) {
+        //    $obj = new \stdClass();
+        //    $obj->id = -1;
+        //    $obj->courseid = $courseid;
+        //    $obj->name = get_string('selectgroup', 'local_teamwork');
+        //
+        //    array_unshift($groupallstudents, $obj);
+        //}
 
         return $groupallstudents;
     }
