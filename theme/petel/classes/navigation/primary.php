@@ -94,4 +94,27 @@ class primary extends \core\navigation\output\primary {
 
         return $nodes;
     }
+
+    /**
+     * Get/Generate the user menu.
+     *
+     * This is leveraging the data from user_get_user_navigation_info and the logic in $OUTPUT->user_menu()
+     *
+     * @param renderer_base $output
+     * @return array
+     */
+    public function get_user_menu(renderer_base $output): array {
+        global $USER;
+
+        $usermenudata = parent::get_user_menu($output);
+
+        if (isloggedin() && !\core\session\manager::is_loggedinas()) {
+            $usermenudata['metadata'] = [
+                    'content' => $USER->firstname . ' ' . $USER->lastname,
+                    'classes' => ''
+            ];
+        }
+
+        return $usermenudata;
+    }
 }
