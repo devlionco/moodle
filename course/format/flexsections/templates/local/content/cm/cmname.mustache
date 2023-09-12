@@ -44,7 +44,7 @@
     }
 }}
 {{#url}}
-    <div class="activity-instance d-flex flex-column">
+    <div class="activity-instance d-flex">
         <div class="activitytitle media {{textclasses}} modtype_{{modname}} position-relative align-self-start">
             <div class="activityiconcontainer {{purpose}} courseicon align-self-start mr-3">
                 <img src="{{{icon}}}" class="activityicon " alt="{{{modname}}} icon">
@@ -72,5 +72,6 @@
                 {{/pluginname}}
             </div>
         </div>
+        <div class="pt-1 inviewgrade" data-cmid="{{cmid}}" data-courseid="{{courseid}}" id="activity-oer-version-{{cmid}}"></div>
     </div>
 {{/url}}
