@@ -190,7 +190,7 @@ function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
 
     //Compare with tolerance
     foreach($arr_coeff_units_new as $item){
-        $coefftolerance = ($item/$dano['value']) * $tolerance;
+        $coefftolerance = ($dano['value'] != 0) ? ($item/$dano['value']) * $tolerance : 0;
         if(qtype_numerical_compare_with_tolerance($item, $answer['value'], $coefftolerance)){
             $value_validation = 1;
 
@@ -282,7 +282,7 @@ function qtype_numerical_compare_answer($dano, $answer, $tolerance) {
     }
 
     $new_dano = $coeff_answer*($dano['value']/$coeff_dano);
-    $coefftolerance = ($new_dano/$dano['value']) * $tolerance;
+    $coefftolerance = ($dano['value'] != 0) ? ($new_dano/$dano['value']) * $tolerance : 0;
 
     return qtype_numerical_compare_with_tolerance($new_dano, $answer['value'], $coefftolerance);
 
