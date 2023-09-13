@@ -43,7 +43,6 @@ class custom_navigation {
             $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
             if ($cmid) {
                 $context = \context_module::instance($cmid);
-
                 if (has_capability('mod/quiz:manage', $context)) {
                     $advancedoverviewurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
                     $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
@@ -80,6 +79,20 @@ class custom_navigation {
         }
 
         // Remove items.
+
+        // PTL-10144. Remove all not relevant items for students.
+        $coursecontext = \context_course::instance($COURSE->id);
+        $notteacher    = !has_capability('moodle/course:update', $coursecontext);
+        if ($notteacher) {
+            $lists = $PAGE->secondarynav->get_children_key_list();
+            if (isset($lists[0])) {
+                foreach ($lists as $key) {
+                    if ($key != $lists[0]) {
+                        $PAGE->secondarynav->children->remove($key);
+                    }
+                }
+            }
+        }
 
         // PTL-9968.
         $flagpermission = false;
