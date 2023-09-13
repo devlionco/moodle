@@ -199,24 +199,25 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     // Students failed.
                     $studentfailed = 0;
 
-                    $gi = $DB->get_record('grade_items', ['courseid' => $mod->course, 'itemmodule' => 'quiz', 'iteminstance' => $mod->instance]);
-                    $gradepass = isset($gi->gradepass) ? $gi->gradepass : 0;
+                    // TODO PTL-10126.
+                    //$gi = $DB->get_record('grade_items', ['courseid' => $mod->course, 'itemmodule' => 'quiz', 'iteminstance' => $mod->instance]);
+                    //$gradepass = isset($gi->gradepass) ? $gi->gradepass : 0;
 
-                    if (class_exists('\quiz_advancedoverview\quizdata') && ($gradepass > 0)) {
-                        $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
-                        $quizdata->prepare_questions();
-                        $quizdata->prepare_charts();
-                        $quizdata->prepare_students();
-
-                        foreach ($quizdata->get_students_table() as $item) {
-                            $grade = trim(strip_tags($item['grade']));
-                            if (is_numeric($grade)) {
-                                if ($grade < $gradepass) {
-                                    $studentfailed++;
-                                }
-                            }
-                        }
-                    }
+                    //if (class_exists('\quiz_advancedoverview\quizdata') && ($gradepass > 0)) {
+                    //    $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
+                    //    $quizdata->prepare_questions();
+                    //    $quizdata->prepare_charts();
+                    //    $quizdata->prepare_students();
+                    //
+                    //    foreach ($quizdata->get_students_table() as $item) {
+                    //        $grade = trim(strip_tags($item['grade']));
+                    //        if (is_numeric($grade)) {
+                    //            if ($grade < $gradepass) {
+                    //                $studentfailed++;
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     $querytmp           = $query . " AND qa.state = 'finished' AND qa.sumgrades IS NULL ";
                     $countwithoutgrades = count($DB->get_records_sql($querytmp, $params));
@@ -467,35 +468,29 @@ function format_flexsections_cm_submission_data(cm_info $mod, $userid = 0) {
             }
 
             if ($tmod->submitted && $tmod->requiregrade && $tmod->grade) {
-                if (class_exists('\quiz_advancedoverview\quizdata')) {
-                    $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
-                    $quizdata->prepare_questions();
-                    $quizdata->prepare_charts();
-                    $quizdata->prepare_students();
 
-                    $quiz = $DB->get_record('quiz', ['id' => $mod->instance]);
+                // TODO PTL-10126.
+                //$gi = $DB->get_record('grade_items', ['courseid' => $mod->course, 'itemmodule' => 'quiz', 'iteminstance' => $mod->instance]);
+                //$gradepass = isset($gi->gradepass) ? $gi->gradepass : 0;
 
-                    foreach ($quizdata->get_students_table() as $item) {
-                        if ($item['userid'] == $userid) {
-
-                            $grade = trim(strip_tags($item['grade']));
-                            if (is_numeric($grade)) {
-                                switch ($quiz->grade) {
-                                    case 10:
-                                        if ($grade < 6) {
-                                            $tmod->failed = true;
-                                        }
-                                        break;
-                                    case 100:
-                                        if ($grade < 60) {
-                                            $tmod->failed = true;
-                                        }
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
+                //if (class_exists('\quiz_advancedoverview\quizdata') && ($gradepass > 0)) {
+                //    $quizdata = new \quiz_advancedoverview\quizdata($mod->get_course_module_record()->id);
+                //    $quizdata->prepare_questions();
+                //    $quizdata->prepare_charts();
+                //    $quizdata->prepare_students();
+                //
+                //    foreach ($quizdata->get_students_table() as $item) {
+                //        if ($item['userid'] == $userid) {
+                //
+                //            $grade = trim(strip_tags($item['grade']));
+                //            if (is_numeric($grade)) {
+                //                if ($grade < $gradepass) {
+                //                    $tmod->failed = true;
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
             }
             break;
 
