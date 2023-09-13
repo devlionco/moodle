@@ -50,6 +50,29 @@ if ($hassiteconfig) {
                 1
             )
         );
+        $choices = array(
+            H5PDisplayOptionBehaviour::NEVER_SHOW => get_string('displayoptiondownloadnever', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::ALWAYS_SHOW => get_string('displayoptiondownloadalways', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => get_string('displayoptiondownloadpermission', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => get_string('displayoptionauthoron', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => get_string('displayoptionauthoroff', 'qtype_hvp')
+        );
+
+        $embedchoices = array(
+            H5PDisplayOptionBehaviour::NEVER_SHOW => get_string('displayoptionnevershow', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::ALWAYS_SHOW => get_string('displayoptionalwaysshow', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => get_string('displayoptionpermissionsembed', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => get_string('displayoptionauthoron', 'qtype_hvp'),
+            H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => get_string('displayoptionauthoroff', 'qtype_hvp')
+        );
+        $settingspage->add(new admin_setting_heading('qtype_hvp/display_options', get_string('displayoptions', 'qtype_hvp'), ''));
+        $settingspage->add(new admin_setting_configcheckbox('qtype_hvp/frame', get_string('enableframe', 'qtype_hvp'), '', 1));
+        $settingspage->add(new admin_setting_configselect('qtype_hvp/export', get_string('enabledownload', 'qtype_hvp'), '',
+            H5PDisplayOptionBehaviour::ALWAYS_SHOW, $choices));
+        $settingspage->add(new admin_setting_configselect('qtype_hvp/embed', get_string('enableembed', 'qtype_hvp'), '',
+            H5PDisplayOptionBehaviour::ALWAYS_SHOW, $embedchoices));
+        $settingspage->add(new admin_setting_configcheckbox('qtype_hvp/copyright', get_string('enablecopyright', 'qtype_hvp'), '', 1));
+        $settingspage->add(new admin_setting_configcheckbox('qtype_hvp/icon', get_string('enableabout', 'qtype_hvp'), '', 1));
     }
     $ADMIN->add('qtype_hvp_category', $settingspage);
     $ADMIN->add('qtype_hvp_category',
@@ -58,6 +81,3 @@ if ($hassiteconfig) {
             get_string('librariessettings', 'qtype_hvp'),
             new moodle_url('/question/type/hvp/library_list.php')));
 }
-
-
-

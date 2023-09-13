@@ -97,7 +97,7 @@ class qtype_hvp_edit_form extends question_edit_form {
         }
         $question->h5pparams = json_encode($maincontentdata, true);
         $mformid = $this->_form->getAttribute('id');
-        \hvp_add_editor_assets($content === null ? null : $question->id, $mformid);
+        \hvp_add_editor_assets($question, $mformid);
         return $question;
     }
 

@@ -101,15 +101,17 @@ function hvp_get_core_settings($context) {
 /**
  * Add required assets for displaying the editor.
  *
+ * @param stdClass $question The question object
  * @param null $mformid Id of Moodle form
  *
  * @throws dml_exception
  * @throws moodle_exception
  */
-function hvp_add_editor_assets($questionid = null, $mformid = null) {
-    global $PAGE, $CFG, $COURSE;
+function hvp_add_editor_assets($question = null, $mformid = null) {
+    global $PAGE, $CFG;
 
-    $context = \context_course::instance($COURSE->id);
+    $contextid = $question->contextid;
+    $context = \context::instance_by_id($contextid);
 
     $settings = \hvp_get_core_assets($context, true);
 

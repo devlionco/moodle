@@ -94,18 +94,8 @@ class qtype_hvp extends question_type {
         } else {
             $core = framework::instance();
             $editor = framework::instance('editor');
-
-            if (!empty($question->id)) {
-                $content = $core->loadContent($question->id);
-                if (!empty($content)) {
-                    $question->id = $content['id'];
-                    $oldlib = $content['library'];
-                    $oldparams = json_decode($content['params']);
-                } else {
-                    $question->question = $question->id;
-                    $question->id = null;
-                }
-            }
+            $question->question = $question->id;
+            $question->id = null;
             $question->library = H5PCore::libraryFromString($question->h5plibrary);
 
             $question->library['libraryId'] = $core->h5pF->getLibraryId($question->library['machineName'],
@@ -113,10 +103,7 @@ class qtype_hvp extends question_type {
                 $question->library['minorVersion']);
             $core->saveContent((array) $question);
             $params = json_decode($question->params);
-
-            $editor->processParameters($question, $question->library, $params,
-                isset($oldlib) ? $oldlib : null,
-                isset($oldparams) ? $oldparams : null);
+            $editor->processParameters($question, $question->library, $params);
         }
         $question->id = $question->question;
         parent::save_question_options($question);

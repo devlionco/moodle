@@ -229,6 +229,7 @@ class H5peditorFile {
    * Print result from file processing.
    */
   public function printResult() {
+    // Add to filename the suffix #tmp.
     $this->result->path = $this->getType() . 's/' . $this->getName() . '#tmp';
 
     // text/plain is used to support IE

@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/type/hvp/library/h5p-file-storage.interface.php');
 
 use \qtype_hvp_library\H5PCore as H5PCore;
+
 /**
  * The qtype_hvp file storage class.
  *
@@ -137,9 +138,11 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
     public function exportContent($id, $target) {
         global $DB;
 
-        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $id]);
+        $hvp = $DB->get_record('qtype_hvp', ['id' => $id]);
+        $questionversion = $DB->get_record('question_versions', ['questionid' => $hvp->question]);
+        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $questionversion->questionbankentryid]);
         $contextid = $DB->get_field('question_categories', 'contextid',
-                                    ['id' => $category]);
+            ['id' => $category]);
         self::exportFileTree($target, $contextid, 'content', '/', $id);
     }
 
@@ -265,7 +268,7 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
                     // Rewrite relative URLs used inside stylesheets.
                     $content .= preg_replace_callback(
                             '/url\([\'"]?([^"\')]+)[\'"]?\)/i',
-                            function ($matches) use ($location) {
+                            function($matches) use ($location) {
                                 if (preg_match("/^(data:|([a-z0-9]+:)?\/)/i", $matches[1]) === 1) {
                                     return $matches[0]; // Not relative, skip.
                                 }
@@ -356,7 +359,7 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
     public function getContent($filepath) {
         // Grab context and file storage.
         $context = \context_system::instance();
-        $fs      = get_file_storage();
+        $fs = get_file_storage();
 
         // Find location of file.
         $location = [];
@@ -427,10 +430,10 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         // Determine source file area and item id.
         if ($fromid === 'editor') {
             $sourcefilearea = 'editor';
-            $sourceitemid = $tocontent->question;
+            $sourceitemid = $tocontent;
         } else {
             $sourcefilearea = 'content';
-            $sourceitemid   = $fromid;
+            $sourceitemid = $fromid;
         };
 
         // Check to see if source exist.
@@ -446,12 +449,12 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
 
         // Create new file record.
         $record = [
-            'contextid' => $this->getQuestionContextId($sourceitemid),
+            'contextid' => $this->getquestioncontextid($sourceitemid),
             'component' => 'qtype_hvp',
-            'filearea'  => 'content',
-            'itemid'    => $sourceitemid,
-            'filepath'  => $this->getFilepath($file),
-            'filename'  => $this->getFilename($file),
+            'filearea' => 'content',
+            'itemid' => $tocontent->question,
+            'filepath' => $this->getFilepath($file),
+            'filename' => $this->getFilename($file),
         ];
         $fs = get_file_storage();
         $fs->create_file_from_storedfile($record, $sourcefile);
@@ -592,22 +595,17 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         }
     }
 
-    private function getQuestionContextId($qid) {
+    public function getquestioncontextid($qid) {
         global $DB;
 
-        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $qid]);
+        if (is_object($qid) && $qid?->context instanceof \context) {
+            return $qid->context->id;
+        }
+        $questionversion = $DB->get_record('question_versions', ['questionid' => $qid]);
+        $category = $DB->get_field('question_bank_entries', 'questioncategoryid', ['id' => $questionversion->questionbankentryid]);
         $contextid = $DB->get_field('question_categories', 'contextid',
-                                    ['id' => $category]);
-        if ($contextid == 0) {
-            return 0;
-        }
-
-        $context = $DB->get_record('context', ['id' => $contextid], '*', MUST_EXIST);
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            $courseid = $DB->get_field('course_modules', 'course', ['id' => $context->instanceid]);
-            $contextid = $DB->get_field('context', 'id', ['instanceid' => $courseid, 'contextlevel' => CONTEXT_COURSE]);
-        }
-        return $contextid;
+            ['id' => $category]);
+        return $contextid ?? 0;
     }
 
 
@@ -622,24 +620,19 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
      * @return \stored_file|bool
      */
     // @codingStandardsIgnoreLine
-    private function getFile($filearea, $itemid, $file) {
-        global $DB;
-
-
-        if (is_object($itemid)) {
-            $itemid = $itemid->id;
-        }
-
-	$ctxid = $this->getQuestionContextId($itemid);
-
+    private function getFile($filearea, $item, $file) {
         if ($filearea === 'editor') {
             $itemid = 0;
+        } else if (is_object($item) && $item?->context instanceof \context) {
+            $itemid = $item->question;
+        } else {
+            $itemid = $item;
         }
+        $ctxid = $this->getquestioncontextid($item);
+
         // Load file.
         $fs = get_file_storage();
-
-        $file = $fs->get_file($ctxid, 'qtype_hvp', $filearea, $itemid, $this->getFilepath($file), $this->getFilename($file));
-        return $file;
+        return $fs->get_file($ctxid, 'qtype_hvp', $filearea, $itemid, $this->getFilepath($file), $this->getFilename($file));
     }
 
     /**
@@ -668,9 +661,9 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
      * Checks if a file exists
      *
      * @method fileExists
-     * @param  string     $filearea [description]
-     * @param  string     $filepath [description]
-     * @param  string     $filename [description]
+     * @param string $filearea [description]
+     * @param string $filepath [description]
+     * @param string $filename [description]
      * @return boolean
      */
     // @codingStandardsIgnoreLine
@@ -764,8 +757,8 @@ class file_storage implements \qtype_hvp_library\H5PFileStorage {
         $fs = get_file_storage();
 
         $pathparts = pathinfo($sourcefile);
-        $filename  = $pathparts['basename'];
-        $filepath  = $pathparts['dirname'];
+        $filename = $pathparts['basename'];
+        $filepath = $pathparts['dirname'];
         $foldername = basename($filepath);
 
         if ($contentid > 0) {

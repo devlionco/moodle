@@ -78,7 +78,7 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
 
             $language = self::get_language();
 
-            $export = !(isset($CFG->qtype_hvp_export) && $CFG->qtype_hvp_export === '0');
+            $export = $CFG->qtype_hvp_export ?? false;
 
             $core = new \qtype_hvp_library\H5PCore($interface, $fs, $url, $language, $export);
             $core->aggregateAssets = !(isset($CFG->qtype_hvp_aggregate_assets) && $CFG->qtype_hvp_aggregate_assets === '0');
@@ -122,7 +122,7 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
      */
     public static function has_editor_access($error) {
         $context = \context::instance_by_id(required_param('contextId', PARAM_RAW));
-        $cap = ($context->contextlevel === CONTEXT_COURSE ? 'addinstance' : 'manage');
+        $cap = 'addinstance';
 
         if (!has_capability("qtype/hvp:$cap", $context)) {
             H5PCore::ajaxError(get_string($error, 'qtype_hvp'));
@@ -153,6 +153,13 @@ class framework  implements \qtype_hvp_library\H5PFrameworkInterface {
 
         // Try to map.
         return isset($map[$language]) ? $map[$language] : $language;
+    }
+
+    public function loadContentById($id) {
+        global $DB;
+
+        $qtypehvp = $DB->get_record('qtype_hvp', ['id' => $id]);
+        return $this->loadContent($qtypehvp->question);
     }
 
     /**

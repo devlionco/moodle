@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_hvp';
-$plugin->version   = 2023040300;
+$plugin->version   = 2023091100;
 
 $plugin->requires  = 2020060900;
 

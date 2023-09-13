@@ -82,7 +82,7 @@ function qtype_hvp_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
             break;
 
         case 'exports':
-            if ($context->contextlevel != CONTEXT_MODULE) {
+            if ($context->contextlevel != CONTEXT_COURSE) {
                 return false; // Invalid context.
             }
 
@@ -121,7 +121,7 @@ function qtype_hvp_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
             }
 
             $contentid = $matches[1];
-            $content = $h5pinterface->loadContent($contentid);
+            $content = $h5pinterface->loadContentById($contentid);
             $displayoptions = $h5pcore->getDisplayOptionsForView($content['disable'], $context->instanceid);
 
             // Check permissions.
@@ -131,9 +131,6 @@ function qtype_hvp_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
             $itemid = 0;
 
-            // Change context to course for retrieving file.
-            $cid = $DB->get_field('course_modules', 'course', ['id' => $context->instanceid]);
-            $context = context_course::instance($cid);
             break;
 
         case 'editor':

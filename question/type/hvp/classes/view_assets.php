@@ -58,21 +58,9 @@ class view_assets {
         $this->core        = framework::instance();
 
         $contextid = $context->id;
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            // Take containing course context instead.
-            $cid = $DB->get_field('course_modules', 'course',
-                                  ['id' => $context->instanceid]);
-            $contextid = $DB->get_field('context', 'id',
-                                        ['contextlevel' => CONTEXT_COURSE,
-                                         'instanceid' => $cid]);
-        }
 
         $this->content     = $this->core->loadContent($questionattempt->get_question_id());
         $this->content['question'] = $questionattempt->get_question_id();
-
-        if ($dorequire) { // Workaround, see mod/hvp.
-            $this->content['filtered'] = $this->content['params'];
-        }
         $this->settings    = \hvp_get_core_assets($context, $dorequire);
         $this->jsrequires  = [];
         $this->cssrequires = [];
@@ -147,14 +135,13 @@ class view_assets {
      */
     private function getexportsettings($downloadenabled) {
         global $CFG;
-
         if ( ! $downloadenabled || (isset($CFG->qtype_hvp_export) && $CFG->qtype_hvp_export === false)) {
             return '';
         }
 
-        $modulecontext = \context_module::instance($this->cm->id);
+        $coursecontext = \context_course::instance($this->cm->course);
         $slug          = $this->content['slug'] ? $this->content['slug'] . '-' : '';
-        $url           = \moodle_url::make_pluginfile_url($modulecontext->id,
+        $url           = \moodle_url::make_pluginfile_url($coursecontext->id,
             'qtype_hvp',
             'exports',
             '',

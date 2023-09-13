@@ -34,7 +34,7 @@ require_once("locallib.php");
 require_login();
 
 $action = required_param('action', PARAM_ALPHA);
-switch($action) {
+ switch($action) {
 
     /*
      * Handle user data reporting
