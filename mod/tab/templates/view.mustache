@@ -35,20 +35,21 @@
     {{/showMenu}}
     <div class="{{{classrecit}}} col{{#showMenu}}-md-9{{/showMenu}} secondary-navigation">
         <div class="moremenu navigation observed" id="TabbedPanelsTabGroup" role="tablist">
-         <ul class="more-nav nav nav-tabs" id="TabbedPanelsTabGroup" role="tablist">
+            <ul class="more-nav nav nav-tabs" id="TabbedPanelsTabGroup" role="tablist">
                 {{#tabs}}
                <li class="nav-item ">
                     <a class=" nav-link d-flex align-items-center justify-content-center {{#active}}active{{/active}}" id="tab-{{{id}}}" data-toggle="tab" href="#tab{{{id}}}" role="tab" aria-controls="tab{{{id}}}"><span>{{{name}}}</span></a>
               </li>
                 {{/tabs}}
           </ul>
-            <div class="tab-content" id="TabbedPanelsTabContent">
-                {{#tabs}}
-                <div class="tab-pane fade show {{#active}}active{{/active}} mt-3" id="tab{{{id}}}" role="tabpanel" aria-labelledby="tab{{{id}}}">
-                    {{{content}}}
-                </div>
-                {{/tabs}}
+        </div>
+        <div class="tab-content" id="TabbedPanelsTabContent">
+            {{#tabs}}
+            <div class="tab-pane fade show {{#active}}active{{/active}} mt-3" id="tab{{{id}}}" role="tabpanel" aria-labelledby="tab{{{id}}}">
+                {{{content}}}
             </div>
+            {{/tabs}}
         </div>
     </div>
 </div>
+
