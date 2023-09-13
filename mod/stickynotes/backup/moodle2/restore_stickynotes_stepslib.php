@@ -42,18 +42,18 @@ class restore_stickynotes_activity_structure_step extends restore_activity_struc
     protected function define_structure() {
 
         $paths = array();
-        $userinfo = $this->get_setting_value('userinfo');
+        //$userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('stickynotes', '/activity/stickynotes');
 
-        if ($userinfo) {
-            $paths[] = new restore_path_element('stickynotescolumn',
+        $paths[] = new restore_path_element('stickynotescolumn',
                 '/activity/stickynotes/stickynotescolumns/stickynotescolumn');
-            $paths[] = new restore_path_element('stickynotesnote',
+
+        $paths[] = new restore_path_element('stickynotesnote',
                 '/activity/stickynotes/stickynotescolumns/stickynotescolumn/stickynotesnotes/stickynotesnote');
-            $paths[] = new restore_path_element('stickynotesvote',
+        $paths[] = new restore_path_element('stickynotesvote',
                 '/activity/stickynotes/stickynotescolumns/stickynotescolumn/stickynotesnotes/stickynotesnote/stickynotesvotes/stickynotesvote');
-        }
+
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }

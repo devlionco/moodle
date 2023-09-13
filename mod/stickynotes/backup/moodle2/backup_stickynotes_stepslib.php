@@ -41,7 +41,7 @@ class backup_stickynotes_activity_structure_step extends backup_activity_structu
     protected function define_structure() {
 
         // To know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
+        //$userinfo = $this->get_setting_value('userinfo');
 
         // Define the root element describing the stickynotes instance.
         $stickynotes = new backup_nested_element('stickynotes', array('id'),
@@ -93,22 +93,22 @@ class backup_stickynotes_activity_structure_step extends backup_activity_structu
         $stickynotes->set_source_table('stickynotes', array('id' => backup::VAR_ACTIVITYID));
 
         // All the rest of elements only happen if we are including user info.
-        if ($userinfo) {
-            $stickynotescolumn->set_source_sql('
-                SELECT *
-                FROM {stickynotes_column}
-                WHERE stickyid = ?',
-            array(backup::VAR_PARENTID));
-            $stickynotesnote->set_source_sql('
-                SELECT *
-                FROM {stickynotes_note}
-                WHERE stickyid = ?',
-            array(backup::VAR_PARENTID));
-            // All the rest of elements only happen if we are including user info.
-            $stickynotescolumn->set_source_table('stickynotes_column', array('stickyid' => backup::VAR_ACTIVITYID));
-            $stickynotesnote->set_source_table('stickynotes_note', array('stickycolid' => backup::VAR_PARENTID));
-            $stickynotesvote->set_source_table('stickynotes_vote', array('stickynoteid' => backup::VAR_PARENTID));
-        }
+
+        $stickynotescolumn->set_source_sql('
+            SELECT *
+            FROM {stickynotes_column}
+            WHERE stickyid = ?',
+        array(backup::VAR_PARENTID));
+        $stickynotesnote->set_source_sql('
+            SELECT *
+            FROM {stickynotes_note}
+            WHERE stickyid = ?',
+        array(backup::VAR_PARENTID));
+        // All the rest of elements only happen if we are including user info.
+        $stickynotescolumn->set_source_table('stickynotes_column', array('stickyid' => backup::VAR_ACTIVITYID));
+        $stickynotesnote->set_source_table('stickynotes_note', array('stickycolid' => backup::VAR_PARENTID));
+        $stickynotesvote->set_source_table('stickynotes_vote', array('stickynoteid' => backup::VAR_PARENTID));
+
 
         // Define id annotations.
         $stickynotesnote->annotate_ids('user', 'userid');
