@@ -18,6 +18,8 @@ namespace metadatacontext_group;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/local/metadata/context/group/classes/context_handler.php');
+
 /**
  * Local metadatacontext_group event handler.
  * @package metadatacontext_group

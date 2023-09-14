@@ -18,8 +18,7 @@ namespace metadatacontext_question;
 
 defined('MOODLE_INTERNAL') || die();
 
-// Question context has never existed. Define it here using the '9000' category.
-define('CONTEXT_QUESTION', 9100);
+require_once($CFG->dirroot.'/local/metadata/context/question/classes/context_handler.php');
 
 /**
  * Local metadatacontext_question event handler.

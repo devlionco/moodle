@@ -18,8 +18,7 @@ namespace metadatacontext_section;
 
 defined('MOODLE_INTERNAL') || die();
 
-// Section context has never existed. Define it here using the '9000' category.
-define('CONTEXT_SECTION', 9200);
+require_once($CFG->dirroot.'/local/metadata/context/section/classes/context_handler.php');
 
 /**
  * Local metadatacontext_question event handler.
