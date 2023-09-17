@@ -34,8 +34,6 @@
     animation: spinner-border .75s linear infinite;
 }
 
-.spinner-border-sm {
-    width: $spinner-width-sm;
-    height: $spinner-height-sm;
-    border-width: $spinner-border-width-sm;
+.block_oer_items #selectCourse .dropdown-menu.show {
+    width: fit-content;
 }
