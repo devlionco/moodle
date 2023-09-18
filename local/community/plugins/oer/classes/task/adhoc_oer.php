@@ -126,7 +126,7 @@ class adhoc_oer extends \core\task\adhoc_task {
                     INNER JOIN {context} ct ON ct.id = ra.contextid
                     INNER JOIN {course} c ON c.id = ct.instanceid
                     INNER JOIN {role} r ON r.id = ra.roleid
-                    WHERE r.shortname IN ('teacher', 'editingteacher') #, 'coursecreator', 'manager')
+                    WHERE r.shortname IN ('teacher', 'editingteacher') 
                     GROUP BY u.id
                 ";
                 $users = $DB->get_records_sql($sql);
@@ -180,7 +180,8 @@ class adhoc_oer extends \core\task\adhoc_task {
                     $DB->execute($sqlupdateblock, [$CFG->eladresearch_cohort_a]);
                 }
             } catch (\Exception $e) {
-                throw new \moodle_exception('error');
+                //throw new \moodle_exception('error');
+                mtrace_exception($e);
             }
         }
     }

@@ -190,9 +190,6 @@ class reviews_oer {
                                         }
                                     }
                                 }
-                                if ($CFG->debugdeveloper) {
-                                    var_dump($request);
-                                }
 
                                 // Update cohort too.
                                 $cohortmember = [
@@ -202,7 +199,8 @@ class reviews_oer {
                                 try {
                                     $DB->insert_record('cohort_members', $cohortmember);
                                 } catch (\Exception $e) {
-                                    throw new \moodle_exception('error');
+                                    mtrace_exception($e);
+                                    //throw new \moodle_exception('error');
                                 }
 
                                 $DB->insert_record('community_oerctlg_rvw_rqsts', $request);
