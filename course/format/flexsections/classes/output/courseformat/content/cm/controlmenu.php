@@ -51,6 +51,7 @@ class controlmenu extends \core_courseformat\output\local\content\cm\controlmenu
      * @return array of edit control items
      */
     protected function cm_control_items() {
+        global $COURSE, $DB;
         $actions = parent::cm_control_items();
 
         $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
@@ -94,6 +95,19 @@ class controlmenu extends \core_courseformat\output\local\content\cm\controlmenu
                     new pix_icon('t/copy', '', 'moodle', array('class' => 'iconsmall')),
                     $str->duplicate,
                     array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
+            );
+        }
+
+        // Demo activity. PTL-10208.
+        if (!empty(get_config('local_petel', 'enabledemo'))) {
+            $enrol = $DB->get_record_select('enrol', 'courseid = ? AND enrol = ? AND password <> ""', [$COURSE->id, 'self']);
+            $actions['demo'] = new action_menu_link_secondary(
+                    new moodle_url('#'),
+                    new pix_icon('t/edit', get_string('linktodemoactivity', 'local_petel'), 'moodle',
+                            array('class' => 'iconsmall', 'title' => '')),
+                    get_string('linktodemoactivity', 'local_petel'),
+                    array('class' => 'demo_popup', 'data-key' => $enrol->password, 'data-lang' => current_language(),
+                            'data-cmid' => $mod->id)
             );
         }
 
