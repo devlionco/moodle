@@ -24,8 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->dirroot . '/local/community/plugins/oercatalog/classes/classFilterPage.php';
-require_once $CFG->dirroot . '/local/community/plugins/oercatalog/locallib.php';
+// TODO: oer?
+// require_once $CFG->dirroot . '/local/community/plugins/oercatalog/classes/classFilterPage.php';
+// require_once $CFG->dirroot . '/local/community/plugins/oercatalog/locallib.php';
 require_once $CFG->dirroot . '/mod/quiz/report/reportlib.php';
 require_once $CFG->dirroot . '/mod/quiz/locallib.php';
 require_once $CFG->dirroot . '/mod/quiz/report/default.php';

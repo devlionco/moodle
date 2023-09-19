@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/competencyoverview_table.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/locallib.php');
+require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport.php';
+require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/competencyoverview_table.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/locallib.php';
 
 /**
  * Quiz report subclass for the competencyoverview report.
@@ -447,30 +447,70 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
     protected function get_graded_questions($questionusageids) {
         global $DB;
 
-        $sort = $this->lastaccess == 1 ? "DESC" : "ASC";
+        $sort     = $this->lastaccess == 1 ? "DESC" : "ASC";
+        $params   = [];
+        $params[] = $this->quiz->id;
 
-        $sql = "SELECT steps.id,steps.questionattemptid,steps.sequencenumber sequencenumber, steps.state, steps.fraction, att.questionid, att.slot, qa.userid as userid
-                FROM {question_attempt_steps} steps
-                        LEFT JOIN {question_attempts} att ON steps.questionattemptid = att.id
-                        LEFT JOIN {quiz_attempts} qa ON (qa.uniqueid = att.questionusageid)
-                WHERE att.questionusageid IN (" . implode(', ', $questionusageids) . ")
-                AND steps.fraction IS NOT NULL
+        $sql = "SELECT
+                    steps.id AS id,
+                    steps.questionattemptid,
+                    steps.sequencenumber,
+                    steps.state,
+                    steps.fraction,
+                    qv.questionid,
+                    qs.slot,
+                    qa.userid AS userid
+                FROM
+                    {question_attempts} att
+                    JOIN {question_attempt_steps} steps ON steps.questionattemptid = att.id
+                        AND steps.sequencenumber = (
+                                SELECT MAX(sequencenumber)
+                                FROM {question_attempt_steps} st2
+                                WHERE st2.questionattemptid = att.id
+                            )
+                    JOIN {quiz_attempts} qa ON qa.uniqueid = att.questionusageid
+                        AND att.questionusageid IN (" . implode(', ', $questionusageids) . ")
+                    JOIN {quiz_slots} qs ON qs.quizid = qa.quiz and att.slot = qs.slot
+                    JOIN {question_references} qr ON qr.itemid = qs.id
+                        AND qr.component = 'mod_quiz'
+                        AND qr.questionarea = 'slot'
+                    JOIN {question_versions} qv ON qv.questionbankentryid = qr.questionbankentryid
+                        AND (
+                            (
+                                qr.version IS NULL
+                                AND qv.version = (
+                                    SELECT
+                                        MAX(version)
+                                    FROM
+                                        {question_versions} qv2
+                                    WHERE
+                                        qv2.questionbankentryid = qr.questionbankentryid
+                                )
+                            )
+                            OR (
+                                qr.version IS NOT NULL
+                                AND qv.version = qr.version
+                            )
+                        )
+                WHERE
+                    steps.fraction IS NOT NULL
                 ORDER BY steps.questionattemptid " . $sort . ", steps.id " . $sort;
 
-        $attempts = $DB->get_records_sql($sql);
+        $attempts = $DB->get_records_sql($sql, $params);
 
-        $temp   = [];
-        $result = [];
-        foreach ($attempts as $K => $attempt) {
-            if (!isset($temp[$attempt->userid][$attempt->questionid])) {
-                $temp[$attempt->userid][$attempt->questionid] = $attempt;
-                $result[]                                     = $attempt;
+        $result             = [];
+        $seenUsersQuestions = [];
+        foreach ($attempts as $attempt) {
+            $key = $attempt->userid . '-' . $attempt->questionid;
+            if (!isset($seenUsersQuestions[$key])) {
+                $seenUsersQuestions[$key] = true;
+                $result[]                 = $attempt;
             }
         }
 
-        //echo "<pre>";
-        //print_r($result);
-        //exit;
+        // echo "<pre>";
+        // print_r($result);
+        // exit;
 
         return $result;
     }
@@ -485,69 +525,110 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
     protected function get_full_skills($competencies, $questions, $questionswithgrades, $users, $quiz) {
 
-        $fullskills         = [];
-        $defaultskillgrade  = 0;
-        $deafultgradedright = 0;
-
-        // Max grade in Quiz.
         $quizmaxgrade = 100;
 
+        $fullskills = $this->calculateSkillGrades($competencies, $questions, $questionswithgrades, $users, $quizmaxgrade);
+        $fullskills = $this->addClassSuccessToSkills($fullskills, $users);
+        $fullskills = $this->addClassScoreToSkills($fullskills, $users);
+
+        return $this->reorderAndSortSkills($fullskills);
+    }
+
+    private function calculateSkillGrades($competencies, $questions, $questionswithgrades, $users, $quizmaxgrade) {
+        $fullskills = [];
         foreach ($competencies as $compid => $questset) {
-            $countcountquestset = count($questset);
-            $skillgrade         = [];
-
-            // Max mark quiz slot count for competency.
-            $allmaxmarks = 0;
-            foreach ($questset as $q) {
-                foreach ($questions as $key => $question) {
-                    if ($q == $question->id) {
-                        $maxmark = $question->maxmark;
-                    }
-                }
-                $allmaxmarks = $allmaxmarks + $maxmark;
-                $gradedright = 1;
-                foreach ($questionswithgrades as $qg) {
-                    $questweight = $maxmark * $qg->fraction;
-
-                    $filter = array_filter($users, function ($u) use ($qg) {
-                        return ($u->id == $qg->userid);
-                    });
-                    if ($filter) {
-                        if (!isset($skillgrade[$qg->userid][0])) {
-                            $skillgrade[$qg->userid][0] = $defaultskillgrade;
-                            $skillgrade[$qg->userid][1] = $deafultgradedright;
-                            $skillgrade[$qg->userid][2] = $q == 0 ? 0 : $countcountquestset;
-                            $skillgrade[$qg->userid][3] = 1;
-                        }
-                        if ($qg->questionid == $q) {
-                            $actualquestweight          = $questweight;
-                            $actualgradedright          = $gradedright;
-                            $skillgrade[$qg->userid][0] = $skillgrade[$qg->userid][0] + $actualquestweight;
-                            $skillgrade[$qg->userid][1] = $skillgrade[$qg->userid][1] + $actualgradedright;
-                        }
-                    }
-                }
-            }
-
-            // Convert skill grade according quiz max grade.
-            foreach ($skillgrade as $key => $sg) {
-                $skillgrade[$key][0] = $skillgrade[$key][0] / $allmaxmarks * $quizmaxgrade;
-            }
-
-            $competency                = $this->get_competency($compid);
-            $parentcompetencyshortname = '';
-            // Check for parent competency.
-            if ($parentcompetency = $this->get_competency($competency->parentid)) {
-                $parentcompetencyshortname = $this->get_competency($competency->parentid)->shortname . ' ';
-            }
-            $fullskills[$parentcompetencyshortname . $competency->shortname . "--" . $compid] = $skillgrade;
+            $skillgrade = $this->calculateSkillGradeForCompetency($compid, $questset, $questions, $questionswithgrades, $users);
+            $fullskills = $this->convertSkillGrade($skillgrade, $fullskills, $compid, $quizmaxgrade);
         }
 
-        reset($fullskills);
-        $firstfullskill = $fullskills[key($fullskills)];
-        $diff           = array_diff_key($users, $firstfullskill);
+        return $this->addNotGradedUsers($fullskills, $users);
+    }
 
+    private function calculateSkillGradeForCompetency($compid, $questset, $questions, $questionswithgrades, $users) {
+        $defaultSkillGrade   = 0;
+        $defaultGradedRight  = 0;
+        $quizMaxGrade        = 100;
+        $totalQuestionsInSet = count($questset);
+        $allMaxMarks         = $this->calculateAllMaxMarks($questset, $questions);
+
+        $skillGrade = $this->calculateSkillGradeForUsers($questset, $questionswithgrades, $users, $defaultSkillGrade, $defaultGradedRight, $totalQuestionsInSet);
+
+        return $this->convertSkillGradeAccordingToMaxGrade($skillGrade, $allMaxMarks, $quizMaxGrade);
+    }
+
+    private function calculateAllMaxMarks($questset, $questions) {
+        $allMaxMarks = 0;
+        foreach ($questset as $q) {
+            $maxMark = array_reduce($questions, function ($carry, $question) use ($q) {
+                return $q == $question->id ? $question->maxmark : $carry;
+            }, 0);
+            $allMaxMarks += $maxMark;
+        }
+        return $allMaxMarks;
+    }
+
+    private function calculateSkillGradeForUsers($questset, $questionswithgrades, $users, $defaultSkillGrade, $defaultGradedRight, $totalQuestionsInSet) {
+        $skillGrade = [];
+
+        foreach ($questset as $q) {
+            foreach ($questionswithgrades as $qg) {
+
+                $user = $users[$qg->userid];
+
+                if ($user) {
+                    $userId = $qg->userid;
+
+                    if (!isset($skillGrade[$userId])) {
+                        $skillGrade[$userId] = [$defaultSkillGrade, $defaultGradedRight, $q == 0 ? 0 : $totalQuestionsInSet, 1];
+                    }
+
+                    if ($qg->questionid == $q) {
+                        $actualQuestWeight = $qg->fraction;
+                        $actualGradedRight = 1;
+
+                        $skillGrade[$userId][0] += $actualQuestWeight;
+                        $skillGrade[$userId][1] += $actualGradedRight;
+                    }
+                }
+            }
+        }
+        return $skillGrade;
+    }
+
+    private function convertSkillGradeAccordingToMaxGrade($skillGrade, $allMaxMarks, $quizMaxGrade) {
+        foreach ($skillGrade as $key => $sg) {
+            $skillGrade[$key][0] = ($sg[0] / $allMaxMarks) * $quizMaxGrade;
+        }
+        return $skillGrade;
+    }
+
+    private function convertSkillGrade($skillgrade, $fullskills, $compid, $quizmaxgrade) {
+
+        // TODO: Do we need this?
+        // Convert skill grade according to quiz max grade.
+        // foreach ($skillgrade as $key => $sg) {
+        //     $skillgrade[$key][0] = $skillgrade[$key][0] / ($sg[2] * $quizmaxgrade);
+        // }
+
+        // Now, we add this skillgrade to our fullskills array based on the competency id
+        $competency                = $this->get_competency($compid); // Assuming you have the get_competency function
+        $parentcompetencyshortname = '';
+
+        // Check for parent competency.
+        if ($parentcompetency = $this->get_competency($competency->parentid)) {
+            $parentcompetencyshortname = $this->get_competency($competency->parentid)->shortname . ' ';
+        }
+        $fullskills[$parentcompetencyshortname . $competency->shortname . "--" . $compid] = $skillgrade;
+
+        return $fullskills;
+    }
+
+    private function addNotGradedUsers($fullskills, $users) {
         if ($this->notgraded == 1) {
+            reset($fullskills);
+            $firstfullskill = $fullskills[key($fullskills)];
+            $diff           = array_diff_key($users, $firstfullskill);
+
             // Add other not graded users.
             foreach ($fullskills as $skillid => $stud) {
                 foreach ($diff as $user) {
@@ -559,8 +640,11 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                 $fullskills[$skillid] = $stud;
             }
         }
+        return $fullskills;
+    }
 
-        // Class Success.
+    private function addClassSuccessToSkills($fullskills, $users) {
+        // Class Success Calculation
         $submitteduserscount = 0;
         $skillcount          = 0;
         foreach ($fullskills as $skillid => $stud) {
@@ -571,7 +655,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                     if ($skillcount == 1) {
                         $submitteduserscount++;
                     }
-                    $sumsuccessclassstud = $stud[$user->id][0] + $sumsuccessclassstud;
+                    $sumsuccessclassstud += $stud[$user->id][0];
                 }
             }
             if ($submitteduserscount != 0) {
@@ -580,8 +664,21 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                 $fullskills[$skillid]['classsuccess'][0] = 0;
             }
         }
+        return $fullskills;
+    }
 
-        // Class Score.
+    private function addClassScoreToSkills($fullskills, $users) {
+        $submitteduserscount = 0; // Initialize
+        // Identify the count of users who submitted
+        foreach ($fullskills as $skillid => $stud) {
+            foreach ($users as $user) {
+                if (isset($stud[$user->id][0]) && $stud[$user->id][3] != 0) {
+                    $submitteduserscount++;
+                    break; // We just need to count once per skill
+                }
+            }
+        }
+
         foreach ($fullskills as $skillid => $stud) {
             $score = 0;
             foreach ($users as $user) {
@@ -592,24 +689,21 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             if ($submitteduserscount != 0) {
                 $fullskills[$skillid]['classscore'][1] = $score;
                 $fullskills[$skillid]['classscore'][2] = $submitteduserscount;
-                $a                                     = $fullskills[$skillid]['classscore'][1];
-                $b                                     = $fullskills[$skillid]['classscore'][2];
             } else {
                 $fullskills[$skillid]['classscore'][1] = 0;
                 $fullskills[$skillid]['classscore'][2] = 0;
             }
-
         }
+        return $fullskills;
+    }
 
-        // Reoreder stats.
+    private function reorderAndSortSkills($fullskills) {
         $newfullskills = [];
+
         foreach ($fullskills as $name => $skill) {
             $newfullskill = [];
             foreach ($skill as $key => $value) {
-                if ($key == 'classsuccess') {
-                    $newfullskill[$key] = $value;
-                    unset($skill[$key]);
-                } else if ($key == 'classscore') {
+                if ($key == 'classsuccess' || $key == 'classscore') {
                     $newfullskill[$key] = $value;
                     unset($skill[$key]);
                 }
@@ -622,7 +716,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         // Sort by classsuccess.
         uasort($newfullskills, function ($item1, $item2) {
-            return $item1['classsuccess'] <=> $item2['classsuccess'];
+            return $item2['classsuccess'][0] <=> $item1['classsuccess'][0];
         });
 
         return $newfullskills;

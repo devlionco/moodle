@@ -269,8 +269,7 @@ class quiz_competencyoverview_external extends external_api {
         $course     = get_course($currentcourseid);
         $coursename = $course->fullname;
         if ($course instanceof stdClass) {
-            require_once $CFG->libdir . '/coursecatlib.php';
-            $course = new course_in_list($course);
+            $course = new core_course_list_element($course);
         }
 
         $imgurl  = '';

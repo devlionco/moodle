@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_options.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_form.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_table.php');
+require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_options.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_form.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/overview_table.php';
 
 /**
  * Quiz report subclass for the questionsoverview (grades) report.
@@ -84,7 +84,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         );
 
         $table->lastaccess = $this->lastaccess;
-        $filename          = quiz_report_download_filename(
+        $filename = quiz_report_download_filename(
             get_string('questionsoverviewfilename', 'quiz_questionsoverview'),
             $courseshortname,
             $quiz->name
@@ -159,7 +159,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                 foreach ($questions as $slot => $question) {
                     // Ignore questions of zero length.
                     $columns[] = 'qsgrade' . $slot;
-                    $header    = get_string('qbrief', 'quiz', $question->slot);
+                    $header = get_string('qbrief', 'quiz', $question->slot);
                     if (!$table->is_downloading()) {
                         $header .= '<br />';
                     } else {
@@ -188,28 +188,18 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
     public function quiz_report_get_significant_questions_set($quiz, $qset) {
         global $DB;
 
-        $params                 = [];
-        $params[]               = $quiz->id;
-        list($sqlin, $paramsin) = $DB->get_in_or_equal(explode(',', $qset));
-        $params                 = array_merge($params, $paramsin);
-        $sql                    = "SELECT slot.slot,
-                       q.id,
-                       q.qtype,
-                       q.length,
-                       slot.maxmark
-                  FROM {question} q
-                  JOIN {quiz_slots} slot ON slot.questionid = q.id
-                 WHERE slot.quizid = ?
-                   AND slot.questionid " . $sqlin . "
-                   AND q.length > 0
-              ORDER BY slot.slot";
-        $qsbyslot = $DB->get_records_sql($sql, $params);
+        $quizobj = \quiz::create($quiz->id);
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+        $questions = $quizobj->get_questions(explode(',', $qset));
 
+        $qsbyslot = [];
         $number = 1;
-        foreach ($qsbyslot as $question) {
+        foreach ($questions as $question) {
             $question->number = $number;
             $number += $question->length;
             $question->type = $question->qtype;
+            $qsbyslot[$question->slot] = $question;
         }
 
         return $qsbyslot;
@@ -363,10 +353,10 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                 }
 
                 if ($this->displayfull) {
-                    $urlbutton  = new moodle_url($PAGE->url, array('display' => 'basic'));
+                    $urlbutton = new moodle_url($PAGE->url, array('display' => 'basic'));
                     $namebutton = get_string('buttonchangedisplaybasic', 'quiz_questionsoverview');
                 } else {
-                    $urlbutton  = new moodle_url($PAGE->url, array('display' => 'full'));
+                    $urlbutton = new moodle_url($PAGE->url, array('display' => 'full'));
                     $namebutton = get_string('buttonchangedisplayfull', 'quiz_questionsoverview');
                 }
 
@@ -403,7 +393,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                 foreach ($questions as $slot => $question) {
                     // Ignore questions of zero length.
                     $columns[] = 'qsgrade' . $slot;
-                    $header    = get_string('qbrief', 'quiz', $question->number);
+                    $header = get_string('qbrief', 'quiz', $question->number);
                     if (!$table->is_downloading()) {
                         $header .= '<br />';
                     } else {
@@ -428,11 +418,11 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                     $groupstudentsjoins
                 );
                 if ($currentgroup) {
-                    $a                     = new stdClass();
-                    $a->groupname          = groups_get_group_name($currentgroup);
-                    $a->coursestudents     = get_string('participants');
+                    $a = new stdClass();
+                    $a->groupname = groups_get_group_name($currentgroup);
+                    $a->coursestudents = get_string('participants');
                     $a->countregradeneeded = $regradesneeded;
-                    $regradealldrydolabel  =
+                    $regradealldrydolabel =
                         get_string('regradealldrydogroup', 'quiz_questionsoverview', $a);
                     $regradealldrylabel =
                         get_string('regradealldrygroup', 'quiz_questionsoverview', $a);
@@ -470,9 +460,9 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         }
 
         if (!$table->is_downloading() && $options->usercanseegrades) {
-            $output                  = $PAGE->get_renderer('mod_quiz');
+            $output = $PAGE->get_renderer('mod_quiz');
             list($bands, $bandwidth) = self::get_bands_count_and_width($quiz);
-            $labels                  = self::get_bands_labels($bands, $bandwidth, $quiz);
+            $labels = self::get_bands_labels($bands, $bandwidth, $quiz);
 
             if ($currentgroup && $this->hasgroupstudents) {
                 $sql = "SELECT qg.id
@@ -485,7 +475,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
                     list($labels, $data) = self::get_converted_labels_and_data($data, $quiz);
 
-                    $chart     = self::get_chart($labels, $data);
+                    $chart = self::get_chart($labels, $data);
                     $graphname = get_string('questionsoverviewreportgraphgroup', 'quiz_questionsoverview', groups_get_group_name($currentgroup));
                     echo $output->chart($chart, $graphname);
                 }
@@ -496,7 +486,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
                 list($labels, $data) = self::get_converted_labels_and_data($data, $quiz);
 
-                $chart     = self::get_chart($labels, $data);
+                $chart = self::get_chart($labels, $data);
                 $graphname = get_string('questionsoverviewreportgraph', 'quiz_questionsoverview');
                 echo $output->chart($chart, $graphname);
             }
@@ -608,7 +598,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
         $finished = $attempt->state == quiz_attempt::FINISHED;
         foreach ($slots as $slot) {
-            $qqr              = new stdClass();
+            $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
 
             $quba->regrade_question($slot, $finished);
@@ -617,9 +607,9 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
             if (abs($qqr->oldfraction - $qqr->newfraction) > 1e-7) {
                 $qqr->questionusageid = $quba->get_id();
-                $qqr->slot            = $slot;
-                $qqr->regraded        = empty($dryrun);
-                $qqr->timemodified    = time();
+                $qqr->slot = $slot;
+                $qqr->regraded = empty($dryrun);
+                $qqr->timemodified = time();
                 $DB->insert_record('quiz_overview_regrades', $qqr, false);
             }
         }
@@ -631,7 +621,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         $transaction->allow_commit();
 
         // Really, PHP should not need this hint, but without this, we just run out of memory.
-        $quba        = null;
+        $quba = null;
         $transaction = null;
         gc_collect_cycles();
     }
@@ -657,7 +647,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
         $sql = "SELECT quiza.*
                   FROM {quiz_attempts} quiza";
-        $where  = "quiz = :qid AND preview = 0";
+        $where = "quiz = :qid AND preview = 0";
         $params = array('qid' => $quiz->id);
 
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
@@ -681,9 +671,9 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_questionsoverview_regrade', 500, true);
-        $a           = array(
+        $a = array(
             'count' => count($attempts),
-            'done'  => 0,
+            'done' => 0,
         );
         foreach ($attempts as $attempt) {
             $this->regrade_attempt($attempt, $dryrun);
@@ -711,7 +701,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         global $CFG, $USER, $DB;
         require_once $CFG->dirroot . "/user/externallib.php";
 
-        $where  = "quiz = ? AND preview = 0";
+        $where = "quiz = ? AND preview = 0";
         $params = array($quiz->id);
         //obtiene los estudiantes del grupo si es que lo hay
         if ($groupstudents) {
@@ -733,8 +723,8 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
         foreach ($attempts as $attempt) {
             if ($attempt->state != 'finished') {
-                $timestamp     = time();
-                $transaction   = $DB->start_delegated_transaction();
+                $timestamp = time();
+                $transaction = $DB->start_delegated_transaction();
                 $attempt->quba = question_engine::load_questions_usage_by_activity($attempt->uniqueid);
                 $attempt->quba->process_all_actions($timestamp);
                 $attempt->quba->finish_all_questions($timestamp);
@@ -742,15 +732,15 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                 question_engine::save_questions_usage_by_activity($attempt->quba);
 
                 $attempt->timemodified = $timestamp;
-                $attempt->timefinish   = $timestamp;
-                $attempt->sumgrades    = $attempt->quba->get_total_mark();
-                $attempt->state        = 'finished';
+                $attempt->timefinish = $timestamp;
+                $attempt->sumgrades = $attempt->quba->get_total_mark();
+                $attempt->state = 'finished';
                 $DB->update_record('quiz_attempts', $attempt);
                 // Get student name
                 //agregado 11/02/2013
-                $studentid    = $attempt->userid;
+                $studentid = $attempt->userid;
                 $studentwhere = "id = $studentid";
-                $students     = $DB->get_records_select('user', $studentwhere);
+                $students = $DB->get_records_select('user', $studentwhere);
                 foreach ($students as $student) {
                     //agregado para que el mensaje del log no sea mayor a 40 caracteres
                     $mensaje = '';
@@ -796,8 +786,8 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         global $DB;
         $this->unlock_session();
 
-        $join   = '{quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid';
-        $where  = "quiza.quiz = :qid AND quiza.preview = 0 AND qqr.regraded = 0";
+        $join = '{quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid';
+        $where = "quiza.quiz = :qid AND quiza.preview = 0 AND qqr.regraded = 0";
         $params = array('qid' => $quiz->id);
 
         // Fetch all attempts that need regrading.
@@ -833,9 +823,9 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_questionsoverview_regrade', 500, true);
-        $a           = array(
+        $a = array(
             'count' => count($attempts),
-            'done'  => 0,
+            'done' => 0,
         );
         foreach ($attempts as $attempt) {
             $this->regrade_attempt($attempt, false, $attemptquestions[$attempt->uniqueid]);
@@ -861,16 +851,16 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
 
         $userjoin = '';
         $usertest = '';
-        $params   = array();
+        $params = array();
         if ($this->hasgroupstudents) {
             $userjoin = "JOIN {user} u ON u.id = quiza.userid
                     {$groupstudentsjoins->joins}";
             $usertest = "{$groupstudentsjoins->wheres} AND u.id = quiza.userid AND ";
-            $params   = $groupstudentsjoins->params;
+            $params = $groupstudentsjoins->params;
         }
 
         $params['cquiz'] = $quiz->id;
-        $sql             = "SELECT COUNT(DISTINCT quiza.id)
+        $sql = "SELECT COUNT(DISTINCT quiza.id)
                   FROM {quiz_attempts} quiza
                   JOIN {quiz_overview_regrades} qqr ON quiza.uniqueid = qqr.questionusageid
                 $userjoin
@@ -911,7 +901,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         $select = "questionusageid IN (
                     SELECT uniqueid
                       FROM {quiz_attempts} quiza";
-        $where  = "WHERE quiza.quiz = :qid";
+        $where = "WHERE quiza.quiz = :qid";
         $params = array('qid' => $quiz->id);
         if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
             $select .= "\nJOIN {user} u ON u.id = quiza.userid
@@ -1002,7 +992,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
         }
 
         //If $bands == 100
-        $bands_new  = $bands / 10;
+        $bands_new = $bands / 10;
         $new_labels = self::get_bands_labels($bands_new, $bandwidth, $quiz);
 
         $chunk_data = array_chunk($data, 10);

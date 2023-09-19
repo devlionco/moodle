@@ -68,8 +68,15 @@ class question_engine_data_mapper_qiestionoverview extends question_engine_data_
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_firstest_steps(qubaid_condition $qubaids, $slots, $fields = null) {
-        global $DB;
-        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+        if ($slots === []) {
+            return [];
+        } else if ($slots !== null) {
+            [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+            $slotwhere = " AND qa.slot {$slottest}";
+        } else {
+            $slotwhere = '';
+            $params = [];
+        }
 
         if ($fields === null) {
             $fields = "qas.id,
@@ -93,63 +100,21 @@ class question_engine_data_mapper_qiestionoverview extends question_engine_data_
     qas.fraction,
     qas.timecreated,
     qas.userid";
+
         }
 
-        $records = [];
-        $qubaids->usage_id_in();
-        $attempts = $qubaids->from_where_params();
+        $records = $this->db->get_records_sql("
+SELECT
+    {$fields}
 
-        foreach ($attempts as $key => $qubaid) {
+FROM {$qubaids->from_question_attempts('qa')}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->firstest_step_for_qa_subquery()}
 
-            $firstslotsparams                     = [];
-            $firstslotsparams['questionusageid']  = $qubaid;
-            $firstslotsparams['questionusageid2'] = $qubaid;
-
-            $firstlotssql = "   SELECT qa.*, qao.slot originalslot
-                                FROM (
-                                    SELECT qs.id, qs.questionid, qs.questionusageid, qs.slot
-                                    FROM (
-                                        SELECT qs2.questionid questionid, qs2.questionusageid questionusageid,
-                                            qs2.id id, qs2.slot slot
-                                        FROM {question_attempts} qs2
-                                        WHERE questionusageid = :questionusageid
-                                        ORDER BY id ASC
-                                    ) qs
-                                    GROUP BY qs.id
-                                ) qa
-                                LEFT JOIN (
-                                    SELECT slot, questionid, id
-                                    FROM {question_attempts}
-                                    WHERE questionusageid = :questionusageid2
-                                    ORDER BY slot ASC
-                                    ) qao
-                                ON qao.questionid = qa.questionid
-                                GROUP BY qa.questionid";
-
-            $firstslots = $DB->get_records_sql($firstlotssql, $firstslotsparams);
-
-            $attemptparams                    = [];
-            $attemptparams['questionusageid'] = $qubaid;
-            foreach ($params as $kos => $orislot) {
-                foreach ($firstslots as $kfs => $firstslot) {
-                    if ($firstslot->originalslot == $orislot) {
-                        $attemptparams[$kos] = $firstslot->slot;
-                    }
-                }
-            }
-
-            $sql = "
-                SELECT
-                    {$fields}
-                FROM {$qubaids->from_question_attempts('qa')}
-                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-                        AND qas.sequencenumber = {$this->firstest_step_for_qa_subquery()}
-                WHERE
-                qa.questionusageid = :questionusageid AND
-                qa.slot $slottest
-                ";
-            $records += $this->db->get_records_sql($sql, $attemptparams);
-        }
+WHERE
+    {$qubaids->where()}
+    $slotwhere
+        ", $params + $qubaids->from_where_params());
 
         return $records;
     }
@@ -181,7 +146,7 @@ class question_engine_data_mapper_qiestionoverview extends question_engine_data_
                 $slots, SQL_PARAMS_NAMED, 'slot');
             $slotwhere = " AND qa.slot {$slottest}";
         } else {
-            $slotwhere   = '';
+            $slotwhere = '';
             $slotsparams = array();
         }
 
@@ -214,6 +179,58 @@ GROUP BY qa.slot
 
 ORDER BY qa.slot
         ", $slotsparams + $stateparams + $qubaids->from_where_params());
+    }
+
+    public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots = null, $fields = null) {
+        if ($slots === []) {
+            return [];
+        } else if ($slots !== null) {
+            [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+            $slotwhere = " AND qa.slot {$slottest}";
+        } else {
+            $slotwhere = '';
+            $params = [];
+        }
+
+        if ($fields === null) {
+            $fields = "qas.id,
+    qa.id AS questionattemptid,
+    qa.questionusageid,
+    qa.slot,
+    qa.behaviour,
+    qa.questionid,
+    qa.variant,
+    qa.maxmark,
+    qa.minfraction,
+    qa.maxfraction,
+    qa.flagged,
+    qa.questionsummary,
+    qa.rightanswer,
+    qa.responsesummary,
+    qa.timemodified,
+    qas.id AS attemptstepid,
+    qas.sequencenumber,
+    qas.state,
+    qas.fraction,
+    qas.timecreated,
+    qas.userid";
+
+        }
+
+        $records = $this->db->get_records_sql("
+SELECT
+    {$fields}
+
+FROM {$qubaids->from_question_attempts('qa')}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
+
+WHERE
+    {$qubaids->where()}
+    $slotwhere
+        ", $params + $qubaids->from_where_params());
+
+        return $records;
     }
 
 }

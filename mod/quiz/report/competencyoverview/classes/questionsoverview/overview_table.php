@@ -18,25 +18,25 @@
  * This file defines the quiz grades table.
  *
  * @package   quiz_questionsoverview
- * @copyright   2020 Devlion <info@devlion.co>
+ * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
-require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/datalib_questionoverview.php');
+require_once $CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php';
+require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/datalib_questionoverview.php';
 
 /**
  * This is a table subclass for displaying the quiz grades report.
  *
- * @copyright   2020 Devlion <info@devlion.co>
+ * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
     protected $regradedqs = array();
-    protected $o          = '';
+    protected $o = '';
 
     /**
      * Constructor
@@ -70,67 +70,88 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         $this->add_separator();
 
         if (!empty($this->groupstudentsjoins->joins)) {
-            $sql = "SELECT DISTINCT u.id
+            $hasgroupstudents = $DB->record_exists_sql("
+                    SELECT 1
                       FROM {user} u
                     {$this->groupstudentsjoins->joins}
-                     WHERE {$this->groupstudentsjoins->wheres}";
-            $groupstudents = $DB->get_records_sql($sql, $this->groupstudentsjoins->params);
-            if ($groupstudents) {
+                     WHERE {$this->groupstudentsjoins->wheres}
+                    ", $this->groupstudentsjoins->params);
+            if ($hasgroupstudents) {
                 $this->add_average_row(get_string('groupavg', 'grades'), $this->groupstudentsjoins);
             }
         }
 
         if (!empty($this->studentsjoins->joins)) {
-            $sql = "SELECT DISTINCT u.id
+            $hasstudents = $DB->record_exists_sql("
+                    SELECT 1
                       FROM {user} u
                     {$this->studentsjoins->joins}
-                     WHERE {$this->studentsjoins->wheres}";
-            $students = $DB->get_records_sql($sql, $this->studentsjoins->params);
-            if ($students) {
+                     WHERE {$this->studentsjoins->wheres}
+                    ", $this->studentsjoins->params);
+            if ($hasstudents) {
                 $this->add_average_row(get_string('overallaverage', 'grades'), $this->studentsjoins);
             }
         }
     }
 
     /**
-     * Add an average grade over the attempts of a set of users.
+     * Calculate the average overall and question scores for a set of attempts at the quiz.
+     *
      * @param string $label the title ot use for this row.
-     * @param \core\dml\sql_join $usersjoins (joins, wheres, params) for the users to average over.
+     * @param \core\dml\sql_join $usersjoins to indicate a set of users.
+     * @return array of table cells that make up the average row.
      */
-    protected function add_average_row($label, \core\dml\sql_join $usersjoins) {
+    public function compute_average_row($label, \core\dml\sql_join $usersjoins) {
         global $DB;
 
         list($fields, $from, $where, $params) = $this->base_sql($usersjoins);
-        $record                               = $DB->get_record_sql("
-                SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
-                  FROM $from
-                 WHERE $where", $params);
+        $record = $DB->get_record_sql("
+                SELECT AVG(quizaouter.sumgrades) AS grade, COUNT(quizaouter.sumgrades) AS numaveraged
+                  FROM {quiz_attempts} quizaouter
+                  JOIN (
+                       SELECT DISTINCT quiza.id
+                         FROM $from
+                        WHERE $where
+                       ) relevant_attempt_ids ON quizaouter.id = relevant_attempt_ids.id
+                ", $params);
         $record->grade = quiz_rescale_grade($record->grade, $this->quiz, false);
-
         if ($this->is_downloading()) {
             $namekey = 'lastname';
         } else {
             $namekey = 'fullname';
         }
         $averagerow = array(
-            $namekey       => $label,
-            'sumgrades'    => $this->format_average($record),
+            $namekey => $label,
+            'sumgrades' => $this->format_average($record),
             'feedbacktext' => strip_tags(quiz_report_feedback_for_grade(
                 $record->grade, $this->quiz->id, $this->context)),
         );
 
         if ($this->options->slotmarks) {
-            $dm      = new question_engine_data_mapper_qiestionoverview();
-            $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
-            if ($this->lastaccess == 0) {
-                $avggradebyq = $dm->load_firstest_average_marks($qubaids, array_keys($this->questions));
-            } else {
-                $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
-            }
+            $dm = new question_engine_data_mapper();
+            $qubaids = new qubaid_join("{quiz_attempts} quizaouter
+                  JOIN (
+                       SELECT DISTINCT quiza.id
+                         FROM $from
+                        WHERE $where
+                       ) relevant_attempt_ids ON quizaouter.id = relevant_attempt_ids.id",
+                'quizaouter.uniqueid', '1 = 1', $params);
+            $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
 
             $averagerow += $this->format_average_grade_for_questions($avggradebyq);
         }
 
+        return $averagerow;
+    }
+
+    /**
+     * Add an average grade row for a set of users.
+     *
+     * @param string $label the title ot use for this row.
+     * @param \core\dml\sql_join $usersjoins (joins, wheres, params) for the users to average over.
+     */
+    protected function add_average_row($label, \core\dml\sql_join $usersjoins) {
+        $averagerow = $this->compute_average_row($label, $usersjoins);
         $this->add_data_keyed($averagerow);
     }
 
@@ -148,13 +169,13 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
         foreach ($this->questions as $question) {
             if (isset($gradeaverages[$question->slot]) && $question->maxmark > 0) {
-                $record        = $gradeaverages[$question->slot];
+                $record = $gradeaverages[$question->slot];
                 $record->grade = quiz_rescale_grade(
                     $record->averagefraction * $question->maxmark, $this->quiz, false);
 
             } else {
-                $record              = new stdClass();
-                $record->grade       = null;
+                $record = new stdClass();
+                $record->grade = null;
                 $record->numaveraged = 0;
             }
 
@@ -166,7 +187,9 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
     /**
      * Format an entry in an average row.
-     * @param object $record with fields grade and numaveraged
+     * @param object $record with fields grade and numaveraged.
+     * @param bool $question true if this is a question score, false if it is an overall score.
+     * @return string HTML fragment for an average score (with number of things included in the average).
      */
     protected function format_average($record, $question = false) {
         if (is_null($record->grade)) {
@@ -191,7 +214,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
     }
 
     protected function submit_buttons() {
-
+        return '';
     }
 
     public function col_sumgrades($attempt) {
@@ -222,7 +245,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
             }
             $newsumgrade = quiz_rescale_grade($newsumgrade, $this->quiz);
             $oldsumgrade = quiz_rescale_grade($oldsumgrade, $this->quiz);
-            $grade       = html_writer::tag('del', $oldsumgrade) . '/' .
+            $grade = html_writer::tag('del', $oldsumgrade) . '/' .
             html_writer::empty_tag('br') . $newsumgrade;
         }
         return html_writer::link(new moodle_url('/mod/quiz/review.php',
@@ -239,7 +262,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
      */
     public function other_cols($colname, $attempt) {
         if (!preg_match('/^qsgrade(\d+)$/', $colname, $matches)) {
-            return null;
+            return parent::other_cols($colname, $attempt);
         }
         $slot = $matches[1];
 
@@ -249,7 +272,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         }
 
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-        $state    = question_state::get($stepdata->state);
+        $state = question_state::get($stepdata->state);
 
         if ($question->maxmark == 0) {
             $grade = '-';
@@ -270,7 +293,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
         if (isset($this->regradedqs[$attempt->usageid][$slot])) {
             $gradefromdb = $grade;
-            $newgrade    = quiz_rescale_grade(
+            $newgrade = quiz_rescale_grade(
                 $this->regradedqs[$attempt->usageid][$slot]->newfraction * $question->maxmark,
                 $this->quiz, 'question');
             $oldgrade = quiz_rescale_grade(
@@ -292,6 +315,22 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         } else if ($attempt->regraded == 1) {
             return get_string('done', 'quiz_questionsoverview');
         }
+    }
+
+    protected function update_sql_after_count($fields, $from, $where, $params) {
+        $fields .= ", COALESCE((
+                                SELECT MAX(qqr.regraded)
+                                  FROM {quiz_overview_regrades} qqr
+                                 WHERE qqr.questionusageid = quiza.uniqueid
+                          ), -1) AS regraded";
+        if ($this->options->onlyregraded) {
+            $where .= " AND COALESCE((
+                                    SELECT MAX(qqr.regraded)
+                                      FROM {quiz_overview_regrades} qqr
+                                     WHERE qqr.questionusageid = quiza.uniqueid
+                                ), -1) <> -1";
+        }
+        return [$fields, $from, $where, $params];
     }
 
     protected function requires_latest_steps_loaded() {
@@ -324,7 +363,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
     protected function get_regraded_questions() {
         global $DB;
 
-        $qubaids    = $this->get_qubaids_condition();
+        $qubaids = $this->get_qubaids_condition();
         $regradedqs = $DB->get_records_select('quiz_overview_regrades',
             'questionusageid ' . $qubaids->usage_id_in(), $qubaids->usage_id_in_params());
         return quiz_report_index_by_keys($regradedqs, array('questionusageid', 'slot'));
@@ -411,7 +450,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
             }
 
             $prefixfirst = $this->request[TABLE_VAR_IFIRST];
-            $prefixlast  = $this->request[TABLE_VAR_ILAST];
+            $prefixlast = $this->request[TABLE_VAR_ILAST];
             $this->o .= $OUTPUT->initials_bar($ifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $this->baseurl);
             $this->o .= $OUTPUT->initials_bar($ilast, 'lastinitial', get_string('lastname'), $prefixlast, $this->baseurl);
         }
@@ -425,9 +464,6 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
     }
 
-    /**
-     * This function is not part of the public api.
-     */
     public function get_row_from_keyed($rowwithkeys) {
         if (is_object($rowwithkeys)) {
             $rowwithkeys = (array) $rowwithkeys;
@@ -441,22 +477,6 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
             }
         }
         return $row;
-    }
-
-    /**
-     * Get the html for the download buttons
-     *
-     * Usually only use internally
-     */
-    public function download_buttons() {
-        global $OUTPUT;
-
-        if ($this->is_downloadable() && !$this->is_downloading()) {
-            return $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
-                $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params());
-        } else {
-            return '';
-        }
     }
 
     /**
@@ -484,24 +504,48 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         $this->o .= $this->get_row_html($row, $classname);
     }
 
-    /**
-     * Generate html code for the passed row.
-     *
-     * @param array $row Row data.
-     * @param string $classname classes to add.
-     *
-     * @return string $html html code for the row passed.
-     */
+    public function wrap_html_finish() {
+
+    }
+
+    public function download_buttons() {
+        global $OUTPUT;
+        return '';
+    }
+
+    protected function render_reset_button() {
+        return '';
+    }
+
+    public function wrap_html_start() {
+        // return '';
+
+        if ($this->is_downloading() || !$this->includecheckboxes) {
+            return;
+        }
+
+        $url = $this->options->get_url();
+
+        $url->param('sesskey', sesskey());
+        $url->param('display', 'full');
+
+        $this->o .= '<div id="tablecontainer">';
+        $this->o .= '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '">';
+
+        $this->o .= html_writer::input_hidden_params($url);
+        $this->o .= '<div>';
+    }
+
     public function get_row_html($row, $classname = '') {
         static $suppress_lastrow = null;
-        $rowclasses              = array();
+        $rowclasses = array();
 
         if ($classname) {
             $rowclasses[] = $classname;
         }
 
         $rowid = $this->uniqueid . '_r' . $this->currentrow;
-        $html  = '';
+        $html = '';
 
         $html .= html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses), 'id' => $rowid));
 
@@ -528,7 +572,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
 
                 $html .= html_writer::tag('td', $content, array(
                     'class' => 'cell c' . $index . $this->column_class[$column],
-                    'id'    => $rowid . '_c' . $index,
+                    'id' => $rowid . '_c' . $index,
                     'style' => $this->make_styles_string($this->column_style[$column])));
             }
         }
@@ -543,44 +587,14 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         return $html;
     }
 
-    /**
-     * Generate the HTML for the collapse/uncollapse icon. This is a helper method
-     * used by {@link print_headers()}.
-     * @param string $column the column name, index into various names.
-     * @param int $index numerical index of the column.
-     * @return string HTML fragment.
-     */
-    protected function show_hide_link($column, $index) {
+    public function start_html() {
         global $OUTPUT;
-        // Some headers contain <br /> tags, do not include in title, hence the
-        // strip tags.
 
-        $ariacontrols = '';
-        for ($i = 0; $i < $this->pagesize; $i++) {
-            $ariacontrols .= $this->uniqueid . '_r' . $i . '_c' . $index . ' ';
-        }
+        $this->o .= html_writer::start_tag('div', array('class' => 'no-overflow'));
+        $this->o .= html_writer::start_tag('table', $this->attributes);
 
-        $ariacontrols = trim($ariacontrols);
-
-        if (!empty($this->prefs['collapse'][$column])) {
-            $linkattributes = array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index]),
-                'aria-expanded'                 => 'false',
-                'aria-controls'                 => $ariacontrols);
-            return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_SHOW] => $column)),
-                $OUTPUT->pix_icon('t/switch_plus', get_string('show')), $linkattributes);
-
-        } else if ($this->headers[$index] !== null) {
-            $linkattributes = array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index]),
-                'aria-expanded'                 => 'true',
-                'aria-controls'                 => $ariacontrols);
-            return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_HIDE] => $column)),
-                $OUTPUT->pix_icon('t/switch_minus', get_string('hide')), $linkattributes);
-        }
     }
 
-    /**
-     * This function is not part of the public api.
-     */
     public function print_headers() {
         global $CFG, $OUTPUT;
 
@@ -594,7 +608,7 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
             }
 
             $primarysortcolumn = '';
-            $primarysortorder  = '';
+            $primarysortorder = '';
 
             switch ($column) {
 
@@ -716,44 +730,6 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
         $this->sort_icon($isprimary, $order);
     }
 
-    /**
-     * This function is not part of the public api.
-     */
-    public function start_html() {
-        global $OUTPUT;
-
-        $this->o .= html_writer::start_tag('div', array('class' => 'no-overflow'));
-        $this->o .= html_writer::start_tag('table', $this->attributes);
-
-    }
-
-    public function wrap_html_start() {
-        if ($this->is_downloading() || !$this->includecheckboxes) {
-            return;
-        }
-
-        $url = $this->options->get_url();
-
-        $url->param('sesskey', sesskey());
-        $url->param('display', 'full');
-
-        $this->o .= '<div id="tablecontainer">';
-        $this->o .= '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '">';
-
-        $this->o .= html_writer::input_hidden_params($url);
-        $this->o .= '<div>';
-    }
-
-    public function wrap_html_finish() {
-
-    }
-
-    /**
-     * Contruct all the parts of the main database query.
-     * @param \core\dml\sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
-     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
-     *     build the actual database query.
-     */
     public function base_sql(\core\dml\sql_join $allowedstudentsjoins) {
         global $DB;
 
@@ -822,19 +798,19 @@ class quiz_questionsoverview_table extends quiz_attempts_report_table {
             case quiz_attempts_report::ENROLLED_WITH:
                 // Show only students with attempts.
                 $from .= "\n" . $allowedstudentsjoins->joins;
-                $where  = "quiza.preview = 0 AND quiza.id IS NOT NULL AND " . $allowedstudentsjoins->wheres;
+                $where = "quiza.preview = 0 AND quiza.id IS NOT NULL AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             case quiz_attempts_report::ENROLLED_WITHOUT:
                 // Show only students without attempts.
                 $from .= "\n" . $allowedstudentsjoins->joins;
-                $where  = "quiza.id IS NULL AND " . $allowedstudentsjoins->wheres;
+                $where = "quiza.id IS NULL AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             case quiz_attempts_report::ENROLLED_ALL:
                 // Show all students with or without attempts.
                 $from .= "\n" . $allowedstudentsjoins->joins;
-                $where  = "(quiza.preview = 0 OR quiza.preview IS NULL) AND " . $allowedstudentsjoins->wheres;
+                $where = "(quiza.preview = 0 OR quiza.preview IS NULL) AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
         }

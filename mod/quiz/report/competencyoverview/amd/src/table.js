@@ -16,8 +16,8 @@
 /**
  * Some UI stuff for table.
  *
- * @package     quiz_competencyoverview
- * @copyright   2020 Devlion <info@devlion.co>
+ * @package
+ * @copyright  2020 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Devlion Moodle Development <service@devlion.co>
  */
@@ -30,10 +30,10 @@ define([
     "core/ajax",
     "core/str",
     "community_social/loadingSpinner",
-], function ($, jqui, ModalFactory, ModalEvents, Ajax, Str, loading) {
+], function($, jqui, ModalFactory, ModalEvents, Ajax, Str, loading) {
     return {
 
-        load: function (quizid, cmid, courseid, lastaccess) {
+        load: function(quizid, cmid, courseid, lastaccess) {
             Ajax.call([
                 {
                     methodname: "quiz_competencyoverview_get_init_params",
@@ -45,30 +45,36 @@ define([
                     },
                     done: params => {
 
-                        var params = JSON.parse(params.params);
+                        params = JSON.parse(params.params);
 
-                        hlfilterranges = params['hlfilterranges'];
-                        hlfilterrangescolor = params['hlfilterrangescolor'];
-                        assign = params['assign'];
-                        users = params['users'];
-                        currentcourseid = params['courseid'];
-                        topskills = params['topskills'];
-                        quizid = params['quizid'];
-                        cmid = params['cmid'];
-                        complist = params['complist'];
-                        lastaccess = params['lastaccess'];
+                        let hlfilterranges = params.hlfilterranges;
+                        let hlfilterrangescolor = params.hlfilterrangescolor;
+                        let assign = params.assign;
+                        let users = params.users;
+                        let currentcourseid = params.courseid;
+                        let topskills = params.topskills;
+                        let _quizid = params.quizid;
+                        let _cmid = params.cmid;
+                        let complist = params.complist;
+                        let _lastaccess = params.lastaccess;
 
-                        this.init(hlfilterranges, hlfilterrangescolor, assign, users, currentcourseid, topskills, quizid, cmid, complist, lastaccess);
+                        this.init(
+                            hlfilterranges, hlfilterrangescolor, assign, users, currentcourseid,
+                            topskills, _quizid, _cmid, complist, _lastaccess
+                        );
                     },
                     fail: {}
                 }
             ]);
         },
 
-        init: function (hlfilterranges, hlfilterrangescolor, assign, users, currentcourseid, topskills, quizid, cmid, complist, lastaccess) {
+        init: function(
+            hlfilterranges, hlfilterrangescolor, assign, users, currentcourseid,
+            topskills, quizid, cmid, complist, lastaccess
+        ) {
 
-            var langStrings = [];
-            var strings = [
+            let langStrings = [];
+            let strings = [
                 {
                     key: 'task_from_course',
                     component: 'quiz_competencyoverview'
@@ -169,15 +175,15 @@ define([
 
             $('#user-action').prop('disabled', true);
 
-            Str.get_strings(strings).then(function (results) {
+            Str.get_strings(strings).then(function(results) {
                 langStrings = results;
             });
 
             // HL coloring.
-            $(".skill-grade-cell").each(function () {
-                var skillgrade = $(this).data("skill-grade");
-                var cell = $(this);
-                $.each(hlfilterrangescolor, function (index, value) {
+            $(".skill-grade-cell").each(function() {
+                let skillgrade = $(this).data("skill-grade");
+                let cell = $(this);
+                $.each(hlfilterrangescolor, function(index, value) {
                     if (skillgrade >= value[0] && skillgrade <= value[1]) {
                         cell.closest("td").addClass(value[3], 200);
                     }
@@ -186,41 +192,44 @@ define([
 
             // Selected users. Assign activities (AA).
 
-            $(document).on("click", ".selected-users", function () {
-                action_status();
+            $(document).on("click", ".selected-users", function() {
+                actionStatus();
                 setskills();
             });
 
-            $(document).on("click", "#user-action", function (e) {
+            $(document).on("click", "#user-action", function(e) {
                 e.preventDefault();
                 useraction();
             });
 
-            var selectedusers = [];
-            var currentstate;
-            var selectedsource;
-            var selectedcourse;
-            var selectedactivity;
-            var selecteditem;
-            var selectedtargetsection;
-            var messagetostudents;
-            var modalbody;
-            var aastates;
-            var flow = [];
+            let selectedusers = [];
+            let currentstate;
+            let selectedsource;
+            let selectedcourse;
+            let selectedactivity;
+            let selecteditem;
+            let selectedtargetsection;
+            let messagetostudents;
+            let modalbody;
+            let aastates;
+            let flow = [];
 
-            var submitted = false;
-            var sentusers = [];
+            let submitted = false;
+            let sentusers = [];
 
-            var selectedskills = [];
+            let selectedskills = [];
 
-            var skillname = '';
+            let skillname = '';
 
-            var selectall = true;
-            var rows = [];
-            var ranges = [];
+            let selectall = true;
+            let rows = [];
+            let ranges = [];
 
-            function redraw_main() {
-                var mainbody = "";
+            /**
+             *
+             */
+            function redrawMain() {
+                let mainbody = "";
                 switch (currentstate) {
                     case "selection":
                         $('.progress-bar-item').removeClass('active');
@@ -229,9 +238,8 @@ define([
                             <div class='d-flex mt-100'>
                             <button id='aa_source_course' type="button" class='aa_h select_source btn-lg btn-block mr-20'>
                             ` + langStrings[0] + `</button>
-                            <button id='aa_source_repository' type="button" class='aa_h select_source btn-lg btn-block'>
-                            ` + langStrings[1] + `</button>
-
+                            <!--<button id='aa_source_repository' type="button" class='aa_h select_source btn-lg btn-block'>
+                            ` + langStrings[1] + `</button>-->
                             </div>
                             `;
                         break;
@@ -239,31 +247,31 @@ define([
                         $('.progress-bar-item').removeClass('active');
                         $('.progress-bar-item').eq(1).addClass('active');
                         mainbody = "";
-                        get_courses();
+                        getCourses();
                         break;
                     case "activity":
                         $('.progress-bar-item').removeClass('active');
                         $('.progress-bar-item').eq(2).addClass('active');
                         mainbody = "";
-                        get_activities(selectedcourse);
+                        getActivities(selectedcourse);
                         break;
                     case "repository":
                         $('.progress-bar-item').removeClass('active');
                         $('.progress-bar-item').eq(1).addClass('active');
                         mainbody = "";
-                        get_items();
+                        getItems();
                         break;
                     case "item":
                         $('.progress-bar-item').removeClass('active');
                         $('.progress-bar-item').eq(1).addClass('active');
                         mainbody = "";
-                        get_item();
+                        getItem();
                         break;
                     case "targetsection":
                         $('.progress-bar-item').removeClass('active');
                         $('.progress-bar-item').eq(2).addClass('active');
                         mainbody = "";
-                        get_targetsections();
+                        getTargetsections();
                         break;
                     case "message":
                         $('.progress-bar-item').removeClass('active');
@@ -301,15 +309,15 @@ define([
 
                 $("#backbtn").off("click");
                 $("#backbtn").on("click", () => {
-                    switch_state(flow.pop(), true)
+                    switchState(flow.pop(), true);
                 });
 
-                if (aastates[currentstate].next_button) {
+                if (aastates[currentstate].nextButton) {
                     $("#nextbtn").addClass("d-none");
-                    if (aastates[currentstate].next_button_enabled) {
+                    if (aastates[currentstate].nextButtonEnabled) {
                         $("#nextbtn").removeClass("d-none");
                     }
-                    $("#nextbtn").text(aastates[currentstate].next_button_text);
+                    $("#nextbtn").text(aastates[currentstate].nextButtonText);
                 } else {
                     $("#nextbtn").addClass("d-none");
                 }
@@ -317,7 +325,7 @@ define([
                 $("#nextbtn").off("click");
                 $("#nextbtn").on("click", () => {
                     if (!submitted) {
-                        switch_state(aastates[currentstate].next_action);
+                        switchState(aastates[currentstate].nextAction);
                     }
                     if ($("#nextbtn").data('finished') == 'true') {
                         submitted = false;
@@ -331,11 +339,11 @@ define([
                     switch (e.target.id) {
                         case "aa_source_course":
                             selectedsource = "course";
-                            switch_state("course");
+                            switchState("course");
                             break;
                         case "aa_source_repository":
                             selectedsource = "repository";
-                            switch_state("repository");
+                            switchState("repository");
                             break;
                         default:
                             break;
@@ -343,23 +351,27 @@ define([
                 });
 
                 $("#aa_bk").html(aastates[currentstate].title);
-                if (aastates[currentstate].next_button) {
-                    $("#nextbtn").value = aastates[currentstate].next_button_text;
+                if (aastates[currentstate].nextButton) {
+                    $("#nextbtn").value = aastates[currentstate].nextButtonText;
                 }
-                if (aastates[currentstate].back_button) {
+                if (aastates[currentstate].backButton) {
                     $("#backbtn").css("visibility", "visible");
                 } else {
                     $("#backbtn").css("visibility", "hidden");
                 }
                 $("#aa_main_col").fadeIn("slow");
 
-                // hlsentdusers();
+                // Hlsentdusers();
 
             }
 
-            function switch_state(state, back = false) {
+            /**
+             * @param state
+             * @param back
+             */
+            function switchState(state, back = false) {
                 if (state == "submit") {
-                    aa_submit();
+                    aaSubmit();
                     return;
                 }
                 if (!back) {
@@ -370,21 +382,27 @@ define([
                 }
                 $("#aa_main_col").hide();
                 currentstate = state;
-                redraw_main();
+                redrawMain();
             }
 
+            /**
+             *
+             */
             function hlsentdusers() {
                 $("#mod-quiz-report-competencyoverview-report-table tbody tr")
                     .not(".emptyrow")
                     .not(".gradedattempt")
-                    .each(function () {
+                    .each(function() {
                         if ($.inArray($(this)[0].cells[0].children[0].dataset.selectedUserid, sentusers) != -1) {
-                            this.firstElementChild.classList.add('sent')
+                            this.firstElementChild.classList.add('sent');
                         }
                     });
             }
 
-            function aa_submit() {
+            /**
+             *
+             */
+            function aaSubmit() {
 
                 submitted = true;
 
@@ -396,12 +414,13 @@ define([
                 $("#aa_main").html(`
                 <div class = "bravo-img-wrapper mr-auto">
                   <h2>` + langStrings[5] + `</h2>
-                  <div class = "img-background" style = "background-image: url('${M.cfg.wwwroot}/mod/quiz/report/competencyoverview/pix/bravo.png')"
+                  <div class="img-background"
+                    style="background-image: url('${M.cfg.wwwroot}/mod/quiz/report/competencyoverview/pix/bravo.png')"
                   </div>
                 </div>
                 `);
 
-                selectedusersjoin = selectedusers.join();
+                let selectedusersjoin = selectedusers.join();
 
                 Ajax.call([
                     {
@@ -416,7 +435,7 @@ define([
                             'messagetostudents': messagetostudents,
                             'currentcourseid': currentcourseid,
                         },
-                        done: result => {
+                        done: () => {
                             selectedusers.forEach(element => {
                                 sentusers.push(element.toString());
                             });
@@ -429,16 +448,19 @@ define([
                 ]);
             }
 
-            function get_courses() {
+            /**
+             *
+             */
+            function getCourses() {
                 Ajax.call([
                     {
                         methodname: "quiz_competencyoverview_get_courses",
                         args: {},
                         done: courses => {
-                            var courseslist = JSON.parse(courses.courses);
-                            var list =
+                            let courseslist = JSON.parse(courses.courses);
+                            let list =
                                 '<div class="aa_scroll"><div id="aa_course_list" class="list-group list-group-flush">';
-                            for (var key in courseslist) {
+                            for (let key in courseslist) {
                                 list +=
                                     `<a href="#" class="aa_course list-group-item"
                                     data-selectedcourseid=` + courseslist[key].id +
@@ -454,7 +476,7 @@ define([
                             $("#aa_main").html(list);
 
                             // TODO Refactor.
-                            $("#aa_course_list a").on("click", function (e) {
+                            $("#aa_course_list a").on("click", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_course_list a"), a => {
                                     $(a).removeClass("active");
@@ -465,7 +487,7 @@ define([
                                 $(this).toggleClass("active");
                             });
 
-                            $("#aa_course_list a").on("dblclick", function (e) {
+                            $("#aa_course_list a").on("dblclick", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_course_list a"), a => {
                                     $(a).removeClass("active");
@@ -475,7 +497,7 @@ define([
                                 $("#nextbtn").css("visibility", "visible");
                                 $(this).toggleClass("active");
 
-                                switch_state(aastates[currentstate].next_action);
+                                switchState(aastates[currentstate].nextAction);
                             });
                         },
                         fail: {}
@@ -483,16 +505,19 @@ define([
                 ]);
             }
 
-            function get_activities(courseid) {
+            /**
+             * @param courseid
+             */
+            function getActivities(courseid) {
                 Ajax.call([
                     {
                         methodname: "quiz_competencyoverview_get_activities",
-                        args: { courseid: courseid },
+                        args: {courseid: courseid},
                         done: activities => {
-                            var activitieslist = JSON.parse(activities.activities);
-                            var list =
+                            let activitieslist = JSON.parse(activities.activities);
+                            let list =
                                 '<div class="aa_scroll"><div id="aa_activity_list" class="list-group list-group-flush">';
-                            for (var key in activitieslist) {
+                            for (let key in activitieslist) {
                                 list +=
                                     `<a href="#" class="aa_activity list-group-item list-group-item-secondary"
                                     data-selectedactivityid=` + activitieslist[key].id +
@@ -508,7 +533,7 @@ define([
                             $("#aa_main").html(list);
 
                             // TODO Refactor.
-                            $("#aa_activity_list a").on("click", function (e) {
+                            $("#aa_activity_list a").on("click", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_activity_list a"), a => {
                                     $(a).removeClass("active");
@@ -518,7 +543,7 @@ define([
                                 $("#nextbtn").css("visibility", "visible");
                                 $(this).toggleClass("active");
                             });
-                            $("#aa_activity_list a").on("dblclick", function (e) {
+                            $("#aa_activity_list a").on("dblclick", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_activity_list a"), a => {
                                     $(a).removeClass("active");
@@ -528,7 +553,7 @@ define([
                                 $("#nextbtn").css("visibility", "visible");
                                 $(this).toggleClass("active");
 
-                                switch_state(aastates[currentstate].next_action);
+                                switchState(aastates[currentstate].nextAction);
                             });
                         },
                         fail: {}
@@ -536,7 +561,10 @@ define([
                 ]);
             }
 
-            function get_items() {
+            /**
+             *
+             */
+            function getItems() {
                 loading.show();
                 Ajax.call([
                     {
@@ -546,21 +574,22 @@ define([
                         },
                         done: items => {
                             loading.remove();
-                            var itemslist = JSON.parse(items.items);
-                            var list =
+                            let itemslist = JSON.parse(items.items);
+                            let list =
                                 `<div class="aa_scroll">
                                     <div id="aa_item_list" class="list-group list-group-flush px-2">`;
-                            for (var key in itemslist) {
+                            for (let key in itemslist) {
 
-                                list += '<div class="js--cardgroup_title cardgroup_title"><span class="carret-down"></span>' + itemslist[key][0] + '</div><div class="card_wrapper">';
-                                for (var key2 in itemslist[key][1]) {
+                                list += '<div class="js--cardgroup_title cardgroup_title"><span class="carret-down"></span>'
+                                    + itemslist[key][0] + '</div><div class="card_wrapper">';
+                                for (let key2 in itemslist[key][1]) {
                                     list += itemslist[key][1][key2].item;
                                 }
-                                list += "</div>"
+                                list += "</div>";
                             }
                             list += "</div></div>";
                             $("#aa_main").html(list);
-                            $('.js--cardgroup_title').click(function () {
+                            $('.js--cardgroup_title').click(function() {
                                 $(this).toggleClass('active');
                                 $(this).next().slideToggle();
                             });
@@ -568,7 +597,7 @@ define([
                             $('.quiz_competencyoverview-select-button').on('click', e => {
                                 selecteditem = $(e.target).data('activity_id');
                                 selectedcourse = $(e.target).data('course_id');
-                                switch_state(aastates[currentstate].next_action);
+                                switchState(aastates[currentstate].nextAction);
                             });
                         },
                         fail: {}
@@ -576,14 +605,17 @@ define([
                 ]);
             }
 
-            function get_item() {
+            /**
+             *
+             */
+            function getItem() {
                 Ajax.call([
                     {
                         methodname: "quiz_competencyoverview_get_item",
-                        args: { 'itemid': selecteditem },
+                        args: {'itemid': selecteditem},
                         done: item => {
-                            var itemone = JSON.parse(item.item).item;
-                            var list =
+                            let itemone = JSON.parse(item.item).item;
+                            let list =
                                 '<div class="aa_scroll"><div id="aa_item_list" class="list-group list-group-flush">';
                             list += itemone;
                             list += "</div></div>";
@@ -596,16 +628,19 @@ define([
                 ]);
             }
 
-            function get_targetsections() {
+            /**
+             *
+             */
+            function getTargetsections() {
                 Ajax.call([
                     {
                         methodname: "quiz_competencyoverview_get_targetsections",
-                        args: { currentcourseid },
+                        args: {currentcourseid},
                         done: targetsections => {
-                            var targetsectionslist = JSON.parse(targetsections.sections);
-                            var imgurl = targetsections.imgurl;
-                            var coursename = targetsections.coursename;
-                            var list =
+                            let targetsectionslist = JSON.parse(targetsections.sections);
+                            let imgurl = targetsections.imgurl;
+                            let coursename = targetsections.coursename;
+                            let list =
                                 `<div class="coursename-wrapper">
                                 <div class="coursename-image">
                                 <img src="${imgurl}" width="auto" height="auto"/>
@@ -614,7 +649,7 @@ define([
                                 </div>
                                 <div class="aa_scroll"><div id="aa_targetsection_list"
                                 class="list-group list-group-flush">`;
-                            for (var key in targetsectionslist) {
+                            for (let key in targetsectionslist) {
                                 let sectionline =
                                     targetsectionslist[key].name ? targetsectionslist[key].name :
                                         langStrings[20] + ' ' + targetsectionslist[key].section;
@@ -628,12 +663,12 @@ define([
                             }
                             list += "</div></div>";
                             $("#aa_main").html(list);
-                            if (imgurl == null) {
+                            if (imgurl === null) {
                                 $('.coursename-image').remove();
                             }
 
                             // TODO Refactor.
-                            $("#aa_targetsection_list a").on("click", function (e) {
+                            $("#aa_targetsection_list a").on("click", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_targetsection_list a"), a => {
                                     $(a).removeClass("active");
@@ -644,7 +679,7 @@ define([
                                 $(this).toggleClass("active");
                             });
 
-                            $("#aa_targetsection_list a").on("dblclick", function (e) {
+                            $("#aa_targetsection_list a").on("dblclick", function(e) {
                                 e.preventDefault();
                                 Array.prototype.forEach.call($("#aa_targetsection_list a"), a => {
                                     $(a).removeClass("active");
@@ -654,7 +689,7 @@ define([
                                 $("#nextbtn").css("visibility", "visible");
                                 $(this).toggleClass("active");
 
-                                switch_state(aastates[currentstate].next_action);
+                                switchState(aastates[currentstate].nextAction);
                             });
 
                         },
@@ -663,114 +698,122 @@ define([
                 ]);
             }
 
-            var mainmodal;
+            let mainmodal;
 
+            /**
+             *
+             */
             function useraction() {
                 // Popup (AA) states.
-                init_aa();
+                initAa();
                 ModalFactory.create({
                     title:
                         langStrings[6],
                     body: modalbody,
                     large: true
-                }).then(function (aamodal) {
+                }).then(function(aamodal) {
                     mainmodal = aamodal;
-                    var aaroot = aamodal.getRoot();
-                    aaroot.on(ModalEvents.hidden, function () {
+                    let aaroot = aamodal.getRoot();
+                    aaroot.on(ModalEvents.hidden, function() {
                         aamodal.destroy();
+                        return;
                     });
                     aamodal.getRoot().addClass('competencies_wizard');
                     aamodal.show();
-                    redraw_main();
-                });
+                    redrawMain();
+                        return;
+                    }).catch();
             }
 
-            function init_aa() {
+            /**
+             *
+             */
+            function initAa() {
                 aastates = {
                     selection: {
-                        back_button: false,
-                        next_button: false,
-                        next_button_enabled: false,
-                        next_button_text: false,
+                        backButton: false,
+                        nextButton: false,
+                        nextButtonEnabled: false,
+                        nextButtonText: false,
                         scroll: false,
                         parent: false,
-                        next_action: false,
+                        nextAction: false,
                         title: langStrings[7]
                     },
                     course: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: false,
-                        next_button_text: langStrings[15],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: false,
+                        nextButtonText: langStrings[15],
                         scroll: true,
                         parent: "selection",
-                        next_action: "activity",
+                        nextAction: "activity",
                         title: langStrings[8]
                     },
                     activity: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: false,
-                        next_button_text: langStrings[15],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: false,
+                        nextButtonText: langStrings[15],
                         scroll: true,
                         parent: "course",
-                        next_action: "targetsection",
+                        nextAction: "targetsection",
                         title: langStrings[9]
                     },
                     repository: {
-                        back_button: true,
-                        next_button: false,
-                        next_button_enabled: false,
-                        next_button_text: false,
+                        backButton: true,
+                        nextButton: false,
+                        nextButtonEnabled: false,
+                        nextButtonText: false,
                         scroll: true,
                         parent: "selection",
-                        next_action: "item",
+                        nextAction: "item",
                         title: langStrings[10]
                     },
                     item: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: true,
-                        next_button_text: langStrings[15],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: true,
+                        nextButtonText: langStrings[15],
                         scroll: false,
                         parent: "repository",
-                        next_action: "targetsection",
+                        nextAction: "targetsection",
                         title: langStrings[11]
                     },
                     targetsection: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: false,
-                        next_button_text: langStrings[15],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: false,
+                        nextButtonText: langStrings[15],
                         scroll: true,
                         parent: "selection",
-                        next_action: "message",
+                        nextAction: "message",
                         title: langStrings[12]
                     },
                     message: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: true,
-                        next_button_text: langStrings[15],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: true,
+                        nextButtonText: langStrings[15],
                         scroll: false,
                         parent: "selection",
-                        next_action: "finish",
+                        nextAction: "finish",
                         title: langStrings[13]
                     },
                     finish: {
-                        back_button: true,
-                        next_button: true,
-                        next_button_enabled: true,
-                        next_button_text: langStrings[16],
+                        backButton: true,
+                        nextButton: true,
+                        nextButtonEnabled: true,
+                        nextButtonText: langStrings[16],
                         scroll: false,
                         parent: "selection",
-                        next_action: "submit",
+                        nextAction: "submit",
                         title: langStrings[14]
                     }
                 };
                 currentstate = "selection";
                 messagetostudents = "";
-                var userslist = "";
+                let userslist = "";
                 selectedusers.forEach(element => {
                     userslist += "<li class='p-2'>" + users[element].firstname
                         + ' ' + users[element].lastname + '</li>';
@@ -778,7 +821,7 @@ define([
 
                 setskills();
 
-                var selcomplist = [];
+                let selcomplist = [];
                 selectedskills.forEach(element => {
                     selcomplist.push(complist[element]);
                 });
@@ -804,11 +847,13 @@ define([
                     <div id='aa_bk' class=''>
 
                     </div>
-                    <div id='aa_main' class='d-flex justify-content-center flex-grow-1 overflow-hidden  flex-wrap' style='visibility: hidden;'>
+                    <div id='aa_main' class='d-flex justify-content-center flex-grow-1 overflow-hidden
+                        flex-wrap' style='visibility: hidden;'>
 
                     </div>
                     <div id='aa_actions' style='visibility: hidden;' class='d-flex mt-5'>
-                    <button id='backbtn' class="btn competencies_wizard-button competencies_wizard-button-outline mr-20">` + langStrings[18] + `</button>
+                    <button id='backbtn' class="btn competencies_wizard-button competencies_wizard-button-outline mr-20">`
+                        + langStrings[18] + `</button>
                     <button id='nextbtn' class="btn competencies_wizard-button d-none">` + langStrings[16] + `</button>
                     </div>
                     </div>
@@ -831,9 +876,12 @@ define([
                     `;
             }
 
-            function action_status() {
+            /**
+             *
+             */
+            function actionStatus() {
                 selectedusers = [];
-                $(".selected-users").each(function () {
+                $(".selected-users").each(function() {
                     if ($(this).closest("input")[0].checked) {
                         selectedusers.push(
                             $(this)
@@ -861,17 +909,20 @@ define([
                 resetfilters();
                 setskills();
                 selectallstudents();
-                action_status();
+                actionStatus();
             });
 
             // Select skills.
-            $(".selected-comp").on("click", (e) => {
+            $(".selected-comp").on("click", () => {
                 setskills();
-                action_status();
+                actionStatus();
             });
 
+            /**
+             *
+             */
             function selectallstudents() {
-                $(".selected-users").each(function () {
+                $(".selected-users").each(function() {
                     $(this).closest("input")[0].checked = selectall;
                 });
                 let selecttitle = selectall ? langStrings[22] : langStrings[21];
@@ -879,9 +930,12 @@ define([
                 selectall = !selectall;
             }
 
+            /**
+             *
+             */
             function setskills() {
                 selectedskills = [];
-                $(".selected-comp").each(function () {
+                $(".selected-comp").each(function() {
                     if ($(this)[0].checked) {
                         if ($(this)[0].dataset.compid !== undefined) {
                             selectedskills.push($(this)[0].dataset.compid);
@@ -890,8 +944,10 @@ define([
                 });
             }
 
-
             // Filters.
+            /**
+             * @param all
+             */
             function resetfilters(all = true) {
 
                 rows = [];
@@ -900,28 +956,28 @@ define([
                 $("#mod-quiz-report-competencyoverview-report-table tbody tr")
                     .not(".emptyrow")
                     .not(".gradedattempt")
-                    .each(function () {
+                    .each(function() {
                         $(this).show(200); // Reset table view - show all rows.
                     });
             }
 
-            $(document).on("click", "#resetfilters", function (e) {
+            $(document).on("click", "#resetfilters", function(e) {
                 e.preventDefault();
                 resetfilters(true);
                 selectall = false;
                 selectallstudents();
-                action_status();
+                actionStatus();
             });
 
             ranges = [];
             rows = [];
 
-            $(document).on("click", ".selected-ranges", function (e) {
+            $(document).on("click", ".selected-ranges", function(e) {
                 e.preventDefault();
 
                 resetfilters(true);
 
-                r = $(this).data('range');
+                let r = $(this).data('range');
                 skillname = $(this).closest("div")[0].dataset.skill;
                 ranges.push({
                     skillname: skillname,
@@ -934,11 +990,11 @@ define([
                         $("#mod-quiz-report-competencyoverview-report-table tbody tr")
                             .not(".emptyrow")
                             .not(".gradedattempt")
-                            .each(function () {
-                                var description = $(this)
+                            .each(function() {
+                                let description = $(this)
                                     .find(`[data-skill-name='${range.skillname}']`)
                                     .data("description");
-                                var skillgrade = $(this)
+                                let skillgrade = $(this)
                                     .find(`[data-skill-name='${range.skillname}']`)
                                     .data("skill-grade");
                                 if (
@@ -956,16 +1012,16 @@ define([
                     selectallstudents();
                     setskills();
 
-                    $(".selected-users").each(function () {
+                    $(".selected-users").each(function() {
 
                         $("#mod-quiz-report-competencyoverview-report-table tbody tr")
                             .not(".emptyrow")
                             .not(".gradedattempt")
-                            .each(function () {
-                                name = $(this).find(`[data-skill-name='${skillname}']`).data("description")
+                            .each(function() {
+                                let _name = $(this).find(`[data-skill-name='${skillname}']`).data("description");
                                 if (
                                     rows.hasOwnProperty(
-                                        name
+                                        _name
                                     )
                                 ) {
                                     $(this)[0].cells[0].firstChild.checked = true;
@@ -973,7 +1029,7 @@ define([
                             });
 
                     });
-                    action_status();
+                    actionStatus();
 
                 } else {
                     skillname = '';
@@ -981,25 +1037,33 @@ define([
                     selectall = false;
                     selectallstudents();
                     setskills();
-                    action_status();
+                    actionStatus();
                 }
 
             });
 
-            $(document).on("click", ".questionsbycompetency", function (e) {
+            $(document).on("click", ".questionsbycompetency", function(e) {
                 e.preventDefault();
 
-                var compid = $(this).data("compid");
-                var qset = $(this).data("qset");
-                var comptitle = $(this).data("comptitle");
+                let compid = $(this).data("compid");
+                let qset = $(this).data("qset");
+                let comptitle = $(this).data("comptitle");
 
                 loading.show();
 
-                var questions = get_questions_by_competency_table(compid, cmid, quizid, currentcourseid, qset, comptitle);
+                getQuestionsByCompetencyTable(compid, cmid, quizid, currentcourseid, qset, comptitle);
 
             });
 
-            function get_questions_by_competency_table(compid, cmid, quizid, courseid, qset, comptitle) {
+            /**
+             * @param compid
+             * @param cmid
+             * @param quizid
+             * @param courseid
+             * @param qset
+             * @param comptitle
+             */
+            function getQuestionsByCompetencyTable(compid, cmid, quizid, courseid, qset, comptitle) {
 
                 Ajax.call([
                     {
@@ -1014,7 +1078,7 @@ define([
                         },
                         done: items => {
                             loading.remove();
-                            var items = JSON.parse(items.questionstable);
+                            items = JSON.parse(items.questionstable);
 
                             $('#modalquestions').html(items);
                             $('#questionsbycompetencymodalTitle').html(comptitle);
@@ -1026,23 +1090,27 @@ define([
                 ]);
             }
 
-            var order = false;
+            let order = false;
 
-            $(document).on("click", "a.sortcol", function (e) {
+            $(document).on("click", "a.sortcol", function(e) {
                 e.preventDefault();
-                var colid = $(this).data("colid");
+                let colid = $(this).data("colid");
 
                 sortTable(colid, order);
                 order = !order;
             });
 
+            /**
+             * @param colid
+             * @param order
+             */
             function sortTable(colid, order) {
-                var rows = $("#mod-quiz-report-competencyoverview-report-table tbody tr")
+                let rows = $("#mod-quiz-report-competencyoverview-report-table tbody tr")
                     .not(".emptyrow")
                     .not(".gradedattempt")
                     .get();
-                var A, B;
-                rows.sort(function (a, b) {
+                let A, B;
+                rows.sort(function(a, b) {
                     if (colid == 0) {
                         if (order) {
                             A = $(a)
@@ -1102,22 +1170,22 @@ define([
                     return 0;
                 });
 
-                $.each(rows, function (index, row) {
+                $.each(rows, function(index, row) {
                     $("#mod-quiz-report-competencyoverview-report-table")
                         .children("tbody")
                         .append(row);
                 });
             }
-            $('label.title').on('click', function () {
+            $('label.title').on('click', function() {
                 $(this).closest('.header-inner').toggleClass('checked');
-            })
+            });
 
             $('[data-toggle="tooltip"]').tooltip({
                 placement: 'top',
                 selector: 'div.skill-grade-cell',
                 trigger: 'focus',
                 offset: '20',
-                delay: { "show": 500, "hide": 100 }
+                delay: {"show": 500, "hide": 100}
             });
         }
     };
