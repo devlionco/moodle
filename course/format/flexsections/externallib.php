@@ -301,7 +301,7 @@ class format_flexsections_external extends external_api {
             $sql = "
                 SELECT *
                 FROM {flexsections_lastaccess}
-                WHERE userid=? AND courseid=? AND cmid > 0
+                WHERE userid=? AND courseid=? AND cmid IN (".implode(',', $cmids).")
                 ORDER BY `timeaccess` DESC
                 LIMIT 1
             ";
