@@ -5,3 +5,10 @@
     border-radius: 3px;
     border: 1px solid #ccc;
 }
+
+/* Atto numbering */
+menu,
+ol,
+ul {
+    padding: 0 0 0 25px;
+}
