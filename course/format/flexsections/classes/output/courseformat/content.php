@@ -185,6 +185,10 @@ class content extends \core_courseformat\output\local\content {
             }
         }
 
+        // Show single copy section.
+        $contextcourse = \context_course::instance($this->format->get_courseid());
+        $data->copysectionenable = has_capability('moodle/course:update', $contextcourse, $USER->id) ? true : false;
+
         if (isset($data->singlesection)) {
             $modinfo = $this->format->get_modinfo();
             $headerclass = $this->format->get_output_classname('content\\section\\header');

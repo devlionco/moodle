@@ -287,11 +287,14 @@ export default class FlexsectionComponent extends Component {
 
                 if (response.result) {
                     const data = JSON.parse(response.data);
+
                     const {html, js} = await Templates.renderForPromise(template, data.cmlist);
                     await Templates.replaceNodeContents(sectionToReplace, html, js);
                     self.reactive.dispatch('sectionState', [sectionId]);
-                    sharewith.addShareActivityButton(null, `[data-cmlistid="${sectionId}"]`);
 
+                    if (data.sharebuttonenable) {
+                        sharewith.addShareActivityButton(null, `[data-cmlistid="${sectionId}"]`);
+                    }
                 } else {
                     Notification.addNotification({
                         type: 'error',

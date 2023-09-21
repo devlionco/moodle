@@ -459,9 +459,10 @@ class format_flexsections_external extends external_api {
      * @return array
      */
     public static function get_section_content($courseid, $sectionid) {
-        global $PAGE;
+        global $PAGE, $USER;
 
-        self::validate_context(context_course::instance($courseid));
+        $context = context_course::instance($courseid);
+        self::validate_context($context);
 
         $params = self::validate_parameters(self::get_section_content_parameters(),
             array(
@@ -503,6 +504,8 @@ class format_flexsections_external extends external_api {
                 }
             }
         }
+
+        $section->sharebuttonenable = has_capability('moodle/course:update', $context, $USER->id) ? true : false;
 
         return ['result' => true, 'data' => json_encode($section)];
     }

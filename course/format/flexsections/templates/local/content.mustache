@@ -114,10 +114,12 @@ Example context (json):
 
     {{#singlesection}}
 
-        <button class="editing_addsubsection ml-auto" data-handler="selectCourseForSection"
-           data-sectionid="{{id}}" role="menuitem" tabindex="-1" title="{{#str}}copysection, community_sharewith{{/str}}">
-            <i class="fa-light fa-copy"></i>
-        </button>
+        {{#copysectionenable}}
+            <button class="editing_addsubsection ml-auto" data-handler="selectCourseForSection"
+               data-sectionid="{{id}}" role="menuitem" tabindex="-1" title="{{#str}}copysection, community_sharewith{{/str}}">
+                <i class="fa-light fa-copy"></i>
+            </button>
+        {{/copysectionenable}}
 
         {{#header}}
         <div class="section-header d-flex">
