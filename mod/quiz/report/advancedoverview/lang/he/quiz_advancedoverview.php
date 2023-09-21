@@ -122,3 +122,9 @@ $string['notstarted'] = 'לא התחילו';
 $string['attempts'] = 'מספר ניסיונות מענה';
 $string['max_grade'] = 'הציון הגבוה בכיתה';
 $string['min_grade'] = 'הציון הנמוך בכיתה';
+
+// Competency
+$string['competencies_title'] = 'קשיים עיקריים של תלמידים';
+$string['questions'] = 'שאלות';
+$string['competencyoverview'] = 'תצוגה מלאה והקצאת פעילויות המשך';
+$string['advancedoverviewreport'] = 'חזרה לדוח ציונים';

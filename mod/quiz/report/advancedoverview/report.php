@@ -58,6 +58,7 @@ class quiz_advancedoverview_report extends quiz_attempts_report {
 
         $quizdata = new \quiz_advancedoverview\quizdata($cm->id);
         $quizdata->prepare_questions();
+        $quizdata->prepare_skills();
         $quizdata->prepare_charts();
         $quizdata->prepare_students();
         $data = $quizdata->get_render_data();

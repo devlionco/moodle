@@ -30,6 +30,7 @@ use moodle_url;
 use quiz_attempt;
 use stdClass;
 use core_user;
+use quiz_competencyoverview_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,6 +39,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/report/advancedoverview/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/report.php');
 
 class quizdata {
 
@@ -61,6 +63,7 @@ class quizdata {
     public $quizobj;
     public $students;
     public $questionids;
+    public $skills;
     public $quiz;
     public $options;
     public $states;
@@ -245,6 +248,36 @@ class quizdata {
         $this->chartaverage = $this->calculate_grades();
         $this->chartstate = $this->get_chart_state_data();
         $this->chartgrade = $this->get_chart_grade_data();
+    }
+
+    public function prepare_skills() {
+        $this->skills = $this->get_skills();
+    }
+
+    public function get_skills() {
+        global $CFG, $OUTPUT, $DB;
+        $response = '';
+
+        // Competencies that were difficult for a class.
+        $competencyreport = new quiz_competencyoverview_report();
+        $competencyreport->lastaccess = 1; // $this->lastaccess;
+        $quiz = $DB->get_record('quiz', array('id' => $this->cm->instance), '*', MUST_EXIST);
+        $skills = $competencyreport->get_brief_competencies($quiz, $this->cm, $this->course);
+        if (count($skills) != 0) {
+            // Competencyoverview report button.
+            $competencybuttonurl = new moodle_url($CFG->wwwroot . '/mod/quiz/report.php?id=' . $this->cm->id . '&mode=competencyoverview', array('display' => 'full', 'lastaccess' => $competencyreport->lastaccess));
+            $competencybuttonname = get_string('competencyoverview', 'quiz_advancedoverview');
+            $competencybutton = '<a href="' . $competencybuttonurl . '" class="btn btn-primary">' . $competencybuttonname . '</a>';
+
+            $compcontext = [
+                'skills' => $skills,
+                'competencybutton' => $competencybutton,
+            ];
+
+            $response = $compcontext;
+        }
+
+        return $response;
     }
 
     public function prepare_questions() {
@@ -1171,8 +1204,6 @@ class quizdata {
         $data['open_questions_count'] = count($this->openquestionslist);
         $data['enable_open_questions'] = count($this->openquestionslist) > 0 ? true : false;
 
-        $data['options'] = json_encode($this->options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-
         $data['cmid'] = $this->cm->id;
         $data['courseid'] = $this->course->id;
         $data['quizid'] = $this->quiz->id;
@@ -1184,6 +1215,9 @@ class quizdata {
         $data['config'] = $this->config;
 
         $data['dir_rtl'] = right_to_left() == 'rtl' ? true : false;
+
+        $data['skills'] = $this->skills['skills'];
+        $data['competencybutton'] = $this->skills['competencybutton'];
 
         return $data;
     }

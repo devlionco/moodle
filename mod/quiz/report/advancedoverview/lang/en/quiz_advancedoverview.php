@@ -122,3 +122,8 @@ $string['notstarted'] = 'Not started';
 $string['attempts'] = 'Total Attempts';
 $string['max_grade'] = 'Max grade';
 $string['min_grade'] = 'Min grade';
+
+// Competency
+$string['competencies_title'] = 'Competencies';
+$string['questions'] = 'Questions:';
+$string['competencyoverview'] = 'View all competency report';

@@ -640,3 +640,23 @@ html[dir=rtl] .chart-tooltip::after {
     margin-bottom: 1rem;
   }
 }/*# sourceMappingURL=styles.css.map */
+
+#competenciestable {
+  width: 100%;
+  margin-right: 10px;
+}
+
+.skillsbar {
+  text-align: right;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: black;
+}
+
+.grade-low-cell {
+  background-color: #F7DDE4;
+}
+
+.grade-med-cell {
+  background-color: #fffaeb;
+}

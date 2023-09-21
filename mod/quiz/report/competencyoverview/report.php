@@ -716,7 +716,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         // Sort by classsuccess.
         uasort($newfullskills, function ($item1, $item2) {
-            return $item2['classsuccess'][0] <=> $item1['classsuccess'][0];
+            return $item1['classsuccess'][0] <=> $item2['classsuccess'][0];
         });
 
         return $newfullskills;

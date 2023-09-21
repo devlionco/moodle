@@ -56,6 +56,7 @@ class quiz_advancedoverview_external extends external_api {
         $quizdata = new \quiz_advancedoverview\quizdata($params['cmid'], $params['groupid'], $config);
 
         $quizdata->prepare_questions();
+        $quizdata->prepare_skills();
         $quizdata->prepare_charts();
         $quizdata->prepare_students();
 

@@ -1,0 +1,34 @@
+<div class="py-3 bg-white" id="competenciestable">
+    <div class="">
+        <h3>
+            {{#str}}competencies_title, quiz_advancedoverview{{/str}}
+        </h3>
+
+        <div class="row ">
+            <div class="col-9">
+                <!-- {{#str}} competencies_title, quiz_advancedoverview {{/str}} -->
+            </div>
+            <div class="col-3">
+                {{#str}} classsuccess, quiz_competencyoverview{{/str}}
+            </div>
+        </div>
+        {{#skills}}
+        <div class="row ">
+            <div class="col-9">
+                {{ name }} ( {{ numquestions }} {{#str}} questions, quiz_advancedoverview {{/str}})
+            </div>
+            <div class="col-3">
+                <div class="m-b-1">
+                    <div class="skillsbar p-2 {{ colorclass }}" style="width: {{ rate }}%;">
+                        {{ rate }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/skills}}
+        <div class="row m-t-5" style="margin: 10px auto; width: fit-content;">
+            {{{ competencybutton }}}
+        </div>
+
+    </div>
+</div>
