@@ -562,7 +562,7 @@ class quizdata {
     }
 
     private function add_to_openquestions($attempt, $question) {
-        $qtypes = ['essay', 'opensheet', 'mlnlpessay'];
+        $qtypes = ['essay', 'opensheet', 'mlnlpessay', 'poodllrecording'];
         if (in_array($question->qtype, $qtypes)) {
             $questionstateclass = $attempt->get_question_state_class($question->slot, true);
             if ($questionstateclass == 'requiresgrading') {
