@@ -53,7 +53,7 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_courses_returns() {
         return new external_single_structure(
             array(
-                'result'  => new external_value(PARAM_INT, 'result bool'),
+                'result' => new external_value(PARAM_INT, 'result bool'),
                 'courses' => new external_value(PARAM_TEXT, 'json categories'),
             )
         );
@@ -69,10 +69,10 @@ class quiz_competencyoverview_external extends external_api {
         $courses = quiz_competencyoverview_get_courses();
 
         if (!empty($courses)) {
-            $result['result']  = 1;
+            $result['result'] = 1;
             $result['courses'] = json_encode($courses);
         } else {
-            $result['result']  = 0;
+            $result['result'] = 0;
             $result['courses'] = json_encode($courses);
         }
 
@@ -98,7 +98,7 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_activities_returns() {
         return new external_single_structure(
             array(
-                'result'     => new external_value(PARAM_INT, 'result bool'),
+                'result' => new external_value(PARAM_INT, 'result bool'),
                 'activities' => new external_value(PARAM_TEXT, 'json categories'),
             )
         );
@@ -111,22 +111,22 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_activities($courseid) {
 
         $modinfo = get_fast_modinfo($courseid);
-        $result  = array();
+        $result = array();
 
         $activities = [];
 
         foreach ($modinfo->get_cms() as $cm) {
             $activities[] = [
-                'id'      => $cm->id, 'shortname'       => $cm->name, 'modname' => $cm->modname,
+                'id' => $cm->id, 'shortname' => $cm->name, 'modname' => $cm->modname,
                 'section' => $cm->section, 'sectionnum' => $cm->sectionnum,
             ];
         }
 
         if (!empty($activities)) {
-            $result['result']     = 1;
+            $result['result'] = 1;
             $result['activities'] = json_encode($activities);
         } else {
-            $result['result']     = 0;
+            $result['result'] = 0;
             $result['activities'] = json_encode($activities);
         }
 
@@ -153,7 +153,7 @@ class quiz_competencyoverview_external extends external_api {
         return new external_single_structure(
             array(
                 'result' => new external_value(PARAM_INT, 'result bool'),
-                'items'  => new external_value(PARAM_RAW, 'json categories'),
+                'items' => new external_value(PARAM_RAW, 'json categories'),
             )
         );
     }
@@ -169,10 +169,10 @@ class quiz_competencyoverview_external extends external_api {
 
         if (!empty($items)) {
             $result['result'] = 1;
-            $result['items']  = json_encode($items);
+            $result['items'] = json_encode($items);
         } else {
             $result['result'] = 0;
-            $result['items']  = json_encode($items);
+            $result['items'] = json_encode($items);
         }
 
         return $result;
@@ -198,7 +198,7 @@ class quiz_competencyoverview_external extends external_api {
         return new external_single_structure(
             array(
                 'result' => new external_value(PARAM_INT, 'result bool'),
-                'item'   => new external_value(PARAM_RAW, 'json categories'),
+                'item' => new external_value(PARAM_RAW, 'json categories'),
             )
         );
     }
@@ -214,10 +214,10 @@ class quiz_competencyoverview_external extends external_api {
 
         if (!empty($item)) {
             $result['result'] = 1;
-            $result['item']   = json_encode($item);
+            $result['item'] = json_encode($item);
         } else {
             $result['result'] = 0;
-            $result['item']   = json_encode($item);
+            $result['item'] = json_encode($item);
         }
 
         return $result;
@@ -242,10 +242,10 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_targetsections_returns() {
         return new external_single_structure(
             array(
-                'result'     => new external_value(PARAM_INT, 'result bool'),
-                'sections'   => new external_value(PARAM_TEXT, 'json categories'),
+                'result' => new external_value(PARAM_INT, 'result bool'),
+                'sections' => new external_value(PARAM_TEXT, 'json categories'),
                 'coursename' => new external_value(PARAM_TEXT, 'coursename'),
-                'imgurl'     => new external_value(PARAM_URL, 'imgurl'),
+                'imgurl' => new external_value(PARAM_URL, 'imgurl'),
             )
         );
     }
@@ -257,28 +257,28 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_targetsections($currentcourseid) {
         global $CFG, $PAGE;
 
-        $modinfo         = get_fast_modinfo($currentcourseid);
-        $result          = array();
+        $modinfo = get_fast_modinfo($currentcourseid);
+        $result = array();
         $modinfosections = $modinfo->get_section_info_all();
-        $sections        = [];
+        $sections = [];
 
         foreach ($modinfosections as $s) {
             $sections[] = ['id' => $s->id, 'name' => $s->name, 'section' => $s->section];
         }
 
-        $course     = get_course($currentcourseid);
+        $course = get_course($currentcourseid);
         $coursename = $course->fullname;
         if ($course instanceof stdClass) {
             $course = new core_course_list_element($course);
         }
 
-        $imgurl  = '';
+        $imgurl = '';
         $context = context_course::instance($course->id);
         $PAGE->set_context($context);
 
         foreach ($course->get_course_overviewfiles() as $file) {
             $isimage = $file->is_valid_image();
-            $imgurl  = file_encode_url("$CFG->wwwroot/pluginfile.php", '/' . $file->get_contextid() . '/' . $file->get_component() . '/' . $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+            $imgurl = file_encode_url("$CFG->wwwroot/pluginfile.php", '/' . $file->get_contextid() . '/' . $file->get_component() . '/' . $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
             if (!$isimage) {
                 $imgurl = $noimgurl;
             }
@@ -291,12 +291,12 @@ class quiz_competencyoverview_external extends external_api {
         }
 
         if (!empty($sections)) {
-            $result['result']     = 1;
-            $result['sections']   = json_encode($sections);
-            $result['imgurl']     = $imgurl;
+            $result['result'] = 1;
+            $result['sections'] = json_encode($sections);
+            $result['imgurl'] = $imgurl;
             $result['coursename'] = $coursename;
         } else {
-            $result['result']   = 0;
+            $result['result'] = 0;
             $result['sections'] = json_encode($sections);
         }
 
@@ -310,14 +310,14 @@ class quiz_competencyoverview_external extends external_api {
     public static function submit_assignment_parameters() {
         return new external_function_parameters(
             array(
-                'selectedusersjoin'     => new external_value(PARAM_SEQUENCE, 'selectedusersjoin'),
-                'selectedsource'        => new external_value(PARAM_ALPHANUM, 'selectedsource'),
-                'selectedcourse'        => new external_value(PARAM_INT, 'selectedcourse', VALUE_OPTIONAL),
-                'selectedactivity'      => new external_value(PARAM_INT, 'selectedactivity', VALUE_OPTIONAL),
-                'selecteditem'          => new external_value(PARAM_INT, 'selecteditem', VALUE_OPTIONAL),
+                'selectedusersjoin' => new external_value(PARAM_SEQUENCE, 'selectedusersjoin'),
+                'selectedsource' => new external_value(PARAM_ALPHANUM, 'selectedsource'),
+                'selectedcourse' => new external_value(PARAM_INT, 'selectedcourse', VALUE_OPTIONAL),
+                'selectedactivity' => new external_value(PARAM_INT, 'selectedactivity', VALUE_OPTIONAL),
+                'selecteditem' => new external_value(PARAM_INT, 'selecteditem', VALUE_OPTIONAL),
                 'selectedtargetsection' => new external_value(PARAM_INT, 'selectedtargetsection'),
-                'messagetostudents'     => new external_value(PARAM_TEXT, 'messagetostudents', VALUE_OPTIONAL),
-                'currentcourseid'       => new external_value(PARAM_INT, 'currentcourseid', VALUE_OPTIONAL),
+                'messagetostudents' => new external_value(PARAM_TEXT, 'messagetostudents', VALUE_OPTIONAL),
+                'currentcourseid' => new external_value(PARAM_INT, 'currentcourseid', VALUE_OPTIONAL),
             )
         );
     }
@@ -365,15 +365,15 @@ class quiz_competencyoverview_external extends external_api {
 
         $conditions = [
             'sourceactivityid' => $item,
-            'courseid'         => $currentcourseid,
-            'sectionid'        => $selectedtargetsection,
+            'courseid' => $currentcourseid,
+            'sectionid' => $selectedtargetsection,
         ];
         $metadata = [
             'callbackpath' => '/mod/quiz/report/competencyoverview/locallib.php',
             'callbackfunc' => 'quiz_competencyoverview_message_to_students',
-            'message'      => $messagetostudents,
-            'students'     => $selectedusersjoin,
-            'conditions'   => $conditions,
+            'message' => $messagetostudents,
+            'students' => $selectedusersjoin,
+            'conditions' => $conditions,
         ];
 
         // Check for exist activity.
@@ -386,7 +386,7 @@ class quiz_competencyoverview_external extends external_api {
         } else {
             // Copy.
             $metadata = json_encode($metadata);
-            $type     = 'activitycopy';
+            $type = 'activitycopy';
 
             $addtask = community_sharewith_add_task(
                 $type,
@@ -418,12 +418,13 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_questions_by_competency_table_parameters() {
         return new external_function_parameters(
             array(
-                'compid'     => new external_value(PARAM_INT, 'compid'),
-                'cmid'       => new external_value(PARAM_INT, 'cmid'),
-                'quizid'     => new external_value(PARAM_INT, 'quizid'),
-                'courseid'   => new external_value(PARAM_INT, 'courseid'),
-                'qset'       => new external_value(PARAM_SEQUENCE, 'qset'),
+                'compid' => new external_value(PARAM_INT, 'compid'),
+                'cmid' => new external_value(PARAM_INT, 'cmid'),
+                'quizid' => new external_value(PARAM_INT, 'quizid'),
+                'courseid' => new external_value(PARAM_INT, 'courseid'),
+                'qset' => new external_value(PARAM_SEQUENCE, 'qset'),
                 'lastaccess' => new external_value(PARAM_INT, 'lastaccess'),
+                'actualusers' => new external_value(PARAM_SEQUENCE, 'actualusers'),
             )
         );
     }
@@ -445,16 +446,16 @@ class quiz_competencyoverview_external extends external_api {
      * Get items
      * @return array
      */
-    public static function get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess) {
+    public static function get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess, $actualusers) {
         $result = array();
 
-        $questionstable = quiz_competencyoverview_get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess);
+        $questionstable = quiz_competencyoverview_get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess, $actualusers);
 
         if (!empty($questionstable)) {
-            $result['result']         = 1;
+            $result['result'] = 1;
             $result['questionstable'] = json_encode($questionstable);
         } else {
-            $result['result']         = 0;
+            $result['result'] = 0;
             $result['questionstable'] = json_encode($questionstable);
         }
 
@@ -468,9 +469,9 @@ class quiz_competencyoverview_external extends external_api {
     public static function get_init_params_parameters() {
         return new external_function_parameters(
             array(
-                'quizid'     => new external_value(PARAM_INT, 'quizid'),
-                'cmid'       => new external_value(PARAM_INT, 'cmid'),
-                'courseid'   => new external_value(PARAM_INT, 'courseid'),
+                'quizid' => new external_value(PARAM_INT, 'quizid'),
+                'cmid' => new external_value(PARAM_INT, 'cmid'),
+                'courseid' => new external_value(PARAM_INT, 'courseid'),
                 'lastaccess' => new external_value(PARAM_INT, 'lastaccess'),
             )
         );

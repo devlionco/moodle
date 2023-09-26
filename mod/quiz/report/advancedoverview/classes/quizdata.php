@@ -256,25 +256,30 @@ class quizdata {
 
     public function get_skills() {
         global $CFG, $OUTPUT, $DB;
-        $response = '';
+
+        $response = [
+            'skills' => false,
+            'competencybutton' => false,
+            'competencyenabled' => false,
+        ];
 
         // Competencies that were difficult for a class.
         $competencyreport = new quiz_competencyoverview_report();
-        $competencyreport->lastaccess = 1; // $this->lastaccess;
         $quiz = $DB->get_record('quiz', array('id' => $this->cm->instance), '*', MUST_EXIST);
+        $competencyenabled = false;
         $skills = $competencyreport->get_brief_competencies($quiz, $this->cm, $this->course);
         if (count($skills) != 0) {
             // Competencyoverview report button.
-            $competencybuttonurl = new moodle_url($CFG->wwwroot . '/mod/quiz/report.php?id=' . $this->cm->id . '&mode=competencyoverview', array('display' => 'full', 'lastaccess' => $competencyreport->lastaccess));
+            $competencybuttonurl = new moodle_url($CFG->wwwroot . '/mod/quiz/report.php?id=' . $this->cm->id . '&mode=competencyoverview', array('display' => 'full'));
             $competencybuttonname = get_string('competencyoverview', 'quiz_advancedoverview');
             $competencybutton = '<a href="' . $competencybuttonurl . '" class="btn btn-primary">' . $competencybuttonname . '</a>';
 
-            $compcontext = [
+            $response = [
                 'skills' => $skills,
                 'competencybutton' => $competencybutton,
+                'competencyenabled' => true,
             ];
 
-            $response = $compcontext;
         }
 
         return $response;
@@ -1218,6 +1223,7 @@ class quizdata {
 
         $data['skills'] = $this->skills['skills'];
         $data['competencybutton'] = $this->skills['competencybutton'];
+        $data['competencyenabled'] = $this->skills['competencyenabled'];
 
         return $data;
     }

@@ -38,28 +38,56 @@ require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/locallib.php';
  */
 class quiz_competencyoverview_report extends quiz_attempts_report {
 
-    protected $displayfull         = true;
-    public $lastaccess             = 0;
-    public $notgraded              = 0;
-    protected $hlfilterranges      = [];
+    protected $displayfull = true;
+    public $lastaccess = 0;
+    public $notgraded = 0;
+    protected $hlfilterranges = [];
     protected $hlfilterrangescolor = [];
-    protected $fullskills          = [];
-    protected $competencies        = [];
-    protected $questions           = [];
+    protected $fullskills = [];
+    protected $competencies = [];
+    protected $questions = [];
     protected $quiz;
     protected $cm;
     protected $course;
+    protected $users;
+    public $actualusers = [];
+
+    private function get_users() {
+        global $DB;
+
+        // Get enrolled users only with role 'student'.
+        $sql = "SELECT u.*
+                FROM {course} c
+                JOIN {context} ct ON c.id = ct.instanceid
+                JOIN {role_assignments} ra ON ra.contextid = ct.id
+                JOIN {user} u ON u.id = ra.userid
+                JOIN {role} r ON r.id = ra.roleid
+                WHERE c.id = ? AND u.id NOT IN (
+                    SELECT u.id
+                    FROM {course} c
+                            JOIN {context} ct ON c.id = ct.instanceid
+                            JOIN {role_assignments} ra ON ra.contextid = ct.id
+                            JOIN {user} u ON u.id = ra.userid
+                            JOIN {role} r ON r.id = ra.roleid
+                    WHERE c.id = ?
+                    AND r.shortname != 'student'
+                )
+            ";
+
+        return $DB->get_records_sql($sql, [$this->course->id, $this->course->id]);
+    }
 
     public function display($quiz, $cm, $course) {
         global $DB, $OUTPUT, $PAGE, $CFG, $USER;
 
-        $this->quiz   = $quiz;
-        $this->cm     = $cm;
+        $this->quiz = $quiz;
+        $this->cm = $cm;
         $this->course = $course;
+        $this->users = $this->get_users();
 
         $highstring = get_string('high', 'quiz_competencyoverview');
-        $medstring  = get_string('med', 'quiz_competencyoverview');
-        $lowstring  = get_string('low', 'quiz_competencyoverview');
+        $medstring = get_string('med', 'quiz_competencyoverview');
+        $lowstring = get_string('low', 'quiz_competencyoverview');
 
         // Ranges for filtering.
         $this->hlfilterranges = [
@@ -87,8 +115,8 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             $this->notgraded = 1;
         }
 
-        $this->mode                                                             = 'competencyoverview';
-        $this->context                                                          = context_module::instance($cm->id);
+        $this->mode = 'competencyoverview';
+        $this->context = context_module::instance($cm->id);
         list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->get_students_joins($cm, $course);
         $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
 
@@ -116,32 +144,11 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         // Data.
 
-        // Get enrolled users only with role 'student'.
-        $sql = "
-            SELECT u.*
-            FROM {course} c
-            JOIN {context} ct ON c.id = ct.instanceid
-            JOIN {role_assignments} ra ON ra.contextid = ct.id
-            JOIN {user} u ON u.id = ra.userid
-            JOIN {role} r ON r.id = ra.roleid
-            WHERE c.id = ? AND u.id NOT IN (
-                SELECT u.id
-                FROM {course} c
-                        JOIN {context} ct ON c.id = ct.instanceid
-                        JOIN {role_assignments} ra ON ra.contextid = ct.id
-                        JOIN {user} u ON u.id = ra.userid
-                        JOIN {role} r ON r.id = ra.roleid
-                WHERE c.id = ?
-                AND r.shortname != 'student'
-            )
-        ";
-        $users = $DB->get_records_sql($sql, [$course->id, $course->id]);
-
         // All competencies.
         $this->questions = quiz_report_get_significant_questions($quiz);
-        $attempts        = $this->get_attempts($quiz, $this->lastaccess);
+        $attempts = $this->get_attempts($quiz, $this->lastaccess);
 
-        $questionusageids    = [];
+        $questionusageids = [];
         $questionswithgrades = [];
         if ($attempts) {
             foreach ($attempts as $att) {
@@ -159,12 +166,12 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             return;
         }
 
-        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $users, $quiz);
+        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $this->users);
 
-        $head    = [];
+        $head = [];
         $columns = [];
-        $keys    = [];
-        $colid   = 0;
+        $keys = [];
+        $colid = 0;
 
         $head[] = $OUTPUT->render_from_template('quiz_competencyoverview/head_table', ['colid' => $colid]);
 
@@ -174,20 +181,20 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         $counter = 0;
         foreach ($this->fullskills as $key => $skill) {
-            $kkeys                 = str_replace(' ', '-', explode('--', $key)[0]);
-            $compid                = str_replace(' ', '-', explode('--', $key)[1]);
-            $complist[$compid]     = explode('--', $key)[0];
+            $kkeys = str_replace(' ', '-', explode('--', $key)[0]);
+            $compid = str_replace(' ', '-', explode('--', $key)[1]);
+            $complist[$compid] = explode('--', $key)[0];
             list($numquest, $qset) = $this->get_num_questions_by_competency($compid);
 
             $competency = $this->get_competency($compid);
-            $colid      = "";
+            $colid = "";
             if ($competency->parentid) {
                 $competencyparent = $this->get_competency($competency->parentid);
-                $colid            = $competencyparent->shortname;
+                $colid = $competencyparent->shortname;
             }
             // HL filter ranges.
             $htmlranges = get_string('select', 'quiz_competencyoverview') . ' ';
-            $c          = 0;
+            $c = 0;
             foreach ($this->hlfilterranges as $k => $range) {
                 $htmlranges .= '<a style="text-decoration: none;" href="#" class="selected-ranges" data-range="' . $k . '" class="m-r-2">' . $range[2] . '</a>';
                 $c += 1;
@@ -196,24 +203,24 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                 }
             }
             $counter = $counter + 1;
-            $key     = $this->clean_competency_name($key);
-            $colid   = $this->clean_competency_name($colid);
-            $head[]  = $OUTPUT->render_from_template('quiz_competencyoverview/head_table_skill', [
-                'colid'        => $colid,
-                'columnid'     => $counter,
-                'key'          => explode('--', $key)[0],
-                'htmlranges'   => $htmlranges,
-                'keys'         => $kkeys,
-                'numquest'     => $numquest,
-                'compid'       => $compid,
-                'qset'         => $qset,
+            $key = $this->clean_competency_name($key);
+            $colid = $this->clean_competency_name($colid);
+            $head[] = $OUTPUT->render_from_template('quiz_competencyoverview/head_table_skill', [
+                'colid' => $colid,
+                'columnid' => $counter,
+                'key' => explode('--', $key)[0],
+                'htmlranges' => $htmlranges,
+                'keys' => $kkeys,
+                'numquest' => $numquest,
+                'compid' => $compid,
+                'qset' => $qset,
                 'classsuccess' => round($skill['classsuccess'][0]),
             ]);
             $columns[] = 'skill_' . $kkeys;
         }
         foreach (reset($this->fullskills) as $kk => $name) {
-            if (isset($users[$kk])) {
-                $keys[$kk] = $users[$kk]->firstname . ' ' . $users[$kk]->lastname;
+            if (isset($this->users[$kk])) {
+                $keys[$kk] = $this->users[$kk]->firstname . ' ' . $this->users[$kk]->lastname;
             } else {
                 $keys[$kk] = $kk;
             }
@@ -222,10 +229,10 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
         $data = [];
 
         foreach ($keys as $userid => $name) {
-            $row               = [];
-            $i                 = 0;
+            $row = [];
+            $i = 0;
             $row[$columns[$i]] = format_string($name); // Column index.
-            $row['userid']     = $userid;
+            $row['userid'] = $userid;
             foreach ($this->fullskills as $skill => $grade) {
                 $i++;
                 $row[$columns[$i]] = $grade[$userid];
@@ -252,7 +259,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         // Only ID/FN/LN fileds in users list.
         $filteredusers = [];
-        foreach ($users as $key => $u) {
+        foreach ($this->users as $key => $u) {
             $filteredusers[$key] = array_intersect_key(get_object_vars($u), array_flip(['id', 'firstname', 'lastname']));
         }
 
@@ -267,10 +274,11 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             'quiz_competencyoverview/table',
             'load',
             [
-                'quizid'     => $quiz->id,
-                'cmid'       => $cm->id,
-                'courseid'   => $course->id,
+                'quizid' => $quiz->id,
+                'cmid' => $cm->id,
+                'courseid' => $course->id,
                 'lastaccess' => $this->lastaccess,
+                'actualusers' => implode(',', $this->actualusers),
             ]
         );
 
@@ -280,13 +288,14 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
     public function get_init_params_report($quiz, $cm, $course) {
         global $DB, $OUTPUT, $PAGE, $CFG, $USER;
 
-        $this->quiz   = $quiz;
-        $this->cm     = $cm;
+        $this->quiz = $quiz;
+        $this->cm = $cm;
         $this->course = $course;
+        $this->users = $this->get_users();
 
         $highstring = get_string('high', 'quiz_competencyoverview');
-        $medstring  = get_string('med', 'quiz_competencyoverview');
-        $lowstring  = get_string('low', 'quiz_competencyoverview');
+        $medstring = get_string('med', 'quiz_competencyoverview');
+        $lowstring = get_string('low', 'quiz_competencyoverview');
 
         // Ranges for filtering.
         $this->hlfilterranges = [
@@ -306,34 +315,14 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             $this->lastaccess = 1;
         }
 
-        $this->mode    = 'competencyoverview';
+        $this->mode = 'competencyoverview';
         $this->context = context_module::instance($cm->id);
-        // Get enrolled users only with role 'student'.
-        $sql = "
-            SELECT u.*
-            FROM {course} c
-            JOIN {context} ct ON c.id = ct.instanceid
-            JOIN {role_assignments} ra ON ra.contextid = ct.id
-            JOIN {user} u ON u.id = ra.userid
-            JOIN {role} r ON r.id = ra.roleid
-            WHERE c.id = ? AND u.id NOT IN (
-                SELECT u.id
-                FROM {course} c
-                        JOIN {context} ct ON c.id = ct.instanceid
-                        JOIN {role_assignments} ra ON ra.contextid = ct.id
-                        JOIN {user} u ON u.id = ra.userid
-                        JOIN {role} r ON r.id = ra.roleid
-                WHERE c.id = ?
-                AND r.shortname != 'student'
-            )
-        ";
-        $users = $DB->get_records_sql($sql, [$course->id, $course->id]);
 
         // All competencies.
         $this->questions = quiz_report_get_significant_questions($quiz);
-        $attempts        = $this->get_attempts($quiz, $this->lastaccess);
+        $attempts = $this->get_attempts($quiz, $this->lastaccess);
 
-        $questionusageids    = [];
+        $questionusageids = [];
         $questionswithgrades = [];
         if ($attempts) {
             foreach ($attempts as $att) {
@@ -346,18 +335,18 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         $this->competencies = quiz_competencyoverview_get_competencies_by_questions($this->questions);
 
-        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $users, $quiz);
+        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $this->users);
 
         $complist = [];
 
         $counter = 0;
         foreach ($this->fullskills as $key => $skill) {
-            $compid            = str_replace(' ', '-', explode('--', $key)[1]);
+            $compid = str_replace(' ', '-', explode('--', $key)[1]);
             $complist[$compid] = explode('--', $key)[0];
         }
         foreach (reset($this->fullskills) as $kk => $name) {
-            if (isset($users[$kk])) {
-                $keys[$kk] = $users[$kk]->firstname . ' ' . $users[$kk]->lastname;
+            if (isset($this->users[$kk])) {
+                $keys[$kk] = $this->users[$kk]->firstname . ' ' . $this->users[$kk]->lastname;
             } else {
                 $keys[$kk] = $kk;
             }
@@ -368,7 +357,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         // Only ID/FN/LN fileds in users list.
         $filteredusers = [];
-        foreach ($users as $key => $u) {
+        foreach ($this->users as $key => $u) {
             $filteredusers[$key] = array_intersect_key(get_object_vars($u), array_flip(['id', 'firstname', 'lastname']));
         }
 
@@ -379,16 +368,16 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         $params =
             [
-            'hlfilterranges'      => $this->hlfilterranges,
+            'hlfilterranges' => $this->hlfilterranges,
             'hlfilterrangescolor' => $this->hlfilterrangescolor,
-            'assign'              => $assign,
-            'users'               => $filteredusers,
-            'courseid'            => $cm->course,
-            'topskills'           => $topskills,
-            'quizid'              => $this->cm->instance,
-            'cmid'                => $this->cm->id,
-            'complist'            => $complist,
-            'lastaccess'          => $this->lastaccess,
+            'assign' => $assign,
+            'users' => $filteredusers,
+            'courseid' => $cm->course,
+            'topskills' => $topskills,
+            'quizid' => $this->cm->instance,
+            'cmid' => $this->cm->id,
+            'complist' => $complist,
+            'lastaccess' => $this->lastaccess,
         ];
 
         return $params;
@@ -398,7 +387,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
      * Clean "chapter X.Y.Z.N ..." from Hebrew competency name.
      */
     public function clean_competency_name($competency_name) {
-        $pattern         = '/(\d|\.\d)/mu';
+        $pattern = '/(\d|\.\d)/mu';
         $competency_name = preg_replace($pattern, '', $competency_name);
         $competency_name = str_replace('פרק ', ' - ', $competency_name);
         return $competency_name;
@@ -406,7 +395,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
     public function get_num_questions_by_competency($compid) {
         $numquest = count($this->competencies[$compid]);
-        $qset     = implode(',', $this->competencies[$compid]);
+        $qset = implode(',', $this->competencies[$compid]);
 
         return [$numquest, $qset];
     }
@@ -447,8 +436,8 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
     protected function get_graded_questions($questionusageids) {
         global $DB;
 
-        $sort     = $this->lastaccess == 1 ? "DESC" : "ASC";
-        $params   = [];
+        $sort = $this->lastaccess == 1 ? "DESC" : "ASC";
+        $params = [];
         $params[] = $this->quiz->id;
 
         $sql = "SELECT
@@ -498,13 +487,13 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
 
         $attempts = $DB->get_records_sql($sql, $params);
 
-        $result             = [];
+        $result = [];
         $seenUsersQuestions = [];
         foreach ($attempts as $attempt) {
             $key = $attempt->userid . '-' . $attempt->questionid;
             if (!isset($seenUsersQuestions[$key])) {
                 $seenUsersQuestions[$key] = true;
-                $result[]                 = $attempt;
+                $result[] = $attempt;
             }
         }
 
@@ -523,112 +512,71 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
         return $competency;
     }
 
-    protected function get_full_skills($competencies, $questions, $questionswithgrades, $users, $quiz) {
+    protected function get_full_skills($competencies, $questions, $questionswithgrades, $users) {
 
+        $fullskills = [];
+        $defaultskillgrade = 0;
+        $deafultgradedright = 0;
+
+        // Max grade in Quiz.
         $quizmaxgrade = 100;
 
-        $fullskills = $this->calculateSkillGrades($competencies, $questions, $questionswithgrades, $users, $quizmaxgrade);
-        $fullskills = $this->addClassSuccessToSkills($fullskills, $users);
-        $fullskills = $this->addClassScoreToSkills($fullskills, $users);
-
-        return $this->reorderAndSortSkills($fullskills);
-    }
-
-    private function calculateSkillGrades($competencies, $questions, $questionswithgrades, $users, $quizmaxgrade) {
-        $fullskills = [];
         foreach ($competencies as $compid => $questset) {
-            $skillgrade = $this->calculateSkillGradeForCompetency($compid, $questset, $questions, $questionswithgrades, $users);
-            $fullskills = $this->convertSkillGrade($skillgrade, $fullskills, $compid, $quizmaxgrade);
-        }
+            $countcountquestset = count($questset);
+            $skillgrade = [];
 
-        return $this->addNotGradedUsers($fullskills, $users);
-    }
-
-    private function calculateSkillGradeForCompetency($compid, $questset, $questions, $questionswithgrades, $users) {
-        $defaultSkillGrade   = 0;
-        $defaultGradedRight  = 0;
-        $quizMaxGrade        = 100;
-        $totalQuestionsInSet = count($questset);
-        $allMaxMarks         = $this->calculateAllMaxMarks($questset, $questions);
-
-        $skillGrade = $this->calculateSkillGradeForUsers($questset, $questionswithgrades, $users, $defaultSkillGrade, $defaultGradedRight, $totalQuestionsInSet);
-
-        return $this->convertSkillGradeAccordingToMaxGrade($skillGrade, $allMaxMarks, $quizMaxGrade);
-    }
-
-    private function calculateAllMaxMarks($questset, $questions) {
-        $allMaxMarks = 0;
-        foreach ($questset as $q) {
-            $maxMark = array_reduce($questions, function ($carry, $question) use ($q) {
-                return $q == $question->id ? $question->maxmark : $carry;
-            }, 0);
-            $allMaxMarks += $maxMark;
-        }
-        return $allMaxMarks;
-    }
-
-    private function calculateSkillGradeForUsers($questset, $questionswithgrades, $users, $defaultSkillGrade, $defaultGradedRight, $totalQuestionsInSet) {
-        $skillGrade = [];
-
-        foreach ($questset as $q) {
-            foreach ($questionswithgrades as $qg) {
-
-                $user = $users[$qg->userid];
-
-                if ($user) {
-                    $userId = $qg->userid;
-
-                    if (!isset($skillGrade[$userId])) {
-                        $skillGrade[$userId] = [$defaultSkillGrade, $defaultGradedRight, $q == 0 ? 0 : $totalQuestionsInSet, 1];
+            // Max mark quiz slot count for competency.
+            $allmaxmarks = 0;
+            foreach ($questset as $q) {
+                foreach ($questions as $key => $question) {
+                    if ($q == $question->id) {
+                        $maxmark = $question->maxmark;
                     }
+                }
+                $allmaxmarks = $allmaxmarks + $maxmark;
+                $gradedright = 1;
+                foreach ($questionswithgrades as $qg) {
+                    $questweight = $maxmark * $qg->fraction;
 
-                    if ($qg->questionid == $q) {
-                        $actualQuestWeight = $qg->fraction;
-                        $actualGradedRight = 1;
-
-                        $skillGrade[$userId][0] += $actualQuestWeight;
-                        $skillGrade[$userId][1] += $actualGradedRight;
+                    $filter = array_filter($users, function ($u) use ($qg) {
+                        return ($u->id == $qg->userid);
+                    });
+                    if ($filter) {
+                        if (!isset($skillgrade[$qg->userid][0])) {
+                            $skillgrade[$qg->userid][0] = $defaultskillgrade;
+                            $skillgrade[$qg->userid][1] = $deafultgradedright;
+                            $skillgrade[$qg->userid][2] = $q == 0 ? 0 : $countcountquestset;
+                            $skillgrade[$qg->userid][3] = 1;
+                        }
+                        if ($qg->questionid == $q) {
+                            $actualquestweight = $questweight;
+                            $actualgradedright = $gradedright;
+                            $skillgrade[$qg->userid][0] = $skillgrade[$qg->userid][0] + $actualquestweight;
+                            $skillgrade[$qg->userid][1] = $skillgrade[$qg->userid][1] + $actualgradedright;
+                        }
                     }
                 }
             }
+
+            // Convert skill grade according quiz max grade.
+            foreach ($skillgrade as $key => $sg) {
+                $skillgrade[$key][0] = $skillgrade[$key][0] / $allmaxmarks * $quizmaxgrade;
+            }
+
+            $competency = $this->get_competency($compid);
+            $parentcompetencyshortname = '';
+            // Check for parent competency.
+            if ($parentcompetency = $this->get_competency($competency->parentid)) {
+                $parentcompetencyshortname = $this->get_competency($competency->parentid)->shortname . ' ';
+            }
+            $fullskills[$parentcompetencyshortname . $competency->shortname . "--" . $compid] = $skillgrade;
         }
-        return $skillGrade;
-    }
 
-    private function convertSkillGradeAccordingToMaxGrade($skillGrade, $allMaxMarks, $quizMaxGrade) {
-        foreach ($skillGrade as $key => $sg) {
-            $skillGrade[$key][0] = ($sg[0] / $allMaxMarks) * $quizMaxGrade;
-        }
-        return $skillGrade;
-    }
+        reset($fullskills);
+        $firstfullskill = $fullskills[key($fullskills)];
+        $diff = array_diff_key($users, $firstfullskill);
 
-    private function convertSkillGrade($skillgrade, $fullskills, $compid, $quizmaxgrade) {
-
-        // TODO: Do we need this?
-        // Convert skill grade according to quiz max grade.
-        // foreach ($skillgrade as $key => $sg) {
-        //     $skillgrade[$key][0] = $skillgrade[$key][0] / ($sg[2] * $quizmaxgrade);
-        // }
-
-        // Now, we add this skillgrade to our fullskills array based on the competency id
-        $competency                = $this->get_competency($compid); // Assuming you have the get_competency function
-        $parentcompetencyshortname = '';
-
-        // Check for parent competency.
-        if ($parentcompetency = $this->get_competency($competency->parentid)) {
-            $parentcompetencyshortname = $this->get_competency($competency->parentid)->shortname . ' ';
-        }
-        $fullskills[$parentcompetencyshortname . $competency->shortname . "--" . $compid] = $skillgrade;
-
-        return $fullskills;
-    }
-
-    private function addNotGradedUsers($fullskills, $users) {
         if ($this->notgraded == 1) {
-            reset($fullskills);
-            $firstfullskill = $fullskills[key($fullskills)];
-            $diff           = array_diff_key($users, $firstfullskill);
-
             // Add other not graded users.
             foreach ($fullskills as $skillid => $stud) {
                 foreach ($diff as $user) {
@@ -640,13 +588,10 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                 $fullskills[$skillid] = $stud;
             }
         }
-        return $fullskills;
-    }
 
-    private function addClassSuccessToSkills($fullskills, $users) {
-        // Class Success Calculation
+        // Class Success.
         $submitteduserscount = 0;
-        $skillcount          = 0;
+        $skillcount = 0;
         foreach ($fullskills as $skillid => $stud) {
             $sumsuccessclassstud = 0;
             $skillcount++;
@@ -655,7 +600,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                     if ($skillcount == 1) {
                         $submitteduserscount++;
                     }
-                    $sumsuccessclassstud += $stud[$user->id][0];
+                    $sumsuccessclassstud = $stud[$user->id][0] + $sumsuccessclassstud;
                 }
             }
             if ($submitteduserscount != 0) {
@@ -664,21 +609,8 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
                 $fullskills[$skillid]['classsuccess'][0] = 0;
             }
         }
-        return $fullskills;
-    }
 
-    private function addClassScoreToSkills($fullskills, $users) {
-        $submitteduserscount = 0; // Initialize
-        // Identify the count of users who submitted
-        foreach ($fullskills as $skillid => $stud) {
-            foreach ($users as $user) {
-                if (isset($stud[$user->id][0]) && $stud[$user->id][3] != 0) {
-                    $submitteduserscount++;
-                    break; // We just need to count once per skill
-                }
-            }
-        }
-
+        // Class Score.
         foreach ($fullskills as $skillid => $stud) {
             $score = 0;
             foreach ($users as $user) {
@@ -689,36 +621,40 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             if ($submitteduserscount != 0) {
                 $fullskills[$skillid]['classscore'][1] = $score;
                 $fullskills[$skillid]['classscore'][2] = $submitteduserscount;
+                $a = $fullskills[$skillid]['classscore'][1];
+                $b = $fullskills[$skillid]['classscore'][2];
             } else {
                 $fullskills[$skillid]['classscore'][1] = 0;
                 $fullskills[$skillid]['classscore'][2] = 0;
             }
+
         }
-        return $fullskills;
-    }
 
-    private function reorderAndSortSkills($fullskills) {
+        // Reoreder stats.
         $newfullskills = [];
-
         foreach ($fullskills as $name => $skill) {
             $newfullskill = [];
             foreach ($skill as $key => $value) {
-                if ($key == 'classsuccess' || $key == 'classscore') {
+                if ($key == 'classsuccess') {
+                    $newfullskill[$key] = $value;
+                    unset($skill[$key]);
+                } else if ($key == 'classscore') {
                     $newfullskill[$key] = $value;
                     unset($skill[$key]);
                 }
             }
             foreach ($skill as $key => $value) {
                 $newfullskill[$key] = $value;
+                array_push($this->actualusers, $key);
             }
             $newfullskills[$name] = $newfullskill;
         }
 
         // Sort by classsuccess.
         uasort($newfullskills, function ($item1, $item2) {
-            return $item1['classsuccess'][0] <=> $item2['classsuccess'][0];
+            return $item1['classsuccess'] <=> $item2['classsuccess'];
         });
-
+        $this->actualusers = object_array_unique($this->actualusers);
         return $newfullskills;
     }
 
@@ -734,15 +670,16 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
     public function get_brief_competencies($quiz, $cm, $course) {
         global $DB, $OUTPUT, $PAGE, $CFG, $USER;
 
-        $this->quiz   = $quiz;
-        $this->cm     = $cm;
+        $this->quiz = $quiz;
+        $this->cm = $cm;
         $this->course = $course;
+        $this->users = $this->get_users();
 
         $skills = [];
 
         $highstring = get_string('high', 'quiz_competencyoverview');
-        $medstring  = get_string('med', 'quiz_competencyoverview');
-        $lowstring  = get_string('low', 'quiz_competencyoverview');
+        $medstring = get_string('med', 'quiz_competencyoverview');
+        $lowstring = get_string('low', 'quiz_competencyoverview');
 
         // Ranges for filtering.
         $this->hlfilterranges = [
@@ -762,37 +699,16 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             $this->displayfull = false;
         }
 
-        $this->mode    = 'competencyoverview';
+        $this->mode = 'competencyoverview';
         $this->context = context_module::instance($cm->id);
 
         // Data.
 
-        // Get enrolled users only with role 'student'.
-        $sql = "
-            SELECT u.*
-            FROM {course} c
-            JOIN {context} ct ON c.id = ct.instanceid
-            JOIN {role_assignments} ra ON ra.contextid = ct.id
-            JOIN {user} u ON u.id = ra.userid
-            JOIN {role} r ON r.id = ra.roleid
-            WHERE c.id = ? AND u.id NOT IN (
-                SELECT u.id
-                FROM {course} c
-                        JOIN {context} ct ON c.id = ct.instanceid
-                        JOIN {role_assignments} ra ON ra.contextid = ct.id
-                        JOIN {user} u ON u.id = ra.userid
-                        JOIN {role} r ON r.id = ra.roleid
-                WHERE c.id = ?
-                AND r.shortname != 'student'
-            )
-        ";
-        $users = $DB->get_records_sql($sql, [$course->id, $course->id]);
-
         // All competecies.
         $this->questions = quiz_report_get_significant_questions($quiz);
-        $attempts        = $this->get_attempts($quiz, $this->lastaccess);
+        $attempts = $this->get_attempts($quiz, $this->lastaccess);
 
-        $questionusageids    = [];
+        $questionusageids = [];
         $questionswithgrades = [];
         if ($attempts) {
             foreach ($attempts as $att) {
@@ -810,24 +726,24 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
             return [];
         }
 
-        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $users, $quiz);
+        $this->fullskills = $this->get_full_skills($this->competencies, $this->questions, $questionswithgrades, $this->users);
 
         foreach ($this->fullskills as $key => $skill) {
-            $compid                = str_replace(' ', '-', explode('--', $key)[1]);
+            $compid = str_replace(' ', '-', explode('--', $key)[1]);
             list($numquest, $qset) = $this->get_num_questions_by_competency($compid);
-            $rate                  = $skill['classsuccess'][0];
+            $rate = $skill['classsuccess'][0];
             foreach ($this->hlfilterrangescolor as $range) {
                 if ($rate >= $range[0] && $rate <= $range[1]) {
                     $class = $range[3];
                 }
             }
-            $sk               = new stdClass();
-            $key              = $this->clean_competency_name($key);
-            $sk->name         = explode('--', $key)[0];
+            $sk = new stdClass();
+            $key = $this->clean_competency_name($key);
+            $sk->name = explode('--', $key)[0];
             $sk->numquestions = $numquest;
-            $sk->rate         = round($rate);
-            $sk->colorclass   = $class;
-            $skills[]         = $sk;
+            $sk->rate = round($rate);
+            $sk->colorclass = $class;
+            $skills[] = $sk;
         }
 
         return $skills;

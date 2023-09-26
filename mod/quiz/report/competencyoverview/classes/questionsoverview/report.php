@@ -37,6 +37,8 @@ require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questi
  */
 class quiz_questionsoverview_report extends quiz_attempts_report {
 
+    public $actualusers = '';
+
     public function get_html_table($compid, $quiz, $cm, $course, $qset) {
         global $DB, $OUTPUT, $PAGE;
 
@@ -146,6 +148,11 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
                                      WHERE qqr.questionusageid = quiza.uniqueid
                                 ), -1) <> -1";
             }
+
+            if ($this->actualusers != '') {
+                $where .= ' AND u.id IN (' . $this->actualusers . ') ';
+            }
+
             $table->set_sql($fields, $from, $where, $params);
 
             // Define table columns.
@@ -235,6 +242,7 @@ class quiz_questionsoverview_report extends quiz_attempts_report {
             true,
             array('context' => context_course::instance($course->id))
         );
+
         $table = new quiz_questionsoverview_table(
             $quiz,
             $this->context,

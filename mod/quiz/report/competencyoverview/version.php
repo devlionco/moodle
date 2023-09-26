@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2020062400;
+$plugin->version      = 2023092202;
 $plugin->requires     = 2017050500;
 $plugin->component    = 'quiz_competencyoverview';
 $plugin->dependencies = array(

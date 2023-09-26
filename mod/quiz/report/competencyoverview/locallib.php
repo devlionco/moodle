@@ -62,11 +62,11 @@ function quiz_competencyoverview_get_courses() {
         if (!has_capability('moodle/course:update', context_course::instance($course->id), $USER->id)) {
             continue;
         }
-        $tmp              = array();
-        $tmp['id']        = $course->id;
-        $tmp['fullname']  = $course->fullname;
+        $tmp = array();
+        $tmp['id'] = $course->id;
+        $tmp['fullname'] = $course->fullname;
         $tmp['shortname'] = $course->shortname;
-        $result[]         = $tmp;
+        $result[] = $tmp;
     }
 
     return $result;
@@ -100,11 +100,11 @@ function quiz_competencyoverview_get_activities($courseid) {
         if (!has_capability('moodle/course:update', context_course::instance($course->id), $USER->id)) {
             continue;
         }
-        $tmp              = array();
-        $tmp['id']        = $course->id;
-        $tmp['fullname']  = $course->fullname;
+        $tmp = array();
+        $tmp['id'] = $course->id;
+        $tmp['fullname'] = $course->fullname;
         $tmp['shortname'] = $course->shortname;
-        $result[]         = $tmp;
+        $result[] = $tmp;
     }
 
     return $result;
@@ -117,25 +117,25 @@ function quiz_competencyoverview_get_activities($courseid) {
 function quiz_competencyoverview_get_items($skills) {
     global $OUTPUT, $PAGE, $DB, $CFG;
 
-    $numgroups        = 3;
+    $numgroups = 3;
     $numitemspergroup = 3;
 
     $allgroups = [];
     $PAGE->set_context(context_system::instance());
     require_sesskey();
-    $post               = array();
+    $post = array();
     $post['competency'] = json_encode($skills);
     // $post['category_id'] = local_community_get_oercatalog_categoryid();
     $oercatalog = new filterPage($post);
     $oercatalog->setAmountItemsOnPage(0);
-    $obj         = $oercatalog->ajaxFilterDataCompetency();
+    $obj = $oercatalog->ajaxFilterDataCompetency();
     $sorteditems = quiz_competencyoverview_group_items($obj->activities);
 
     // Group 3 X 3.
     $groupeditems = [];
     $groupcounter = 0;
     foreach ($skills as $keyskill => $skillid) {
-        $group       = [];
+        $group = [];
         $itemcounter = 0;
 
         // Sort by skill.
@@ -169,17 +169,17 @@ function quiz_competencyoverview_get_items($skills) {
         foreach ($group as $item) {
             $block = [];
             // Activity data.
-            $data                = community_oercatalog_prepare_box_data($obj, $item);
+            $data = community_oercatalog_prepare_box_data($obj, $item);
             $data->choose_button = true;
-            $html                = $OUTPUT->render_from_template('quiz_competencyoverview/list_box_item', $data);
-            $block['id']         = $item->activity_id;
-            $block['item']       = $html;
+            $html = $OUTPUT->render_from_template('quiz_competencyoverview/list_box_item', $data);
+            $block['id'] = $item->activity_id;
+            $block['item'] = $html;
 
             $items[] = $block;
         }
 
         // Skillname.
-        $skillname   = $DB->get_record('competency', ['id' => $key]);
+        $skillname = $DB->get_record('competency', ['id' => $key]);
         $allgroups[] = [$skillname->shortname, $items];
     }
 
@@ -190,7 +190,7 @@ function quiz_competencyoverview_get_items($skills) {
  * Get questions by competency table
  * @return obj
  */
-function quiz_competencyoverview_get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess) {
+function quiz_competencyoverview_get_questions_by_competency_table($compid, $cmid, $quizid, $courseid, $qset, $lastaccess, $actualusers) {
     global $OUTPUT, $PAGE, $DB, $CFG;
 
     $PAGE->set_context(context_system::instance());
@@ -207,9 +207,10 @@ function quiz_competencyoverview_get_questions_by_competency_table($compid, $cmi
         print_error('invalidcoursemodule');
     }
 
-    $report             = new quiz_questionsoverview_report();
+    $report = new quiz_questionsoverview_report();
     $report->lastaccess = $lastaccess;
-    $embedhtml          = $report->get_html_table($compid, $quiz, $cm, $course, $qset);
+    $report->actualusers = $actualusers;
+    $embedhtml = $report->get_html_table($compid, $quiz, $cm, $course, $qset);
 
     return $embedhtml;
 }
@@ -228,17 +229,17 @@ function quiz_competencyoverview_group_items(array $items) {
 
         // Base score of activity.
         $competency = core_competency\api::list_course_module_competencies_in_course_module($item->activity_id);
-        $compscore  = [];
+        $compscore = [];
         foreach ($competency as $key => $comp) {
             $compscore[$comp->get('competencyid')] = 1;
         }
 
         // For quiz type add quiestions score.
-        $questions     = [];
+        $questions = [];
         $qcompetencies = [];
         if ($item->mod_type == 'quiz' || $item->mod_type == 'activequiz') {
-            $quiz          = $DB->get_record('quiz', array('id' => $cm->instance));
-            $questions     = quiz_report_get_significant_questions($quiz);
+            $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
+            $questions = quiz_report_get_significant_questions($quiz);
             $qcompetencies = quiz_competencyoverview_get_competencies_by_questions($questions);
 
             foreach ($qcompetencies as $key => $qcomp) {
@@ -252,7 +253,7 @@ function quiz_competencyoverview_group_items(array $items) {
         }
 
         $item->compscore = $compscore;
-        $goupeditems[]   = $item;
+        $goupeditems[] = $item;
     }
 
     return $goupeditems;
@@ -268,7 +269,7 @@ function quiz_competencyoverview_get_item($cmid) {
 
     if ($cmid) {
         $activity = new \community_oer\activity_oer;
-        if($element = $activity->single_cmid_render_data($cmid, 'social')){
+        if ($element = $activity->single_cmid_render_data($cmid, 'social')) {
             $block = [];
 
             // Activity data.
@@ -308,11 +309,11 @@ function quiz_competencyoverview_get_targetsections($currentcourseid) {
         if (!has_capability('moodle/course:update', context_course::instance($course->id), $USER->id)) {
             continue;
         }
-        $tmp              = array();
-        $tmp['id']        = $course->id;
-        $tmp['fullname']  = $course->fullname;
+        $tmp = array();
+        $tmp['id'] = $course->id;
+        $tmp['fullname'] = $course->fullname;
         $tmp['shortname'] = $course->shortname;
-        $result[]         = $tmp;
+        $result[] = $tmp;
     }
 
     return $result;
@@ -344,9 +345,9 @@ function quiz_competencyoverview_message_to_students($metadata, $newactivityid) 
 
     $metadata = (object) $metadata;
 
-    $conditions               = (array) $metadata->conditions;
+    $conditions = (array) $metadata->conditions;
     $conditions['activityid'] = $newactivityid;
-    $newaa                    = $DB->get_record('quiz_competencyoverview_aa', $conditions);
+    $newaa = $DB->get_record('quiz_competencyoverview_aa', $conditions);
 
     if (!$newaa) {
         $newaa = $DB->insert_record('quiz_competencyoverview_aa', $conditions);
@@ -385,13 +386,13 @@ function quiz_competencyoverview_message_to_students($metadata, $newactivityid) 
         ';
         $module = $DB->get_record_sql($sql, array($newactivityid));
 
-        $a       = new stdClass;
+        $a = new stdClass;
         $a->link = $CFG->wwwroot . '/mod/' . $module->name . '/view.php?id=' . $newactivityid;
 
-        $fullmessage  = get_string('fullmessagehtml_to_student', 'quiz_competencyoverview', $a) . '<br>' . $metadata->message;
+        $fullmessage = get_string('fullmessagehtml_to_student', 'quiz_competencyoverview', $a) . '<br>' . $metadata->message;
         $smallmessage = get_string('shortmessage_to_student', 'quiz_competencyoverview');
 
-        $admins   = get_admins();
+        $admins = get_admins();
         $userfrom = array_shift($admins);
 
         $usertoobj = $DB->get_record('user', ['id' => $userto]);
@@ -437,9 +438,9 @@ function quiz_competencyoverview_get_init_params($quizid, $cmid, $courseid, $las
         print_error('invalidcoursemodule');
     }
 
-    $report             = new quiz_competencyoverview_report();
+    $report = new quiz_competencyoverview_report();
     $report->lastaccess = $lastaccess;
-    $params             = $report->get_init_params_report($quiz, $cm, $course);
+    $params = $report->get_init_params_report($quiz, $cm, $course);
 
     return $params;
 }
@@ -553,12 +554,12 @@ function add_competency_to_question($qid, $competencyid) {
     //    throw new coding_exception('Cannot add a competency to a question if it does not belong to the course');
     //}
 
-    $record               = new stdClass();
-    $record->qid          = $qid;
+    $record = new stdClass();
+    $record->qid = $qid;
     $record->competencyid = $competencyid;
 
     $questioncompetency = new quiz_competencyoverview\question_competency();
-    $exists             = $questioncompetency::get_records(array('qid' => $qid, 'competencyid' => $competencyid));
+    $exists = $questioncompetency::get_records(array('qid' => $qid, 'competencyid' => $competencyid));
     if (!$exists) {
         $questioncompetency->from_record($record);
         if ($questioncompetency->create()) {

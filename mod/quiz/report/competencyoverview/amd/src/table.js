@@ -31,9 +31,12 @@ define([
     "core/str",
     "community_social/loadingSpinner",
 ], function($, jqui, ModalFactory, ModalEvents, Ajax, Str, loading) {
-    return {
 
-        load: function(quizid, cmid, courseid, lastaccess) {
+    let actualusers = '';
+
+    return {
+        load: function (quizid, cmid, courseid, lastaccess, _actualusers) {
+            actualusers = _actualusers;
             Ajax.call([
                 {
                     methodname: "quiz_competencyoverview_get_init_params",
@@ -852,9 +855,10 @@ define([
 
                     </div>
                     <div id='aa_actions' style='visibility: hidden;' class='d-flex mt-5'>
-                    <button id='backbtn' class="btn competencies_wizard-button competencies_wizard-button-outline mr-20">`
+                    <button id='backbtn' class="btn btn-secondary competencies_wizard-button 
+                    competencies_wizard-button-outline mr-20">`
                         + langStrings[18] + `</button>
-                    <button id='nextbtn' class="btn competencies_wizard-button d-none">` + langStrings[16] + `</button>
+                    <button id='nextbtn' class="btn btn-primary competencies_wizard-button d-none">` + langStrings[16] + `</button>
                     </div>
                     </div>
 
@@ -1075,6 +1079,7 @@ define([
                             'courseid': courseid,
                             'qset': qset,
                             'lastaccess': lastaccess,
+                            'actualusers': actualusers,
                         },
                         done: items => {
                             loading.remove();
