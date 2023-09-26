@@ -123,6 +123,20 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $users = array_keys( $assignment->list_participants($currentgroup, true));
+
+        // EC-160 Unset teachers from grading table.
+        $context = \context_course::instance($assignment->get_course()->id);
+        foreach ($users as $key => $userid) {
+            $roles = get_user_roles($context, $userid);
+            if (count($roles) == 1) {
+                foreach ($roles as $role) {
+                    if (in_array($role->shortname, ['teacher', 'editingteacher'])) {
+                        unset($users[$key]);
+                    }
+                }
+            }
+        }
+
         if (count($users) == 0) {
             // Insert a record that will never match to the sql is still valid.
             $users[] = -1;
