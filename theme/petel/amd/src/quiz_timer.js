@@ -19,7 +19,7 @@
  * Javascript controller for the aside blocks.
  *
  * @module     theme_petel/quiz_timer
- * @package    theme_petel
+ * @package
  * @copyright  2019 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.7
@@ -85,19 +85,24 @@ const twoDigit = (num) => {
     }
 };
 
-
+const checkTimer = () => {
+if (+TIMER.timelimit === 0) {
+    SELECTORS.quizTimecounterLabel.innerText = '';
+}
+};
 const updateTimer = () => {
     let secondslefttotal = Math.floor((TIMER.endtime - new Date().getTime()) / 1000);
 
 
-    if (secondslefttotal < 0) {
+    if (secondslefttotal < 0 || secondslefttotal === 0) {
         stop();
 
         SELECTORS.timeupInput.value = 1;
-        var form = SELECTORS.timeupInput.closest('form');
+        let form = SELECTORS.timeupInput.closest('form');
         if (form.querySelector('input[name=finishattempt]')) {
             form.querySelector('input[name=finishattempt]')[0].value = 0;
         }
+        SELECTORS.quizTimecounterLabel.innerText = STRINGS.timeisup;
         // M.core_formchangechecker.set_form_submitted();
         form.submit();
         return;
@@ -163,7 +168,7 @@ const updateTimer = () => {
         SELECTORS.timeLeftInfo.innerText = STRINGS.timeStr(secondslefttotal * 1000);
     }
     // Arrange for this method to be called again soon.
-    TIMER.timeoutid = setTimeout(updateTimer, 60000);
+    TIMER.timeoutid = setTimeout(updateTimer, 30000);
 };
 
 
@@ -368,8 +373,9 @@ export const init = function (start, timeleft, timelimit,
                 units: ["h", "m"],
                 maxDecimalPoints: 0
             });
+            TIMER.timelimit = +timelimit;
             initSelectors();
-
+            checkTimer();
             // If quiz has timelimit in preferencess.
             if (TIMER.timerEnabled) {
                 TIMER.start = +start;
@@ -398,12 +404,9 @@ export const init = function (start, timeleft, timelimit,
                     checkState();
                     setReminder(REMINDER.type, REMINDER.isVisible, REMINDER.cmid);
                 };
+                updateTimer();
 
             }
-            // TODO: need to be checked!
-            /* else {
-                checkState();
-            } */
 
             SELECTORS.quizProgressLabel.innerText = answered;
             SELECTORS.quizTotalLabel.innerText = totalquestions;
@@ -414,7 +417,6 @@ export const init = function (start, timeleft, timelimit,
                     stop();
                 };
             }
-
             return;
 
         })
