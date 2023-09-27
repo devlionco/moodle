@@ -288,6 +288,10 @@ export default class FlexsectionComponent extends Component {
                 if (response.result) {
                     const data = JSON.parse(response.data);
 
+                    if (data.cmlist === undefined) {
+                        data.cmlist = [];
+                    }
+
                     const {html, js} = await Templates.renderForPromise(template, data.cmlist);
                     await Templates.replaceNodeContents(sectionToReplace, html, js);
                     self.reactive.dispatch('sectionState', [sectionId]);

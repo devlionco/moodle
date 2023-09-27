@@ -280,8 +280,6 @@ class content extends \core_courseformat\output\local\content {
      * @return array data context for a mustache template
      */
     protected function export_sections(\renderer_base $output): array{
-        global $DB;
-
         $format  = $this->format;
         $course  = $format->get_course();
         $modinfo = $this->format->get_modinfo();
@@ -318,18 +316,11 @@ class content extends \core_courseformat\output\local\content {
             $sections = array_merge($sections, $stealthsections);
         }
 
-        // PTL-9923.
+        // PTL-9923, EC-159.
         if (has_capability('moodle/course:viewhiddensections', \context_course::instance($course->id))) {
             return $sections;
         } else {
-            foreach ($sections as $key => $section) {
-
-                $obj = $DB->get_record('course_sections', ['id' => $section->id]);
-                if ($obj && !$obj->visible) {
-                    unset($sections[$key]);
-                }
-            }
-
+            $this->recursive_unset_sections($sections);
             return array_values($sections);
         }
     }
@@ -351,4 +342,24 @@ class content extends \core_courseformat\output\local\content {
                 ($viewedsection && $s->section == $viewedsection);
         }));
     }
+
+    private function recursive_unset_sections(&$sections){
+        global $DB;
+
+        foreach ($sections as $key => $section) {
+            $obj = $DB->get_record('course_sections', ['id' => $section->id]);
+            if ($obj && !$obj->visible) {
+                unset($sections[$key]);
+                $sections = array_values($sections);
+                continue;
+            }
+
+            if(isset($section->subsections) && !empty($section->subsections)){
+                $subsections = $section->subsections;
+                $this->recursive_unset_sections($subsections);
+                $sections[$key]->subsections = $subsections;
+            }
+        }
+    }
+
 }
