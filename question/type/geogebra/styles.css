@@ -22,5 +22,5 @@ html[dir=rtl] .ggbcontainer{
 }
 
 #page-mod-quiz-review .highlightDraggers{
-    width: 700px !important;
+    min-width: 950px !important;
 }
