@@ -20,3 +20,7 @@
 html[dir=rtl] .ggbcontainer{
     direction: rtl;
 }
+
+#page-mod-quiz-review .highlightDraggers{
+    width: 700px !important;
+}
