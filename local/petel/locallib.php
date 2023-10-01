@@ -373,6 +373,42 @@ function local_petel_duplicate_course($courseid, $categoryid, $coursename = null
     $rc->execute_plan();
     $rc->destroy();
 
+    // Copy flexsections image.
+    $fs = get_file_storage();
+    $oldsections = [];
+    $oldcontext = \context_course::instance($courseid);
+    foreach ($DB->get_records('course_sections', ['course' => $courseid]) as $item) {
+        $oldsections[] = $item->id;
+    }
+
+    $newsections = [];
+    $newcontext = \context_course::instance($newcourseid);
+    foreach ($DB->get_records('course_sections', ['course' => $newcourseid]) as $item) {
+        $newsections[] = $item->id;
+    }
+
+    foreach ($oldsections as $key => $item) {
+        $files = $fs->get_area_files($oldcontext->id, 'format_flexsections', 'image', $oldsections[$key]);
+        foreach ($files as $f) {
+            if ($f->get_filesize() != 0 || $f->get_filename() != '.') {
+                $filename = str_replace(' ', '_', $f->get_filename());
+                $fileinfo = array(
+                        'contextid' => $newcontext->id,
+                        'component' => $f->get_component(),
+                        'filearea'  => $f->get_filearea(),
+                        'itemid'    => $newsections[$key],
+                        'filepath'  => '/',
+                        'filename'  => $filename,
+                );
+
+                // Save file.
+                $fs->create_file_from_string($fileinfo, $f->get_content());
+
+                break;
+            }
+        }
+    }
+
     $course = $DB->get_record('course', array('id' => $newcourseid), '*', MUST_EXIST);
     $course->fullname = $fullname;
     $course->shortname = $shortname;
