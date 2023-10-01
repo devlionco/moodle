@@ -292,7 +292,7 @@ class section extends \core_courseformat\output\local\content\section {
             $modecircle = false;
             $modeline = true;
         }
-        //echo '<pre>';print_r($percentage);
+
         return [
             'total' => $total,
             'completed' => $completed,

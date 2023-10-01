@@ -380,27 +380,33 @@ class format_flexsections_external extends external_api {
                 ];
             }
         }else{
+
             // Student.
             $waitingforsubmission = $failed = $notsubmitted = 0;
 
             foreach ($cmids as $cmid){
-                $cm = $modinfo->get_cm($cmid);
-                if ($tmod = format_flexsections_cm_submission_data($cm)) {
+                try {
+                    $cm = $modinfo->get_cm($cmid);
 
-                    // Status הוגש וטרם נבדק.
-                    if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
-                        $waitingforsubmission++;
-                    }
+                    if ($tmod = format_flexsections_cm_submission_data($cm)) {
 
-                    // Status failed.
-                    if ($tmod->failed) {
-                        $failed++;
-                    }
+                        // Status הוגש וטרם נבדק.
+                        if ($tmod->submitted && $tmod->requiregrade && !$tmod->grade) {
+                            $waitingforsubmission++;
+                        }
 
-                    // Status לאחר תאריך הגשה סופי.
-                    if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
-                        $notsubmitted++;
+                        // Status failed.
+                        if ($tmod->failed) {
+                            $failed++;
+                        }
+
+                        // Status לאחר תאריך הגשה סופי.
+                        if (!$tmod->submitted && $tmod->cutoffdate && $tmod->cutoffdate <= time()) {
+                            $notsubmitted++;
+                        }
                     }
+                } catch (Exception $e) {
+
                 }
             }
 
