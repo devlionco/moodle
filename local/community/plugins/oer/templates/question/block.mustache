@@ -248,7 +248,7 @@ require(['community_sharequestion/main', 'community_oer/inview', 'community_oer/
             let qid = parent.data('qid');
             let spinner = parent.find('.raspberry_loading');
             spinner.show();
-            let html = '<iframe id="iframe' + qid + '" scrolling="no" style="width:100%; height:300px;" src="' + M.cfg.wwwroot + '/local/community/plugins/oer/previewquestion.php?id=' + qid + '&behaviour=adaptive"></iframe>';
+            let html = '<iframe id="iframe' + qid + '" scrolling="yes" style="width:100%; height:300px;" src="' + M.cfg.wwwroot + '/local/community/plugins/oer/previewquestion.php?id=' + qid + '&behaviour=adaptive"></iframe>';
             parent.find('.question-collapse-inner').html(html);
             document.querySelector('#iframe' + qid).addEventListener('load', function () {
                 spinner = parent.find('.raspberry_loading');

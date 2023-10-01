@@ -198,12 +198,11 @@
 .activity-title h2 {
   font-size: 1.125rem;
   overflow-wrap: break-word;
-  max-width: 70%;
   line-height: 1.25;
 }
 .activity-title .activity-title-info {
   line-height: 1.6;
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 
 .teacher-img {
@@ -219,7 +218,7 @@
   padding-left: 0.875rem;
   padding-right: 0.875rem;
   line-height: 2rem;
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 
 .activity-text {
