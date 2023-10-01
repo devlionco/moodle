@@ -310,7 +310,7 @@ class form_mathlive implements renderable {
 
         $identificator = str_replace( ':', '_', $name);
 
-        if($default == null){
+        if($default == null || !isset($choices[$default])){
             $formula = get_string('choose');
             $value = 0;
         }else{

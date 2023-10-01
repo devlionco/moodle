@@ -87,7 +87,7 @@ class qtype_combined_gapselectmath_embedded_renderer extends qtype_renderer
                 $selecthtml = '<span class="ml-1 mr-2"></span>';
             }
         } else {
-            $selecthtml = $mathlive->select_render($qa->get_qt_field_name($fieldname), $selectoptions);
+            $selecthtml = $mathlive->select_render($qa->get_qt_field_name($fieldname), $selectoptions, $value);
         }
 
         $selecthtml .= ' ' . $feedbackimage;
