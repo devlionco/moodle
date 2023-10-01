@@ -34,18 +34,29 @@ class custom_navigation {
     public static function secondary_navigation(): bool {
         global $PAGE, $COURSE, $USER;
 
+        $coursecontext = \context_course::instance($COURSE->id);
+        $roles = get_user_roles($coursecontext, $USER->id);
+
         // Add items.
 
-        // PTL-9414.
-        if (in_array($PAGE->pagetype,
-                ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
-                        'question-edit', 'mod-quiz-override', ''])) {
+        // Add advanced overview. PTL-9414.
+        if (in_array($PAGE->pagetype, ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
+                                        'question-edit', 'mod-quiz-override', ''])) {
             $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
             if ($cmid) {
                 $context = \context_module::instance($cmid);
-                if (has_capability('mod/quiz:manage', $context)) {
+
+                $flagpermission = false;
+                foreach ($roles as $role) {
+                    if (in_array($role->shortname, ['teacher'])) {
+                        $flagpermission = true;
+                    }
+                }
+
+                if (has_capability('mod/quiz:manage', $context) || $flagpermission) {
                     $advancedoverviewurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
-                    $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl);
+                    $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl,
+                            $PAGE->secondarynav::TYPE_CUSTOM, 'reportadvancedoverview', 'reportadvancedoverview');
                 }
             }
         }
@@ -58,6 +69,7 @@ class custom_navigation {
                 'questionbank',
                 'metadata'
         ];
+
         $lists = $PAGE->secondarynav->get_children_key_list();
         foreach ($movetootherlist as $key) {
             if (in_array($key, $lists)) {
@@ -69,9 +81,6 @@ class custom_navigation {
             return true;
         }
 
-        $context = \context_course::instance($COURSE->id);
-        $roles = get_user_roles($context, $USER->id);
-
         foreach ($roles as $role) {
             if (in_array($role->shortname, ['manager'])) {
                 return true;
@@ -80,16 +89,33 @@ class custom_navigation {
 
         // Remove items.
 
-        // PTL-10144. Remove all not relevant items for students.
-        $coursecontext = \context_course::instance($COURSE->id);
+        // PTL-10144. PTL-9713. PTL-9383. PTL-9730. Remove all not relevant items for students.
+        // Exclude links from menu (מורה צופה או כמורה עמית).
+        $flagpermission = false;
+        $rolespermitted = ['browsingteacher', 'teachercolleague'];
+        foreach ($roles as $role) {
+            if (in_array($role->shortname, $rolespermitted)) {
+                $flagpermission = true;
+            }
+        }
+
         $notteacher    = !has_capability('moodle/course:update', $coursecontext);
-        if ($notteacher) {
-            $lists = $PAGE->secondarynav->get_children_key_list();
+
+        if ($notteacher || $flagpermission) {
+            $present = [];
             if (isset($lists[0])) {
-                foreach ($lists as $key) {
-                    if ($key != $lists[0]) {
-                        $PAGE->secondarynav->children->remove($key);
-                    }
+                $present[] = $lists[0];
+            }
+
+            foreach ($roles as $role) {
+                if (in_array($role->shortname, ['teacher']) && in_array('reportadvancedoverview', $lists)) {
+                    $present[] = 'reportadvancedoverview';
+                }
+            }
+
+            foreach ($PAGE->secondarynav->get_children_key_list() as $key) {
+                if (!in_array($key, $present)) {
+                    $PAGE->secondarynav->children->remove($key);
                 }
             }
         }
@@ -110,27 +136,6 @@ class custom_navigation {
             }
         }
 
-        // PTL-9713. PTL-9383.
-        $coursecontext = \context_course::instance($COURSE->id);
-        $notteacher    = !has_capability('moodle/course:update', $coursecontext);
-        if ($notteacher && in_array($PAGE->pagetype, [
-                        'mod-quiz-attempt',
-                        'mod-quiz-review',
-                        'mod-quiz-view',
-                        'mod-quiz-report',
-                        'mod-quiz-summary',
-                        'mod-assign-view',
-                ])) {
-            $lists = $PAGE->secondarynav->get_children_key_list();
-            if (isset($lists[0])) {
-                foreach ($lists as $key) {
-                    if ($key != $lists[0]) {
-                        $PAGE->secondarynav->children->remove($key);
-                    }
-                }
-            }
-        }
-
         // PTL-9609.
         // Exclude links from menu.
         if (!has_capability('moodle/site:config', \context_system::instance())) {
@@ -145,31 +150,9 @@ class custom_navigation {
                     'quiz_report',
             ];
 
-            $lists = $PAGE->secondarynav->get_children_key_list();
             foreach ($exclude as $key) {
                 if (in_array($key, $lists)) {
                     $PAGE->secondarynav->children->remove($key);
-                }
-            }
-        }
-
-        // PTL-9730.
-        // Exclude links from menu (מורה צופה או כמורה עמית).
-        $flagpermission = false;
-        $rolespermitted = ['browsingteacher', 'teachercolleague'];
-        foreach ($roles as $role) {
-            if (in_array($role->shortname, $rolespermitted)) {
-                $flagpermission = true;
-            }
-        }
-
-        if ($flagpermission) {
-            $lists = $PAGE->secondarynav->get_children_key_list();
-            if (isset($lists[0])) {
-                foreach ($lists as $key) {
-                    if ($key != $lists[0]) {
-                        $PAGE->secondarynav->children->remove($key);
-                    }
                 }
             }
         }
