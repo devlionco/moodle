@@ -54,5 +54,18 @@ function xmldb_community_sharewith_upgrade($oldversion) {
         ]);
     }
 
+    if ($oldversion < 2020081108) {
+
+        $table = new xmldb_table('community_sharewith_task');
+
+        $field = new xmldb_field('error', XMLDB_TYPE_TEXT, null, null, null, null, null, 'status');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2020081108, 'community', 'sharewith');
+    }
+
     return true;
 }

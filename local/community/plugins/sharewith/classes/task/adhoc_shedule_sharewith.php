@@ -83,303 +83,201 @@ class adhoc_shedule_sharewith extends \core\task\adhoc_task {
 
         // End working.
         foreach ($obj as $item) {
-            $item->status = 1;
+            $item->status = 2;
             $DB->update_record('community_sharewith_task', $item);
         }
 
         foreach ($obj as $item) {
-            switch ($item->type) {
-                case 'coursecopy':
+            try {
+                switch ($item->type) {
+                    case 'coursecopy':
 
-                    $tc = get_course($item->sourcecourseid);
+                        $tc = get_course($item->sourcecourseid);
 
-                    $category = $DB->get_record('course_categories', array('id' => $tc->category));
+                        $category = $DB->get_record('course_categories', array('id' => $tc->category));
 
-                    $fullname = $tc->fullname . ' ' . $category->name . ' ' . get_string('word_copy', 'community_sharewith');
+                        $fullname = $tc->fullname . ' ' . $category->name . ' ' . get_string('word_copy', 'community_sharewith');
 
-                    $shortnamedefault = $tc->shortname . '-' . $tc->category;
-                    $shortname = $this->create_relevant_shortname($shortnamedefault);
+                        $shortnamedefault = $tc->shortname . '-' . $tc->category;
+                        $shortname = $this->create_relevant_shortname($shortnamedefault);
 
-                    $adminid = isset($CFG->adminid) ? $CFG->adminid : 2;
+                        $adminid = isset($CFG->adminid) ? $CFG->adminid : 2;
 
-                    // Copy course.
-                    $newcourse =
-                            \duplicate::duplicate_course($adminid, $tc->id, $fullname, $shortname, $item->categoryid);
+                        // Copy course.
+                        $newcourse =
+                                \duplicate::duplicate_course($adminid, $tc->id, $fullname, $shortname, $item->categoryid);
 
-                    // Copy metadata and update cID.
-                    \local_metadata\mcontext::course()->copy_all_metadata($tc->id, $newcourse['id']);
-                    \local_metadata\mcontext::course()->save($newcourse['id'], 'cID', $tc->id);
+                        // Copy metadata and update cID.
+                        \local_metadata\mcontext::course()->copy_all_metadata($tc->id, $newcourse['id']);
+                        \local_metadata\mcontext::course()->save($newcourse['id'], 'cID', $tc->id);
 
-                    // Change startdate and enddate in new course.
-                    $startdate = time();
-                    $diff = $tc->enddate - $tc->startdate;
-                    $enddate = ($diff > 0) ? $startdate + $diff : 0;
+                        // Change startdate and enddate in new course.
+                        $startdate = time();
+                        $diff = $tc->enddate - $tc->startdate;
+                        $enddate = ($diff > 0) ? $startdate + $diff : 0;
 
-                    $obj = $DB->get_record('course', ['id' => $newcourse['id']]);
-                    $obj->startdate = $startdate;
-                    $obj->enddate = $enddate;
+                        $obj = $DB->get_record('course', ['id' => $newcourse['id']]);
+                        $obj->startdate = $startdate;
+                        $obj->enddate = $enddate;
 
-                    $DB->update_record('course', $obj);
+                        $DB->update_record('course', $obj);
 
-                    // Set user to course.
-                    if (!is_siteadmin($item->sourceuserid)) {
-                        $namerole = 'editingteacher';
-                        $role = $DB->get_record('role', array('shortname' => $namerole));
-                        if (!empty($role)) {
-                            enrol_try_internal_enrol($newcourse['id'], $item->sourceuserid, $role->id);
-                        }
-                    }
-
-                    $roles = array();
-                    $context = \context_course::instance($tc->id);
-                    if ($userroles = get_user_roles($context, $item->sourceuserid)) {
-                        foreach ($userroles as $role) {
-                            $roles[] = $role->shortname;
-                        }
-                    }
-
-                    $usertype = 'teacher';
-                    if (in_array('teachercolleague', $roles)) {
-                        $usertype = 'teachercolleague';
-                    }
-
-                    $eventdata = array(
-                            'userid' => $item->sourceuserid,
-                            'courseid' => $tc->id,
-                            'categoryid' => $tc->category,
-                            'targetcourseid' => $newcourse['id'],
-                            'usertype' => $usertype,
-                    );
-
-                    \community_sharewith\event\course_copy::create_event($newcourse['id'], $eventdata)->trigger();
-
-                    // Send mail.
-                    $this->send_mail_to_teacher($item, $newcourse);
-
-                    // Send notification.
-                    $this->send_notification_to_teacher($item, $newcourse);
-
-                    break;
-
-                case 'activitycopy':
-
-                    $lib = new \duplicate();
-                    $lib->set_obj_duplicate($item);
-
-                    $metadataobj = !empty($item->metadata) ? json_decode($item->metadata) : null;
-                    $messagetype = isset($metadataobj->notification) ? $metadataobj->notification : "";
-
-                    $lib->set_copy_type($messagetype);
-
-                    if (isset($metadataobj->ifglossary) && $metadataobj->ifglossary == 1) {
-                        $lib->enable_glossary_copy_users();
-                    }
-
-                    if (isset($metadataobj->ifdatabase) && $metadataobj->ifdatabase == 1) {
-                        $lib->enable_database_copy_users();
-                    }
-
-                    $newactivities = array();
-                    $sequence = (isset($metadataobj->activitysequence) && $metadataobj->activitysequence) ?
-                            json_decode($metadataobj->activitysequence) : [];
-                    $newcmids = $lib->duplicate_activity($item->sourceactivityid, $item->courseid, $item->sectionid, $newactivities,
-                            $sequence);
-
-                    // Callback in metadata.
-                    // Requred 'callbackfunc'.
-                    // Optional 'callbackpath'.
-                    // Metadata object metadataobj will sent to callback func.
-                    // Example:
-                    // {
-                    //   "callbackpath": "/mod/quiz/report/competencyoverview/locallib.php",
-                    //   "callbackfunc": "quiz_competencyoverview_message_to_students",
-                    //   "message": "Some message",
-                    //   "students": "3,4"
-                    // }.
-
-                    $callbackfunc = isset($metadataobj->callbackfunc) ? $metadataobj->callbackfunc : false;
-                    if (isset($metadataobj->callbackpath)) {
-                        require_once($CFG->dirroot . $metadataobj->callbackpath);
-                    }
-
-                    // Update field added in course_modules.
-                    foreach ($newcmids as $newcmid) {
-
-                        if (function_exists($callbackfunc)) {
-                            call_user_func_array($callbackfunc, [$metadataobj, $newcmid]);
-                        }
-
-                        $newrow = $DB->get_record('course_modules', array('id' => $newcmid));
-                        $newrow->added = time();
-                        $DB->update_record('course_modules', $newrow);
-
-                        // Add competencies.
-                        if ($metadataobj->newactivitycompetencies != '') {
-                            $newactivitycompetencies = explode(',', $metadataobj->newactivitycompetencies);
-                            foreach ($newactivitycompetencies as $key => $compid) {
-                                $competresult = \core_competency\api::add_competency_to_course_module($newcmid, $compid);
+                        // Set user to course.
+                        if (!is_siteadmin($item->sourceuserid)) {
+                            $namerole = 'editingteacher';
+                            $role = $DB->get_record('role', array('shortname' => $namerole));
+                            if (!empty($role)) {
+                                enrol_try_internal_enrol($newcourse['id'], $item->sourceuserid, $role->id);
                             }
                         }
-                    }
 
-                    /*
-                     * PTL-927 Do not sent system notification and emails to teachers
-                     *          when they initiate an activity copy or share.
-                     */
-                    // Send mail.
-                    //$this->send_mail_to_teacher($item, $newcmid);
+                        $roles = array();
+                        $context = \context_course::instance($tc->id);
+                        if ($userroles = get_user_roles($context, $item->sourceuserid)) {
+                            foreach ($userroles as $role) {
+                                $roles[] = $role->shortname;
+                            }
+                        }
 
-                    // Send notification.
-                    //$this->send_notification_to_teacher($item, $newcmid);
+                        $usertype = 'teacher';
+                        if (in_array('teachercolleague', $roles)) {
+                            $usertype = 'teachercolleague';
+                        }
 
-                    switch ($messagetype) {
-                        case "banksharing":
+                        $eventdata = array(
+                                'userid' => $item->sourceuserid,
+                                'courseid' => $tc->id,
+                                'categoryid' => $tc->category,
+                                'targetcourseid' => $newcourse['id'],
+                                'usertype' => $usertype,
+                        );
 
-                            foreach ($newcmids as $newcmid) {
+                        \community_sharewith\event\course_copy::create_event($newcourse['id'], $eventdata)->trigger();
 
-                                // UPDATE linksectionids.
-                                \local_metadata\mcontext::module()->save($newcmid, 'linksectionids', $metadataobj->linksectionids);
+                        // Send mail.
+                        $this->send_mail_to_teacher($item, $newcourse);
 
-                                // UPDATE MID IN METADATA.
-                                $warningselect =
-                                        isset($metadataobj->metadata->warningselect) ? $metadataobj->metadata->warningselect : 0;
-                                switch ($warningselect) {
+                        // Send notification.
+                        $this->send_notification_to_teacher($item, $newcourse);
 
-                                    // Translate activity.
-                                    case 1:
-                                        $mid = \local_metadata\mcontext::module()->get($item->sourceactivityid, 'ID');
-                                        \local_metadata\mcontext::module()->save($newcmid, 'translatemid', $mid);
-                                        \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
-                                        break;
+                        break;
 
-                                    // Repair or improvement of the activity.
-                                    case 2:
-                                        community_sharewith_send_mail_toadmin_about_duplicate_mid($item->sourceactivityid,
-                                                $newcmid);
-                                        break;
+                    case 'activitycopy':
 
-                                    // A new pedagogical activity.
-                                    case 3:
-                                        \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
-                                        break;
-                                    default:
-                                        \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
+                        $lib = new \duplicate();
+                        $lib->set_obj_duplicate($item);
+
+                        $metadataobj = !empty($item->metadata) ? json_decode($item->metadata) : null;
+                        $messagetype = isset($metadataobj->notification) ? $metadataobj->notification : "";
+
+                        $lib->set_copy_type($messagetype);
+
+                        if (isset($metadataobj->ifglossary) && $metadataobj->ifglossary == 1) {
+                            $lib->enable_glossary_copy_users();
+                        }
+
+                        if (isset($metadataobj->ifdatabase) && $metadataobj->ifdatabase == 1) {
+                            $lib->enable_database_copy_users();
+                        }
+
+                        $newactivities = array();
+                        $sequence = (isset($metadataobj->activitysequence) && $metadataobj->activitysequence) ?
+                                json_decode($metadataobj->activitysequence) : [];
+                        $newcmids =
+                                $lib->duplicate_activity($item->sourceactivityid, $item->courseid, $item->sectionid, $newactivities,
+                                        $sequence);
+
+                        // Callback in metadata.
+                        // Requred 'callbackfunc'.
+                        // Optional 'callbackpath'.
+                        // Metadata object metadataobj will sent to callback func.
+                        // Example:
+                        // {
+                        //   "callbackpath": "/mod/quiz/report/competencyoverview/locallib.php",
+                        //   "callbackfunc": "quiz_competencyoverview_message_to_students",
+                        //   "message": "Some message",
+                        //   "students": "3,4"
+                        // }.
+
+                        $callbackfunc = isset($metadataobj->callbackfunc) ? $metadataobj->callbackfunc : false;
+                        if (isset($metadataobj->callbackpath)) {
+                            require_once($CFG->dirroot . $metadataobj->callbackpath);
+                        }
+
+                        // Update field added in course_modules.
+                        foreach ($newcmids as $newcmid) {
+
+                            if (function_exists($callbackfunc)) {
+                                call_user_func_array($callbackfunc, [$metadataobj, $newcmid]);
+                            }
+
+                            $newrow = $DB->get_record('course_modules', array('id' => $newcmid));
+                            $newrow->added = time();
+                            $DB->update_record('course_modules', $newrow);
+
+                            // Add competencies.
+                            if ($metadataobj->newactivitycompetencies != '') {
+                                $newactivitycompetencies = explode(',', $metadataobj->newactivitycompetencies);
+                                foreach ($newactivitycompetencies as $key => $compid) {
+                                    $competresult = \core_competency\api::add_competency_to_course_module($newcmid, $compid);
                                 }
+                            }
+                        }
 
-                                // Update metadata.
-                                if (isset($metadataobj->metadata) && !empty($metadataobj->metadata)) {
-                                    $func = new \functionHelp();
-                                    $func->update_metadata_cron((array) $metadataobj->metadata, $item->sourceuserid, $newcmid);
-                                }
+                        /*
+                         * PTL-927 Do not sent system notification and emails to teachers
+                         *          when they initiate an activity copy or share.
+                         */
+                        // Send mail.
+                        //$this->send_mail_to_teacher($item, $newcmid);
 
-                                // Deactivate activities.
-                                set_coursemodule_visible($newcmid, 0);
+                        // Send notification.
+                        //$this->send_notification_to_teacher($item, $newcmid);
 
-                                $eventdata = array(
-                                        'userid' => $item->sourceuserid,
-                                        'instanceid' => $item->sourceactivityid,
-                                        'targetuserid' => $item->userid,
-                                        'targetinstanceid' => $newcmid,
-                                        'targetcourseid' => $item->courseid,
-                                        'targetsectionid' => $item->sectionid,
-                                );
+                        switch ($messagetype) {
+                            case "banksharing":
 
-                                // PTL-4202.
-                                if ($cm = $DB->get_record('course_modules', ['id' => $newcmid])) {
-                                    if ($module = $DB->get_record('modules', ['id' => $cm->module])) {
-                                        if ($extra = $DB->get_record($module->name, ['id' => $cm->instance])) {
+                                foreach ($newcmids as $newcmid) {
 
-                                            $cm->availability = null;
-                                            $cm->completion = 0;
-                                            $cm->completiongradeitemnumber = null;
-                                            $cm->completionview = 0;
-                                            $cm->completionexpected = 0;
+                                    // UPDATE linksectionids.
+                                    \local_metadata\mcontext::module()
+                                            ->save($newcmid, 'linksectionids', $metadataobj->linksectionids);
 
-                                            $DB->update_record('course_modules', $cm);
+                                    // UPDATE MID IN METADATA.
+                                    $warningselect =
+                                            isset($metadataobj->metadata->warningselect) ? $metadataobj->metadata->warningselect :
+                                                    0;
+                                    switch ($warningselect) {
 
-                                            switch ($module->name) {
-                                                case 'quiz':
-                                                    $extra->timeopen = 0;
-                                                    $extra->timeclose = 0;
-                                                    break;
-                                                case 'assign':
-                                                    $extra->duedate = 0;
-                                                    $extra->allowsubmissionsfromdate = 0;
-                                                    $extra->cutoffdate = 0;
-                                                    $extra->gradingduedate = 0;
-                                                    break;
-                                                case 'questionnaire':
-                                                    $extra->opendate = 0;
-                                                    $extra->closedate = 0;
-                                                    break;
-                                            }
-
-                                            $DB->update_record($module->name, $extra);
-                                        }
-                                    }
-                                }
-
-                                // PTL-5822.
-                                if ($cm = $DB->get_record('course_modules', ['id' => $newcmid])) {
-
-                                    switch (get_config('community_sharewith', 'visibilitytype')) {
+                                        // Translate activity.
                                         case 1:
-                                            $cm->visible = 1;
-                                            $cm->visibleold = 1;
-                                            $cm->visibleoncoursepage = 1;
+                                            $mid = \local_metadata\mcontext::module()->get($item->sourceactivityid, 'ID');
+                                            \local_metadata\mcontext::module()->save($newcmid, 'translatemid', $mid);
+                                            \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
                                             break;
+
+                                        // Repair or improvement of the activity.
                                         case 2:
-                                            $cm->visible = 0;
-                                            $cm->visibleold = 0;
-                                            $cm->visibleoncoursepage = 1;
+                                            community_sharewith_send_mail_toadmin_about_duplicate_mid($item->sourceactivityid,
+                                                    $newcmid);
                                             break;
+
+                                        // A new pedagogical activity.
                                         case 3:
-                                            $cm->visible = 0;
-                                            $cm->visibleold = 1;
-                                            $cm->visibleoncoursepage = 0;
+                                            \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
                                             break;
+                                        default:
+                                            \local_metadata\mcontext::module()->save($newcmid, 'ID', $newcmid);
                                     }
 
-                                    $DB->update_record('course_modules', $cm);
+                                    // Update metadata.
+                                    if (isset($metadataobj->metadata) && !empty($metadataobj->metadata)) {
+                                        $func = new \functionHelp();
+                                        $func->update_metadata_cron((array) $metadataobj->metadata, $item->sourceuserid, $newcmid);
+                                    }
 
-                                    rebuild_course_cache($cm->course, true);
-                                }
-
-                                \community_sharewith\event\activity_to_bank_copy::create_event($item->courseid, $eventdata)
-                                        ->trigger();
-
-                                community_sharewith_send_mail_toadmin_about_banksharing($item->sourceactivityid, $newcmid);
-                            }
-                            break;
-
-                        case "bankdownload":
-
-                            $targetsection = $DB->get_record('course_sections', ['id' => $item->sectionid]);
-
-                            foreach ($newcmids as $newcmid) {
-
-                                // Deactivate activities.
-                                set_coursemodule_visible($newcmid, 0);
-
-                                // Save to oer catalog log.
-                                $arrinsert = array(
-                                        'userid' => $item->sourceuserid,
-                                        'activityid' => $item->sourceactivityid,
-                                        'courseid' => $item->courseid,
-
-                                        // TODO: should be $item->sectionid.
-                                        'sectionid' => $targetsection->section,
-
-                                        // TODO: we should add newsectionnum instead of sectionid.
-                                        //'newsectionnum' => $targetsection->section,
-
-                                        'newactivityid' => $newcmid,
-                                        'timemodified' => time()
-                                );
-                                $DB->insert_record('community_oercatalog_log', $arrinsert);
-
-                                // Save Moodle Log oercata log.
-                                if (!empty($metadataobj) && isset($metadataobj->referer)) {
+                                    // Deactivate activities.
+                                    set_coursemodule_visible($newcmid, 0);
 
                                     $eventdata = array(
                                             'userid' => $item->sourceuserid,
@@ -388,145 +286,246 @@ class adhoc_shedule_sharewith extends \core\task\adhoc_task {
                                             'targetinstanceid' => $newcmid,
                                             'targetcourseid' => $item->courseid,
                                             'targetsectionid' => $item->sectionid,
-                                            'referer' => $metadataobj->referer,
                                     );
 
-                                    \community_sharewith\event\activity_from_bank_download::create_event($item->courseid,
-                                            $eventdata)
+                                    // PTL-4202.
+                                    if ($cm = $DB->get_record('course_modules', ['id' => $newcmid])) {
+                                        if ($module = $DB->get_record('modules', ['id' => $cm->module])) {
+                                            if ($extra = $DB->get_record($module->name, ['id' => $cm->instance])) {
+
+                                                $cm->availability = null;
+                                                $cm->completion = 0;
+                                                $cm->completiongradeitemnumber = null;
+                                                $cm->completionview = 0;
+                                                $cm->completionexpected = 0;
+
+                                                $DB->update_record('course_modules', $cm);
+
+                                                switch ($module->name) {
+                                                    case 'quiz':
+                                                        $extra->timeopen = 0;
+                                                        $extra->timeclose = 0;
+                                                        break;
+                                                    case 'assign':
+                                                        $extra->duedate = 0;
+                                                        $extra->allowsubmissionsfromdate = 0;
+                                                        $extra->cutoffdate = 0;
+                                                        $extra->gradingduedate = 0;
+                                                        break;
+                                                    case 'questionnaire':
+                                                        $extra->opendate = 0;
+                                                        $extra->closedate = 0;
+                                                        break;
+                                                }
+
+                                                $DB->update_record($module->name, $extra);
+                                            }
+                                        }
+                                    }
+
+                                    // PTL-5822.
+                                    if ($cm = $DB->get_record('course_modules', ['id' => $newcmid])) {
+
+                                        switch (get_config('community_sharewith', 'visibilitytype')) {
+                                            case 1:
+                                                $cm->visible = 1;
+                                                $cm->visibleold = 1;
+                                                $cm->visibleoncoursepage = 1;
+                                                break;
+                                            case 2:
+                                                $cm->visible = 0;
+                                                $cm->visibleold = 0;
+                                                $cm->visibleoncoursepage = 1;
+                                                break;
+                                            case 3:
+                                                $cm->visible = 0;
+                                                $cm->visibleold = 1;
+                                                $cm->visibleoncoursepage = 0;
+                                                break;
+                                        }
+
+                                        $DB->update_record('course_modules', $cm);
+
+                                        rebuild_course_cache($cm->course, true);
+                                    }
+
+                                    \community_sharewith\event\activity_to_bank_copy::create_event($item->courseid, $eventdata)
+                                            ->trigger();
+
+                                    community_sharewith_send_mail_toadmin_about_banksharing($item->sourceactivityid, $newcmid);
+                                }
+                                break;
+
+                            case "bankdownload":
+
+                                $targetsection = $DB->get_record('course_sections', ['id' => $item->sectionid]);
+
+                                foreach ($newcmids as $newcmid) {
+
+                                    // Deactivate activities.
+                                    set_coursemodule_visible($newcmid, 0);
+
+                                    // Save to oer catalog log.
+                                    $arrinsert = array(
+                                            'userid' => $item->sourceuserid,
+                                            'activityid' => $item->sourceactivityid,
+                                            'courseid' => $item->courseid,
+
+                                        // TODO: should be $item->sectionid.
+                                            'sectionid' => $targetsection->section,
+
+                                        // TODO: we should add newsectionnum instead of sectionid.
+                                        //'newsectionnum' => $targetsection->section,
+
+                                            'newactivityid' => $newcmid,
+                                            'timemodified' => time()
+                                    );
+                                    $DB->insert_record('community_oercatalog_log', $arrinsert);
+
+                                    // Save Moodle Log oercata log.
+                                    if (!empty($metadataobj) && isset($metadataobj->referer)) {
+
+                                        $eventdata = array(
+                                                'userid' => $item->sourceuserid,
+                                                'instanceid' => $item->sourceactivityid,
+                                                'targetuserid' => $item->userid,
+                                                'targetinstanceid' => $newcmid,
+                                                'targetcourseid' => $item->courseid,
+                                                'targetsectionid' => $item->sectionid,
+                                                'referer' => $metadataobj->referer,
+                                        );
+
+                                        \community_sharewith\event\activity_from_bank_download::create_event($item->courseid,
+                                                $eventdata)
+                                                ->trigger();
+                                    }
+                                }
+
+                                break;
+
+                            case "copytohimself":
+
+                                foreach ($newcmids as $newcmid) {
+                                    $eventdata = array(
+                                            'userid' => $item->sourceuserid,
+                                            'instanceid' => $item->sourceactivityid,
+                                            'targetuserid' => $item->userid,
+                                            'targetinstanceid' => $newcmid,
+                                            'targetcourseid' => $item->courseid,
+                                            'targetsectionid' => $item->sectionid,
+                                    );
+
+                                    \community_sharewith\event\activity_copy::create_event($item->courseid, $eventdata)->trigger();
+                                }
+                                break;
+
+                            case "copytoanotherteacher":
+
+                                foreach ($newcmids as $newcmid) {
+                                    $eventdata = array(
+                                            'userid' => $item->sourceuserid,
+                                            'instanceid' => $item->sourceactivityid,
+                                            'targetuserid' => $item->userid,
+                                            'targetinstanceid' => $newcmid,
+                                            'targetcourseid' => $item->courseid,
+                                            'targetsectionid' => $item->sectionid,
+                                    );
+
+                                    \community_sharewith\event\sent_activity_copy::create_event($item->courseid, $eventdata)
                                             ->trigger();
                                 }
-                            }
+                                break;
 
-                            break;
+                        }
+                        break;
 
-                        case "copytohimself":
+                    case 'sectioncopy':
 
-                            foreach ($newcmids as $newcmid) {
-                                $eventdata = array(
-                                        'userid' => $item->sourceuserid,
-                                        'instanceid' => $item->sourceactivityid,
-                                        'targetuserid' => $item->userid,
-                                        'targetinstanceid' => $newcmid,
-                                        'targetcourseid' => $item->courseid,
-                                        'targetsectionid' => $item->sectionid,
-                                );
+                        // Subsections.
+                        require_once($CFG->dirroot . '/course/format/lib.php');
 
-                                \community_sharewith\event\activity_copy::create_event($item->courseid, $eventdata)->trigger();
-                            }
-                            break;
+                        $metadataobj = !empty($item->metadata) ? json_decode($item->metadata) : null;
+                        $copysub = isset($metadataobj->copysub) ? $metadataobj->copysub : false;
+                        $targetcourseformat = course_get_format($item->courseid)->get_format();
 
-                        case "copytoanotherteacher":
+                        $lib = new \duplicate();
+                        $lib->set_obj_duplicate($item);
+                        $sectioncount = 0;
+                        if ($copysub) {
+                            $subsectionstree = community_sharewith_get_subsections_tree($item->sourcesectionid);
+                            $keys = [];
+                            $newsection = $lib->duplicate_section($item->sourcesectionid, $item->courseid);
+                            $sectioncount += 1;
+                            $mainsection = $newsection->section;
+                            foreach ($subsectionstree as $keysubs => $subs) {
+                                if (count($keys) != 0) {
+                                    $mainsection = $keys[$keysubs];
+                                }
+                                foreach ($subs as $keysub => $sub) {
+                                    $newsubsection = $lib->duplicate_section($sub->id, $item->courseid);
+                                    $sectioncount += 1;
+                                    $keys[$keysub] = $newsubsection->section;
 
-                            foreach ($newcmids as $newcmid) {
-                                $eventdata = array(
-                                        'userid' => $item->sourceuserid,
-                                        'instanceid' => $item->sourceactivityid,
-                                        'targetuserid' => $item->userid,
-                                        'targetinstanceid' => $newcmid,
-                                        'targetcourseid' => $item->courseid,
-                                        'targetsectionid' => $item->sectionid,
-                                );
-
-                                \community_sharewith\event\sent_activity_copy::create_event($item->courseid, $eventdata)
-                                        ->trigger();
-                            }
-                            break;
-
-                    }
-                    break;
-
-                case 'sectioncopy':
-
-                    // Subsections.
-                    require_once($CFG->dirroot . '/course/format/lib.php');
-
-                    $metadataobj = !empty($item->metadata) ? json_decode($item->metadata) : null;
-                    $copysub = isset($metadataobj->copysub) ? $metadataobj->copysub : false;
-                    $targetcourseformat = course_get_format($item->courseid)->get_format();
-
-                    $lib = new \duplicate();
-                    $lib->set_obj_duplicate($item);
-                    $sectioncount = 0;
-                    if ($copysub) {
-                        $subsectionstree = community_sharewith_get_subsections_tree($item->sourcesectionid);
-                        $keys = [];
-                        $newsection = $lib->duplicate_section($item->sourcesectionid, $item->courseid);
-                        $sectioncount += 1;
-                        $mainsection = $newsection->section;
-                        foreach ($subsectionstree as $keysubs => $subs) {
-                            if (count($keys) != 0) {
-                                $mainsection = $keys[$keysubs];
-                            }
-                            foreach ($subs as $keysub => $sub) {
-                                $newsubsection = $lib->duplicate_section($sub->id, $item->courseid);
-                                $sectioncount += 1;
-                                $keys[$keysub] = $newsubsection->section;
-
-                                // Restore sctructure.
-                                if ($targetcourseformat == 'tiles' || $targetcourseformat == 'flexsections') {
-                                    $option = new stdClass();
-                                    $option->courseid = $item->courseid;
-                                    $option->format = $targetcourseformat;
-                                    $option->sectionid = $newsubsection->id;
-                                    $option->name = 'parent';
-                                    $option->value = $mainsection;
-                                    $DB->insert_record('course_format_options', $option);
+                                    // Restore sctructure.
+                                    if ($targetcourseformat == 'flexsections') {
+                                        $option = new stdClass();
+                                        $option->courseid = $item->courseid;
+                                        $option->format = $targetcourseformat;
+                                        $option->sectionid = $newsubsection->id;
+                                        $option->name = 'parent';
+                                        $option->value = $mainsection;
+                                        $DB->insert_record('course_format_options', $option);
+                                    }
                                 }
                             }
+                        } else {
+                            $newsection = $lib->duplicate_section($item->sourcesectionid, $item->courseid);
+                            $sectioncount += 1;
                         }
-                    } else {
-                        $newsection = $lib->duplicate_section($item->sourcesectionid, $item->courseid);
-                        $sectioncount += 1;
-                    }
 
-                    // Recalculate numsections in case of grid.
-                    if ($targetcourseformat == 'grid') {
-                        $formatoption = $DB->get_record('course_format_options', [
-                                'name' => 'numsections',
-                                'format' => 'grid',
+                        // Update sID metadata.
+                        \local_metadata\mcontext::section()->save($newsection->id, 'sID', $item->sourcesectionid);
+
+                        // Send mail.
+                        $this->send_mail_to_teacher($item, $newsection);
+
+                        // Send notification.
+                        $this->send_notification_to_teacher($item, $newsection);
+
+                        $roles = array();
+                        $context = \context_course::instance($item->courseid);
+                        if ($userroles = get_user_roles($context, $item->sourceuserid)) {
+                            foreach ($userroles as $role) {
+                                $roles[] = $role->shortname;
+                            }
+                        }
+
+                        $usertype = 'teacher';
+                        if (in_array('teachercolleague', $roles)) {
+                            $usertype = 'teachercolleague';
+                        }
+
+                        $eventdata = array(
+                                'userid' => $item->sourceuserid,
                                 'courseid' => $item->courseid,
-                        ]);
-                        if ($formatoption) {
-                            $formatoption->value = $formatoption->value + $sectioncount;
-                            $DB->update_record('course_format_options', $formatoption);
-                        }
-                    }
+                                'sectionid' => $item->sourcesectionid,
+                                'targetuserid' => $item->userid,
+                                'targetcourseid' => $item->courseid,
+                                'targetsectionid' => $item->sectionid,
+                                'usertype' => $usertype,
+                        );
 
-                    // Update sID metadata.
-                    \local_metadata\mcontext::section()->save($newsection->id, 'sID', $item->sourcesectionid);
+                        \community_sharewith\event\section_copy::create_event($item->courseid, $eventdata)->trigger();
 
-                    // Send mail.
-                    $this->send_mail_to_teacher($item, $newsection);
+                        break;
+                }
 
-                    // Send notification.
-                    $this->send_notification_to_teacher($item, $newsection);
+                $item->status = 1;
+                $DB->update_record('community_sharewith_task', $item);
 
-                    $roles = array();
-                    $context = \context_course::instance($item->courseid);
-                    if ($userroles = get_user_roles($context, $item->sourceuserid)) {
-                        foreach ($userroles as $role) {
-                            $roles[] = $role->shortname;
-                        }
-                    }
-
-                    $usertype = 'teacher';
-                    if (in_array('teachercolleague', $roles)) {
-                        $usertype = 'teachercolleague';
-                    }
-
-                    $eventdata = array(
-                            'userid' => $item->sourceuserid,
-                            'courseid' => $item->courseid,
-                            'sectionid' => $item->sourcesectionid,
-                            'targetuserid' => $item->userid,
-                            'targetcourseid' => $item->courseid,
-                            'targetsectionid' => $item->sectionid,
-                            'usertype' => $usertype,
-                    );
-
-                    \community_sharewith\event\section_copy::create_event($item->courseid, $eventdata)->trigger();
-
-                    break;
+            } catch (\Exception $e) {
+                $item->error = $e->getMessage();
+                $DB->update_record('community_sharewith_task', $item);
             }
         }
     }

@@ -1065,7 +1065,7 @@ function community_sharewith_send_message_to_teacher($useridfrom, $useridto, $sh
 }
 
 function community_sharewith_get_subsections_tree($sectionid) {
-    global $DB, $CFG, $USER;
+    global $DB;
 
     $subsectionstree = [];
     if ($section = $DB->get_record('course_sections', array('id' => $sectionid), '*', MUST_EXIST)) {
@@ -1079,7 +1079,7 @@ function community_sharewith_iterate_subsections($section, &$subsectionstree) {
     global $CFG;
 
     require_once($CFG->dirroot . '/course/format/lib.php');
-    require_once($CFG->dirroot . '/course/format/tiles/lib.php');
+
     $currentsection = $section->section;
     $currentsectionsubs = course_get_format($section->course)->get_subsections($currentsection);
     if (!$currentsectionsubs || count($currentsectionsubs) == 0) {

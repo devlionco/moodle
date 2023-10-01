@@ -45,6 +45,7 @@ function xmldb_community_sharewith_install() {
         $table->add_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('metadata', XMLDB_TYPE_TEXT, 'long', null, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('error', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 

@@ -27,5 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'community_sharewith';
 $plugin->maturity = MATURITY_BETA;
 $plugin->release = 'INITIAL';
-$plugin->version = 2020081107;
+$plugin->version = 2020081108;
 $plugin->requires = 2016052300;
