@@ -305,7 +305,7 @@ class mod_vpl_edit {
      * @param int $processid
      * @throws Exception
      */
-    public static function cancel($vpl, $userid, int $processid) {
+    public static function cancel($vpl, $userid, int $processid = -1) {
         $example = $vpl->get_instance()->example;
         $lastsub = $vpl->last_user_submission( $userid );
         if (! $lastsub && ! $example) {
@@ -317,6 +317,9 @@ class mod_vpl_edit {
             $submission = new mod_vpl_submission_CE( $vpl, $lastsub );
         }
         $submission->cancelProcess($processid);
+
+        $response = new stdClass();
+        return $response;
     }
 
     /**
