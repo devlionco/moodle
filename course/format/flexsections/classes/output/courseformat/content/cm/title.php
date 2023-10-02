@@ -98,7 +98,7 @@ class title extends \core_courseformat\output\local\content\cm\title {
      *
      */
     protected function get_title_displayvalue (): string {
-        global $PAGE, $COURSE;
+        global $PAGE, $COURSE, $DB;
 
         // Inplace editable uses core renderer by default. However, course elements require
         // the format specific renderer.
@@ -122,7 +122,17 @@ class title extends \core_courseformat\output\local\content\cm\title {
 
             if (!empty($mid) && !empty($mteacherremarks)) {
 
+                // Default date.
                 $moddateadded = gmdate("d-m-Y", $mod->added);
+
+                // Get last modified.
+                $dbman = $DB->get_manager();
+                if ($dbman->table_exists($mod->modname)) {
+                    if ($obj = $DB->get_record($mod->modname, ['id' => $mod->instance])){
+                        $moddateadded = gmdate("d-m-Y", $obj->timemodified);
+                    }
+                }
+
                 $title = $mteacherremarks . '<br/> ID=' . $mid . '    ' . get_string("lastmodified") . ': ' . $moddateadded;
                 $title = str_replace("'", '', $title);
                 $title = str_replace('"', "'", $title);
@@ -141,10 +151,7 @@ class title extends \core_courseformat\output\local\content\cm\title {
         }
 
         // File type after name, for alphabetic lists (screen reader).
-        if (strpos(
-            core_text::strtolower($data->instancename),
-            core_text::strtolower($mod->modfullname)
-        ) === false) {
+        if (strpos(core_text::strtolower($data->instancename), core_text::strtolower($mod->modfullname)) === false) {
             $data->altname = get_accesshide(' ' . $mod->modfullname);
         }
 
