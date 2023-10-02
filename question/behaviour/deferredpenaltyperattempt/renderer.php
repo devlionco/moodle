@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIF__ . '/../deferredfeedback/renderer.php');
+require_once(__DIR__ . '/../deferredfeedback/renderer.php');
 
 class qbehaviour_deferredpenaltyperattempt_renderer extends qbehaviour_deferredfeedback_renderer {
     public function feedback(question_attempt $qa, question_display_options $options) {
