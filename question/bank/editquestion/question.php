@@ -287,6 +287,8 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    $flagnewquestion = empty($question->id) ? true : false;
+
     // If this is a new question, save defaults for user in user_preferences table.
     if (empty($question->id)) {
         $qtypeobj->save_defaults_for_new_questions($fromform);
@@ -320,6 +322,31 @@ if ($mform->is_cancelled()) {
 
     // If we are saving and continuing to edit the question.
     if (!empty($fromform->updatebutton)) {
+
+        // EC-229 Create question if empty.
+        if (!$inpopup && $cm->modname == 'quiz' && $flagnewquestion) {
+
+            require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+            list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
+                    question_edit_setup('editq', '/mod/quiz/edit.php', true);
+
+            // Get the course object and related bits.
+            $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+            $quizobj = new quiz($quiz, $cm, $course);
+            $structure = $quizobj->get_structure();
+
+            $addquestion = $question->id;
+
+            // Add a single question to the current quiz.
+            $structure->check_can_be_edited();
+            quiz_require_question_use($addquestion);
+            $addonpage = optional_param('addonpage', 0, PARAM_INT);
+            quiz_add_quiz_question($addquestion, $quiz, $addonpage);
+            quiz_delete_previews($quiz);
+            quiz_update_sumgrades($quiz);
+        }
+
         $url->param('id', $question->id);
         $url->remove_params('makecopy');
         redirect($url);
