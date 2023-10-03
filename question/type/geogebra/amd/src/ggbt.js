@@ -234,6 +234,7 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
         handlesettingschanged: function(evt) {
             window.GGBT.parameters[evt.target.id] = (evt.target.checked);
             $('input[name="ggbparameters"]').val(JSON.stringify(window.GGBT.parameters));
+            $('#applet_parameters').val(JSON.stringify(window.GGBT.parameters));
             if (evt.target.id == "showToolBar" || evt.target.id == "showMenuBar" || evt.target.id == "showAlgebraInput") {
                 window.applet1 = new GGBApplet(window.GGBT.parameters, true);
                 // window.applet1.setHTML5Codebase("https://cdn.geogebra.org/apps/5.0.541.0/web3d");

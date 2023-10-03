@@ -568,25 +568,37 @@ EOD;
         $showreseticon = get_string('show_reset_icon', 'qtype_geogebra');
         $showtoolbar = get_string('show_tool_bar', 'qtype_geogebra');
 
+        $parsedOptions = json_decode($this->ggbparameters);
+
+        $checkedArray = array(
+            $parsedOptions->enableRightClick ? 'checked' : '',
+            $parsedOptions->enableLabelDrags ? 'checked' : '',
+            $parsedOptions->showResetIcon ? 'checked' : '',
+            $parsedOptions->enableShiftDragZoom ? 'checked' : '',
+            $parsedOptions->showMenuBar ? 'checked' : '',
+            $parsedOptions->showToolBar ? 'checked' : '',
+            $parsedOptions->showAlgebraInput ? 'checked' : ''
+        );
+
         $options = <<<HTML
 <div id='applet_options' class="form-group row  fitem"><div class="col-md-3">
 <div class="fitemtitle"><label for="applet_options">$appletadvancedsettings</label></div>
 </div>
 <div  class="fitem col-md-9 felement" >
     <fieldset class="felement fgroup">
-        <input type="checkbox" id="enableRightClick" name="enableRightClick" value="1">
+        <input type="checkbox" id="enableRightClick" name="enableRightClick" value="1" $checkedArray[0]>
         <label for="enableRightClick">$enablerightclick</label><br>
-        <input type="checkbox" id="enableLabelDrags" name="enableLabelDrags" value="1">
+        <input type="checkbox" id="enableLabelDrags" name="enableLabelDrags" value="1" $checkedArray[1]>
         <label for="enableLabelDrags">$enablelabeldrags</label><br>
-        <input type="checkbox" id="showResetIcon" name="showResetIcon" value="1" checked="checked">
+        <input type="checkbox" id="showResetIcon" name="showResetIcon" value="1" $checkedArray[2]>
         <label for="showResetIcon">$showreseticon</label><br>
-        <input type="checkbox" id="enableShiftDragZoom" name="enableShiftDragZoom" value="1" checked="checked">
+        <input type="checkbox" id="enableShiftDragZoom" name="enableShiftDragZoom" value="1" $checkedArray[3]>
         <label for="enableShiftDragZoom">$enableshiftdragzoom</label><br>
-        <input type="checkbox" id="showMenuBar" name="showMenuBar" value="1">
+        <input type="checkbox" id="showMenuBar" name="showMenuBar" value="1" $checkedArray[4]>
         <label for="showMenuBar">$showmenubar</label><br>
-        <input type="checkbox" id="showToolBar" name="showToolBar" value="1">
+        <input type="checkbox" id="showToolBar" name="showToolBar" value="1" $checkedArray[5]>
         <label for="showToolBar">$showtoolbar</label><br>
-        <input type="checkbox" id="showAlgebraInput" name="showAlgebraInput" value="1">
+        <input type="checkbox" id="showAlgebraInput" name="showAlgebraInput" value="1" $checkedArray[6]>
         <label for="showAlgebraInput">$showalgebrainput</label><br>
     </fieldset>
 </div>
