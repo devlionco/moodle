@@ -24,3 +24,6 @@ html[dir=rtl] .ggbcontainer{
 #page-mod-quiz-review .highlightDraggers{
     min-width: 950px !important;
 }
+#page:has(.GeoGebraFrame) {
+    overflow-x: hidden;
+}

@@ -498,6 +498,15 @@ var GGBApplet = function () {
                         }));
                         html5AppletsToProcess = null
                     }
+                    const renderCanvasInterval = setInterval(() => {
+                        if($('.EuclidianPanel')[0]) {
+                            $('.EuclidianPanel').on('focusout', () => {
+                                $("body").css("padding-bottom", '0px');
+                            })
+                            clearInterval(renderCanvasInterval)
+                        }
+                    },500)
+                    
                 };
                 if (parseVersion(html5CodebaseVersion) < 5) {
                     a.className += " geogebraweb"

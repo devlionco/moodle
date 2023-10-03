@@ -181,12 +181,6 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
                 }
             }
 
-            //TODO find function that cat catch event on close TabbedKeyBoard
-            if ($('.TabbedKeyBoard')) {
-                if ($('.TabbedKeyBoard').attr('aria-hidden')) {
-                    $("body").css("padding-bottom", '0px');
-                }
-            }
         },
 
     };
