@@ -31,6 +31,8 @@
 function format_flexsections_cm_grade_status(cm_info $mod) {
     global $CFG, $USER, $DB;
 
+    $data = [];
+
     // For a teacher colleagues don`t show activity status.
     $modcontext = context_module::instance($mod->id);
     $roles      = get_user_roles($modcontext, $USER->id, false);

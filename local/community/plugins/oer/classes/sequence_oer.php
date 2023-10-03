@@ -890,6 +890,8 @@ class sequence_help {
 
         list($filtertypes, $filtersingle, $filtermore) = self::prepare_data_for_filters();
 
+        $group = 1400;
+
         // Filter mod_types.
         if (!empty($filtertypes)) {
 
@@ -938,9 +940,6 @@ class sequence_help {
 
         // Filter singles.
         if (!empty($filtersingle)) {
-            $columns = [];
-
-            $group = 1400;
             foreach ($filtersingle as $item) {
 
                 if ($item['type'] != 'metadata') {
