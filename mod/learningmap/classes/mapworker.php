@@ -164,9 +164,20 @@ class mapworker {
                 $url = $CFG->wwwroot . '/course/view.php?id=' . $placecm->course .
                 '&section=' . $placecm->sectionnum . '#module-' . $placecm->id;
             }
+
+            $place['opacityValue'] = isset($place['opacityValue']) ? (int) $place['opacityValue'] : 1;
+            $place['linkTargetType'] = isset($place['linkTargetType']) ? $place['linkTargetType'] : '';
+
             if (!$this->edit) {
-                $this->svgmap->set_link($place['linkId'], $url);
+                $this->svgmap->set_link($place['linkId'], $url,
+                                        $place['linkTargetType'], $place['opacityValue'], $place['linkTargetSize']);
             }
+
+            if ($this->edit) {
+                $this->svgmap->set_link($place['linkId'], '',
+                                        $place['linkTargetType'], $place['opacityValue'] + 0.5, $place['linkTargetSize']);
+            }
+
             $links[$place['id']] = $place['linkId'];
             $this->svgmap->update_text_and_title(
                 $place['id'],

@@ -64,24 +64,58 @@
 }}
 <div id="learningmap-activity-setting" class="card border-dark">
     <div class="card-body">
-    <div class="card-title alert alert-dark">{{#str}} editplace, learningmap {{/str}}</div>
-    <div class="card-text">{{#str}} activity, core {{/str}}
-    <select id="learningmap-activity-selector">
-    {{#sections}}
-        <option disabled title="{{name}}">-- {{#shortentext}} 30, {{{name}}} {{/shortentext}} --</option>
-        {{#coursemodules}}
-        {{^completionenabled}}
-        <option value="{{id}}" disabled class="learningmap-disabled-activity" title="{{#str}} nocompletionenabled, learningmap {{/str}}">{{#shortentext}} 30, {{{name}}} {{/shortentext}}</option>
-        {{/completionenabled}}
-        {{#completionenabled}}
-        <option value="{{id}}" title="{{name}}" data-activity-hidden="{{hidden}}">{{#shortentext}} 30, {{{name}}} {{/shortentext}}</option>
-        {{/completionenabled}}
-        {{/coursemodules}}
-    {{/sections}}
-    </select><br/>
-    <div class="alert alert-warning mt-3" hidden id="learningmap-activity-hidden-warning">{{#str}} hiddenactivitywarning, learningmap {{/str}}</div>
-    <input type="checkbox" id="learningmap-activity-starting"/> {{#str}} startingplace, learningmap {{/str}}<br/>
-    <input type="checkbox" id="learningmap-activity-target"/> {{#str}} targetplace, learningmap {{/str}}
+        <div class="card-title alert alert-dark">{{#str}} editplace, learningmap {{/str}}</div>
+        <div class="card-text">
+            <div class="form-group mb-3">
+                <label for="learningmap-activity-selector" class="">{{#str}} activity, core {{/str}}</label>
+                <select id="learningmap-activity-selector">
+                    {{#sections}}
+                    <option disabled title="{{name}}">-- {{#shortentext}} 30, {{{name}}} {{/shortentext}} --</option>
+                    {{#coursemodules}}
+                    {{^completionenabled}}
+                    <option value="{{id}}" disabled class="learningmap-disabled-activity"
+                        title="{{#str}} nocompletionenabled, learningmap {{/str}}">{{#shortentext}} 30, {{{name}}}
+                        {{/shortentext}}</option>
+                    {{/completionenabled}}
+                    {{#completionenabled}}
+                    <option value="{{id}}" title="{{name}}" data-activity-hidden="{{hidden}}">{{#shortentext}} 30,
+                        {{{name}}} {{/shortentext}}</option>
+                    {{/completionenabled}}
+                    {{/coursemodules}}
+                    {{/sections}}
+                </select>
+            </div>
+            <div class="alert alert-warning mt-3" hidden id="learningmap-activity-hidden-warning">
+                {{#str}} hiddenactivitywarning, learningmap {{/str}}
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="learningmap-activity-starting">
+                    <label class="custom-control-label" for="learningmap-activity-starting">{{#str}} startingplace, learningmap{{/str}}</label>
+                  </div>
+                </div>
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="learningmap-activity-target">
+                    <label class="custom-control-label" for="learningmap-activity-target">{{#str}} targetplace, learningmap {{/str}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="learningmap-activity-newwindow">
+                    <label class="custom-control-label" for="learningmap-activity-newwindow">{{#str}} openinnewwindow, learningmap {{/str}}</label>
+                </div>
+            </div>
+             <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="learningmap-activity-transparent">
+                    <label class="custom-control-label" for="learningmap-activity-transparent">{{#str}} maketransparent, learningmap {{/str}}</label>
+                </div>
+            </div>
+             <div class="form-group">
+                <label for="learningmap-activity-pointsize">{{#str}} pointsize, learningmap {{/str}}</label>
+                <input type="range" class="custom-range" id="learningmap-activity-pointsize" min="1" max="10">
+            </div>
+        </div>
     </div>
-</div>
 </div>

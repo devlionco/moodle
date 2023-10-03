@@ -16,6 +16,8 @@
 
 namespace mod_learningmap;
 
+use core_reportbuilder\local\filters\number;
+
 /**
  * Class for handling the content of the learningmap
  *
@@ -180,13 +182,15 @@ class svgmap {
      * Sets the URL of a link.
      *
      * @param string $linkid Id of the link
-     * @param string $url URL to set the xlink:href attribute to
+     * @param string $url URL to set the href attribute to
      * @return void
      */
-    public function set_link(string $linkid, string $url): void {
+    public function set_link(string $linkid, string $url, string $target, int $opacity): void {
         $link = $this->dom->getElementById($linkid);
         if ($link) {
-            $link->setAttribute('xlink:href', $url);
+            $link->setAttribute('href', $url);
+            $link->setAttribute('target', $target);
+            $link->setAttribute('opacity', $opacity);
         }
     }
 
@@ -199,7 +203,7 @@ class svgmap {
     public function remove_link(string $linkid) {
         $link = $this->dom->getElementById($linkid);
         if ($link) {
-            $link->removeAttribute('xlink:href');
+            $link->removeAttribute('href');
         }
     }
 
@@ -289,7 +293,7 @@ class svgmap {
             $x = $place->getAttribute('cx');
             $y = $place->getAttribute('cy');
             $use = $this->dom->createElement('use');
-            $use->setAttribute('xlink:href', '#checkmark');
+            $use->setAttribute('href', '#checkmark');
             $use->setAttribute('transform', 'translate(' . $x . ' '. $y . ')');
             $use->setAttribute('class', 'learningmap-checkmark');
             $place->parentNode->appendChild($use);

@@ -103,6 +103,9 @@ class mod_learningmap_mod_form extends moodleform_mod {
             )
         );
 
+        $mform->addElement( 'select', 'modalsize', get_string('selectthepopupsize', 'learningmap'),
+               [50 => '50%', 60 => '60%', 70 => '70%', 80 => '80%', 90 => '90%', 100 => '100%'], array('id' => 'modalsize_select'));
+
         $mform->addElement('checkbox', 'showdescription', get_string('showdescription', 'learningmap'));
         $mform->setType('showdescription', PARAM_INT);
         $mform->addHelpButton('showdescription', 'showdescription', 'learningmap');

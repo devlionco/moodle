@@ -57,7 +57,7 @@
     </style>
     <g id="backgroundGroup">
         <image x="0" y="0" width="800" class="learningmap-background-image" id="learningmap-background-image"
-            xlink:href="@@PLUGINFILE@@/Hintergrund%20hoch.jpg?oid=1673206943" height="2111"></image>
+            href="@@PLUGINFILE@@/Hintergrund%20hoch.jpg?oid=1673206943" height="2111"></image>
     </g>
     <g id="pathsGroup">
         <path class="learningmap-path" id="p0_1"
@@ -76,49 +76,49 @@
             d="M 634.7630004882812 151.31727600097656 L 310.7688293457031 1610.8843994140625"></path>
     </g>
     <g id="placesGroup">
-        <a id="a0" xlink:href="">
+        <a id="a0" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p0"
-                cx="87.69086869147608" cy="62.08608864410135" r="10"></circle>
+                cx="87.69086869147608" cy="62.08608864410135" r="16"></circle>
             <title id="titlep0"></title><text id="textp0" x="87.69086869147608" y="62.08608864410135" dx="15"
                 dy="15"></text>
-        </a><a id="a1" xlink:href="">
+        </a><a id="a1" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p1"
-                cx="323.24910389624284" cy="93.06227597406071" r="10"></circle>
+                cx="323.24910389624284" cy="93.06227597406071" r="16"></circle>
             <title id="titlep1"></title><text id="textp1" x="323.24910389624284" y="93.06227597406071" dx="15"
                 dy="15"></text>
-        </a><a id="a2" xlink:href="">
+        </a><a id="a2" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p2"
-                cx="466.9233914311517" cy="150.25499449114076" r="10"></circle>
+                cx="466.9233914311517" cy="150.25499449114076" r="16"></circle>
             <title id="titlep2"></title><text id="textp2" x="466.9233914311517" y="150.25499449114076" dx="15"
                 dy="15"></text>
-        </a><a id="a3" xlink:href="">
+        </a><a id="a3" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p3"
-                cx="405.31138493563014" cy="235.23707241599806" r="10"></circle>
+                cx="405.31138493563014" cy="235.23707241599806" r="16"></circle>
             <title id="titlep3"></title><text id="textp3" x="405.31138493563014" y="235.23707241599806" dx="15"
                 dy="15"></text>
-        </a><a id="a4" xlink:href="">
+        </a><a id="a4" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p4"
-                cx="241.7208849302799" cy="227.80114059757304" r="10"></circle>
+                cx="241.7208849302799" cy="227.80114059757304" r="16"></circle>
             <title id="titlep4"></title><text id="textp4" x="241.7208849302799" y="227.80114059757304" dx="15"
                 dy="15"></text>
-        </a><a id="a5" xlink:href="">
+        </a><a id="a5" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p5"
-                cx="159.92563492760476" cy="318.0945983927339" r="10"></circle>
+                cx="159.92563492760476" cy="318.0945983927339" r="16"></circle>
             <title id="titlep5"></title><text id="textp5" x="159.92563492760476" y="318.0945983927339" dx="15"
                 dy="15"></text>
-        </a><a id="a6" xlink:href="">
+        </a><a id="a6" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace" id="p6"
-                cx="300.14606350361925" cy="334.0287380036446" r="10"></circle>
+                cx="300.14606350361925" cy="334.0287380036446" r="16"></circle>
             <title id="titlep6"></title><text id="textp6" x="300.14606350361925" y="334.0287380036446" dx="15"
                 dy="15"></text>
-        </a><a id="a8" xlink:href="">
+        </a><a id="a8" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace learningmap-targetplace"
-                id="p8" cx="634.7629953327448" cy="151.3172704652015" r="10"></circle>
+                id="p8" cx="634.7629953327448" cy="151.3172704652015" r="16"></circle>
             <title id="titlep8"></title><text id="textp8" x="634.7629953327448" y="151.3172704652015" dx="15"
                 dy="15"></text>
-        </a><a id="a9" xlink:href="">
+        </a><a id="a9" href="">
             <circle class="learningmap-place learningmap-draggable learningmap-emptyplace learningmap-targetplace"
-                id="p9" cx="310.76882324422644" cy="1610.8844588246252" r="10"></circle>
+                id="p9" cx="310.76882324422644" cy="1610.8844588246252" r="16"></circle>
             <title id="titlep9"></title><text id="textp9" x="310.76882324422644" y="1610.8844588246252" dx="15"
                 dy="15"></text>
         </a>

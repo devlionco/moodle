@@ -299,11 +299,13 @@ function learningmap_get_learningmap(cm_info $cm) : string {
     $filtermanager = filter_manager::instance();
     $skipfilters = array_diff(array_keys(filter_get_active_in_context($cm->context)), $allowedfilters);
 
+    $mapimagesize = $map->modalsize > 0 ? $map->modalsize : 60;
+
     return(
         $filtermanager->filter_text(
             $OUTPUT->render_from_template(
                 'mod_learningmap/mapcontainer',
-                ['mapcode' => $worker->get_svgcode()]
+                ['mapcode' => $worker->get_svgcode(), 'mapimagesize' => $mapimagesize]
             ),
             $cm->context,
             ['trusted' => true, 'noclean' => true],

@@ -70,7 +70,7 @@
     position: relative;
     min-height: 100px;
     width: 100%;
-    max-width: 90vw;
+    margin: 0 auto;
 }
 
 .learningmap-scaling-svg.learningmap-slicemode {

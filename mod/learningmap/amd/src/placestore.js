@@ -49,12 +49,18 @@ let placestore = {
      * Adds a place. If it is the only place, it is set as starting place
      * @param {*} id id of the place
      * @param {*} linkId id of the corresponding link
+     * @param {*} linkTargetType type of link target "_blank/_self"
+     * @param {*} linkTargetSize radius of link target
+     * @param {*} opacityValue link opacity
      * @param {*} linkedActivity course module id of linked activity
      */
-    addPlace: function(id, linkId, linkedActivity = null) {
+    addPlace: function(id, linkId, linkTargetType, linkTargetSize, opacityValue, linkedActivity = null) {
         this.places.push({
             id: id,
             linkId: linkId,
+            linkTargetType: linkTargetType,
+            opacityValue: +opacityValue,
+            linkTargetSize: +linkTargetSize,
             linkedActivity: linkedActivity,
             placecolor: null,
             visitedcolor: null
@@ -95,6 +101,7 @@ let placestore = {
             }
         );
     },
+
     /**
      * Returns whether a place is in the array of starting places
      * @param {*} id id of the place
@@ -103,6 +110,7 @@ let placestore = {
     isStartingPlace: function(id) {
         return this.startingplaces.includes(id);
     },
+
     /**
      * Adds a place to the array of target places
      * @param {*} id id of the place
@@ -110,6 +118,7 @@ let placestore = {
     addTargetPlace: function(id) {
         this.targetplaces.push(id);
     },
+
     /**
      * Removes a place from the array of target places
      * @param {*} id id of the place
@@ -121,6 +130,76 @@ let placestore = {
             }
         );
     },
+
+   /**
+    * Adds a place to the array of target places
+    * @param {*} id id of the place
+    * @param {*} linkTargetType type of link target (blank or self)
+    */
+    changeLinkTargetType: function(id, linkTargetType) {
+        this.places.forEach((el) => {
+            if (el.id === id) {
+                el.linkTargetType = linkTargetType;
+            }
+        });
+    },
+
+    /**
+         * Returns whether a place is in the array of target places
+         * @param {number} id id of the place
+         * @returns {boolean}
+         */
+    isLinkTargetTypeBlank: function(id) {
+        let state;
+        this.places.forEach(el => {
+            if (el.id === id) {
+                state = (el.linkTargetType === '_blank') ? 'checked' : false;
+            }
+        });
+        return state;
+    },
+
+    /**
+        * Adds a place to the array of target places
+        * @param {*} id id of the place
+        * @param {*} opacityValue num of link opacity
+        */
+    changeLinkTargetOpacity: function(id, opacityValue) {
+        this.places.forEach((el) => {
+            if (el.id === id) {
+                el.opacityValue = opacityValue;
+            }
+        });
+    },
+
+    /**
+         * Returns whether a place is in the array of target places
+         * @param {number} id id of the place
+         * @returns {boolean}
+         */
+    isLinkTargetOpacity: function(id) {
+        let value;
+        this.places.forEach(el => {
+            if (el.id === id) {
+                value = (el.opacityValue === 0) ? 'checked' : false;
+            }
+        });
+        return value;
+    },
+
+    /**
+        * Change place target size
+        * @param {*} id id of the place
+        * @param {*} size size in rem
+        */
+    changeLinkTargetSize: function(id, size) {
+        this.places.forEach((el) => {
+            if (el.id === id) {
+                el.linkTargetSize = size;
+            }
+        });
+    },
+
     /**
      * Returns whether a place is in the array of target places
      * @param {number} id id of the place

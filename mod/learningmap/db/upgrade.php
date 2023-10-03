@@ -51,5 +51,18 @@ function xmldb_learningmap_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2023080101, 'learningmap');
     }
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2023080103) {
+        $table = new xmldb_table('learningmap');
+        $field = new xmldb_field('modalsize', XMLDB_TYPE_INTEGER, 10, null, null, null, 0);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2023080103, 'learningmap');
+    }
+
     return true;
 }

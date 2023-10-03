@@ -2,7 +2,7 @@ import {exception as displayException} from 'core/notification';
 import Templates from 'core/templates';
 import placestore from 'mod_learningmap/placestore';
 
-const circleRadius = 10;
+const circleRadius = 16;
 
 // Constants for updatePathDeclaration.
 const targetPoints = {
@@ -55,6 +55,12 @@ export const init = () => {
     let activitySelector = document.getElementById('learningmap-activity-selector');
     let activityStarting = document.getElementById('learningmap-activity-starting');
     let activityTarget = document.getElementById('learningmap-activity-target');
+    let activityLinkTarget = document.getElementById('learningmap-activity-newwindow');
+    let activityLinkTransparent = document.getElementById('learningmap-activity-transparent');
+    let activityLinkSize = document.getElementById('learningmap-activity-pointsize');
+
+
+
     let activityHiddenWarning = document.getElementById('learningmap-activity-hidden-warning');
     let advancedSettingsIcon = document.getElementById('learningmap-advanced-settings-icon');
 
@@ -115,6 +121,45 @@ export const init = () => {
             }
             updateCode();
         });
+
+        // Add / remove target value places array
+        activityLinkTarget.addEventListener('change', function() {
+            if (activityLinkTarget.checked) {
+                placestore.changeLinkTargetType(elementForActivitySelector, '_blank');
+                document.getElementById(elementForActivitySelector).closest('a').classList.add('learningmap-newwindow');
+            } else {
+                placestore.changeLinkTargetType(elementForActivitySelector, '_self');
+                document.getElementById(elementForActivitySelector).closest('a').classList.remove('learningmap-newwindow');
+            }
+            updateCode();
+        });
+
+        // Add / remove transparent value places array
+        activityLinkTransparent.addEventListener('change', function() {
+            if (activityLinkTransparent.checked) {
+                placestore.changeLinkTargetOpacity(elementForActivitySelector, 0);
+                document.getElementById(elementForActivitySelector).closest('a').classList.add('learningmap-opacity');
+                document.getElementById(elementForActivitySelector).closest('a').setAttribute('opacity', 0.25);
+
+            } else {
+                placestore.changeLinkTargetOpacity(elementForActivitySelector, 1);
+                document.getElementById(elementForActivitySelector).closest('a').classList.remove('learningmap-opacity');
+                document.getElementById(elementForActivitySelector).closest('a').setAttribute('opacity', 1);
+
+            }
+
+            updateCode();
+        });
+
+        // Change link point size
+        activityLinkSize.addEventListener('change', function(e) {
+            let radius = e.target.value;
+            placestore.changeLinkTargetSize(elementForActivitySelector, +radius);
+            document.getElementById(elementForActivitySelector).setAttribute('r', +radius * circleRadius);
+
+            updateCode();
+        });
+
     }
 
     // Load placestore values from the hidden input field
@@ -210,6 +255,11 @@ export const init = () => {
                 document.getElementById('learningmap-activity-selector').value = activityId;
                 document.getElementById('learningmap-activity-starting').checked = placestore.isStartingPlace(e.target.id);
                 document.getElementById('learningmap-activity-target').checked = placestore.isTargetPlace(e.target.id);
+                document.getElementById('learningmap-activity-newwindow').checked = placestore.isLinkTargetTypeBlank(e.target.id);
+                document.getElementById('learningmap-activity-transparent').checked = placestore.isLinkTargetOpacity(e.target.id);
+                // eslint-disable-next-line max-len
+                document.getElementById('learningmap-activity-pointsize').value = document.getElementById(e.target.id).getAttribute('r') / 16;
+
                 elementForActivitySelector = e.target.id;
                 updateActivities();
             } else {
@@ -613,18 +663,18 @@ export const init = () => {
      * Returns a circle tag with the given dimensions.
      * @param {*} x x coordinate of the center
      * @param {*} y y coordinate of the center
-     * @param {*} r radius
+     * @param {*} linkTargetSize radius
      * @param {*} classes classes to add
      * @param {*} id id of the circle
      * @returns {any}
      */
-    function circle(x, y, r, classes, id) {
+    function circle(x, y, linkTargetSize, classes, id) {
         let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('class', classes);
         circle.setAttribute('id', id);
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
-        circle.setAttribute('r', r);
+        circle.setAttribute('r', linkTargetSize);
         return circle;
     }
 
@@ -651,14 +701,19 @@ export const init = () => {
      * to the child for accessibility.
      * @param {*} child child item to set the link on
      * @param {*} id id of the link
+     * @param {*} target where to display the linked URL
+     * @param {*} opacityValue link opacity
      * @param {*} title title of the link
      * @param {*} text text to describe the link
      * @returns {any}
      */
-    function link(child, id, title = null, text = null) {
+    function link(child, id, target, opacityValue, title = null, text = null) {
         let link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttribute('id', id);
-        link.setAttribute('xlink:href', '');
+        link.setAttribute('href', '');
+        link.setAttribute('target', target);
+        link.setAttribute('opacity', opacityValue);
+        link.setAttribute('rel', 'noopener');
         link.appendChild(child);
         if (title !== null) {
             link.appendChild(title);
@@ -684,15 +739,21 @@ export const init = () => {
         }
         let cx = (event.clientX - CTM.e) / CTM.a;
         let cy = (event.clientY - CTM.f) / CTM.d;
+
+        // By default link will be open in current window.
+        let linkTargetType = '_self';
+        let opacityValue = 1;
         placesgroup.appendChild(
             link(
                 circle(cx, cy, circleRadius, 'learningmap-place learningmap-draggable learningmap-emptyplace', placeId),
                 linkId,
+                linkTargetType,
+                opacityValue,
                 title('title' + placeId),
                 text('text' + placeId, '', cx, cy)
             )
         );
-        placestore.addPlace(placeId, linkId);
+        placestore.addPlace(placeId, linkId, linkTargetType, +opacityValue, circleRadius);
     }
 
     /**
@@ -828,7 +889,7 @@ export const init = () => {
             if (previewimage[0].getAttribute('src').split('?')[1].includes('&oid=')) {
                 backgroundurl += '?oid=' + previewimage[0].getAttribute('src').split('&oid=')[1];
             }
-            background.setAttribute('xlink:href', backgroundurl);
+            background.setAttribute('href', backgroundurl);
         }
     }
 
