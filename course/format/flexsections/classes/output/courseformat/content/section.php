@@ -51,7 +51,7 @@ class section extends \core_courseformat\output\local\content\section {
      * @param bool $lazyload
      * @return stdClass
      */
-    public function export_for_template(\renderer_base $output, bool $lazyload = false): stdClass {
+    public function export_for_template(\renderer_base $output, bool $ajax = false): stdClass {
         global $USER, $PAGE;
 
         $format = $this->format;
@@ -60,11 +60,30 @@ class section extends \core_courseformat\output\local\content\section {
 
         $summary = new $this->summaryclass($format, $section);
 
-        if ($section->section === '0') {
-            $lazyload = false;
-        } else {
-            $lazyload = true;
+        // Default action.
+        $lazyload = false;
+        $cmload = true;
+
+        if ($ajax === false) {
+            if ($section->section == '0') {
+                $lazyload = false;
+                $cmload = true;
+            } else {
+                $lazyload = true;
+                $cmload = false;
+            }
         }
+
+        if ($ajax === true) {
+            if ($section->section == '0') {
+                $lazyload = false;
+                $cmload = false;
+            } else {
+                $lazyload = true;
+                $cmload = true;
+            }
+        }
+
         $data = (object)[
             'num' => $section->section ?? '0',
             'id' => $section->id,
@@ -74,18 +93,17 @@ class section extends \core_courseformat\output\local\content\section {
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
             'editing' => $PAGE->user_is_editing(),
-            // PTL-9806 Improve performance (lazyload was FALSE)
-            'lazyload' => $lazyload, //$this->format->get_format_option('sectionviewoption') == FORMAT_FLEXSECTIONS_SECTIONSVIEW_LIST || $PAGE->user_is_editing(), // Turn on for list section view only
+            'lazyload' => $lazyload
         ];
         $haspartials = [];
         $haspartials['header'] = $this->add_header_data($data, $output);
 
-            $haspartials['availability'] = $this->add_availability_data($data, $output);
-            $haspartials['visibility'] = $this->add_visibility_data($data, $output);
-            $haspartials['editor'] = $this->add_editor_data($data, $output);
-            $haspartials['header'] = $this->add_header_data($data, $output);
+        $haspartials['availability'] = $this->add_availability_data($data, $output);
+        $haspartials['visibility'] = $this->add_visibility_data($data, $output);
+        $haspartials['editor'] = $this->add_editor_data($data, $output);
+        $haspartials['header'] = $this->add_header_data($data, $output);
 
-        if ($lazyload) { // || !$data->lazyload){ // Lazy load
+        if ($cmload) {
             $haspartials['cm'] = $this->add_cm_data($data, $output);
         }
         $this->add_format_data($data, $haspartials, $output);

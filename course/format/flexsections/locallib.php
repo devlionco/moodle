@@ -31,7 +31,7 @@
 function format_flexsections_cm_grade_status(cm_info $mod) {
     global $CFG, $USER, $DB;
 
-    $data = [];
+    $result = [];
 
     // For a teacher colleagues don`t show activity status.
     $modcontext = context_module::instance($mod->id);
@@ -320,9 +320,9 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                        ORDER BY g.timemodified DESC
                     ";
 
-                    $result = $DB->get_records_sql($query, [$mod->instance, $hvp->id]);
+                    $data = $DB->get_records_sql($query, [$mod->instance, $hvp->id]);
 
-                    $havegrade    = count($result);
+                    $havegrade    = count($data);
                     $notsubmitted = $countmaxusers - $havegrade;
 
                     // Gray - טרם הוגש.
@@ -350,32 +350,31 @@ function format_flexsections_cm_grade_status(cm_info $mod) {
                     break;
             }
 
-            $data                  = [];
-            $data['url']           = $url;
-            $data['countmaxusers'] = $countmaxusers;
+            $result['url']           = $url;
+            $result['countmaxusers'] = $countmaxusers;
 
-            $data['segment_green']         = $segmentgreen;
-            $data['segment_green_percent'] = ($countmaxusers > 0) ? $segmentgreen / $countmaxusers * 100 : 0;
+            $result['segment_green']         = $segmentgreen;
+            $result['segment_green_percent'] = ($countmaxusers > 0) ? $segmentgreen / $countmaxusers * 100 : 0;
 
-            $data['segment_orange']         = $segmentorange;
-            $data['segment_orange_percent'] = ($countmaxusers > 0) ? $segmentorange / $countmaxusers * 100 : 0;
+            $result['segment_orange']         = $segmentorange;
+            $result['segment_orange_percent'] = ($countmaxusers > 0) ? $segmentorange / $countmaxusers * 100 : 0;
 
-            $data['segment_blue']         = $segmentblue;
-            $data['segment_blue_percent'] = ($countmaxusers > 0) ? $segmentblue / $countmaxusers * 100 : 0;
+            $result['segment_blue']         = $segmentblue;
+            $result['segment_blue_percent'] = ($countmaxusers > 0) ? $segmentblue / $countmaxusers * 100 : 0;
 
-            $data['segment_gray']         = $segmentgray;
-            $data['segment_gray_percent'] = ($countmaxusers > 0) ? $segmentgray / $countmaxusers * 100 : 0;
+            $result['segment_gray']         = $segmentgray;
+            $result['segment_gray_percent'] = ($countmaxusers > 0) ? $segmentgray / $countmaxusers * 100 : 0;
 
-            $data['segment_red']         = $segmentred;
-            $data['segment_red_percent'] = ($countmaxusers > 0) ? $segmentred / $countmaxusers * 100 : 0;
+            $result['segment_red']         = $segmentred;
+            $result['segment_red_percent'] = ($countmaxusers > 0) ? $segmentred / $countmaxusers * 100 : 0;
 
-            $data['tooltip'] = $tooltip;
+            $result['tooltip'] = $tooltip;
 
-            $data['student_failed'] = $studentfailed;
+            $result['student_failed'] = $studentfailed;
         }
     }
 
-    return $data;
+    return $result;
 }
 
 /**
