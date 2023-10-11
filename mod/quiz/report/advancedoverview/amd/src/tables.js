@@ -102,6 +102,7 @@ export const initquestionstable = function(data) {
     ],
   };
 
+
   TABLES.questionsTable = new Tabulator("#questions-table", content);
 };
 
@@ -234,7 +235,6 @@ export const initstudentstable = function(data, anon = 0) {
       self.translatedStrings.starttime = str[11];
       self.translatedStrings.endtime = str[12];
       self.translatedStrings.duration = str[13];
-
       const clickMenu = [
         {
           disabled: function(component) {
@@ -317,6 +317,16 @@ export const initstudentstable = function(data, anon = 0) {
 
       let tabledata = JSON.parse(data);
 
+      const linkRegex = /<a[^>]*>([^<]+)<\/a>/
+      tabledata.map((el) => {
+        const newGrade = linkRegex.exec(el.grade)
+        el.grade  = newGrade[1]
+
+        return el
+      })
+
+      console.log(tabledata)
+
       let content = {
         headerSortElement: function(column, dir) {
           switch (dir) {
@@ -367,70 +377,29 @@ export const initstudentstable = function(data, anon = 0) {
 
               case "attempt_number":
                 column.title = self.translatedStrings.attemptNumber;
-
-                column.sorter = function(
-                  a,
-                  b,
-                  aRow,
-                  bRow,
-                  column,
-                  dir,
-                  sorterParams
-                ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
-                };
+                column.sorter = "number"
 
                 break;
 
               case "grade":
                 column.title = self.translatedStrings.grade;
-
-                column.sorter = function(
-                  a,
-                  b,
-                  aRow,
-                  bRow,
-                  column,
-                  dir,
-                  sorterParams
-                ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
-                };
+                column.sorter = "number"
+                
 
                 break;
 
               case "starttime":
                 column.title = self.translatedStrings.starttime;
-                column.sorter = function(
-                  a,
-                  b,
-                  aRow,
-                  bRow,
-                  column,
-                  dir,
-                  sorterParams
-                ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
-                };
                 break;
 
               case "endtime":
                 column.title = self.translatedStrings.endtime;
-                column.sorter = function(
-                  a,
-                  b,
-                  aRow,
-                  bRow,
-                  column,
-                  dir,
-                  sorterParams
-                ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
-                };
                 break;
 
               case "duration":
                 column.title = self.translatedStrings.duration;
+                column.sorter = "number"
+                
                 column.sorter = function(
                   a,
                   b,
@@ -440,7 +409,27 @@ export const initstudentstable = function(data, anon = 0) {
                   dir,
                   sorterParams
                 ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
+                  function sortTime(el) {
+                    const timeSplit = el.split(' ')
+                    const timeType = timeSplit[1]
+                    let newDuration = timeSplit.filter((el) => !isNaN(Number(el)))
+                    if(timeSplit[0] === "—") return 0
+
+                    const firstNum = Number(newDuration[0])
+                    const secondNum = Number(newDuration[1])
+
+                    if(timeType === "mins") {
+                      el = (firstNum * 60) + (secondNum)
+                    }
+                    if(timeType === "hour" || timeType === "hours") {
+                      el = (firstNum * 60 * 60) + (secondNum * 60)
+                    }
+                    if(timeType === "day" || timeType === "days") {
+                      el = (firstNum * 24  * 60 * 60) + (secondNum * 60  * 60)
+                    }
+                    return Number(el)
+                  }
+                  return sortTime(a) - sortTime(b);
                 };
                 break;
 
@@ -501,7 +490,6 @@ export const initstudentstable = function(data, anon = 0) {
       if (tabledata.length > 20) {
         content.pagination = true;
       }
-
       self.TABLES.studentsTable = new Tabulator("#students-table", content);
 
       self.TABLES.studentsTable.on(
