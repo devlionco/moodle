@@ -217,3 +217,18 @@
 {{#testingonly-make-mustache-lint-happy}}
 </div>
 {{/testingonly-make-mustache-lint-happy}}
+
+{{#js}}
+    if($('.activitytitle')[0]) {
+        function hideToolTip() {
+            if(!$('.tooltip')[0]) return
+            const isHovered = !!$('.activitytitle').filter(function() { return $(this).is(":hover"); }).length
+            if(!isHovered) $('.tooltip').remove()
+        }
+        $("body")[0].addEventListener('mousemove', hideToolTip)
+        $("#page")[0].addEventListener('scroll', () => {
+            if(!$('.tooltip')[0]) return
+            $('.tooltip').remove()
+        })
+    }
+{{/js}}
