@@ -56,6 +56,12 @@ class content extends \core_courseformat\output\local\content {
 
         $data = parent::export_for_template($output);
 
+        // EC-249.
+        if(!isset($data->singlesection)) {
+            $sections = $this->export_sections($output);
+            $data->singlesection = array_shift($sections);
+        }
+
         // If we are on course view page for particular section.
         if ($this->format->get_viewed_section()) {
             // Do not display the "General" section when on a page of another section.
