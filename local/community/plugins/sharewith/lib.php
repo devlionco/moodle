@@ -73,12 +73,14 @@ function community_sharewith_render_navbar_output() {
     }
 
     $teachercolleague = false;
-    if (!$activitycopyenable) {
-        foreach ($roles as $role) {
-            if ($role->shortname == 'teachercolleague' || $role->shortname == 'teachertraining') {
-                $teachercolleague = true;
-            }
+    foreach ($roles as $role) {
+        if ($role->shortname == 'teachercolleague' || $role->shortname == 'teachertraining') {
+            $teachercolleague = true;
         }
+    }
+
+    if ($teachercolleague) {
+        $activitycopyenable = false;
     }
 
     $stringman = get_string_manager();
