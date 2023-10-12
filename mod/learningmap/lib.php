@@ -162,7 +162,7 @@ function learningmap_get_coursemodule_info($cm) : cached_cm_info {
     global $DB;
 
     if (!$map = $DB->get_record('learningmap', ['id' => $cm->instance], 'completiontype')) {
-        return null;
+        return new cached_cm_info();
     }
 
     $result = new cached_cm_info();
