@@ -73,9 +73,11 @@ function community_sharewith_render_navbar_output() {
     }
 
     $teachercolleague = false;
-    foreach ($roles as $role) {
-        if ($role->shortname == 'teachercolleague' || $role->shortname == 'teachertraining') {
-            $teachercolleague = true;
+    if (!$activitycopyenable) {
+        foreach ($roles as $role) {
+            if ($role->shortname == 'teachercolleague' || $role->shortname == 'teachertraining') {
+                $teachercolleague = true;
+            }
         }
     }
 

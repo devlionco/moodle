@@ -93,9 +93,18 @@ define([
             };
 
             // On load.
-            $(`${node} [data-region="${SELECTORS.shareActivityButton}"]`).each(function() {
-                renderButton($(this));
-            });
+            if (attr !== null && attr.amit) {
+                setTimeout(function() {
+                    $(`${node} [data-region="${SELECTORS.shareActivityButton}"]`).each(function() {
+                        renderButton($(this));
+                    });
+
+                }, 2000);
+            } else {
+                $(`${node} [data-region="${SELECTORS.shareActivityButton}"]`).each(function() {
+                    renderButton($(this));
+                });
+            }
 
             // Observer on action.
             let observerNodeTargets = document.querySelectorAll('.section'),

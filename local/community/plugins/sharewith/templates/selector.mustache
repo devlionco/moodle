@@ -26,13 +26,15 @@
     </button>
 
     {{#amit}}
-    <a class="btn btn-outline-primary {{^teacherid}}disabled{{/teacherid}}"
-        href='{{{wwwroot}}}/message/index.php?id={{teacherid}}&mess=2&modname={{modname}}&coursename={{coursename}}'
-        target="_blank" role="button">
-        <i aria-hidden="true" title="{{#str}}info, community_sharewith{{/str}}"
-            class="icon fa fa-info-circle fa-fw"></i>
-        {{#str}}info, community_sharewith{{/str}}
-    </a>
+        {{#teacherid}}
+            <button type="button" class="sharewith-btn sharemodal-btn align-self-center"
+                onclick="window.open('{{{wwwroot}}}/message/index.php?id={{teacherid}}&mess=2&modname={{modname}}&coursename={{coursename}}', '_blank');">
+                    <div class="circle mb-2">
+                        <i class="fa-light fa-circle-info fa-2x" title="{{#str}}info, community_sharewith{{/str}}"></i>
+                    </div>
+                    <span class="text w-100 d-flex text-center justify-content-center">{{#str}}info, community_sharewith{{/str}}</span>
+            </button>
+        {{/teacherid}}
     {{/amit}}
 
     {{^amit}}
