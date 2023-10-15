@@ -27,3 +27,9 @@ html[dir=rtl] .ggbcontainer{
 #page:has(.GeoGebraFrame) {
     overflow-x: hidden;
 }
+#page-question-type-geogebra{
+    padding-bottom: 0px !important;
+}
+#page-mod-quiz-attempt{
+    padding-bottom: 0px !important;
+}
