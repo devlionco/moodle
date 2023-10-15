@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-/* eslint-disable no-console */
 /* eslint-disable jsdoc/require-jsdoc */
 import Notification from "core/notification";
 import * as Str from "core/str";
@@ -317,15 +316,15 @@ export const initstudentstable = function(data, anon = 0) {
 
       let tabledata = JSON.parse(data);
 
-      const linkRegex = /<a[^>]*>([^<]+)<\/a>/
+      const linkRegex = /<a[^>]*>([^<]+)<\/a>/;
       tabledata.map((el) => {
-        const newGrade = linkRegex.exec(el.grade)
-        el.grade  = newGrade[1]
+        const newGrade = linkRegex.exec(el.grade);
+        if (newGrade) {
+          el.grade = newGrade[1];
+        }
 
-        return el
-      })
-
-      console.log(tabledata)
+        return el;
+      });
 
       let content = {
         headerSortElement: function(column, dir) {
@@ -377,14 +376,13 @@ export const initstudentstable = function(data, anon = 0) {
 
               case "attempt_number":
                 column.title = self.translatedStrings.attemptNumber;
-                column.sorter = "number"
+                column.sorter = "number";
 
                 break;
 
               case "grade":
                 column.title = self.translatedStrings.grade;
-                column.sorter = "number"
-                
+                column.sorter = "number";
 
                 break;
 
@@ -398,8 +396,8 @@ export const initstudentstable = function(data, anon = 0) {
 
               case "duration":
                 column.title = self.translatedStrings.duration;
-                column.sorter = "number"
-                
+                column.sorter = "number";
+
                 column.sorter = function(
                   a,
                   b,
@@ -409,25 +407,28 @@ export const initstudentstable = function(data, anon = 0) {
                   dir,
                   sorterParams
                 ) {
+                  // eslint-disable-next-line require-jsdoc
                   function sortTime(el) {
-                    const timeSplit = el.split(' ')
-                    const timeType = timeSplit[1]
-                    let newDuration = timeSplit.filter((el) => !isNaN(Number(el)))
-                    if(timeSplit[0] === "—") return 0
+                    const timeSplit = el.split(' ');
+                    const timeType = timeSplit[1];
+                    let newDuration = timeSplit.filter((el) => !isNaN(Number(el)));
+                    if (timeSplit[0] === "—") {
+                      return 0;
+                      }
 
-                    const firstNum = Number(newDuration[0])
-                    const secondNum = Number(newDuration[1])
+                    const firstNum = Number(newDuration[0]);
+                    const secondNum = Number(newDuration[1]);
 
-                    if(timeType === "mins") {
-                      el = (firstNum * 60) + (secondNum)
+                    if (timeType === "mins") {
+                      el = (firstNum * 60) + (secondNum);
                     }
-                    if(timeType === "hour" || timeType === "hours") {
-                      el = (firstNum * 60 * 60) + (secondNum * 60)
+                    if (timeType === "hour" || timeType === "hours") {
+                      el = (firstNum * 60 * 60) + (secondNum * 60);
                     }
-                    if(timeType === "day" || timeType === "days") {
-                      el = (firstNum * 24  * 60 * 60) + (secondNum * 60  * 60)
+                    if (timeType === "day" || timeType === "days") {
+                      el = (firstNum * 24 * 60 * 60) + (secondNum * 60 * 60);
                     }
-                    return Number(el)
+                    return Number(el);
                   }
                   return sortTime(a) - sortTime(b);
                 };
@@ -664,7 +665,7 @@ export const initstudentstable = function(data, anon = 0) {
           $(page).scrollTop(storedScrollPosition);
         });
 
-      window.addEventListener('beforeunload', function () {
+      window.addEventListener('beforeunload', function() {
           sessionStorage.setItem("scrollPosition", page.scrollTop);
       });
 
