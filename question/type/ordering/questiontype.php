@@ -126,12 +126,15 @@ class qtype_ordering extends question_type {
         }
 
         // PTL-7937 New order.
-        $neworder = array_flip($question->order);
-        ksort($neworder, SORT_NUMERIC);
-        $neworder = array_values($neworder);
         $newanswerorder = [];
-        foreach ($neworder as $key => $value) {
-            $newanswerorder[] = $question->answer[$value];
+
+        if (is_array($question->order)) {
+            $neworder = array_flip($question->order);
+            ksort($neworder, SORT_NUMERIC);
+            $neworder = array_values($neworder);
+            foreach ($neworder as $key => $value) {
+                $newanswerorder[] = $question->answer[$value];
+            }
         }
 
         if(!$newanswerorder) {
