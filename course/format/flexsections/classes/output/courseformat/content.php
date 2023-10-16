@@ -367,10 +367,12 @@ class content extends \core_courseformat\output\local\content {
                 continue;
             }
 
-            if(isset($section->subsections) && !empty($section->subsections)){
+            if (isset($section->subsections) && !empty($section->subsections)) {
                 $subsections = $section->subsections;
                 $this->recursive_unset_sections($subsections);
-                $sections[$key]->subsections = $subsections;
+                if ($subsections && $sections[$key]) {
+                    $sections[$key]->subsections = $subsections;
+                }
             }
         }
     }
