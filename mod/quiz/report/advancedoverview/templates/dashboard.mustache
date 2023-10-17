@@ -7,17 +7,17 @@
             <div class="course-group-wrapper d-flex align-items-center">
                 <span class="mr-3">{{#str}}separategroups, quiz_advancedoverview{{/str}}</span>
                 <div class="dropdown">
-                    <button class="btn btn-link-secondary dropdown-toggle advancedoverview_report-dropdown-btn" type="button"
+                    <button class="btn btn-link-secondary {{#groupsselectenable}}dropdown-toggle{{/groupsselectenable}} advancedoverview_report-dropdown-btn" type="button"
                             id="advancedoverview_groupid"
                             data-value="{{#groups}}{{#selected}}{{groupid}}{{/selected}}{{/groups}}"
                             data-name="{{#groups}}{{#selected}}{{groupname}}{{/selected}}{{/groups}}"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{#groupsselectenable}}data-toggle="dropdown"{{/groupsselectenable}} aria-haspopup="true" aria-expanded="false">
                             <span class="advancedoverview_report-dropdown-btn-title">
                                 {{#groups}}{{#selected}}{{groupname}}{{/selected}}{{/groups}}
                             </span>
                     </button>
 
-                    <div class="dropdown-menu {{#dir_rtl}} dropdown-menu-right {{/dir_rtl}} aaaaaa" aria-labelledby="advancedoverview_groupid">
+                    <div class="dropdown-menu {{#dir_rtl}} dropdown-menu-right {{/dir_rtl}}" aria-labelledby="advancedoverview_groupid">
                         {{#groups}}
                         <a class="dropdown-item {{#selected}}selected{{/selected}}" href="javascript:void(0)"
                             data-value="{{groupid}}" data-name="{{groupname}}">

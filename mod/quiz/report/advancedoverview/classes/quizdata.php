@@ -46,6 +46,7 @@ class quizdata {
     public $course;
     public $cm;
     public $groupid;
+    public $groups;
     public $questions;
     public $participants;
     public $participantsids;
@@ -73,7 +74,7 @@ class quizdata {
     public $openquestionslist = [];
     public $anonymouscount = 1;
 
-    public function __construct($cmid, $groupid = 0, $config = null) {
+    public function __construct($cmid, $groupid = -1, $config = null) {
         global $USER;
 
         $this->states = [];
@@ -106,7 +107,55 @@ class quizdata {
         $this->prepare_options();
 
         list($this->course, $this->cm) = get_course_and_cm_from_cmid($cmid);
-        $this->groupid = $groupid;
+
+        // Build groups.
+        $coursecontext = context_course::instance($this->course->id);
+        $roles = get_user_roles($coursecontext, $USER->id, false);
+        $teacher = false;
+        foreach ($roles as $role) {
+            if ($role->shortname == 'teacher') {
+                $teacher = true;
+            }
+        }
+
+        $groups = [];
+
+        if ($teacher) {
+            foreach (groups_get_all_groups($this->course->id, $USER->id) as $group) {
+                $groups[] = [
+                        'groupid' => $group->id,
+                        'groupname' => $group->name,
+                ];
+            }
+
+            // Default group id.
+            if ($groupid == -1) {
+                $groupid = isset($groups[0]) ?  $groups[0]['groupid'] : -2;
+            }
+
+            $this->groupid = $groupid;
+        } else {
+            $groups[] = [
+                    'groupid' => '0',
+                    'groupname' => get_string('allparticipants', 'quiz_advancedoverview'),
+            ];
+
+            foreach (groups_get_all_groups($this->course->id) as $group) {
+                $groups[] = [
+                        'groupid' => $group->id,
+                        'groupname' => $group->name,
+                ];
+            }
+
+            // Default group id.
+            $this->groupid = ($groupid == -1) ? 0 : $groupid;
+        }
+
+        foreach ($groups as $key => $item) {
+            $groups[$key]['selected'] = ($this->groupid == $item['groupid']) ? true : false;
+        }
+
+        $this->groups = $groups;
 
         $this->quizobj = \quiz::create($this->cm->instance);
         $this->quizobj->preload_questions();
@@ -1134,24 +1183,8 @@ class quizdata {
                 'title' => format_string($this->cm->name, true, ['context' => $context]),
         ];
 
-        // Build groups.
-        $groups = [[
-                'groupid' => '0',
-                'groupname' => get_string('allparticipants', 'quiz_advancedoverview'),
-        ]];
-
-        foreach (groups_get_all_groups($this->course->id) as $group) {
-            $groups[] = [
-                    'groupid' => $group->id,
-                    'groupname' => $group->name,
-            ];
-        }
-
-        foreach ($groups as $key => $item) {
-            $groups[$key]['selected'] = ($this->groupid == $item['groupid']) ? true : false;
-        }
-
-        $data['groups'] = $groups;
+        $data['groups'] = $this->groups;
+        $data['groupsselectenable'] = count($this->groups) > 1 ? true : false;
 
         // Buttons.
         $data['href_edit_question'] = new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cm->id]);
