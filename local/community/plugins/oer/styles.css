@@ -198,6 +198,7 @@
 .activity-title h2 {
   font-size: 1.125rem;
   overflow-wrap: break-word;
+  max-width: 70%;
   line-height: 1.25;
 }
 .activity-title .activity-title-info {
@@ -246,10 +247,12 @@
   font-style: normal;
   font-weight: 400;
   line-height: 0.75rem;
+  font-size: 1rem;
 }
 .activity-info .activity-info-blocks .activity-info-block i {
   font-size: 1.5rem;
   padding-left: 2rem;
+  margin-bottom: 0.25rem;
 }
 
 .sort-result-dropdown-menu {
@@ -347,7 +350,7 @@ button.back {
   align-items: center;
 }
 #oer_btn_container button span {
-  font-size: 0.75rem;
+  font-size: 1.125rem;
 }
 
 .oer-tooltip {
