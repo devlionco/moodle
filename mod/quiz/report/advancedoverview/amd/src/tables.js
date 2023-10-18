@@ -414,7 +414,7 @@ export const initstudentstable = function(data, anon = 0) {
                     let newDuration = timeSplit.filter((el) => !isNaN(Number(el)));
                     if (timeSplit[0] === "—") {
                       return 0;
-                      }
+                    }
 
                     const firstNum = Number(newDuration[0]);
                     const secondNum = Number(newDuration[1]);
@@ -475,7 +475,28 @@ export const initstudentstable = function(data, anon = 0) {
                   dir,
                   sorterParams
                 ) {
-                  return attemptNumberSorter(aRow, bRow, dir);
+                  function sortQuestion(el) {
+                    let result = -3;
+                    if (el[0] === "—") {
+                      result = -2;
+                      return result;
+                    }
+                    if (el[0] === "<" && el.includes("=numerical_value")) {
+                      const pattern = /<div class=numerical_value>([\d.]+)<\/div>/;
+                      const match = el.match(pattern);
+                      if(el.includes("=complete")) {
+                        result = 100;
+                        return result;
+                      }
+                      if(el.includes("=incorrect")) {
+                        result = -1;
+                        return result;
+                      }
+                      result = match[1];
+                    }
+                    return result;
+                  }
+                  return sortQuestion(b) - sortQuestion(a) ;
                 };
                 break;
             }
@@ -486,6 +507,7 @@ export const initstudentstable = function(data, anon = 0) {
           return definitions;
         },
       };
+
 
       // Enable pagination.
       if (tabledata.length > 20) {
