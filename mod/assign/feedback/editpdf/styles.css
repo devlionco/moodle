@@ -454,3 +454,7 @@ ul.assignfeedback_editpdf_menu {
 .assignfeedback_editpdf_widget .pageheader button img {
     margin: 0;
 }
+.assignfeedback_editpdf_htmleditor .moodle-dialogue-hd:nth-child(1) {
+    background-color: #0b4886 !important;
+    color: white !important;
+}

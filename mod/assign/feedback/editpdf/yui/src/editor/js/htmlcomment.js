@@ -183,6 +183,7 @@ var HTMLCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
         if (this.width < 200) {
             this.width = 200;
         }
+        
         node.set('innerHTML', this.rawtext);
         Y.use('mathjax', function() {
             window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
@@ -248,6 +249,14 @@ var HTMLCOMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext
                 }
             }
         }
+        drawable.nodes.forEach(element => {
+            let rawInner = $(element._node).find("> .htmlcomment").html()
+            rawInner =  rawInner.replaceAll("«","<")
+            rawInner =  rawInner.replaceAll("»",">")
+            rawInner = rawInner.replaceAll("¨", '"')
+            rawInner =  rawInner.replaceAll("§", "&")
+            $(element._node).find("> .htmlcomment").html(rawInner)
+        });
         return drawable;
     };
 

@@ -91,6 +91,8 @@ Y.extend(HTMLEDITOR, M.core.dialogue, {
             section: Y.WidgetStdMod.FOOTER
         });
 
+        $('.yui3-htmleditor h5')[0].innerText = M.util.get_string('htmleditor', 'assignfeedback_editpdf');
+
     },
     removeeditor: function () {
         if (Y.one(".assignfeedback_editpdf_htmleditor")) {
