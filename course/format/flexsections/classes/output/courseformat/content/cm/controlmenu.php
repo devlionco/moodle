@@ -124,6 +124,15 @@ class controlmenu extends \core_courseformat\output\local\content\cm\controlmenu
             );
         }
 
+        // Local_resourcenotif.
+        $actions['local_resourcenotif'] = new action_menu_link_secondary(
+                new moodle_url('/local/resourcenotif/resourcenotif.php', array('id' => $mod->id)),
+                new pix_icon('t/email', get_string('notifications'), 'moodle',
+                        array('class' => 'iconsmall', 'title' => '')),
+                get_string('notifications'),
+                array('class' => '', 'data-action' => 'local_resourcenotif' ,'data-sectionreturn' => $sr, 'target'=>'_blank')
+        );
+
         // Activity remind.
         list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
 

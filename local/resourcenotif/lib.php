@@ -8,6 +8,8 @@
 function local_resourcenotif_extend_navigation_course() {
     global $OUTPUT, $PAGE;
 
+    return true;
+
     $linkItem = '<a class="dropdown-item editing_notifications menu-action cm-edit-action" data-action="notifications" role="menuitem" href="'
         . htmlspecialchars(new moodle_url('/local/resourcenotif/resourcenotif.php', array('id' => '123XYZ321')))
         . '" title="' . htmlspecialchars(get_string("notifications")) . '">'
