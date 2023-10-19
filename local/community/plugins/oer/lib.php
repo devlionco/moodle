@@ -96,9 +96,6 @@ function community_oer_render_navbar_output() {
     // View single page.
     community_oer_render_info_single_page();
 
-    // Add menu option in edit activity menu.
-    community_oer_add_activity_menu_item();
-
     // Add comment icon in view page of activity.
     community_oer_add_comment_icon_in_view_page();
 
@@ -183,54 +180,6 @@ function community_oer_render_info_single_page() {
             }
 
         }
-    }
-
-    return true;
-}
-
-function community_oer_add_activity_menu_item() {
-    global $PAGE, $USER, $COURSE;
-
-    // Structure oercatalog data.
-    list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
-
-    $catid = \community_oer\main_oer::get_oer_category();
-
-    if ($catid == null) {
-        return false;
-    }
-
-    $context = \context_coursecat::instance($catid);
-
-    if (!in_array($COURSE->id, $courses) || !has_capability('moodle/category:manage', $context)) {
-        return false;
-    }
-
-    if (strpos($PAGE->pagetype, "course-view") === 0 && $PAGE->user_is_editing()) {
-        $linkitem =
-                '<button class="dropdown-item menu-action cm-edit-action activityRemind" data-action="activityRemind" title="" data-handler="activityRemind" data-cmid="123ZYX321">'
-                . '<i class="icon fal fa-comment fa-fw" aria-hidden="true"></i>'
-                . '<span class="menu-action-text">' .
-                htmlspecialchars(get_string('activity_update_notification', 'community_oer')) .
-                '</span>'
-                . '</button>';
-
-        // Style Boost.
-        $enc = json_encode($linkitem);
-        $PAGE->requires->js_init_code(<<<EOJS
-    var activities = document.querySelectorAll('.section-cm-edit-actions div[role="menu"]');
-    if (activities) {
-        for (var i = 0; i < activities.length; i++) {
-            var ul = activities[i];
-            var owner = ul.parentNode.parentNode.parentNode.getAttribute('data-owner');
-            if (owner) {
-                var id = owner.replace(/^#module-/, '');
-                ul.insertAdjacentHTML('beforeend', $enc.replace('123ZYX321', id));
-            }
-        }
-    }
-EOJS
-                , true);
     }
 
     return true;

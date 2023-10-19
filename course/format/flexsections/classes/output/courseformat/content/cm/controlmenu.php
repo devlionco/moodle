@@ -124,6 +124,25 @@ class controlmenu extends \core_courseformat\output\local\content\cm\controlmenu
             );
         }
 
+        // Activity remind.
+        list($categories, $courses, $activities) = \community_oer\main_oer::get_main_structure_elements();
+
+        $catid = \community_oer\main_oer::get_oer_category();
+        if ($catid != null) {
+            $context = \context_coursecat::instance($catid);
+
+            if (in_array($COURSE->id, $courses) && has_capability('moodle/category:manage', $context)) {
+                $actions['activityRemind'] = new action_menu_link_secondary(
+                        new moodle_url('javascript:void(0)'),
+                        new pix_icon('comment', get_string('activity_update_notification', 'community_oer'),
+                                'community_oer', array('class' => 'iconsmall', 'title' => '')),
+                        get_string('activity_update_notification', 'community_oer'),
+                        array('class' => 'activityRemind', 'data-action' => 'activityRemind', 'data-handler' => 'activityRemind',
+                                'data-cmid' => $mod->id)
+                );
+            }
+        }
+
         return $actions;
     }
 }

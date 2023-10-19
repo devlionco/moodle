@@ -392,7 +392,7 @@ function format_flexsections_cm_submission_data(cm_info $mod, $userid = 0) {
         $userid = $USER->id;
     }
 
-    if (!in_array($mod->modname, ['quiz', 'assign', 'questionnaire'])) {
+    if (!in_array($mod->modname, ['quiz', 'assign', 'questionnaire', 'hvp'])) {
         return false;
     }
 
