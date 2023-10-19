@@ -287,7 +287,8 @@ class format_flexsections_external extends external_api {
      */
     public static function get_section_status($sectionid) {
         global $DB, $USER, $COURSE;
-
+        //TODO Improve statistics
+        return json_encode([]);
         $data = $cmids = [];
 
         format_flexsections_get_sub_sections_cmids($cmids, $sectionid);
