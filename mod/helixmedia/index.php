@@ -37,7 +37,7 @@ $event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $PAGE->set_url('/mod/helixmedia/index.php', array('id' => $course->id));
-$pagetitle = strip_tags($course->shortname.': '.get_string("modulenamepluralformatted", "helixmedia"));
+$pagetitle = strip_tags($course->fullname.': '.get_string("modulenamepluralformatted", "helixmedia"));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 

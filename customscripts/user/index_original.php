@@ -83,7 +83,7 @@ if ($isfrontpage) {
 // Trigger events.
 user_list_view($course, $context);
 
-$PAGE->set_title("$course->shortname: ".get_string('participants'));
+$PAGE->set_title("$course->fullname: ".get_string('participants'));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagetype('course-view-participants');
 $PAGE->set_docs_path('enrol/users');

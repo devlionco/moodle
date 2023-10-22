@@ -90,7 +90,7 @@ require_login($course);
 
 helixmedia_view($hmli, $course, $cm, $context);
 
-$pagetitle = strip_tags($course->shortname.': '.format_string($hmli->name));
+$pagetitle = strip_tags($course->fullname.': '.format_string($hmli->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 

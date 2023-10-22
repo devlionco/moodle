@@ -46,7 +46,7 @@ $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
 $PAGE->set_url('/mod/url/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strurls);
+$PAGE->set_title($course->fullname.': '.$strurls);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strurls);
 echo $OUTPUT->header();

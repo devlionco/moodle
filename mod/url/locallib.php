@@ -165,7 +165,7 @@ function url_filter_callback($matches) {
 function url_print_header($url, $cm, $course) {
     global $PAGE, $OUTPUT;
 
-    $PAGE->set_title($course->shortname.': '.$url->name);
+    $PAGE->set_title($course->fullname.': '.$url->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($url);
     echo $OUTPUT->header();
