@@ -56,12 +56,6 @@ class content extends \core_courseformat\output\local\content {
 
         $data = parent::export_for_template($output);
 
-        // EC-249.
-        if(!isset($data->singlesection)) {
-            $sections = $this->export_sections($output);
-            $data->singlesection = array_shift($sections);
-        }
-
         // If we are on course view page for particular section.
         if ($this->format->get_viewed_section()) {
             // Do not display the "General" section when on a page of another section.
@@ -334,6 +328,12 @@ class content extends \core_courseformat\output\local\content {
             return $sections;
         } else {
             $this->recursive_unset_sections($sections);
+
+            // EC-249.
+            if (count($sections) == 1) {
+                $sections[1] = $sections[0];
+            }
+
             return array_values($sections);
         }
     }
