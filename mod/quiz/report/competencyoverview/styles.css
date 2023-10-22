@@ -1,7 +1,7 @@
 /*
 Inmported in theme/petel
 @import url("https://wfonts.weizmann.ac.il/css/Meoded+Pashut:200,400,700");
-@import url("https://fonts.googleapis.com/css?family=Assistant|Heebo&display=swap&subset=hebrew");
+@import url("https://fonts.googleapis.com/css?family=Assistant|&display=swap&subset=hebrew");
 */
 .competencies_wizard #aa_bk {
   font: 300 16px/32px Heebo;
@@ -24,7 +24,7 @@ Inmported in theme/petel
   display: flex;
   box-shadow: 2px 4px 6px rgba(85, 67, 116, 0.34);
   border-radius: 4px;
-  font: 400 24px/29px Meoded Pashut;
+  font: 400 16px/29px Heebo;
   color: #220F44;
   justify-content: space-between;
   align-items: center;
@@ -60,7 +60,7 @@ Inmported in theme/petel
   .competencies_wizard .modal-header h4 {
     color: #fff;
     margin: 0;
-    font: 400 32px/38px Meoded Pashut; }
+    font: 400 16px/38px Heebo; }
   .competencies_wizard .modal-header button.close {
     width: 24px;
     height: 24px;
@@ -123,7 +123,7 @@ Inmported in theme/petel
   border-radius: 4px;
   background-color: #fff;
   text-align: center;
-  font: 400 18px/32px Heebo;
+  font: 400 16px/32px Heebo;
   color: #220F44;
   margin: 0;
   white-space: nowrap;
@@ -131,12 +131,12 @@ Inmported in theme/petel
   text-overflow: ellipsis; }
 
 .competencies_wizard #aa_bk span {
-  font: 500 18px/32px Heebo;
+  font: 500 16px/32px Heebo;
   letter-spacing: 0;
   color: #220F44; }
 
 .competencies_wizard #aa_st_list > div {
-  font: 400 24px/29px Meoded Pashut;
+  font: 400 16px/29px Heebo;
   letter-spacing: 0;
   color: #220F44; }
 
@@ -319,7 +319,7 @@ Inmported in theme/petel
       vertical-align: middle;
       padding: .5rem 1rem; }
     #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table td.cell a {
-      font: 300 18px/32px Heebo;
+      font: 300 16px/32px Heebo;
       letter-spacing: 0;
       color: #220F44; }
     #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table .header-inner {
@@ -331,12 +331,12 @@ Inmported in theme/petel
         background-color: rgba(165, 155, 181, 0.15); }
     #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table #selectallstudents {
       text-decoration: underline;
-      font: 400 24px/29px Meoded Pashut;
+      font: 400 16px/29px Heebo;
       letter-spacing: 0;
       color: #220F44; }
     #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table .title-wrapper label.title {
       text-align: left;
-      font: 700 24px/29px Meoded Pashut;
+      font: 700 16px/29px Heebo;
       letter-spacing: 0;
       color: #220F44; }
     #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table td {
@@ -425,7 +425,7 @@ Inmported in theme/petel
       width: auto;
       margin-bottom: 1rem; }
     #page-mod-quiz-report .aa_scroll .card-title {
-      font: 700 18px/22px Meoded Pashut;
+      font: 700 16px/22px Heebo;
       margin-bottom: 0.8rem; }
     #page-mod-quiz-report .aa_scroll .card-data-inner {
       display: flex;
@@ -437,7 +437,7 @@ Inmported in theme/petel
     #page-mod-quiz-report .aa_scroll .card-text {
       width: 50%;
       display: flex;
-      font: 300 18px/22px Meoded Pashut;
+      font: 300 16px/22px Heebo;
       color: #220F44; }
       #page-mod-quiz-report .aa_scroll .card-text .user-name {
         text-decoration: underline;
@@ -469,7 +469,7 @@ Inmported in theme/petel
       display: flex;
       align-items: center; }
       #page-mod-quiz-report .aa_scroll .quiz_competencyoverview-select-button label {
-        font: 400 16px/16px Meoded Pashut;
+        font: 400 16px/16px Heebo;
         letter-spacing: 0;
         margin-bottom: 0;
         color: #FFFFFF; }
@@ -484,7 +484,7 @@ Inmported in theme/petel
       background: #F2F1F3 0% 0% no-repeat padding-box;
       box-shadow: 2px 4px 6px rgba(165, 155, 181, 0.15);
       border-radius: 4px;
-      font: 200 24px/29px Meoded Pashut;
+      font: 200 16px/29px Heebo;
       color: #220F44;
       margin-bottom: 1rem;
       border: none; }
@@ -501,7 +501,7 @@ Inmported in theme/petel
     display: flex;
     align-items: center;
     justify-content: center;
-    font: normal 18px/32px Heebo; }
+    font: normal 16px/32px Heebo; }
   #page-mod-quiz-report .custom_container {
     width: 100%; }
   #page-mod-quiz-report .custom-checkbox {
@@ -542,7 +542,7 @@ Inmported in theme/petel
       border-width: 0 2px 2px 0;
       transform: rotate(-45deg); }
   #page-mod-quiz-report .competency-popup-subtitle {
-    font: Bold 18px/24px Heebo;
+    font: Bold 16px/24px Heebo;
     color: #220F44; }
     #page-mod-quiz-report .competency-popup-subtitle p {
       font: Normal 16px/24px Heebo; }
