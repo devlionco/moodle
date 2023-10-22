@@ -22,6 +22,7 @@
  * @author      Bas Brands <bas@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace theme_petel\output;
 
 defined('MOODLE_INTERNAL') || die();
@@ -41,40 +42,36 @@ class icon_system_fontawesome extends \core\output\icon_system_fontawesome {
      * Default is to do no mapping.
      */
     public function get_icon_name_map() {
-      $iconmap = parent::get_icon_name_map();
+        $iconmap = parent::get_icon_name_map();
 
-      unset($iconmap['core:i/grade_correct']);
-      unset($iconmap['core:i/grade_incorrect']);
-      unset($iconmap['core:i/grade_partiallycorrect']);
+        //unset($iconmap['core:i/grade_correct']);
+        //unset($iconmap['core:i/grade_incorrect']);
+        //unset($iconmap['core:i/grade_partiallycorrect']);
 
-        $iconmap['core:a/add_file'] = 'fa-file';
-        $iconmap['core:b/document-new'] = 'fa-file';
-        $iconmap['core:e/new_document'] = 'fa-file';
-        $iconmap['theme:fp/add_file'] = 'fa-file';
-        $iconmap['theme:fp/create_folder'] = 'fa-folder';
-        $iconmap['core:a/create_folder'] = 'fa-folder';
-        $iconmap['core:i/competencies'] = 'fa-check-square';
-        $iconmap['core:e/share_square'] = 'fa-share-square';
-        $iconmap['core:i/badge'] = 'fa-trophy';
-        $iconmap['core:t/grades'] = 'fa-shield-check';
+        //$iconmap['core:a/add_file'] = 'fa-file';
+        //$iconmap['core:b/document-new'] = 'fa-file';
+        //$iconmap['core:e/new_document'] = 'fa-file';
+        //$iconmap['theme:fp/add_file'] = 'fa-file';
+        //$iconmap['theme:fp/create_folder'] = 'fa-folder';
+        //$iconmap['core:a/create_folder'] = 'fa-folder';
+        //$iconmap['core:i/competencies'] = 'fa-check-square';
+        //$iconmap['core:e/share_square'] = 'fa-share-square';
+        //$iconmap['core:i/badge'] = 'fa-trophy';
+        //$iconmap['core:t/grades'] = 'fa-shield-check';
 
-      return $iconmap;
+        return $iconmap;
     }
 
     public function render_pix_icon(\renderer_base $output, \pix_icon $icon) {
-        $subtype = 'pix_icon_fontawesome';
-        $subpix = new $subtype($icon);
+        $render = parent::render_pix_icon($output, $icon);
 
-        $data = $subpix->export_for_template($output);
+        if ($icon->pix == 'i/grade_partiallycorrect') {
+            $changedicon = new \pix_icon('grade_partiallycorrect', '', 'theme_petel',
+                    array('class' => 'iconsmall', 'title' => ''));
 
-        if (!$subpix->is_mapped()) {
-            $data['unmappedIcon'] = $icon->export_for_template($output);
-        }
-        if (isset($icon->attributes['aria-hidden'])) {
-            $data['aria-hidden'] = $icon->attributes['aria-hidden'];
+            $render = self::render_pix_icon($output, $changedicon);
         }
 
-        $data['faextendedclass'] = 'fal';
-        return $output->render_from_template('theme_petel/pix_icon_fontawesome', $data);
+        return $render;
     }
 }

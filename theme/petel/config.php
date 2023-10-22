@@ -93,4 +93,4 @@ $THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;
 $THEME->yuicssmodules = array('cssnormalize');
 $THEME->haseditswitch = true;
 $THEME->removedprimarynavitems = ['home', 'myhome','courses', 'siteadminnode'];
-//$THEME->iconsystem = '\\theme_petel\\output\\icon_system_fontawesome';
+$THEME->iconsystem = '\\theme_petel\\output\\icon_system_fontawesome';
