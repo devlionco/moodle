@@ -15,15 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz statistics report version information.
  *
- * @package   quiz_statistics
- * @copyright 2008 Jamie Pratt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz_statistics
+ * @copyright  2023 Devlion <info@devlion.co>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022112805;
-$plugin->requires  = 2022111800;
-$plugin->component = 'quiz_statistics';
+$tasks = array(
+        array(
+                'classname' => 'quiz_statistics\task\schedule_recalculate',
+                'blocking' => 0,
+                'minute' => 0,
+                'hour' => 3,
+                'day' => '*',
+                'dayofweek' => '*',
+                'month' => '*',
+        ),
+);

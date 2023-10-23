@@ -34,20 +34,21 @@ class statistics_helper {
      * @return void
      */
     public static function run_pending_recalculation_tasks(bool $discardoutput = false): void {
-        while ($task = \core\task\manager::get_next_adhoc_task(
-            time() + HOURSECS + 1,
-            false,
-            '\quiz_statistics\task\recalculate'
-        )) {
-            if ($discardoutput) {
-                ob_start();
-            }
-            $task->execute();
-            if ($discardoutput) {
-                ob_end_clean();
-            }
-            \core\task\manager::adhoc_task_complete($task);
-        }
+
+		// Disable cron cycling.        //while ($task = \core\task\manager::get_next_adhoc_task(
+        //    time() + HOURSECS + 1,
+        //    false,
+        //    '\quiz_statistics\task\recalculate'
+        //)) {
+        //    if ($discardoutput) {
+        //        ob_start();
+        //    }
+        //    $task->execute();
+        //    if ($discardoutput) {
+        //        ob_end_clean();
+        //    }
+        //    \core\task\manager::adhoc_task_complete($task);
+        //}
     }
 
 }
