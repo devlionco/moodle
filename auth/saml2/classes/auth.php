@@ -752,12 +752,16 @@ class auth extends \auth_plugin_base {
                     'reason' => AUTH_LOGIN_NOUSER]]);
                 $event->trigger();
                 $this->log(__FUNCTION__ . " user '$uid' is not in moodle so error");
-                $user = new stdClass();
-                $this->update_user_record_from_attribute_map($user, $attributes, true);
-                $user->email = $this->get_email_from_attributes($attributes);
-                $user->username = strtolower($uid);
-                $user->idnumber = strtolower($uid);
-                $this->error_page_moe_user_notfound($user);
+
+                if (isset($CFG->instancename) && in_array($CFG->instancename, ['feinberg', 'tutorials'])) {
+                    $this->error_page(get_string('nouser', 'auth_saml2', $uid));
+                }else{
+                    $user = new stdClass();
+                    $this->update_user_record_from_attribute_map($user, $attributes, true);
+                    $user->email = $this->get_email_from_attributes($attributes);
+                    $user->username = strtolower($uid);
+                    $this->error_page_moe_user_notfound($user);
+                }
             }
         } else {
             // Prevent access to users who are suspended.
