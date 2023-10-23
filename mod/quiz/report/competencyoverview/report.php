@@ -243,7 +243,7 @@ class quiz_competencyoverview_report extends quiz_attempts_report {
         // Table.
         $table = new quiz_competencyoverview_flexible_table('mod-quiz-report-competencyverview-report');
 
-        $table->gradesreportbuttonurl = new moodle_url($CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id . '&mode=teacheroverview', array('display' => 'full', 'lastaccess' => $this->lastaccess));
+        $table->gradesreportbuttonurl = new moodle_url($CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id . '&mode=advancedoverview', array('display' => 'full', 'lastaccess' => $this->lastaccess));
         $table->define_columns($columns);
         $table->define_headers($head);
         $table->define_baseurl($CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id . '&mode=competencyoverview');
