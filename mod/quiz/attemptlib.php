@@ -3016,7 +3016,14 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
             // Don't link from the summary page to itself.
             return '';
         }
-        return html_writer::link($this->attemptobj->summary_url(),
+
+        $url = new \moodle_url('/mod/quiz/forcefinishattempt.php', [
+                'sesskey' => sesskey(),
+                'attempt' => $this->attemptobj->get_attempt()->id,
+                'cmid' => $this->attemptobj->get_cmid()
+        ]);
+
+        return html_writer::link($url,
                 get_string('endtest', 'quiz'), array('class' => 'endtestlink aalink')) .
                 $this->render_restart_preview_link($output);
     }

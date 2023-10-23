@@ -242,12 +242,12 @@ M.mod_quiz.nav.init = function(Y) {
         }, document.body, '.qnbutton');
     }
 
-    if (Y.one('a.endtestlink')) {
-        Y.on('click', function(e) {
-            e.preventDefault();
-            nav_to_page(-1);
-        }, 'a.endtestlink');
-    }
+    // if (Y.one('a.endtestlink')) {
+    //     Y.on('click', function(e) {
+    //         e.preventDefault();
+    //         nav_to_page(-1);
+    //     }, 'a.endtestlink');
+    // }
 
     // Navigation buttons should be disabled when the files are uploading.
     require(['core_form/events'], function(formEvent) {
