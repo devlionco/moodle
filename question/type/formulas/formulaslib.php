@@ -185,7 +185,11 @@ function qtype_formulas_check_for_penalty($dano, $answer, $tolerance) {
     $arr_coeff_units_new = array();
     foreach($arr_coeff_units as $item){
         if (is_numeric($dano['value'])){
-            $arr_coeff_units_new[] = floatval($item) * (floatval($dano['value'])/floatval($coeff_dano));
+            if (floatval($coeff_dano) != 0) {
+                $arr_coeff_units_new[] = floatval($item) * (floatval($dano['value'])/floatval($coeff_dano));
+            }else{
+                $arr_coeff_units_new[] = floatval($item);
+            }
         }
     }
 
@@ -278,7 +282,12 @@ function qtype_formulas_compare_answer($dano, $answer, $tolerance) {
         }
     }
 
-    $new_dano = $coeff_answer*($dano['value']/$coeff_dano);
+    if (floatval($coeff_dano) != 0) {
+        $new_dano = $coeff_answer*($dano['value']/floatval($coeff_dano));
+    }else{
+        $new_dano = $coeff_answer;
+    }
+
     $coefftolerance = ($dano['value'] != 0) ? ($new_dano/$dano['value']) * $tolerance : 0;
 
     return qtype_formulas_compare_with_tolerance($new_dano, $answer['value'], $coefftolerance);
