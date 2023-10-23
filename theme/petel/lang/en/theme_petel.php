@@ -269,7 +269,7 @@ $string['rightfooter_descr'] = 'Will appear below the right side Science Teachin
 $string['teammembers'] = 'Team members';
 $string['currenttask'] = 'Current task';
 $string['qsendmessage'] = 'Ask teacher';
-$string['qmessageforteacher'] = 'I have trouble with question {$a->number} in quiz: {$a->cmname} course: {$a->coursename}\n I would be happy for your help';
+$string['qmessageforteacher'] = 'I have trouble with <a href="{$a->qlink}" target="_blank">question {$a->number}</a> in quiz: {$a->cmname} course: {$a->coursename}\n I would be happy for your help';
 $string['quiz_student_question'] = 'User opened chat';
 
 $string['switch_to_english'] = 'Switch to activity';

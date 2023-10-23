@@ -252,7 +252,7 @@ $string['togglemessagemenuclose'] = 'שליחת מסרים';
 $string['teammembers'] = 'חברי צוות';
 $string['currenttask'] = 'משימה נוכחית';
 $string['qsendmessage'] = 'שאלה למורה';
-$string['qmessageforteacher'] = 'אני מתקשה בשאלה {$a->number} משימה: {$a->cmname} קורס: {$a->coursename} \n אשמח לעזרתך';
+$string['qmessageforteacher'] = 'אני מתקשה  <a href="{$a->qlink}" target="_blank">בשאלה {$a->number}</a> משימה: {$a->cmname} קורס: {$a->coursename} \n אשמח לעזרתך';
 $string['quiz_student_question'] = 'המשתמש פתח את הציאט';
 
 $string['switch_to_english'] = 'מעבר לפעילות';

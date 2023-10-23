@@ -415,22 +415,30 @@ class question_renderer extends \core_question_renderer {
 
         $coursename = '';
         $cmname = '';
+        $text = '';
         if($attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $qa->get_usage_id()))){
             $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
 
             $course = get_course($quiz->course);
             $coursename = $course->fullname;
             $cmname = $quiz->name;
+
+            $a = new \StdClass();
+            $a->number = $number;
+            $a->cmname = $cmname;
+            $a->coursename = $coursename;
+
+            $qlink = new \moodle_url('/question/bank/editquestion/question.php', [
+                    'courseid' => $quiz->course,
+                    'id' => $qa->get_question_id()
+            ]);
+
+            $a->qlink = $qlink->out(false);
+
+            $text = get_string('qmessageforteacher', 'theme_petel', $a);
+            // Remove " that can break JS.
+            $text = str_replace('"', '', $text);
         }
-
-        $a = new \StdClass();
-        $a->number = $number;
-        $a->cmname = $cmname;
-        $a->coursename = $coursename;
-
-        $text = get_string('qmessageforteacher', 'theme_petel', $a);
-        // Remove " that can break JS
-        $text = str_replace('"', '', $text);
 
         $PAGE->requires->js_amd_inline('
             require(["jquery", "core/ajax", "core/notification"], function($, Ajax, Notification) {
