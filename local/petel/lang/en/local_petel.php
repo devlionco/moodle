@@ -239,6 +239,6 @@ $string['beforecontent'] = 'Before item "{$a}"';
 $string['blankcannotbesaved'] = 'A blank comment cannot be saved, please enter text here';
 $string['currentview'] = 'Current view:';
 $string['currentfolder'] = 'Current folder: ';
-
+$string['moemyprofile'] = 'MOE user profile';
 $string['periodictable'] = 'Periodic table';
 $string['closedialog'] = 'Close window';

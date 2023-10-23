@@ -99,6 +99,15 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $tree->add_node($node);
             }
         }
+        if ($CFG->moe_idp === 'test' || $CFG->moe_idp === NULL) {
+            $url = 'https://appslimud.education.gov.il/EduLogin/myaccount.aspx';
+        } else {
+            $url = 'https://apps2.education.gov.il/EduLogin/myaccount.aspx';
+        }
+        $node = new core_user\output\myprofile\node('contact', 'moeprofile',
+            get_string('moemyprofile', 'local_petel'), null, $url,
+            null, null, 'moeprofile');
+        $tree->add_node($node);
     }
 
     // Preference page.
