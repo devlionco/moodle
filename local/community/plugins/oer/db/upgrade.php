@@ -460,7 +460,7 @@ function xmldb_community_oer_upgrade($oldversion) {
         \core\task\manager::queue_adhoc_task($task);
     }
 
-    if ($oldversion < 2021101325) {
+    if ($oldversion < 2021101326) {
         // Create task (run immediately) for recache.
         $task = new \community_oer\task\adhoc_oer();
         $task->set_custom_data(

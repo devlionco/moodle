@@ -191,9 +191,22 @@ class question_oer {
         $catid = $course->category;
 
         // Prepare qname_text.
-        $qnametext = trim(strip_tags($obj->questiontext));
-        $qnametext = str_replace('m&nbsp;', '', $qnametext);
-        $qnametext = str_replace('&nbsp;', '', $qnametext);
+        $questiontext = trim(strip_tags($obj->questiontext));
+        $questiontext = str_replace('m&nbsp;', '', $questiontext);
+        $questiontext = str_replace('&nbsp;', '', $questiontext);
+
+        // Check questiontext.
+        $flag = false;
+        if (strpos($questiontext, 'MULTICHOICE_S') !== false || strpos($questiontext, '[[') !== false) {
+            $flag = true;
+        }
+
+        if (empty($questiontext) || $flag) {
+            $qnametext = $obj->qname;
+        } else {
+            $qnametext = $questiontext;
+        }
+
         $words = [];
         $countchars = 0;
         foreach (explode(' ', $qnametext) as $word) {
