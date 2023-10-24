@@ -223,7 +223,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             case 'none':
                 return '';
             default:
-                return 'ERR';
+                $number = chr(ord('a') + $num);
         }
         return $this->number_html($number);
     }

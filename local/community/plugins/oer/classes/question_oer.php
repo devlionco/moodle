@@ -197,7 +197,8 @@ class question_oer {
 
         // Check questiontext.
         $flag = false;
-        if (strpos($questiontext, 'MULTICHOICE_S') !== false || strpos($questiontext, '[[') !== false) {
+        if (strpos($questiontext, 'MULTICHOICE_S') !== false || strpos($questiontext, '[[') !== false ||
+                strpos($questiontext, 'NUMERICAL') !== false) {
             $flag = true;
         }
 
