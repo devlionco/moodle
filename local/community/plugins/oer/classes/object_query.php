@@ -358,7 +358,9 @@ class object_query {
         $result = [];
         $field = $this->uniquefield;
         foreach ($this->data as $item) {
-            $result[$item->$field] = $item;
+            if (isset($item->$field)) {
+                $result[$item->$field] = $item;
+            }
         }
 
         $this->data = $result;

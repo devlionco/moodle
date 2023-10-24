@@ -258,6 +258,8 @@ class qtype_numerical_question extends question_graded_automatically {
 
         foreach ($correctanswers as $answer) {
 
+            $answer->unitisright = false;
+
             if($answer->newtype){
                 $dano['value'] = $answer->answer;
                 $dano['unit'] = $answer->unit;

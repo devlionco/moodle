@@ -216,7 +216,7 @@ class adhoc_shedule_sharewith extends \core\task\adhoc_task {
                             $DB->update_record('course_modules', $newrow);
 
                             // Add competencies.
-                            if ($metadataobj->newactivitycompetencies != '') {
+                            if (isset($metadataobj->newactivitycompetencies) && $metadataobj->newactivitycompetencies != '') {
                                 $newactivitycompetencies = explode(',', $metadataobj->newactivitycompetencies);
                                 foreach ($newactivitycompetencies as $key => $compid) {
                                     $competresult = \core_competency\api::add_competency_to_course_module($newcmid, $compid);
