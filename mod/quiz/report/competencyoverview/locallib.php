@@ -24,15 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// TODO: oer?
-// require_once $CFG->dirroot . '/local/community/plugins/oercatalog/classes/classFilterPage.php';
-// require_once $CFG->dirroot . '/local/community/plugins/oercatalog/locallib.php';
-require_once $CFG->dirroot . '/mod/quiz/report/reportlib.php';
-require_once $CFG->dirroot . '/mod/quiz/locallib.php';
-require_once $CFG->dirroot . '/mod/quiz/report/default.php';
-require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/report.php';
-require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/question_competency.php';
-require_once $CFG->dirroot . '/mod/quiz/report/competencyoverview/report.php';
+require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/report/default.php');
+require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/questionsoverview/report.php');
+require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/classes/question_competency.php');
+require_once($CFG->dirroot . '/mod/quiz/report/competencyoverview/report.php');
+require_once($CFG->dirroot . '/local/community/plugins/oer/classes/activity_oer.php');
 
 /**
  * Get user courses
@@ -123,27 +121,30 @@ function quiz_competencyoverview_get_items($skills) {
     $allgroups = [];
     $PAGE->set_context(context_system::instance());
     require_sesskey();
-    $post = array();
-    $post['competency'] = json_encode($skills);
-    // $post['category_id'] = local_community_get_oercatalog_categoryid();
-    $oercatalog = new filterPage($post);
-    $oercatalog->setAmountItemsOnPage(0);
-    $obj = $oercatalog->ajaxFilterDataCompetency();
-    $sorteditems = quiz_competencyoverview_group_items($obj->activities);
 
-    // Group 3 X 3.
+    $obj = new \community_oer\activity_oer;
+    $activities = $obj->query()->get();
+
+    foreach ($activities as $key => $activity) {
+        if (!(in_array($activity->compmcompetencyid, $skills) || in_array($activity->compqcompetencyid, $skills))) {
+            unset($activities[$key]);
+        }
+    }
+    $sorteditems = quiz_competencyoverview_group_items($activities);
+
     $groupeditems = [];
     $groupcounter = 0;
+
     foreach ($skills as $keyskill => $skillid) {
         $group = [];
         $itemcounter = 0;
 
-        // Sort by skill.
+        // Sort by skill, but only if both $a and $b have the skill.
         uasort($sorteditems, function ($a, $b) use ($skillid) {
-            if ($a->compscore[$skillid] == $b->compscore[$skillid]) {
-                return 0;
-            }
-            return ($a->compscore[$skillid] > $b->compscore[$skillid]) ? -1 : 1;
+            $compScoreA = $a->compscore[$skillid] ?? 0; // Default to 0 if the skill doesn't exist.
+            $compScoreB = $b->compscore[$skillid] ?? 0;
+
+            return $compScoreB <=> $compScoreA; // Sort in descending order.
         });
 
         foreach ($sorteditems as $keysa => $sa) {
@@ -168,12 +169,20 @@ function quiz_competencyoverview_get_items($skills) {
         $items = [];
         foreach ($group as $item) {
             $block = [];
-            // Activity data.
-            $data = community_oercatalog_prepare_box_data($obj, $item);
-            $data->choose_button = true;
-            $html = $OUTPUT->render_from_template('quiz_competencyoverview/list_box_item', $data);
-            $block['id'] = $item->activity_id;
-            $block['item'] = $html;
+
+            $compitem = quiz_competencyoverview_get_item($item->cmid);
+
+            $data = new stdClass;
+            $data->activity_id = $item->cmid;
+            $data->course_id = $item->courseid;
+            $data->mod_name = $item->mod_name;
+            $data->item = $compitem;
+
+            // Wrap item, add choose button.
+            $wrappeditem = $OUTPUT->render_from_template('quiz_competencyoverview/itemwrapper', $data);
+
+            $block['id'] = $item->cmid;
+            $block['item'] = $wrappeditem;
 
             $items[] = $block;
         }
@@ -225,10 +234,10 @@ function quiz_competencyoverview_group_items(array $items) {
 
     foreach ($items as $item) {
 
-        $cm = $DB->get_record('course_modules', array('id' => $item->activity_id));
+        $cm = $DB->get_record('course_modules', array('id' => $item->cmid));
 
         // Base score of activity.
-        $competency = core_competency\api::list_course_module_competencies_in_course_module($item->activity_id);
+        $competency = core_competency\api::list_course_module_competencies_in_course_module($item->cmid);
         $compscore = [];
         foreach ($competency as $key => $comp) {
             $compscore[$comp->get('competencyid')] = 1;
@@ -269,16 +278,12 @@ function quiz_competencyoverview_get_item($cmid) {
 
     if ($cmid) {
         $activity = new \community_oer\activity_oer;
-        if ($element = $activity->single_cmid_render_data($cmid, 'social')) {
-            $block = [];
-
+        if ($element = $activity->single_cmid_render_data($cmid)) {
             // Activity data.
             $data = [];
             $data['blocks'][0] = $element;
-            $data->choose_button = false;
             $html = $OUTPUT->render_from_template('community_oer/activity/block', $data);
-            $block['item'] = $html;
-            $items = $block;
+            $items = $html;
         }
     }
 

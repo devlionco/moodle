@@ -241,8 +241,8 @@ define([
                             <div class='d-flex mt-100'>
                             <button id='aa_source_course' type="button" class='aa_h select_source btn-lg btn-block mr-20'>
                             ` + langStrings[0] + `</button>
-                            <!--<button id='aa_source_repository' type="button" class='aa_h select_source btn-lg btn-block'>
-                            ` + langStrings[1] + `</button>-->
+                            <button id='aa_source_repository' type="button" class='aa_h select_source btn-lg btn-block'>
+                            ` + langStrings[1] + `</button>
                             </div>
                             `;
                         break;
@@ -617,7 +617,7 @@ define([
                         methodname: "quiz_competencyoverview_get_item",
                         args: {'itemid': selecteditem},
                         done: item => {
-                            let itemone = JSON.parse(item.item).item;
+                            let itemone = JSON.parse(item.item);
                             let list =
                                 '<div class="aa_scroll"><div id="aa_item_list" class="list-group list-group-flush">';
                             list += itemone;

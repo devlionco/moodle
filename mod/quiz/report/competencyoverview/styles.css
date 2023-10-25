@@ -7,11 +7,12 @@ Inmported in theme/petel
   font: 300 16px/32px Heebo;
   letter-spacing: 0;
   color: #554374;
-  max-width: 584px;
+  /* max-width: 584px; */
   margin-bottom: .5rem; }
 
 .competencies_wizard #aa_main {
-  max-width: 584px; }
+  /* max-width: 584px; */
+}
 
 .competencies_wizard .cardgroup_title {
   height: 48px;
