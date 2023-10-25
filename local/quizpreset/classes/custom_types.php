@@ -93,14 +93,20 @@ class custom_types {
 
             if ($this->pagestate == 'update') {
                 $sql = "SELECT * FROM {local_quizpreset} WHERE cmid = ? AND status = 0 ORDER BY id DESC LIMIT 1";
-                $qp = $DB->get_record_sql($sql, array($cmid));
-                $qp->viewall = 1;
+                if (!$qp = $DB->get_record_sql($sql, array($cmid))){
+                    $qp = new \StdClass();
+                    $qp->viewall = 1;
+                    $qp->type = null;
+                }
             }
 
             if ($this->pagestate == 'new') {
                 $sql = "SELECT * FROM {local_quizpreset} WHERE userid = ? AND state = 'new' ORDER BY id DESC LIMIT 1";
-                $qp = $DB->get_record_sql($sql, array($USER->id));
-                $qp->viewall = 1;
+                if (!$qp = $DB->get_record_sql($sql, array($USER->id))) {
+                    $qp = new \StdClass();
+                    $qp->viewall = 1;
+                    $qp->type = null;
+                }
             }
 
         } else {
