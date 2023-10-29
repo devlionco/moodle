@@ -75,8 +75,8 @@ function prep_notifications($instanceid, $carousel = null) {
 
             // Check if for everyone or specific cohort.
             if ($notif->cohort != 0) {
-                $user_cohort = $DB->get_record('cohort_members', array('cohortid' => $notif->cohort, 'userid' => $USER->id));
-                if (!$user_cohort) {
+                $usercohort = $DB->get_record('cohort_members', array('cohortid' => $notif->cohort, 'userid' => $USER->id));
+                if (!$usercohort) {
                     $render = false;
                 }
             }
@@ -94,6 +94,15 @@ function prep_notifications($instanceid, $carousel = null) {
             }
         } else {
             $render = true;
+
+            // Check if for everyone or specific cohort.
+            if ($notif->cohort != 0) {
+                $usercohort = $DB->get_record('cohort_members', array('cohortid' => $notif->cohort, 'userid' => $USER->id));
+                if (!$usercohort) {
+                    $render = false;
+                }
+            }
+
             // Don't render if notification not in carousel IDs in carousel mode.
             if (!is_null($carousel) && !in_array($notif->id, $carousel->ids)) {
                 $render = false;
