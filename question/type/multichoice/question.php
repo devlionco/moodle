@@ -532,6 +532,24 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
 
     public function grade_response(array $response) {
         $fraction = 0;
+
+        $countcorrectanswer = $countanswered = 0;
+        foreach ($this->order as $ansid) {
+            if ($this->answers[$ansid]->fraction > 0) {
+                $countcorrectanswer++;
+            }
+        }
+
+        foreach ($response as $resp) {
+            if ($resp == 1) {
+                $countanswered++;
+            }
+        }
+
+        if ($countcorrectanswer != $countanswered) {
+            return array($fraction, question_state::graded_state_for_fraction($fraction));
+        }
+
         foreach ($this->order as $key => $ansid) {
             if (!empty($response[$this->field($key)])) {
                 $fraction += $this->answers[$ansid]->fraction;
