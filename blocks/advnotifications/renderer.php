@@ -43,6 +43,11 @@ class block_advnotifications_renderer extends plugin_renderer_base
         $html = '';
         // Render all the appropriate notifications.
 
+        // If no data.
+        if (count($notifications) == 0) {
+            return $html;
+        }
+
         if (!$carousel) {
             foreach ($notifications as $notification) {
                 // Open notification block.
@@ -150,7 +155,8 @@ class block_advnotifications_renderer extends plugin_renderer_base
                 $html .= '</div>';
             }
 
-            $html .= '  </div>
+            if (count($notifications) > 1) {
+                $html .= '  </div>
                         <button class="carousel-control-prev btn btn-link mb-3" type="button" data-target="#advnotifcarousel'.$uniqid.'" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
@@ -160,7 +166,7 @@ class block_advnotifications_renderer extends plugin_renderer_base
                             <span class="sr-only">Next</span>
                         </button>
                     </div>';
-
+            }
         }
 
         return $html;
