@@ -128,8 +128,11 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $mform->setDefault('idnumber', $idnumber);
             $username = optional_param('username', '', PARAM_RAW);
             $mform->setDefault('username', $username);
-            $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
-            $mform->setDefault('password', substr(str_shuffle($chars), 0, 10));
+            $chars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 3);
+            $chars .= substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 3);
+            $chars .= substr(str_shuffle('0123456789'), 0, 2);
+            $chars .= substr(str_shuffle('!@#$%^&*()'), 0, 2);
+            $mform->setDefault('password', str_shuffle($chars));
         }
 
         // Add "Agree to sitepolicy" controls. By default it is a link to the policy text and a checkbox but

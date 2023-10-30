@@ -759,7 +759,7 @@ class auth extends \auth_plugin_base {
                     $user = new stdClass();
                     $this->update_user_record_from_attribute_map($user, $attributes, true);
                     $user->email = $this->get_email_from_attributes($attributes);
-                    $user->username = strtolower($uid);
+                    $user->username = $this->get_username_from_attributes($attributes);
                     $this->error_page_moe_user_notfound($user);
                 }
             }
