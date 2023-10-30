@@ -1177,6 +1177,7 @@ class quizdata {
     }
 
     public function get_render_data() {
+        global $DB;
 
         $context = \context_module::instance($this->cm->id);
         $data = [
@@ -1195,7 +1196,9 @@ class quizdata {
 
         // Table according to questions.
         $tablequestion = [];
+        $questionTexts = [];
         foreach ($this->questions as $q) {
+            global $DB;
 
             $questionanswerder = $this->get_question_answered($q->id);
             $questionwrongs = $this->get_question_wrongs($q->id);
@@ -1206,6 +1209,10 @@ class quizdata {
             $questiontitle = get_string('question');
             $qname = htmlspecialchars($q->name, ENT_QUOTES, 'UTF-8');
             $url = quiz_advancedoverview_get_question_link($q, $this->cm->id);
+            $questiontext = $DB->get_field('question', 'questiontext', array('id' => $q->id));
+            preg_match_all('/<[^>]*>([^<]*)<\/[^>]*>/', $questiontext, $matches);
+            $parsedStr = implode(" ", $matches[1]);
+            array_push($questionTexts, $parsedStr);
             $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->slot .
                     "</span><span class=description>" . $qname . "</span></a>";
             $tablequestion[] = [
@@ -1221,6 +1228,7 @@ class quizdata {
         }
 
         $data['count_according_questions'] = count($tablequestion);
+        $data['questionTexts'] = json_encode(['texts' => $questionTexts]);
         $data['enable_table_according_questions'] = count($tablequestion) > 0 ? true : false;
         $data['data_table_according_questions'] = json_encode($tablequestion, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         // Students table.

@@ -15,9 +15,11 @@ export let QLENGTH = 0;
 const SELECTORS = {};
 export const TEMPCONFIG = {};
 
+let outerQuestions;
+
 export const TABLES = {};
 export const translatedStrings = {};
-export const initquestionstable = function(data) {
+export const initquestionstable = function(data, questions) {
   SELECTORS.studentstableNavFilter = document.getElementById(
     "studentstableNavFilter"
   );
@@ -27,6 +29,7 @@ export const initquestionstable = function(data) {
 
   let textDirection = $("html").attr("dir");
 
+  outerQuestions = questions;
   let tabledata = JSON.parse(data);
   QLENGTH = tabledata.length;
 
@@ -466,6 +469,7 @@ export const initstudentstable = function(data, anon = 0) {
                 column.visible = false;
                 break;
               default:
+                column.headerTooltip = outerQuestions.texts[i - 19].replace(/\&nbsp;/g, '');
                 column.sorter = function(
                   a,
                   b,

@@ -18,7 +18,7 @@
 {{#js}}
     {{#enable_table_according_questions}}
         require(['jquery', 'quiz_advancedoverview/tables'], function($, Tables) {
-            Tables.initquestionstable('{{{data_table_according_questions}}}');
+            Tables.initquestionstable('{{{data_table_according_questions}}}', {{{questionTexts}}});
         });
     {{/enable_table_according_questions}}
 {{/js}}
