@@ -131,7 +131,6 @@ class login_signup_form extends moodleform implements renderable, templatable {
             $chars = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 3);
             $chars .= substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 3);
             $chars .= substr(str_shuffle('0123456789'), 0, 2);
-            $chars .= substr(str_shuffle('!@#$%^&*()'), 0, 2);
             $mform->setDefault('password', str_shuffle($chars));
         }
 

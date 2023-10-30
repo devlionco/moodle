@@ -81,7 +81,7 @@ class user_extractor {
             $sql = "SELECT u.id
                       FROM {user} u $joins
                      WHERE u.deleted <> 1
-                       AND u.mnethostid = :mnethostid $fieldsql";
+                       AND u.mnethostid = :mnethostid $fieldsql limit 1";
 
             if ($records = $DB->get_records_sql($sql, $params)) {
                 if (count($records) == 1) {
