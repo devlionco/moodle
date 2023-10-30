@@ -44,6 +44,7 @@ class qtype_numerical extends question_type {
     const UNITINPUT = 0;
     const UNITRADIO = 1;
     const UNITSELECT = 2;
+    const UNITAUTOCOMPLETE = 3;
 
     const UNITNONE = 3;
     const UNITGRADED = 1;
@@ -71,7 +72,7 @@ class qtype_numerical extends question_type {
         //       the question table as is usually the case for qtype
         //       specific tables.
         if (!$question->options->answers = $DB->get_records_sql(
-                                "SELECT a.*, n.tolerance " .
+                                "SELECT a.*, n.tolerance, n.unit AS unitvalue " .
                                 "FROM {question_answers} a, " .
                                 "     {question_numerical} n " .
                                 "WHERE a.question = ? " .
@@ -236,6 +237,17 @@ class qtype_numerical extends question_type {
                 }
                 $options->tolerance = (string)$options->tolerance;
             }
+
+            if (isset($question->unitvalue)) {
+                if (trim($question->unitvalue[$key]) == '') {
+                    $options->unit = '';
+                } else {
+                    $options->unit = trim($question->unitvalue[$key]);
+                }
+            } else {
+                $options->unit = '';
+            }
+
             if (isset($options->id)) {
                 $DB->update_record('question_numerical', $options);
             } else {
@@ -297,7 +309,7 @@ class qtype_numerical extends question_type {
             $options->showunits = $question->unitrole;
             if ($question->unitrole == self::UNITGRADED) {
                 $options->unitgradingtype = $question->unitgradingtypes;
-                $options->showunits = $question->multichoicedisplay;
+                $options->showunits = (isset($question->multichoicedisplay)) ? $question->multichoicedisplay : qtype_numerical::UNITAUTOCOMPLETE;
             }
 
         } else if (isset($question->showunits)) {
@@ -378,10 +390,23 @@ class qtype_numerical extends question_type {
         if (empty($questiondata->options->answers)) {
             return;
         }
+
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id] = new qtype_numerical_answer($a->id, $a->answer,
                     $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance);
         }
+
+        // TODO ???
+        //$newtype = 0;
+        //if($questiondata->options->showunits == 3 && $questiondata->options->unitgradingtype == 1) $newtype = 1;
+        //
+        //foreach ($questiondata->options->answers as $a) {
+        //    if (!property_exists($a, 'unitvalue')) {
+        //        $a->unitvalue = null;
+        //    }
+        //    $question->answers[$a->id] = new qtype_numerical_answer($a->id, $a->answer,
+        //            $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance,$a->unitvalue, $newtype);
+        //}
     }
 
     public function make_answer_processor($units, $unitsleft) {
@@ -526,6 +551,8 @@ class qtype_numerical_answer_processor {
 
     protected $regex = null;
 
+    protected $typeautocomplete = false;
+
     public function __construct($units, $unitsbefore = false, $decsep = null,
             $thousandssep = null) {
         if (is_null($decsep)) {
@@ -540,6 +567,12 @@ class qtype_numerical_answer_processor {
 
         $this->units = $units;
         $this->unitsbefore = $unitsbefore;
+
+
+    }
+
+    public function set_type_autocomplete($type) {
+        $this->typeautocomplete = $type;
     }
 
     /**
@@ -653,6 +686,11 @@ class qtype_numerical_answer_processor {
     public function apply_units($response, $separateunit = null): array {
         if ($response === null || trim($response) === '') {
             return [null, null, null];
+        }
+
+        if ($this->typeautocomplete) {
+            $response = str_replace(' ', '', $response);
+            return [$response, null, null];
         }
 
         // Strip spaces (which may be thousands separators) and change other forms

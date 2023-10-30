@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/questionbase.php');
+require_once($CFG->dirroot . '/question/type/numerical/numericallib.php');
 
 /**
  * Represents a numerical question.
@@ -69,7 +70,12 @@ class qtype_numerical_question extends question_graded_automatically {
 
     public function apply_attempt_state(question_attempt_step $step) {
         list($point, $separator) = explode('$', $step->get_qt_var('_separators'));
-                $this->ap->set_characters($point, $separator);
+        $this->ap->set_characters($point, $separator);
+
+
+        if($this->if_autocomplete_enable()){
+            $this->ap->set_type_autocomplete(true);
+        }
     }
 
     public function summarise_response(array $response) {
@@ -106,6 +112,17 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function is_complete_response(array $response) {
+
+        if($this->if_autocomplete_enable()){
+            list($num, $unit) = qtype_numerical_split_answer($response['answer']);
+
+            if ($num == null || $unit == null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         if (!$this->is_gradable_response($response)) {
             return false;
         }
@@ -131,6 +148,21 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function get_validation_error(array $response) {
+
+        if($this->if_autocomplete_enable()){
+            list($num, $unit) = qtype_numerical_split_answer($response['answer']);
+
+            if ($num == null) {
+                return get_string('invalidnumber', 'qtype_numerical');
+            }
+
+            if ($unit == null) {
+                return get_string('invalidunit', 'qtype_numerical');
+            }
+
+            return '';
+        }
+
         if (!$this->is_gradable_response($response)) {
             return get_string('pleaseenterananswer', 'qtype_numerical');
         }
@@ -197,6 +229,50 @@ class qtype_numerical_question extends question_graded_automatically {
      */
     public function get_matching_answer($value, $multiplier) {
         if (is_null($value) || $value === '') {
+            return null;
+        }
+
+        if($this->if_autocomplete_enable()){
+            list($num, $unit) = qtype_numerical_split_answer($value);
+
+            if ($num == null || $unit == null) {
+                return null;
+            }
+
+            foreach ($this->answers as $answer) {
+                $dano = [
+                        'value' =>  $answer->answer,
+                        'unit' =>  $answer->unit,
+                ];
+
+                $answert = [
+                        'value' =>  $num,
+                        'unit' =>  $unit,
+                ];
+
+                if (qtype_numerical_compare_answer($dano, $answert, $answer->tolerance)) {
+                    $answer->unitisright = true;
+                    return $answer;
+                } else {
+                    $obj = qtype_numerical_check_for_penalty($dano, $answert, $answer->tolerance);
+
+                    if ($obj->result == true) {
+                        $answer->fraction = $answer->fraction - $answer->fraction * $obj->penalty;
+                        $answer->unitisright = true;
+
+                        if(isset($obj->penaltytype) && $obj->penaltytype == 'value'){
+                            $answer->feedback = get_string('feedbackwrongvalue', 'qtype_numerical');
+                        }
+
+                        if(isset($obj->penaltytype) && $obj->penaltytype == 'unit'){
+                            $answer->feedback = get_string('feedbackwrongunit', 'qtype_numerical');
+                        }
+
+                        return $answer;
+                    }
+                }
+            }
+
             return null;
         }
 
@@ -339,6 +415,18 @@ class qtype_numerical_question extends question_graded_automatically {
             'unitsleft' => $this->unitsleft,
         ];
     }
+
+    public function if_autocomplete_enable() {
+        global $DB;
+
+        $qno = $DB->get_record('question_numerical_options', ['question' => $this->id]);
+
+        if($this->unitdisplay == 3 && $this->unitgradingtype == 1 && $qno->showunits == qtype_numerical::UNITAUTOCOMPLETE){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 
@@ -356,8 +444,13 @@ class qtype_numerical_answer extends question_answer {
     public $tolerancetype = 2;
 
     public function __construct($id, $answer, $fraction, $feedback, $feedbackformat, $tolerance) {
+        global $DB;
+
         parent::__construct($id, $answer, $fraction, $feedback, $feedbackformat);
         $this->tolerance = abs((float)$tolerance);
+
+        $qn = $DB->get_record('question_numerical', ['answer' => $this->id]);
+        $this->unit = $qn->unit;
     }
 
     public function get_tolerance_interval() {

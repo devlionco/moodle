@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once($CFG->dirroot . '/question/type/numerical/numericallib.php');
 
 /**
  * Numerical question renderer class.
@@ -33,9 +34,27 @@
 class qtype_numerical_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
+        global $PAGE;
 
         $question = $qa->get_question();
+
+        $numericalunits = qtype_numerical_prepare_units_for_student($question);
+        $selectors = array('.autocomplete_numerical');
+        $PAGE->requires->js_call_amd('qtype_numerical/autocomplete-student', 'init', array(json_encode($selectors), json_encode($numericalunits)));
+
         $currentanswer = $qa->get_last_qt_var('answer');
+        $currentanswer = str_replace(' ', '', $currentanswer);
+
+        // Correct answer for question preview page.
+        if($options instanceof \qbank_previewquestion\question_preview_options) {
+            foreach($question->answers as $item){
+                if(trim($currentanswer) == trim($item->answer) && isset($item->unit) && !empty($item->unit)){
+                    $currentanswer .= ' '.$item->unit;
+                    break;
+                }
+            }
+        }
+
         if ($question->has_separate_unit_field()) {
             $selectedunit = $qa->get_last_qt_var('unit');
         } else {
@@ -51,6 +70,13 @@ class qtype_numerical_renderer extends qtype_renderer {
             'size' => 30,
             'class' => 'form-control d-inline',
         );
+
+        // If new type enabled.
+        if($question->if_autocomplete_enable()){
+            $inputattributes['class'] .= ' autocomplete_numerical';
+        }
+
+        $inputattributes['class'] .= ' answer-numerical';
 
         if ($options->readonly) {
             $inputattributes['readonly'] = 'readonly';
@@ -156,12 +182,17 @@ class qtype_numerical_renderer extends qtype_renderer {
         if ($answer && $answer->feedback) {
             $feedback = $question->format_text($answer->feedback, $answer->feedbackformat,
                     $qa, 'question', 'answerfeedback', $answer->id);
-        } else {
-            $feedback = '';
         }
 
-        if ($question->unitgradingtype && !$question->ap->is_known_unit($unit)) {
-            $feedback .= html_writer::tag('p', get_string('unitincorrect', 'qtype_numerical'));
+        if (!$answer) {
+            $feedback = get_string('feedbackwronganswer', 'qtype_numerical');
+
+        }
+
+        if(!$question->if_autocomplete_enable()) {
+            if ($question->unitgradingtype && !$question->ap->is_known_unit($unit)) {
+                $feedback .= html_writer::tag('p', get_string('unitincorrect', 'qtype_numerical'));
+            }
         }
 
         return $feedback;
@@ -174,9 +205,13 @@ class qtype_numerical_renderer extends qtype_renderer {
             return '';
         }
 
-        $response = str_replace('.', $question->ap->get_point(), $answer->answer);
-        if ($question->unitdisplay != qtype_numerical::UNITNONE) {
-            $response = $question->ap->add_unit($response);
+        if($question->if_autocomplete_enable()) {
+            $response = $answer->answer.$answer->unit;
+        } else {
+            $response = str_replace('.', $question->ap->get_point(), $answer->answer);
+            if ($question->unitdisplay != qtype_numerical::UNITNONE) {
+                $response = $question->ap->add_unit($response);
+            }
         }
 
         return get_string('correctansweris', 'qtype_shortanswer', $response);

@@ -210,14 +210,15 @@ function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
 
     if($wrongvaluepenalty != '0' && $wrongunitpenalty != '0'){
         if($value_validation){
-            $obj->result = 'true';
+            $obj->result = true;
             $obj->penaltytype = 'unit';
             $obj->penalty = $wrongunitpenalty;
             $obj->feedback = get_string('feedbackwrongunit', 'qtype_numerical');
         }elseif($unit_validation_aprox){
-            $obj->result = 'true';
+            $obj->result = true;
             $obj->penaltytype = 'value';
             $obj->penalty = $wrongvaluepenalty;
+            $obj->feedback = get_string('feedbackwrongvalue', 'qtype_numerical');
         }
     }
 
@@ -452,4 +453,32 @@ function qtype_numerical_prepare_units_for_student(qtype_numerical_question $que
     $result = array_values($result);
 
     return $result;
+}
+
+function qtype_numerical_split_answer($value) {
+    $num = $unit = null;
+
+    $length = strlen($value);
+    for ($i=0; $i <= $length; $i++) {
+
+        $str = substr($value, 0, $length - $i);
+        if (is_numeric($str)) {
+            $num = floatval($str);
+            $unit = substr($value, -$i, $i);
+            break;
+        }
+    }
+
+    $num = str_replace(' ', '', $num);
+    $unit = str_replace(' ', '', $unit);
+
+    if (empty($num)) {
+        $num = null;
+    }
+
+    if (empty($unit)) {
+        $unit = null;
+    }
+
+    return [$num, $unit];
 }
