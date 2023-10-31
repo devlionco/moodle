@@ -469,7 +469,13 @@ export const initstudentstable = function(data, anon = 0) {
                 column.visible = false;
                 break;
               default:
-                column.headerTooltip = outerQuestions.texts[i - 19].replace(/\&nbsp;/g, '');
+                // eslint-disable-next-line
+                let resultText;
+                // eslint-disable-next-line
+                let rawText = outerQuestions.texts[i - 19].replace(/\&nbsp;/g, '');
+                if(rawText.length > 50) {resultText = '...' + rawText.slice(0,49);}
+                else {resultText = rawText;}
+                column.headerTooltip = resultText;
                 column.sorter = function(
                   a,
                   b,
