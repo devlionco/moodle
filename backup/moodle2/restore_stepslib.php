@@ -4856,6 +4856,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 'question_bank_entry/question_version/question_versions/questions/question/question_hints/question_hint');
             $paths [] = new restore_path_element('tag', '/question_categories/question_category/question_bank_entries/'.
                 'question_bank_entry/question_version/question_versions/questions/question/tags/tag');
+            $path [] = new restore_path_element('competency',
+                '/question_categories/question_category/questions/question/competencies/competency');
         }
 
         return $paths;

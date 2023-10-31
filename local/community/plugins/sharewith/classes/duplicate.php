@@ -438,9 +438,72 @@ class duplicate extends \external_api {
             fulldelete($backupbasepath);
         }
 
+        // EC-260 Copy question competencies.
+        $targetactivityid = $newcmid;
+
+        $isquiz = duplicate::check_object_is_module($sourceactivityid, 'quiz');
+        if ($isquiz) {
+            list($sourcecourse, $sourcecm) = get_course_and_cm_from_cmid($sourceactivityid);
+            $sourcequizobj = \quiz::create($sourcecm->instance);
+            $sourcequizobj->preload_questions();
+            $sourcequizobj->load_questions();
+            $sourcequizquestions = $sourcequizobj->get_questions();
+
+            $isquiz_target = duplicate::check_object_is_module($targetactivityid, 'quiz');
+            if ($isquiz_target) {
+                list($targetcourse, $targetcm) = get_course_and_cm_from_cmid($targetactivityid);
+                $targetquizobj = \quiz::create($targetcm->instance);
+                $targetquizobj->preload_questions();
+                $targetquizobj->load_questions();
+                $targetquizquestions = $targetquizobj->get_questions();
+
+                foreach ($sourcequizquestions as $sourceqkey => $sourcequestion) {
+                    $targetquestion = duplicate::find_corresponding_target_question($sourcequestion, $targetquizquestions);
+
+                    if ($targetquestion) {
+                        community_sharequestion\duplicate_question::copy_question_competencies($sourcequestion, $targetquestion);
+                    }
+                }
+            }
+        }
+
         $newactivityid[] = $newcm;
 
         return isset($newcmid) ? $newcmid : null;
+    }
+
+    function find_corresponding_target_question($sourcequestion, $targetquizquestions) {
+        foreach ($targetquizquestions as $targetqkey => $targetquestion) {
+            if ($sourcequestion->slot == $targetquestion->slot) {
+                return $targetquestion;
+            }
+        }
+        return null;
+    }
+
+    public static function check_object_is_module($cmid, $module = '') {
+        global $DB, $CFG;
+        $response = false;
+
+        if ($module == '') {
+            return false;
+        }
+
+        $sql = "SELECT
+                    cm.id,
+                    m.name
+                FROM
+                    {course_modules} cm
+                    LEFT JOIN {modules} m ON m.id = cm.module
+                WHERE
+                    cm.id = ?
+                    AND m.name = ?";
+
+        if ($ret = $DB->get_record_sql($sql, [$cmid, $module])) {
+            $response = true;
+        }
+
+        return $response;
     }
 
     /**

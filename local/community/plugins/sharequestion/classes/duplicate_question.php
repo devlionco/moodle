@@ -362,5 +362,42 @@ class duplicate_question {
                 set_config('allowcheck_' . $neq->id, $allowcheck, 'qtype_essay');
             }
         }
+
+        // EC-260 Copy question competencies.
+        self::copy_question_competencies($q, $neq);
+
     }
+
+    /**
+     * Copy question competencies from one question to another.
+     *
+     * @param object $q The source question object.
+     * @param object $neq The target question object.
+     */
+    public static function copy_question_competencies($q, $neq) {
+        global $DB, $USER;
+
+        $sourcecompetencies = $DB->get_records('competency_questioncomp', ['qid' => $q->id]);
+
+        foreach ($sourcecompetencies as $key => $sourcecompetency) {
+            $sourcecompetency->qid = $neq->id;
+            $sourcecompetency->userid = $USER->id;
+            $sourcecompetency->timecreated = time();
+            $sourcecompetency->timemodified = $sourcecompetency->timecreated;
+            $sourcecompetencies[$key] = $sourcecompetency;
+
+            $existing = $DB->get_record('competency_questioncomp', [
+                'competencyid' => $sourcecompetency->competencyid,
+                'qid' => $neq->id,
+            ]);
+
+            if ($existing) {
+                $sourcecompetency->id = $existing->id;
+                $DB->update_record('competency_questioncomp', $sourcecompetency);
+            } else {
+                $DB->insert_record('competency_questioncomp', $sourcecompetency);
+            }
+        }
+    }
+
 }
