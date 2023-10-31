@@ -115,7 +115,8 @@ if ($PAGE->pagetype == 'my-index') {
 
 // Close for quiz reports.
 if ($PAGE->pagetype == 'mod-quiz-report') {
-    $buttonvloseblockdrawer = false;
+    $blockdraweropen = false;
+    $hasblocks = false;
 }
 
 $abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
