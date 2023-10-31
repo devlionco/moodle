@@ -352,9 +352,30 @@ class observer_assign {
         if (!\local_teamwork\common::is_assign_submission_enable($cm->instance)) {
             return false;
         }
+
+        // Get source user submission from assign_submission.
+        $obj = array(
+                'userid' => $event->relateduserid,
+                'assignment' => $event->get_assign()->get_grade_item()->iteminstance,
+                'latest' => 1
+        );
+        $sourceusersubmission = $DB->get_record('assign_submission', $obj);
+
+        // Main submission file.
+        $mainusersubmissionfiles = $DB->get_records_sql("SELECT * FROM {files} WHERE component = 'assignsubmission_file' " .
+                " AND filearea = 'submission_files' AND itemid = ? AND contextid = ? " .
+                " AND filename != '.' ", array($sourceusersubmission->id, $event->get_context()->id));
+
+        $pathnamehashessubmission = array();
+        foreach ($mainusersubmissionfiles as $itemfile) {
+            $pathnamehashessubmission[] = $itemfile->pathnamehash;
+        }
+
         foreach ($members as $member) {
             $DB->set_field('assign_submission', 'status', 'submitted',
                     array('userid' => $member->userid, 'assignment' => $cm->instance));
+
+            self::copy_files_to_member_assignsubmission($event, $pathnamehashessubmission, $member->userid);
         }
 
         // Update onlinetext.
