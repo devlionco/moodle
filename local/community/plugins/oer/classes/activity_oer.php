@@ -591,6 +591,10 @@ class activity_oer {
 
             // PTL-6060 Run filters through metadata_teacherremarks.
             $filtered = format_text($obj->data[$key]->metadata_teacherremarks, FORMAT_HTML);
+
+            // If present image, change url.
+            $filtered = str_replace($CFG->wwwroot.'/brokenfile.php#', $CFG->wwwroot.'/draftfile.php', $filtered);
+
             $obj->data[$key]->metadata_teacherremarks = $filtered;
 
             if (isset($CFG->trimbuttonchars) && $CFG->trimbuttonchars) {
