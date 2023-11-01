@@ -588,6 +588,8 @@ define([
                                 for (let key2 in itemslist[key][1]) {
                                     list += itemslist[key][1][key2].item;
                                 }
+                                list = list.replaceAll('mx-3', '');
+                                list = list.replaceAll('flex-xl-nowrap', '');
                                 list += "</div>";
                             }
                             list += "</div></div>";

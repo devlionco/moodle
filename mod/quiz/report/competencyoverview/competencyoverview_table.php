@@ -149,7 +149,7 @@ class quiz_competencyoverview_flexible_table extends flexible_table {
         get_string('assign_activities', 'quiz_competencyoverview') . '"id="user-action" class="btn btn-primary"
                     style="display: ;">'
         . get_string('assign_activities', 'quiz_competencyoverview') . '</button>
-                     <a href="' . $this->gradesreportbuttonurl . '" class="btn btn-secondary pull-right">' . get_string('teacheroverviewreport', 'quiz_competencyoverview') . '</a>
+                     <a href="' . $this->gradesreportbuttonurl . '" class="btn btn-secondarymedium pull-right">' . get_string('teacheroverviewreport', 'quiz_competencyoverview') . '</a>
                 </div>
             </div>
         </div>

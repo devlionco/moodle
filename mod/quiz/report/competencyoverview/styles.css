@@ -10,8 +10,10 @@ Inmported in theme/petel
   /* max-width: 584px; */
   margin-bottom: .5rem; }
 
-.competencies_wizard #aa_main {
+.competencies_wizard #aa_main .activity-title h2{
   /* max-width: 584px; */
+        font-size: 1rem;
+        line-height: 1;
 }
 
 .competencies_wizard .cardgroup_title {
