@@ -5605,7 +5605,7 @@ class assign {
      * @param bool $showlinks - Return plain text or links to the profile
      * @return string - the html summary
      */
-    public function view_student_summary($user, $showlinks) {
+    public function view_student_summary($user, $showlinks, $instance = null) {
 
         $o = '';
 
@@ -5615,7 +5615,7 @@ class assign {
                 $submissionstatus = $this->get_assign_submission_status_renderable($user, $showlinks);
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
-
+            $o .= $this->view_submission_action_bar($instance, $user);
             // If there is a visible grade, show the feedback.
             $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
             if ($feedbackstatus) {
@@ -5985,8 +5985,8 @@ class assign {
         }
 
         if ($this->can_view_submission($USER->id)) {
-            $o .= $this->view_submission_action_bar($instance, $USER);
-            $o .= $this->view_student_summary($USER, true);
+            $o .= $this->view_student_summary($USER, true,$instance);
+            //$o .= $this->view_submission_action_bar($instance, $USER);
         }
 
         $o .= $this->view_footer();

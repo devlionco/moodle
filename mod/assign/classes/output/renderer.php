@@ -810,7 +810,8 @@ class renderer extends \plugin_renderer_base {
                     $cell2content = get_string('nosubmissionyet', 'assign');
                 }
             }
-        } else {
+        }
+        else {
             $group = $status->submissiongroup;
             if (!$group && $status->preventsubmissionnotingroup) {
                 $cell2content = get_string('nosubmission', 'assign');
@@ -894,21 +895,21 @@ class renderer extends \plugin_renderer_base {
             }
         }
 
-        // Time remaining.
-        // Only add the row if there is a due date, or a countdown.
-        if ($status->duedate > 0 || !empty($submission->timestarted)) {
-            $cell1content = get_string('timeremaining', 'assign');
-            [$cell2content, $cell2attributes] = $this->get_time_remaining($status);
-            $this->add_table_row_tuple($t, $cell1content, $cell2content, [], ['class' => $cell2attributes]);
-        }
-
-        // Add time limit info if there is one.
-        $timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0;
-        if ($timelimitenabled && $status->timelimit > 0) {
-            $cell1content = get_string('timelimit', 'assign');
-            $cell2content = format_time($status->timelimit);
-            $this->add_table_row_tuple($t, $cell1content, $cell2content, [], []);
-        }
+        //// Time remaining.
+        //// Only add the row if there is a due date, or a countdown.
+        //if ($status->duedate > 0 || !empty($submission->timestarted)) {
+        //    $cell1content = get_string('timeremaining', 'assign');
+        //    [$cell2content, $cell2attributes] = $this->get_time_remaining($status);
+        //    $this->add_table_row_tuple($t, $cell1content, $cell2content, [], ['class' => $cell2attributes]);
+        //}
+        //
+        //// Add time limit info if there is one.
+        //$timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0;
+        //if ($timelimitenabled && $status->timelimit > 0) {
+        //    $cell1content = get_string('timelimit', 'assign');
+        //    $cell2content = format_time($status->timelimit);
+        //    $this->add_table_row_tuple($t, $cell1content, $cell2content, [], []);
+        //}
 
         // Show graders whether this submission is editable by students.
         if ($status->view == assign_submission_status::GRADER_VIEW) {
@@ -929,11 +930,10 @@ class renderer extends \plugin_renderer_base {
 
             if ($submission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
                 $cell2content = userdate($submission->timemodified);
-            } else {
-                $cell2content = "-";
+                $this->add_table_row_tuple($t, $cell1content, $cell2content);
             }
 
-            $this->add_table_row_tuple($t, $cell1content, $cell2content);
+
 
             if (!$status->teamsubmission || $status->submissiongroup != false || !$status->preventsubmissionnotingroup) {
                 foreach ($status->submissionplugins as $plugin) {
@@ -964,9 +964,9 @@ class renderer extends \plugin_renderer_base {
         $o .= $this->output->box_end();
 
         // Grading criteria preview.
-        if (!empty($status->gradingcontrollerpreview)) {
-            $o .= $this->output->heading(get_string('gradingmethodpreview', 'assign'), 4);
-            $o .= $status->gradingcontrollerpreview;
+        if (!empty($status->gradebreakdown)) {
+            $o .= $this->output->heading(get_string('gradebreakdown', 'assign'), 4);
+            $o .= $status->gradebreakdown;
         }
 
         $o .= $this->output->container_end();
