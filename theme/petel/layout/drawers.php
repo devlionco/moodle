@@ -113,10 +113,16 @@ if ($PAGE->pagetype == 'my-index') {
     $buttonvloseblockdrawer = false;
 }
 
-// Close for quiz reports.
+// Close left block for quiz reports.
 if ($PAGE->pagetype == 'mod-quiz-report') {
     $blockdraweropen = false;
     $hasblocks = false;
+}
+
+// Close right block for edit question.
+if (substr($PAGE->pagetype, 0, 14) == 'question-type-') {
+    $courseindex = false;
+    $courseindexopen = false;
 }
 
 $abouturl = get_config('theme_petel', 'abouturl') != '' ? get_config('theme_petel', 'abouturl') : 'https://petel.weizmann.ac.il/';
