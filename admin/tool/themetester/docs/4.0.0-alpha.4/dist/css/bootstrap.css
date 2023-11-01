@@ -2260,8 +2260,6 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 .btn.disabled, .btn:disabled {
   cursor: not-allowed;
   opacity: .65;
-  background-color: #8e7bb8;
-  color: #efebeb;
 }
 
 a.btn.disabled,
