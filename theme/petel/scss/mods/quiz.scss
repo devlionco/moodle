@@ -3,6 +3,12 @@
     margin: 0em 0;
 }
 
+#page-mod-quiz-attempt {
+    .add_block_button {
+        display: none;
+    }
+}
+
 #page-mod-quiz-edit {
     .select-multiple-checkbox {
         display: block;
