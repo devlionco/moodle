@@ -88,6 +88,10 @@ Inmported in theme/petel
 .competencies_wizard .modal-footer {
   padding: 0; }
 
+.competencies_wizard .modal-title {
+  color: #fff;
+}
+
 .competencies_wizard .progress-bar-wrapper {
   position: relative;
   width: 348px;
@@ -188,6 +192,7 @@ Inmported in theme/petel
     .competencies_wizard .coursename-wrapper .coursename-image img {
       height: 100%;
       width: auto; }
+
 
 #page-mod-quiz-report {
   /*     .card {
@@ -549,6 +554,10 @@ Inmported in theme/petel
     color: #220F44; }
     #page-mod-quiz-report .competency-popup-subtitle p {
       font: Normal 16px/24px Heebo; }
+  #page-mod-quiz-report #user-action:disabled  {
+    background-color: #8e7bb8;
+    color: #efebeb;
+  }
 
 html[dir=ltr] #page-mod-quiz-report #mod-quiz-report-competencyoverview-report-table .custom-checkbox:checked + label:after {
   content: '';

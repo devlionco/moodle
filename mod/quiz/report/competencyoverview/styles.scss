@@ -120,6 +120,10 @@ Inmported in theme/petel
         padding: 0;
     }
 
+    .modal-title {
+        color: #fff;
+    }
+
     .progress-bar-wrapper {
         position: relative;
         width: 348px;
@@ -817,6 +821,11 @@ Inmported in theme/petel
             font: Normal 16px/24px Heebo;
         }
     }
+}
+
+#page-mod-quiz-report #user-action:disabled  {
+    background-color: #8e7bb8;
+    color: #efebeb;
 }
 
 html[dir=ltr] {
