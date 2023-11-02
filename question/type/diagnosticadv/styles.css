@@ -1,0 +1,99 @@
+.que.diagnosticadv .answer div.r0,
+.que.diagnosticadv .answer div.r1,
+.que.diagnosticadv .security div.securitysurewrapper
+{
+    display: flex;
+    margin: 0.25rem 0;
+    align-items: flex-start;
+}
+
+.que.diagnosticadv .answer div.ownanswer {
+    display: flex;
+    margin: 0.25rem 0;
+}
+
+.que.diagnosticadv .answer div.ownchoice {
+    display: flex;
+    align-items: center;
+}
+
+.que.diagnosticadv .answer div.r0 input[type="radio"],
+.que.diagnosticadv .answer div.r1 input[type="radio"],
+.que.diagnosticadv .answer div.ownanswer input[type="radio"],
+.que.diagnosticadv .security div.securitysurewrapper input[type="radio"] {
+    margin: 0.3rem 0.5rem;
+    width: 14px;
+    flex-shrink: 0;
+}
+
+.que.diagnosticadv .answer div.ownanswer input[type="text"] {
+    margin: 0.3rem 0.5rem;
+}
+
+.que.diagnosticadv .answer .answernumber {
+    min-width: 1.5em;
+}
+
+.que.diagnosticadv .answer .specificfeedback {
+    display: inline;
+    padding: 0 0.7em;
+    background: #fff3bf;
+}
+
+/* Editing form. */
+body#page-question-type-diagnosticadv div[id^=fitem_id_][id*=answer_] {
+    background: #eee;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-bottom: 0;
+}
+
+body#page-question-type-diagnosticadv div[id^=fitem_id_][id*=answer_] .fitemtitle {
+    font-weight: bold;
+}
+
+body#page-question-type-diagnosticadv div[id^=fitem_id_] .fitemtitle {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 6px;
+    padding-right: 0;
+}
+
+body#page-question-type-diagnosticadv div[id^=fitem_id_][id*=fraction_] {
+    background: #eee;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+    border-bottom: 0;
+}
+
+body#page-question-type-diagnosticadv div[id^=fitem_id_][id*=feedback_] {
+    background: #eee;
+    margin-bottom: 2em;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+}
+
+.diagnosticadvprogress {
+    position: relative;
+    border: 1px solid #666666;
+    padding: 0px;
+}
+.diagnosticadvbar {
+    height: 20px;
+    background-color: #999999;
+}
+
+.diagnosticadvpercent {
+    position: absolute;
+    left: 50%;
+}

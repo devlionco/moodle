@@ -1,0 +1,81 @@
+<div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+    <a role="button" data-toggle="collapse" href="#collapsesummary" aria-expanded="false"
+       aria-controls="collapsesummary"
+       class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader collapsed">
+            <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, moodle {{/str}}">
+                                <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                            </span>
+        <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, moodle {{/str}}">
+                                <span class="dir-rtl-hide">
+                                    <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                                </span>
+                                <span class="dir-ltr-hide">
+                                    <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                                </span>
+                            </span>
+        <span class="sr-only">{{#str}} showhide, qtype_diagnosticadv {{/str}}</span>
+    </a>
+
+    <h5 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+        {{#str}} showhide, qtype_diagnosticadv {{/str}}
+    </h5>
+</div>
+<div class="collapse mt-2" id="collapsesummary">
+    {{#hassummary}}
+        <table class="generaltable">
+            <tr>
+                <th>{{#str}}tablehdranswer, qtype_diagnosticadv{{/str}}</th>
+                <th>{{#str}}tablehdranswernum, qtype_diagnosticadv{{/str}}</th>
+                <th></th>
+                <th>{{#str}}tablehdranswersured, qtype_diagnosticadv{{/str}}</th>
+            </tr>
+            {{#summary}}
+                <tr>
+                    <td>{{answer}}</td>
+                    <td>{{answernum}} ({{answernumprc}}%)</td>
+                    <td>
+                        <div class="diagnosticadvprogress">
+                            <div class="diagnosticadvbar" style="width:{{{answernumprc}}}%;"></div>
+                        </div>
+                    </td>
+                    <td>{{answersured}} ({{answersuredprc}}%)</td>
+                </tr>
+            {{/summary}}
+            <tr class="diagnosticadvtotal">
+                <td>{{#str}}totalnotanswered, qtype_diagnosticadv{{/str}}</td>
+                <td>{{notanswernumtotal}} ({{notanswerprc}}%)</td>
+                <td><div class="diagnosticadvprogress">
+                    <div class="diagnosticadvbar" style="width:{{{notanswerprc}}}%;"></div>
+                </div></td>
+                <td></td>
+            </tr>
+        </table>
+        <h4>{{#str}}commentsandsecurityhdr, qtype_diagnosticadv{{/str}}</h4>
+        {{#summary}}
+            {{#hascomments}}
+                <span>{{answer}}</span>
+                <table class="generaltable mt-1">
+                    <tr>
+                        <th>{{#str}}tablehdruser, qtype_diagnosticadv{{/str}}</th>
+                        <th>{{#str}}tablehdrcomment, qtype_diagnosticadv{{/str}}</th>
+                    </tr>
+                    {{#comments}}
+                        <tr>
+                            <td>{{{user}}}</td>
+                            <td>{{{commenttext}}}</td>
+                        </tr>
+                        {{#securitytext}}
+                            <tr>
+                                <td></td>
+                                <td>{{{securitytext}}}</td>
+                            </tr>
+                        {{/securitytext}}
+                    {{/comments}}
+                </table>
+            {{/hascomments}}
+        {{/summary}}
+    {{/hassummary}}
+    {{^hassummary}}
+        <p>{{#str}}nodata, qtype_diagnosticadv{{/str}}</p>
+    {{/hassummary}}
+</div>
