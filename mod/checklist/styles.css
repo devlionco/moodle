@@ -309,7 +309,7 @@ ol.checklist label {
 }
 #page-mod-checklist-report .dataTable th {
     position: sticky;
-    top: 50px;
+    top: 0;
     z-index: 10;
     background: white;
 }
@@ -317,7 +317,7 @@ ol.checklist label {
     background: white;
     position: sticky;
     z-index: 5;
-    left: 0;
+    left: -3rem;
 }
 td.cell.c0 {
     max-width: 100%;
