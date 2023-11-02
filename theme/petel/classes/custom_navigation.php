@@ -32,7 +32,7 @@ class custom_navigation {
      * Custom secondary navigation.
      */
     public static function secondary_navigation(): bool {
-        global $PAGE, $COURSE, $USER;
+        global $PAGE, $COURSE, $USER, $CFG;
 
         $coursecontext = \context_course::instance($COURSE->id);
         $roles = get_user_roles($coursecontext, $USER->id);
@@ -77,6 +77,7 @@ class custom_navigation {
             }
         }
 
+        // If admin see all.
         if (is_siteadmin()) {
             return true;
         }
@@ -111,6 +112,14 @@ class custom_navigation {
                 if (in_array($role->shortname, ['teacher']) && in_array('reportadvancedoverview', $lists)) {
                     $present[] = 'reportadvancedoverview';
                 }
+            }
+
+            // EC-330.
+            require_once($CFG->dirroot.'/cohort/lib.php');
+            $availabletocohort = get_config('community_sharecourse', 'availabletocohort');
+            $flagcourse = cohort_is_member($availabletocohort, $USER->id) ? true : false;
+            if(\community_oer\course_oer::funcs()::if_course_shared($COURSE->id) && $flagcourse && in_array('participants', $lists)) {
+                $present[] = 'participants';
             }
 
             foreach ($PAGE->secondarynav->get_children_key_list() as $key) {
