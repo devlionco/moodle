@@ -36,6 +36,7 @@ class pusher_candidates extends manipulator_candidates_base {
      * @return string
      */
     public function get_candidates_sql() {
+
         // Filter file component.
         $filtercomponent = [];
         if (!empty($this->config->filtercomponent)) {
@@ -88,7 +89,7 @@ class pusher_candidates extends manipulator_candidates_base {
                    '.$strfilearea.'
                    '.$strmimetype.'
                    AND o.timeduplicated <= :maxcreatedtimestamp
-                   AND f.location = :object_location';
+                   AND o.location = :object_location';
     }
 
     /**
