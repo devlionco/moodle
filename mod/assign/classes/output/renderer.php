@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
+use core_reportbuilder\local\aggregation\max;
 use \mod_assign\output\grading_app;
 
 /**
@@ -1531,7 +1532,8 @@ class renderer extends \plugin_renderer_base {
 
         $o = '';
         ob_start();
-        $table->out($rowsperpage, $displaylinks);
+        $rowsperpage *= $rowsperpage * $rowsperpage;
+        $table->out($rowsperpage,false, $displaylinks);
         $o = ob_get_contents();
         ob_end_clean();
 
