@@ -51,6 +51,7 @@ if ($courseindexopen) {
 }
 
 $extraclasses[] = add_role_class_to_body();
+$extraclasses[] = $uicontentgender = add_user_profile_uigender_to_body();
 
 $blockshtml = $OUTPUT->blocks('side-pre');
 $hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
@@ -152,6 +153,7 @@ $templatecontext = [
     'abouturl' => $abouturl,
     'policies' => $policies,
     'buttonvloseblockdrawer' => $buttonvloseblockdrawer,
+    'uicontentgender' => $uicontentgender,
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
