@@ -1054,6 +1054,11 @@ class qtype_stack extends question_type {
 
         foreach ($q->prts as $index => $prt) {
             foreach ($prt->get_nodes_summary() as $nodeid => $choices) {
+                //EC-283 (10487) - solution to set supposed grade if question is not graded
+                if ($choices->falsescore == 'grade') {
+                    $choices->falsescore = 0;
+                    $choices->truescore = 1;
+                }
                 $parts[$index . '-' . $nodeid] = array(
                     $choices->falseanswernote => new question_possible_response(
                             $choices->falseanswernote, $choices->falsescore * $prt->get_value()),
@@ -1071,6 +1076,7 @@ class qtype_stack extends question_type {
      * Helper method used by {@link export_to_xml()}.
      * @param qformat_xml $format the importer/exporter object.
      * @param string $tag the XML tag to use.
+     * @param string $text the text to output.
      * @param string $text the text to output.
      * @param int $textformat the text's format.
      * @param int $itemid the itemid for any files.
