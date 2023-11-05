@@ -36,3 +36,4 @@ $string['rightformat_help'] = "The format should be used in the following way: <
     " and a Hebrew value seperated by '|' in the format <lang>=<value>|<lang>=<value>, where Hebrew <lang> can be either 'he' or 'he_kids' depending on your system. ".
     " Here is a full example: 1:en=Checking|he_kids=בדיקה ";
 $string['rightformat'] = 'יש להזין מפתח וערכים לפי תחביר מיוחד המוצג בחלונית העזרה';
+$string['example'] = 'דוגמה:';

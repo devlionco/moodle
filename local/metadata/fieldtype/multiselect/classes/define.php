@@ -50,6 +50,14 @@ class define extends \local_metadata\fieldtype\define_base {
         $form->setType('param1', PARAM_TEXT);
         $form->addHelpButton('param1', 'rightformat', 'metadatafieldtype_multiselect');
 
+        $content = \html_writer::tag('p', get_string('example', 'metadatafieldtype_multiselect') );
+        $content .= \html_writer::tag('p', '1:he=בננה|en=banana' );
+        $content .= \html_writer::tag('p', '2:he=פרח|en=flower' );
+        $content .= \html_writer::tag('p', '3:he=עגבנייה|en=tomato' );
+
+        $div = \html_writer::div($content, 'col-md-9 align-items-start felement ml-auto');
+        $form->addElement('html', $div);
+
         // Default data.
         $form->addElement('text', 'defaultdata', get_string('profiledefaultdata', 'admin'), 'size="50"');
         $form->setType('defaultdata', PARAM_TEXT);
