@@ -57,9 +57,9 @@
 {{#uicontentgender}}
     {{#js}}
         require(['theme_petel/ivrita'], function(ivrita) {
-        if ( '{{uicontentgender}}' != 'OFF') {
-        var petel_ivrita = new ivrita(document.querySelector('#region-main'), ivrita.{{uicontentgender}} );
-        }
+            if ('{{uicontentgender}}' != 'OFF') {
+                var petel_ivrita = new ivrita(document.querySelector('#region-main'), ivrita.{{uicontentgender}} );
+            }
         });
     {{/js}}
 {{/uicontentgender}}
