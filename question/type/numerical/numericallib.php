@@ -349,6 +349,14 @@ function qtype_numerical_prepare_units() {
                     $arr[1] = substr ( $item , strlen($arr[0]));
                 }
 
+                if(count($arr) != 2){
+                    $val = $arr[0];
+
+                    $arr = array();
+                    $arr[0] = $val;
+                    $arr[1] = substr ($item , strlen($arr[0]));
+                }
+
                 $arr1['value'] = trim($arr[0]);
 
                 if (isset($arr[1])) {
