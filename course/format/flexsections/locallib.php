@@ -541,8 +541,8 @@ function format_flexsections_cm_submission_data(cm_info $mod, $userid = 0) {
             break;
 
         case 'hvp':
-            $tmod->duedate      = $extra->opendate;
-            $tmod->cutoffdate   = $extra->closedate;
+            $tmod->duedate      = 0;
+            $tmod->cutoffdate   = 0;
             $tmod->requiregrade = true;
 
             $hvp = $DB->get_record_sql(
