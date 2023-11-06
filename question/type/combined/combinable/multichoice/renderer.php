@@ -66,7 +66,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
                 unset($inputattributes['checked']);
             }
 
-            $choice = html_writer::div($question->format_text($ans->answer, $ans->answerformat, $qa,
+            $choice = html_writer::div($this->custom_format_text($ans->answer, $ans->answerformat, $qa,
                 'question', 'answer', $ansid), 'flex-fill ml-1');
             $rbuttons[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) .
                 html_writer::div(html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering),
@@ -75,7 +75,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('span',
-                    $question->make_html_inline($question->format_text(
+                    $question->make_html_inline($this->custom_format_text(
                         $ans->feedback, $ans->feedbackformat,
                         $qa, 'question', 'answerfeedback', $ansid)),
                     array('class' => ' subqspecificfeedback '));
