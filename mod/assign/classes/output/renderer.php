@@ -1532,7 +1532,7 @@ class renderer extends \plugin_renderer_base {
 
         $o = '';
         ob_start();
-        $rowsperpage *= $rowsperpage * $rowsperpage;
+        $rowsperpage = 1000;
         $table->out($rowsperpage,false, $displaylinks);
         $o = ob_get_contents();
         ob_end_clean();
