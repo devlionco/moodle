@@ -15,6 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['error_page_moe_user_title'] = 'ברוכים הבאים לסביבת פטל';
-$string['error_page_moe_user_label'] = 'אם ברשותכם מפתח הרשמה, אנא הזינו את המפתח';
-$string['error_page_moe_user_text'] = 'אם אין ברשותכם מפתח הרשמה, אתם מוזמנים לעבור ל<https://stwww1.weizmann.ac.il/petel">אתר פטל</a> ולהכיר חוויית הוראה ולמידה אחרת ושונה.
-הסתקרנתם? מלאו את טופס ההצטרפות הזמין באתר ואנחנו נחזור אליכם.';
+$string['error_page_moe_user_label'] = 'ברוכים הבאים לסביבת פטל!
+<br>
+בשלב זה, אינכם רשומים למערכת.
+<br>
+על מנת להירשם, הזינו את מפתח הקורס (במידה וקיבלתם)';
+$string['error_page_moe_user_text'] = '<br>
+או מלאו את <a href="https://stwww1.weizmann.ac.il/petel/contact_us/" style="text-decoration: underline; color: blue;">טופס ההצטרפות</a> ונחזור אליכם בהקדם.
+<br>
+בכל בעיה אחרת, מוזמנים לפנות אל מוקד התמיכה שלנו בדוא"ל
+petel@weizmann.ac.il';
