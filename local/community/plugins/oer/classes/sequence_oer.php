@@ -621,7 +621,7 @@ class sequence_oer {
                 }
 
                 $urltosocialprofile = "javascript:void(0)";
-                if ($act->userid && get_user_preferences('community_social_enable', '', $act->userid)) {
+                if (isset($act->userid) && get_user_preferences('community_social_enable', '', $act->userid)) {
                     $urltosocialprofile = new \moodle_url('/local/community/plugins/social/profile.php', ['id' => $act->userid]);
                     $urltosocialprofile = $urltosocialprofile->out();
                 }

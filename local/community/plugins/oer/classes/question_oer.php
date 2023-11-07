@@ -397,7 +397,7 @@ class question_oer {
 
             // Url to social profile.
             $urltosocialprofile = "javascript:void(0)";
-            if ($item->userid && get_user_preferences('community_social_enable', '', $item->userid)) {
+            if (isset($item->userid) && get_user_preferences('community_social_enable', '', $item->userid)) {
                 $urltosocialprofile = new \moodle_url('/local/community/plugins/social/profile.php', ['id' => $item->userid]);
                 $urltosocialprofile = $urltosocialprofile->out();
             }

@@ -458,7 +458,7 @@ class course_oer {
             // Url to social profile.
             foreach ($obj->data[$key]->users as $key2 => $item2) {
                 $urltosocialprofile = "javascript:void(0)";
-                if ($item2->userid && get_user_preferences('community_social_enable', '', $item2->userid)) {
+                if (isset($item2->userid) && get_user_preferences('community_social_enable', '', $item2->userid)) {
                     $urltosocialprofile = new \moodle_url('/local/community/plugins/social/profile.php', ['id' => $item2->userid]);
                     $urltosocialprofile = $urltosocialprofile->out();
                 }
