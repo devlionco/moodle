@@ -34,11 +34,14 @@ class activity_oer {
     public $revision;
 
     public function __construct() {
+        global $DB;
+
         $this->cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, 'oer_activity_cache', 'activities');
         $this->revision = \community_oer\main_oer::get_oercacheversion();
         $this->key = 'data' . $this->revision;
 
-        if (empty($this->get_activities_from_cache())) {
+        $count = $DB->count_records('community_oer_activity');
+        if ($count != count($this->get_activities_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }

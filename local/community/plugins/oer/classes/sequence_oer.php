@@ -35,12 +35,15 @@ class sequence_oer {
     public $contextlevel;
 
     public function __construct() {
+        global $DB;
+
         $this->cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, 'oer_sequence_cache', 'sequences');
         $this->revision = \community_oer\main_oer::get_oercacheversion();
         $this->key = 'data' . $this->revision;
         $this->contextlevel = \local_metadata\mcontext::section()->get_contextid();
 
-        if (empty($this->get_sequences_from_cache())) {
+        $count = $DB->count_records('community_oer_sequence');
+        if ($count != count($this->get_sequences_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }
