@@ -714,26 +714,17 @@ class activity_oer {
     }
 
     public function get_total_elements($type, $value, $data) {
-        global $DB;
 
         switch ($type) {
             case 'category':
-                $res = $DB->get_records('community_oer_activity', ['catid' => $value]);
+                $newcache = $this->query()->compare('catid', $value)->get();
                 break;
             case 'course':
-                $res = $DB->get_records('community_oer_activity', ['courseid' => $value]);
+                $newcache = $this->query()->compare('courseid', $value)->get();
                 break;
             case 'section':
-                $res = $DB->get_records('community_oer_activity', ['sectionid' => $value]);
+                $newcache = $this->query()->compare('sectionid', $value)->get();
                 break;
-        }
-
-        $cache = $this->get_activities_from_cache();
-        $newcache = [];
-        foreach ($res as $item) {
-            if (isset($cache[$item->uniqueid])) {
-                $newcache[$item->uniqueid] = $cache[$item->uniqueid];
-            }
         }
 
         $obj = $this->query($newcache)->compare('visible', '1');

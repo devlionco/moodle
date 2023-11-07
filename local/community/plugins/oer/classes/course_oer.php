@@ -520,28 +520,17 @@ class course_oer {
     }
 
     public function get_total_elements($type, $value, $data) {
-        global $DB;
 
         switch ($type) {
             case 'category':
-                $res = $DB->get_records('community_oer_course', ['catid' => $value]);
+                $newcache = $this->query()->compare('catid', $value)->get();
                 break;
             case 'course':
-                $res = $DB->get_records('community_oer_course', ['courseid' => $value]);
+                $newcache = $this->query()->compare('courseid', $value)->get();
                 break;
             case 'section':
-                $section = $DB->get_record('course_sections', ['id' => $value]);
-                $res = $DB->get_records('community_oer_course', ['courseid' => $section->course]);
+                $newcache = $this->query()->compare('sectionid', $value)->get();
                 break;
-        }
-
-        $cache = $this->get_courses_from_cache();
-
-        $newcache = [];
-        foreach ($res as $item) {
-            if (isset($cache[$item->uniqueid])) {
-                $newcache[$item->uniqueid] = $cache[$item->uniqueid];
-            }
         }
 
         $obj = $this->query($newcache)->compare('visible', '1')->groupBy('cid');

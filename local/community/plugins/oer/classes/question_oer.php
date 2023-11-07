@@ -517,27 +517,17 @@ class question_oer {
     }
 
     public function get_total_elements($type, $value, $data) {
-        global $DB;
 
         switch ($type) {
             case 'category':
-                $res = $DB->get_records('community_oer_question', ['catid' => $value]);
+                $newcache = $this->query()->compare('catid', $value)->get();
                 break;
             case 'course':
-                $res = $DB->get_records('community_oer_question', ['courseid' => $value]);
+                $newcache = $this->query()->compare('courseid', $value)->get();
                 break;
             case 'section':
-                $res = $DB->get_records('community_oer_question', ['sectionid' => $value]);
+                $newcache = $this->query()->compare('sectionid', $value)->get();
                 break;
-        }
-
-        $cache = $this->get_questions_from_cache();
-
-        $newcache = [];
-        foreach ($res as $item) {
-            if (isset($cache[$item->qid])) {
-                $newcache[$item->qid] = $cache[$item->qid];
-            }
         }
 
         $obj = $this->query($newcache)->compare('metadata_qhidden', '0');

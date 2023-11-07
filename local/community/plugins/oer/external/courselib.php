@@ -70,39 +70,27 @@ class community_oer_course_external extends external_api {
         $data = json_decode($params['presets']);
         $event = [];
 
+        $course = new \community_oer\course_oer;
+
         // Get data by catid, courseid, sectionid.
-        $res = [];
         foreach ($data as $item) {
             if ($item->area == 'sidemenu') {
                 switch ($item->action) {
                     case 'category':
-                        $res = $DB->get_records('community_oer_course', ['catid' => $item->value]);
-                        list($activitytotal, $questiontotal, $sequencetotal, $coursetotal) =
-                                \community_oer\main_oer::total_elements_of_plugins($item->action, $item->value, $data);
+                        $newcache = $course->query()->compare('catid', $item->value)->get();
                         break;
                     case 'course':
-                        $res = $DB->get_records('community_oer_course', ['courseid' => $item->value]);
-                        list($activitytotal, $questiontotal, $sequencetotal, $coursetotal) =
-                                \community_oer\main_oer::total_elements_of_plugins($item->action, $item->value, $data);
+                        $newcache = $course->query()->compare('courseid', $item->value)->get();
                         break;
                     case 'section':
-                        $res = $DB->get_records('community_oer_course', ['sectionid' => $item->value]);
-                        list($activitytotal, $questiontotal, $sequencetotal, $coursetotal) =
-                                \community_oer\main_oer::total_elements_of_plugins($item->action, $item->value, $data);
+                        $newcache = $course->query()->compare('sectionid', $item->value)->get();
                         break;
                 }
 
+                list($activitytotal, $questiontotal, $sequencetotal, $coursetotal) =
+                        \community_oer\main_oer::total_elements_of_plugins($item->action, $item->value, $data);
+
                 $event[$item->area] = [$item->action => $item->value];
-            }
-        }
-
-        $course = new \community_oer\course_oer;
-        $cache = $course->get_courses_from_cache();
-
-        $newcache = [];
-        foreach ($res as $item) {
-            if (isset($cache[$item->uniqueid])) {
-                $newcache[$item->uniqueid] = $cache[$item->uniqueid];
             }
         }
 

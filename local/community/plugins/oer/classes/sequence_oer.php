@@ -655,26 +655,17 @@ class sequence_oer {
     }
 
     public function get_total_elements($type, $value, $data) {
-        global $DB;
 
         switch ($type) {
             case 'category':
-                $res = $DB->get_records('community_oer_sequence', ['catid' => $value]);
+                $newcache = $this->query()->compare('catid', $value)->get();
                 break;
             case 'course':
-                $res = $DB->get_records('community_oer_sequence', ['courseid' => $value]);
+                $newcache = $this->query()->compare('courseid', $value)->get();
                 break;
             case 'section':
-                $res = $DB->get_records('community_oer_sequence', ['sectionid' => $value]);
+                $newcache = $this->query()->compare('sectionid', $value)->get();
                 break;
-        }
-
-        $cache = $this->get_sequences_from_cache();
-        $newcache = [];
-        foreach ($res as $item) {
-            if (isset($cache[$item->seqid])) {
-                $newcache[$item->seqid] = $cache[$item->seqid];
-            }
         }
 
         $obj = $this->query($newcache)->compare('visible', '1');
