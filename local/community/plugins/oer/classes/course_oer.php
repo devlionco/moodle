@@ -41,7 +41,7 @@ class course_oer {
         $this->key = 'data' . $this->revision;
 
         $count = $DB->count_records('community_oer_course');
-        if ($count != count($this->get_courses_from_cache())) {
+        if ($count > count($this->get_courses_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }

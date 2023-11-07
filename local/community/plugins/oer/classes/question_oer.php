@@ -46,7 +46,7 @@ class question_oer {
         $this->contextlevel = \local_metadata\mcontext::question()->get_contextid();
 
         $count = $DB->count_records('community_oer_question');
-        if ($count != count($this->get_questions_from_cache())) {
+        if ($count > count($this->get_questions_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }

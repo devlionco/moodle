@@ -41,7 +41,7 @@ class activity_oer {
         $this->key = 'data' . $this->revision;
 
         $count = $DB->count_records('community_oer_activity');
-        if ($count != count($this->get_activities_from_cache())) {
+        if ($count > count($this->get_activities_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }

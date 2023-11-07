@@ -43,7 +43,7 @@ class sequence_oer {
         $this->contextlevel = \local_metadata\mcontext::section()->get_contextid();
 
         $count = $DB->count_records('community_oer_sequence');
-        if ($count != count($this->get_sequences_from_cache())) {
+        if ($count > count($this->get_sequences_from_cache())) {
             $this->recalculate_data_in_cache();
         }
     }
