@@ -119,6 +119,7 @@ class custom_navigation {
             $availabletocohort = get_config('community_sharecourse', 'availabletocohort');
             $flagcourse = cohort_is_member($availabletocohort, $USER->id) ? true : false;
             if(\community_oer\course_oer::funcs()::if_course_shared($COURSE->id) && $flagcourse && in_array('participants', $lists)) {
+                $present[] = 'editsettings';
                 $present[] = 'participants';
             }
 
