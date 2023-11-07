@@ -1,0 +1,18 @@
+.modal {
+    .modal-header {
+        background-color: $primary;
+    }
+
+    .modal-title,
+    .close {
+        color: $white;
+    }
+
+    .modal-title {
+        font-family: $primary-font;
+        font-size: 1.375rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+    }
+}
