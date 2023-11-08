@@ -50,9 +50,20 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+// PTL-4140 Arabic font
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
+
+// MONO Hebrew font
+@import url('https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap');
+// Font Alef
+@import url('https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap');
 
 
 @import "font_awesome_6";
 /*
 @import "font_awesome_pro";
 */
+
+body.lang-ar {
+  font-family: Almarai, $primary-font, "Helvetica Neue", Alef, Ariel, sans-serif;
+}
