@@ -129,7 +129,7 @@ try {
             $result->response = mod_vpl_edit::cancel( $vpl, $userid, $actiondata->processid );
             break;
         case 'getjails':
-            $result->response->servers = vpl_jailserver_manager::get_https_server_list( $vpl->get_instance()->jailservers );
+            $result->response->servers = vpl_jailserver_manager::get_https_server_list((string) $vpl->get_instance()->jailservers );
             break;
         case 'directrun':
             $files = mod_vpl_edit::filesfromide( $actiondata->files );
