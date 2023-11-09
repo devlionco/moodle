@@ -76,6 +76,8 @@ class question_renderer extends \core_question_renderer {
         $output = '';
         $name = $qa->get_question()->name;
 
+        $PAGE->requires->js_call_amd('theme_petel/quiz_review');
+
         $output .= html_writer::start_tag('div', array(
             'id' => $qa->get_outer_question_div_unique_id(),
             'class' => implode(' ', array(
