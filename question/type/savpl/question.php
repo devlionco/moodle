@@ -95,9 +95,9 @@ class qtype_savpl_question extends question_graded_automatically {
         global $DB;
         $deletesubmissions = get_config(SAQVPL, 'deletevplsubmissions') == '1';
         $result = qtype_savpl_evaluate($this->get_answer($response), $this, $deletesubmissions);
-        echo '<pre>';
-        print_r($result);
-        echo '</pre>';
+        //echo '<pre>';
+        //print_r($result);
+        //echo '</pre>';
         $vplresult = $result->vplresult;
         $grade = qtype_savpl_extract_fraction($vplresult, $this->defaultmark);
 
