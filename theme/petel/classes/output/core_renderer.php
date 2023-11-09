@@ -201,6 +201,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
      */
     public function full_header() {
         global $PAGE, $COURSE, $DB, $OUTPUT, $CFG, $USER;
+        $PAGE->requires->js_call_amd('theme_petel/quiz_review');
+        
         $iscoursepage = preg_match("/course-view/", $PAGE->pagetype);
 
         $header = new stdClass();
@@ -997,7 +999,6 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
      */
     public function standard_footer_html() {
         global $CFG, $SCRIPT, $PAGE;
-
         $output = '';
         if (during_initial_install()) {
             // Debugging info can not work before install is finished,
