@@ -360,3 +360,7 @@ pre.vpl_terminal {
 .vpl_dimmed {
     opacity: 0.3;
 }
+
+[dir="rtl"] #vpl_results_accordion table{
+    direction: rtl;
+}
