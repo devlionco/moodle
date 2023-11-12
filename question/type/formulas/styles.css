@@ -56,6 +56,11 @@
     /*width: 40px;*/
 }
 
+html[dir="rtl"] .que.formulas .formulas_number {
+    /*rtl:ignore*/
+    direction: ltr;
+}
+
 .que.formulas .formulas_number_unit {
     margin: 0 0 0 0;
     width: 80px;
