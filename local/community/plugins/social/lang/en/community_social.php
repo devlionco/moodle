@@ -195,6 +195,8 @@ $string['error_migrate_courses_pombim'] = 'You have no public courses or copy co
 // Are you shure popup.
 $string['titleareyoushure'] = 'Warning';
 $string['areyoushure'] = 'Are you shure?';
+$string['oldcourseverify'] = 'Would you like to change the course';
+$string['newcourseverify'] = 'with the course';
 
 // Role capabilities.
 $string['social:addinstance'] = 'Add instance';

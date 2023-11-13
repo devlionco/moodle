@@ -188,10 +188,12 @@ $string['to_course'] = 'לקורס';
 
 // Migrate popup.
 $string['migratebutton'] = 'העבר קורס';
-$string['migratepubliccourses'] = 'העבר קורס פומבי לאחר';
+$string['migratepubliccourses'] = 'החלפת קורס פומבי בקורס אחר';
 $string['migratecoursesdesc'] = '';
 $string['error_migrate_courses_pombim'] = 'אין לך קורסים פומביים וקורסים להעתקה';
 
 // Are you shure popup.
 $string['titleareyoushure'] = 'התראה';
 $string['areyoushure'] = 'האם אתה בטוח?';
+$string['oldcourseverify'] = 'אם אתם בטוחים שתרצו להחליף קורס';
+$string['newcourseverify'] = 'בקורס';

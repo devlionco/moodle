@@ -1491,7 +1491,24 @@ class community_social_external extends external_api {
         $context = context_user::instance($USER->id);
         self::validate_context($context);
 
-        $html = $OUTPUT->render_from_template('community_social/are-you-shure', array('data' => $data));
+        $courses = json_decode($data);
+        $o = '';
+        foreach ($courses as $key => $obj) {
+            if ($obj->name === 'oldcourseid' || $obj->name === 'newcourseid') {
+                $courseId = $obj->value;
+                $course =  get_course($courseId); // Using Moodle's function to get course details.
+
+                if ($obj->name === 'oldcourseid') {
+                    // Add a new property 'courseName' with the course's full name.
+                    $o .= "<strong>" . get_string('oldcourseverify', 'community_social') . "</strong>" . " " . $course->fullname . "<br>";
+                }
+                else{
+                    $o .= "<strong>" . get_string('newcourseverify', 'community_social') . "</strong>" . " " . $course->fullname . "?" . "<br>";
+                }
+            }
+        }
+
+        $html = $OUTPUT->render_from_template('community_social/are-you-shure', array('data' => $data, 'courses' => $o));
 
         $arrcontent = array(
                 'content' => $html,
