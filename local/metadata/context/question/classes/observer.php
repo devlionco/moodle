@@ -40,8 +40,10 @@ class observer {
         global $DB;
 
         $obj = $DB->get_record('question_versions', ['questionid' => $event->objectid]);
-        foreach ($DB->get_records('question_versions', ['questionbankentryid' => $obj->questionbankentryid]) as $item) {
-            \local_metadata\observer::delete_metadata(CONTEXT_QUESTION, $item->questionid);
+        if (!empty($obj) && isset($obj->questionbankentryid)) {
+            foreach ($DB->get_records('question_versions', ['questionbankentryid' => $obj->questionbankentryid]) as $item) {
+                \local_metadata\observer::delete_metadata(CONTEXT_QUESTION, $item->questionid);
+            }
         }
 
         return true;
