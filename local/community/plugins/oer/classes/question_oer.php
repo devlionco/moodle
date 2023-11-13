@@ -126,6 +126,7 @@ class question_oer {
                 qbe.questioncategoryid AS qcatid,
                 q.name AS qname,
                 q.questiontext AS questiontext,
+                q.parent AS qparent,
                 q.qtype AS qtype,                
                 qbe.idnumber AS qidnumber,
                 q.timecreated AS qtimecreated,
@@ -148,6 +149,11 @@ class question_oer {
 
         $obj = $DB->get_record_sql($query, [$qid]);
         if (empty($obj->qid)) {
+            return false;
+        }
+
+        // Remove child question.
+        if ($obj->qparent != 0) {
             return false;
         }
 
@@ -200,8 +206,7 @@ class question_oer {
 
         // Check questiontext.
         $flag = false;
-        if (strpos($questiontext, 'MULTICHOICE_S') !== false || strpos($questiontext, '[[') !== false ||
-                strpos($questiontext, 'NUMERICAL') !== false) {
+        if (in_array($obj->qtype, ['combined', 'multianswer'])) {
             $flag = true;
         }
 
