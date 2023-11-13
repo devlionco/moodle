@@ -119,7 +119,7 @@ class community_oer_question_external extends external_api {
 
         // Get by childcat.
         foreach ($data as $item) {
-            if ($item->area == 'sidemenu' && $item->secondaction == 'childcategory') {
+            if ($item->area == 'sidemenu' && isset($item->secondaction) && $item->secondaction == 'childcategory') {
                 $obj = $obj->compare('qcategory', $item->childcategory);
                 $event[$item->area] = [$item->secondaction => $item->childcategory];
             }

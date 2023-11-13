@@ -433,8 +433,11 @@ class course_oer {
             $obj->data[$key]->course_shared_disabled = ($item->metadata_callowfullcopy == 1) ? false : true;
 
             // Check if user shared course.
-            if ($item->userid == $USER->id) {
-                $obj->data[$key]->course_shared_disabled = true;
+            foreach ($item->users as $el) {
+                if ($el->userid == $USER->id) {
+                    $obj->data[$key]->course_shared_disabled = true;
+                    break;
+                }
             }
 
             $errorcategory = 1;
