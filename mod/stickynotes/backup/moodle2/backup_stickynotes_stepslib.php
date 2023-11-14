@@ -115,20 +115,22 @@ class backup_stickynotes_activity_structure_step extends backup_activity_structu
             FROM {stickynotes_column}
             WHERE stickyid = ?',
         array(backup::VAR_PARENTID));
-        $stickynotesnote->set_source_sql('
-            SELECT *
-            FROM {stickynotes_note}
-            WHERE stickyid = ?',
-        array(backup::VAR_PARENTID));
+
+        //$stickynotesnote->set_source_sql('
+        //    SELECT *
+        //    FROM {stickynotes_note}
+        //    WHERE stickyid = ?',
+        //array(backup::VAR_PARENTID));
+
         // All the rest of elements only happen if we are including user info.
         $stickynotescolumn->set_source_table('stickynotes_column', array('stickyid' => backup::VAR_ACTIVITYID));
-        $stickynotesnote->set_source_table('stickynotes_note', array('stickycolid' => backup::VAR_PARENTID));
+        //$stickynotesnote->set_source_table('stickynotes_note', array('stickycolid' => backup::VAR_PARENTID));
         $stickynotesvote->set_source_table('stickynotes_vote', array('stickynoteid' => backup::VAR_PARENTID));
 
 
         // Define id annotations.
         $stickynotesnote->annotate_ids('user', 'userid');
-        $stickynotesvote->annotate_ids('user', 'userid');
+        //$stickynotesvote->annotate_ids('user', 'userid');
 
         // Define file annotations.
         $stickynotes->annotate_files('mod_stickynotes', 'intro', null); // This file areas haven't itemid.
