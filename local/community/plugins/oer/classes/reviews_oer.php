@@ -623,35 +623,36 @@ class reviews_oer {
 
         switch ($type) {
             case 'activity':
-                $activity = self::get_activity($objid, false);
+                $activity = new \community_oer\activity_oer;
 
-                $catalogactivity = new \community_oer\activity_oer;
-                $obj = $catalogactivity->single_cmid_render_data($objid);
+                $obj = $activity->single_cmid_render_data($objid);
+                if (!empty($obj) && !empty($obj->users)) {
+                    $user = reset($obj->users);
 
-                if (!empty($obj)) {
-                    $messageurl = ($obj->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
-                    => $obj->userid]))->out() : "";
+                    $messageurl = ($user->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
+                    => $user->userid]))->out() : "";
 
                     $a = new \StdClass();
                     $a->count = count($rawreviews);
-                    $a->activityName = $activity->mod_name;
+                    $a->activityName = $obj->mod_name;
                     $response['header'] = get_string('responses_to_activity', 'community_oer', $a);
-                    $response['objurl'] = $activity->url;
+                    $response['objurl'] = $obj->urlactivity;
                     $response['objlinkname'] = get_string('open_activity', 'community_oer');
-                    $response['objcreated'] = gmdate("d.m.Y", $activity->activity_created);
-                    $response['author'] = $obj->username;
+                    $response['objcreated'] = $obj->cm_created_format;
+                    $response['author'] = $user->user_fname.' '.$user->user_lname;
                     $response['messageurl'] = $messageurl;
                 }
                 break;
             case 'course':
                 $course = new \community_oer\course_oer;
                 $data = $course->query()->compare('cid', $objid)->get();
-                $data = array_values($data);
-                if (isset($data[0])) {
-                    $obj = $data[0];
 
-                    $messageurl = ($obj->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
-                    => $obj->userid]))->out() : "";
+                $obj = reset($data);
+                if (!empty($obj) && !empty($obj->users)) {
+                    $user = reset($obj->users);
+
+                    $messageurl = ($user->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
+                    => $user->userid]))->out() : "";
 
                     $a = new \StdClass();
                     $a->count = count($rawreviews);
@@ -660,17 +661,16 @@ class reviews_oer {
                     $response['objurl'] = (new \moodle_url('/course/view.php', ['id' => $obj->cid]))->out(false);
                     $response['objlinkname'] = get_string('open_course', 'community_oer');
                     $response['objcreated'] = gmdate("d.m.Y", $obj->metadata_cshared_at);
-                    $response['author'] = $obj->username;
+                    $response['author'] = $user->user_fname.' '.$user->user_lname;
                     $response['messageurl'] = $messageurl;
                 }
                 break;
             case 'question':
                 $question = new \community_oer\question_oer;
                 $data = $question->query()->compare('qid', $objid)->get();
-                $data = array_values($data);
-                if (isset($data[0])) {
-                    $obj = $data[0];
 
+                $obj = reset($data);
+                if (!empty($obj)) {
                     $messageurl = ($obj->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
                     => $obj->userid]))->out() : "";
 
@@ -688,14 +688,13 @@ class reviews_oer {
             case 'sequence':
                 $sequence = new \community_oer\sequence_oer;
                 $data = $sequence->query()->compare('seqid', $objid)->get();
-                $data = array_values($data);
 
-                if (isset($data[0])) {
-                    $obj = $data[0];
+                $obj = reset($data);
+                if (!empty($obj) && !empty($obj->tab_data_sequence->users)) {
+                    $user = reset($obj->tab_data_sequence->users);
 
-                    $messageurl =
-                            ($obj->tab_data_sequence->userid && is_siteadmin()) ? (new \moodle_url('/message/index.php', ['user2'
-                            => $obj->tab_data_sequence->userid]))->out() : "";
+                    $messageurl = ($user->userid && is_siteadmin()) ?
+                        (new \moodle_url('/message/index.php', ['user2' => $user->userid]))->out() : "";
 
                     $a = new \StdClass();
                     $a->count = count($rawreviews);
@@ -703,11 +702,13 @@ class reviews_oer {
                     $response['header'] = get_string('responses_to_sequence', 'community_oer', $a);
 
                     $response['objurl'] =
-                            (new \moodle_url('/course/view.php', ['id' => $obj->courseid, 'section' => $obj->section]))->out(false);
+                            (new \moodle_url('/course/view.php',
+                                    ['id' => $obj->courseid, 'section' => $obj->section]))->out(false);
                     $response['objlinkname'] = get_string('open_sequence', 'community_oer');
                     $response['objcreated'] = '';
-                    $response['author'] = $obj->tab_data_sequence->username;
+                    $response['author'] = $user->user_fname.' '.$user->user_lname;
                     $response['messageurl'] = $messageurl;
+
                 }
                 break;
         }
