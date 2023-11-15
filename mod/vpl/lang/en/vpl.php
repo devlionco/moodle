@@ -476,3 +476,6 @@ $string['notice_submissionoverwrite'] = '<span class="text-danger font-weight-bo
 $string['advancedsettings'] = 'Advanced settings';
 $string['grade'] = 'Grade';
 $string['executionkeepfiles'] = 'Files to keep';
+
+$string['saveandeval'] = 'Submit answer';
+$string['finishactivity'] = 'Finish activity';

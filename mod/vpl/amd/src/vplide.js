@@ -76,7 +76,8 @@ define(
                 'multidelete': true,
                 'acetheme': true,
                 'console': true,
-                'comments': true
+                'comments': true,
+                'saveandeval': true,
             };
             if ((typeof options.loadajaxurl) == 'undefined') {
                 options.loadajaxurl = options.ajaxurl;
@@ -93,6 +94,7 @@ define(
             options.sort = (maxNumberOfFiles - minNumberOfFiles >= 2);
             options.multidelete = options.sort;
             options.import = !restrictedEdit;
+            options.saveandeval = true;
             var isOptionAllowed = function(op) {
                 if (!optionsToCheck[op]) {
                     return true;
@@ -733,6 +735,7 @@ define(
                         text = text + ' -' + res.reductionbyevaluation;
                     }
                     menuButtons.setExtracontent('evaluate', text);
+                    menuButtons.setExtracontent('saveandeval', text);
                 }
             };
             this.lastResult = null;
@@ -1524,6 +1527,7 @@ define(
                     fileManager.currentFile('next');
                 }
             });
+
             menuButtons.add({
                 name: 'fullscreen',
                 originalAction: function() {
@@ -1707,6 +1711,61 @@ define(
                     mac: 'Command-Option-U'
                 }
             });
+
+            /** **********Save and redirect*************/
+            menuButtons.add({
+                name: 'saveandeval',
+                icon: 'save',
+                originalAction: function() {
+                    var data = {
+                        files: fileManager.getFilesToSave(),
+                        comments: $('#vpl_ide_input_comments').val(),
+                        version: fileManager.getVersion()
+                    };
+                    if (JSON.stringify(data).length > options.postMaxSize) {
+                        showErrorMessage(str('maxpostsizeexceeded'));
+                        return;
+                    }
+                    /**
+                     * Save action
+                     */
+                    function doSaveAndEval() {
+                        VPLUtil.requestAction('save', 'saving', data, options.ajaxurl)
+                            .done(function(response) {
+                                if (response.requestsconfirmation) {
+                                    showMessage(response.question, {
+                                        title: str('saving'),
+                                        icon: 'alert',
+                                        yes: function() {
+                                            data.version = response.version;
+                                            doSaveAndEval();
+                                        }
+                                    });
+                                } else {
+                                    fileManager.resetModified();
+                                    fileManager.setVersion(response.version);
+                                    menuButtons.setTimeLeft(response);
+                                    VPLUtil.delay('updateMenu', updateMenu);
+                                    if (VPLUtil.monitorRunning()) {
+                                        data.processid = VPLUtil.getProcessId();
+                                        VPLUtil.requestAction('update', 'updating', data, options.ajaxurl).done(function(response) {
+                                            window.location.href = options.redirecturl;
+                                        });
+                                    } else {
+                                        window.location.href = options.redirecturl;
+                                    }
+                                }
+                            }).fail(showErrorMessage);
+                    }
+                    doSaveAndEval();
+                },
+                bindKey: {
+                    win: 'Ctrl-E',
+                    mac: 'Command-E'
+                }
+            });
+            /** ****************************************/
+
             menuButtons.add({
                 name: 'comments',
                 originalAction: function() {
@@ -1817,6 +1876,7 @@ define(
             menuHtml += menuButtons.getHTML('find');
             menuHtml += menuButtons.getHTML('find_replace');
             menuHtml += menuButtons.getHTML('next');
+            menuHtml += menuButtons.getHTML('saveandeval');
             menuHtml += "</span> ";
             menuHtml += "</span> ";
             menuHtml += menuButtons.getHTML('fullscreen') + ' ';
@@ -1871,6 +1931,7 @@ define(
                 menuButtons.enable('run', !running && (!modified || options.example) && isOptionAllowed('run'));
                 menuButtons.enable('debug', !running && (!modified || options.example) && isOptionAllowed('debug'));
                 menuButtons.enable('evaluate', !running && (!modified || options.example) && isOptionAllowed('evaluate'));
+                menuButtons.enable('saveandeval', !running && (!modified || options.example) && isOptionAllowed('evaluate'));
                 menuButtons.enable('download', !modified);
                 menuButtons.enable('new', nfiles < maxNumberOfFiles);
                 menuButtons.enable('sort', nfiles - minNumberOfFiles > 1);
@@ -1894,6 +1955,8 @@ define(
                 menuButtons.enable('find_replace', file.hasFindReplace());
                 menuButtons.enable('next', file.hasNext());
                 VPLUtil.delay('updateFileList', fileManager.updateFileList);
+
+                console.log(menuButtons);
             };
 
             executionActions = {

@@ -344,6 +344,7 @@ class vpl_editor_util {
                 'selectbreakpoint',
                 'removebreakpoint',
                 'maxpostsizeexceeded',
+                'saveandeval',
         );
         $words = array (
                 'cancel',

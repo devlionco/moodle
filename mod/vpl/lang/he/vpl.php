@@ -48,3 +48,6 @@ $string['submissionperiod'] = 'תאריך הגשה';
 $string['test'] = 'תצוגת תלמיד';
 $string['testcases'] = 'תכנית בדיקה';
 $string['notice_submissionoverwrite'] = '<span class="text-danger font-weight-bold">שימו לב! העלאת קובץ הגשה חדש תמחוק ותחליף את תוכן ההגשה הנוכחית בחדש</span>';
+
+$string['saveandeval'] = 'הגשת תשובה';
+$string['finishactivity'] = 'סיום הפעילות...';

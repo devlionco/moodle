@@ -1354,7 +1354,7 @@ class mod_vpl {
         global $OUTPUT;
         if (! $this->use_seb() ) {
             $style = "float:right; right:10px; padding:8px; background-color: white;text-align:center;";
-            echo '<div style="' . $style . '">';
+            echo '<br><div style="' . $style . '">';
             echo '<a href="http://vpl.dis.ulpgc.es/">';
             echo 'VPL '. vpl_get_version();
             echo '</a>';

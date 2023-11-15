@@ -678,6 +678,9 @@ class mod_vpl_submission {
             $div = new vpl_hide_show_div( true );
             $ret = '<b>' . get_string( $title, VPL ) . $div->generate( true ) . '</b><br>';
             $ret .= $div->begin_div( true ) . s($comment) . $div->end_div( true );
+            //EC-395 add return to the course button
+            $returnurl = new \moodle_url('/course/view.php', ['id' => $this->vpl->get_course()->id]);
+            $ret .= html_writer::link($returnurl, get_string( 'finishactivity', VPL ), ['class' => 'btn btn-primary']);
             $PAGE->requires->js_call_amd('mod_vpl/vplutil', 'addResults', array($div->get_div_id(), false, true));
         }
         return $ret;

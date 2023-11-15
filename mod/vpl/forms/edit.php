@@ -94,6 +94,7 @@ $options['username'] = $vpl->fullname($DB->get_record( 'user', array ( 'id' => $
 $linkuserid = $copy ? $USER->id : $userid;
 $ajaxurl = "edit.json.php?id={$id}&userid={$linkuserid}";
 $options['ajaxurl'] = $ajaxurl . '&action=';
+$options['redirecturl'] = (new \moodle_url('/mod/vpl/forms/evaluation.php', ['id' => $id, 'userid' => $linkuserid]))->out(false);
 if ( $copy ) {
     $loadajaxurl = "edit.json.php?id={$id}&userid={$userid}&privatecopy=1";
     if ( $subid && $lastsub ) {
@@ -136,5 +137,9 @@ $vpl->print_view_tabs( basename( __FILE__ ) );
 vpl_editor_util::print_tag();
 vpl_editor_util::print_js_i18n();
 vpl_editor_util::print_js_description($vpl, $userid);
+
+if (!$grader) {
+    echo $OUTPUT->render_from_template('mod_vpl/saveandeval', ['buttonid' => 'saveandeval']);
+}
 
 $vpl->print_footer();
