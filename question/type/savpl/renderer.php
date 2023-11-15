@@ -80,7 +80,7 @@ class qtype_savpl_renderer extends qtype_renderer {
         $templatecontext->lineoffset = $lineoffset;
         $templatecontext->templatelang = $question->templatelang;
         $templatecontext->lastanswer = $lastanswer;
-        $templatecontext->run = true; //TODO
+        $templatecontext->run = is_siteadmin($USER); //EC-397
         $templatecontext->precheck = $question->precheckpreference != 'none';
         $templatecontext->precheckaction = $question->precheckpreference == 'dbg' ? 'debug' : 'evaluate';
         $templatecontext->answertemplate = $question->answertemplate;
