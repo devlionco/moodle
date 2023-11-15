@@ -480,7 +480,7 @@ function qtype_numerical_split_answer($value) {
     $num = str_replace(' ', '', $num);
     $unit = str_replace(' ', '', $unit);
 
-    if (empty($num)) {
+    if (strlen($num) == 0 || !is_numeric($num)) {
         $num = null;
     }
 
