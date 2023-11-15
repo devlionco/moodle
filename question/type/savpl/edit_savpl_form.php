@@ -207,6 +207,7 @@ class qtype_savpl_edit_form extends question_edit_form {
         $mform->addElement('select', 'gradingmethod',
             get_string('gradingmethod', SAQVPL),
             array(get_string('allornothing', SAQVPL), get_string('scaling', SAQVPL)));
+        $mform->setDefault('gradingmethod', 1);
         $mform->addHelpButton('gradingmethod', 'gradingmethod', SAQVPL);
     }
 
