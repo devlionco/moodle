@@ -101,15 +101,15 @@ class question_renderer extends \core_question_renderer {
         if (in_array($PAGE->pagetype,['mod-quiz-attempt', 'mod-quiz-report'])) {
             $lqsoptions = local_quiz_summary_option_get_quiz_config();
 
-            if (!$lqsoptions->summary_numbering) {
+            if (isset($lqsoptions->summary_numbering) && !$lqsoptions->summary_numbering) {
                 $arrtitle[] = $this->number($number);
             }
 
-            if (!$lqsoptions->summary_questionname) {
+            if (isset($lqsoptions->summary_questionname) && !$lqsoptions->summary_questionname) {
                 $arrtitle[] = $this->qname($name);
             }
 
-            if (!$lqsoptions->summary_grade) {
+            if (isset($lqsoptions->summary_grade) && !$lqsoptions->summary_grade) {
                 $arrtitle[] = $questionpointstext;
             }
         }else{
@@ -211,13 +211,13 @@ class question_renderer extends \core_question_renderer {
 
             $lqsoptions = local_quiz_summary_option_get_quiz_config();
 
-            if(!$lqsoptions->summary_mark) {
+            if(isset($lqsoptions->summary_mark) && !$lqsoptions->summary_mark) {
                 $output .= $this->question_flag($qa, $options->flags);
             }
 
             $output .= $this->edit_question_link($qa, $options);
 
-            if(!$lqsoptions->summary_teacherdialog) {
+            if(isset($lqsoptions->summary_teacherdialog) && !$lqsoptions->summary_teacherdialog) {
                 $output .= $this->send_message_teacher($qa, $options, $number);
             }
 

@@ -72,6 +72,8 @@ class quizdata {
     public $slots;
     public $openquestions = [];
     public $openquestionslist = [];
+    public $childopenquestion = [];
+    public $childopenquestionslist = [];
     public $anonymouscount = 1;
 
     public function __construct($cmid, $groupid = -1, $config = null) {
@@ -610,15 +612,72 @@ class quizdata {
         return $fullquestionstate;
     }
 
+    private function get_child_questions_for_grading($questionid, $qtypes = []) {
+        global $DB;
+
+        $params = [];
+        $params['questionid'] = $questionid;
+        list($sqlin, $inparams) = $DB->get_in_or_equal($qtypes, SQL_PARAMS_NAMED);
+        $params += $inparams;
+
+        $sql = "SELECT
+                    *
+                FROM
+                    {question}
+                WHERE
+                    parent = :questionid
+                    AND qtype $sqlin";
+
+        $childquestions = $DB->get_records_sql($sql, $params);
+
+        return $childquestions;
+    }
+
+
     private function add_to_openquestions($attempt, $question) {
-        $qtypes = ['essay', 'opensheet', 'mlnlpessay', 'poodllrecording'];
+
+        $qtypes = [
+            'essay',
+            'opensheet',
+            'mlnlpessay',
+            'poodllrecording',
+            'combined',
+            'multianswer',
+        ];
+
+        // Check for child in combined and multianswer.
+        $childquestionsforgrading = [];
+        switch ($question->qtype) {
+            case 'combined':
+            case 'multianswer':
+                $childquestionsforgrading = $this->get_child_questions_for_grading($question->questionid, $qtypes);
+                break;
+            default:
+                break;
+        }
+
         if (in_array($question->qtype, $qtypes)) {
             $questionstateclass = $attempt->get_question_state_class($question->slot, true);
             if ($questionstateclass == 'requiresgrading') {
-                if (!isset($this->openquestions[$question->id])) {
-                    $this->openquestions[$question->id] = 1;
+                if (count($childquestionsforgrading) != 0) {
+                    foreach ($childquestionsforgrading as $key => $childquestion) {
+                        $this->childopenquestionslist += $childquestionsforgrading;
+                        $childquestionvid = $childquestion->id;
+                        $childquestion->slot = $question->slot;
+                        $childquestion->id = $question->id;
+                        $childquestion->name = "$question->name — $childquestion->name:$childquestion->qtype";
+                        if (!isset($this->openquestions[$childquestion->id])) {
+                            $this->openquestions[$childquestionvid] = 1;
+                        } else {
+                            $this->openquestions[$childquestionvid]++;
+                        }
+                    }
                 } else {
-                    $this->openquestions[$question->id]++;
+                    if (!isset($this->openquestions[$question->id])) {
+                        $this->openquestions[$question->id] = 1;
+                    } else {
+                        $this->openquestions[$question->id]++;
+                    }
                 }
             }
         }
@@ -626,20 +685,23 @@ class quizdata {
 
     private function prepare_openquestions() {
         foreach ($this->openquestions as $key => $value) {
+
+            $question = $this->questions[$key] ?? $this->childopenquestionslist[$key];
+
             $item = new stdClass;
 
             $link = new moodle_url('/mod/quiz/report.php', [
-                    'id' => $this->cm->id,
-                    'mode' => 'grading',
-                    'slot' => $this->questions[$key]->slot,
-                    'qid' => $this->questions[$key]->id,
-                    'grade' => 'needsgrading'
+                'id' => $this->cm->id,
+                'mode' => 'grading',
+                'slot' => $question->slot,
+                'qid' => $question->id,
+                'grade' => 'needsgrading',
             ]);
 
             $item->count_students = $value;
-            $item->name = $this->questions[$key]->name;
+            $item->name = $question->name;
             $item->link = $link->out(false);
-            $item->qnumber = $this->questions[$key]->slot;
+            $item->qnumber = $question->slot;
 
             $this->openquestionslist[] = $item;
         }
