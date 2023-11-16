@@ -27,7 +27,7 @@ define( 'AJAX_SCRIPT', true );
 
 require(__DIR__ . '/../../../config.php');
 
-global $PAGE, $OUTPUT, $USER, $CFG, $COURSE;
+global $PAGE, $OUTPUT, $USER, $CFG;
 
 use qtype_savpl\editor\vpl_editor_util;
 use qtype_savpl\savpl_CE;
@@ -44,11 +44,14 @@ try {
     if (! isloggedin()) {
         throw new Exception( get_string( 'loggedinnot' ) );
     }
-    $id = required_param( 'id', PARAM_INT ); // Course id.
+    $id = required_param( 'id', PARAM_INT ); // Question id.
+    $courseid = required_param( 'courseid', PARAM_INT ); // Course id.
     $action = required_param( 'action', PARAM_ALPHANUMEXT );
+    $course = get_course($courseid);
+
     // TODO use or not sesskey "require_sesskey();".
-    require_login( $COURSE, false );
-    $coursecontext = \context_course::instance($COURSE->id);
+    require_login( $course, false );
+    $coursecontext = \context_course::instance($course->id);
     require_capability('moodle/course:update', $coursecontext);
     $PAGE->set_url( new moodle_url( '/qtype/savpl/classes/editor/executionfiles.json.php', array (
             'id' => $id,

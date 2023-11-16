@@ -45,10 +45,12 @@ try {
         throw new Exception( get_string( 'loggedinnot' ) );
     }
     $id = required_param( 'id', PARAM_INT ); // Question id.
+    $courseid = required_param( 'courseid', PARAM_INT ); // Course id.
     $action = required_param( 'action', PARAM_ALPHANUMEXT );
     // TODO use or not sesskey "require_sesskey();".
-    require_login( $COURSE, false );
-    $coursecontext = \context_course::instance($COURSE->id);
+    $course = get_course($courseid);
+    require_login( $course, false );
+    $coursecontext = \context_course::instance($course->id);
     require_capability('moodle/course:update', $coursecontext);
     $PAGE->set_url( new moodle_url( '/qtype/savpl/classes/editor/executionfiles.json.php', array (
             'id' => $id,

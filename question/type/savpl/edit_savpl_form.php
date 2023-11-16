@@ -113,7 +113,7 @@ class qtype_savpl_edit_form extends question_edit_form {
             $options['run'] = true;
             $options['debug'] = true;
             $options['evaluate'] = true;
-            $options['ajaxurl'] = $CFG->wwwroot . "/question/type/savpl/executionfiles.json.php?id={$this->question->id}&action=";
+            $options['ajaxurl'] = $CFG->wwwroot . "/question/type/savpl/executionfiles.json.php?id={$this->question->id}&courseid={$COURSE->id}&action=";
             $options['download'] = $CFG->wwwroot . "/question/type/savpl/downloadexecutionfiles.php?id={$this->question->id}";
             $options['resetfiles'] = false;
             $options['minfiles'] = 0;
@@ -168,7 +168,7 @@ class qtype_savpl_edit_form extends question_edit_form {
      * @param MoodleQuickForm $mform the form being built.
      */
     protected function add_execfiles_field($mform) {
-        global $CFG;
+        global $CFG, $COURSE;
         $this->create_header($mform, 'execfilesevalsettings');
 
         //$this->add_fileset_editor($mform, 'execfiles', 'execfileslist', 'execfile');
@@ -189,7 +189,7 @@ class qtype_savpl_edit_form extends question_edit_form {
             $options['run'] = true;
             $options['debug'] = true;
             $options['evaluate'] = true;
-            $options['ajaxurl'] = $CFG->wwwroot . "/question/type/savpl/precheckfiles.json.php?id={$this->question->id}&action=";
+            $options['ajaxurl'] = $CFG->wwwroot . "/question/type/savpl/precheckfiles.json.php?id={$this->question->id}&courseid={$COURSE->id}&action=";
             $options['download'] = $CFG->wwwroot . "/question/type/savpl/downloadprecheckfiles.php?id={$this->question->id}";
             $options['resetfiles'] = false;
             $options['minfiles'] = 0;
