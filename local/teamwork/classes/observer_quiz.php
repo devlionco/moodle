@@ -161,9 +161,9 @@ class observer_quiz {
 
         // Insert data for target user.
         if ($qq) {
-            unset($qi->id);
-            $qi->userid = $targetuserid;
-            $DB->insert_record('quiz_grades', $qi);
+            unset($qq->id);
+            $qq->userid = $targetuserid;
+            $DB->insert_record('quiz_grades', $qq);
         }
     }
 
