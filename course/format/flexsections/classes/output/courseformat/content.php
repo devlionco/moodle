@@ -328,12 +328,6 @@ class content extends \core_courseformat\output\local\content {
             return $sections;
         } else {
             $this->recursive_unset_sections($sections);
-
-            // EC-249.
-            if (count($sections) == 1) {
-                $sections[1] = $sections[0];
-            }
-
             return array_values($sections);
         }
     }
@@ -363,7 +357,6 @@ class content extends \core_courseformat\output\local\content {
             $obj = $DB->get_record('course_sections', ['id' => $section->id]);
             if ($obj && !$obj->visible) {
                 unset($sections[$key]);
-                $sections = array_values($sections);
                 continue;
             }
 
