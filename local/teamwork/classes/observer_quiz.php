@@ -124,6 +124,47 @@ class observer_quiz {
 
         self::tw_clone_questions($sourcequestionusageid, $targetquestionusageid, $sourceuserid, $targetuserid);
 
+        self::tw_clone_grades($quizid, $sourceuserid, $targetuserid);
+    }
+
+    private static function tw_clone_grades($quizid, $sourceuserid, $targetuserid) {
+        global $DB;
+
+        $quiz = $DB->get_record('quiz', ['id' => $quizid]);
+        $qi = $DB->get_record('grade_items', [
+                'courseid' => $quiz->course,
+                'itemtype' => 'mod',
+                'itemmodule' => 'quiz',
+                'iteminstance' => $quizid,
+        ]);
+
+        // Table grade_grades.
+
+        // Remove all data for target user.
+        $DB->delete_records('grade_grades', ['itemid' => $qi->id, 'userid' => $targetuserid]);
+
+        $qi = $DB->get_record('grade_grades', ['itemid' => $qi->id, 'userid' => $sourceuserid]);
+
+        // Insert data for target user.
+        if ($qi) {
+            unset($qi->id);
+            $qi->userid = $targetuserid;
+            $DB->insert_record('grade_grades', $qi);
+        }
+
+        // Table quiz_grades.
+
+        // Remove all data for target user.
+        $DB->delete_records('quiz_grades', ['quiz' => $quizid, 'userid' => $targetuserid]);
+
+        $qq = $DB->get_record('quiz_grades', ['quiz' => $quizid, 'userid' => $sourceuserid]);
+
+        // Insert data for target user.
+        if ($qq) {
+            unset($qi->id);
+            $qi->userid = $targetuserid;
+            $DB->insert_record('quiz_grades', $qi);
+        }
     }
 
     private static function tw_clone_questions($sourcequestionusageid, $targetquestionusageid, $sourceuserid, $targetuserid) {
