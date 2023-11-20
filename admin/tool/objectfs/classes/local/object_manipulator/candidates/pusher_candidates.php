@@ -98,6 +98,12 @@ class pusher_candidates extends manipulator_candidates_base {
      */
     public function get_candidates_sql_params() {
         $filesystem = new $this->config->filesystem;
+
+        $this->config->sizethreshold = isset($this->config->sizethreshold) ? $this->config->sizethreshold : '';
+        $this->config->component = isset($this->config->component) ? $this->config->component : '';
+        $this->config->filearea = isset($this->config->filearea) ? $this->config->filearea : '';
+        $this->config->mimetype = isset($this->config->mimetype) ? $this->config->mimetype : '';
+
         return [
             'maxcreatedtimestamp' => time() - $this->config->minimumage,
             'threshold' => $this->config->sizethreshold,

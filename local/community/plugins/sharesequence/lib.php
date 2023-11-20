@@ -54,7 +54,12 @@ function community_sharesequence_output_fragment_upload_sequence_catalog_page_1(
 
     // Prepare default data.
     $data = json_decode($args->default_data);
-    $data = (array) json_decode($data->default_data);
+
+    if (isset($data->default_data)) {
+        $data = (array) json_decode($data->default_data);
+    } else {
+        $data = [];
+    }
 
     $default = [];
     $sharesequence = new sharesequence();
@@ -121,7 +126,7 @@ function community_sharesequence_output_fragment_upload_sequence_catalog_page_1(
     $numberofsections = !empty($numberofsections) ? $numberofsections : 1;
 
     $selectedsections = '';
-    if ($data['selected_sections'] && !empty($data['selected_sections'])) {
+    if (isset($data['selected_sections']) && !empty($data['selected_sections'])) {
         $selectedsections = json_encode($data['selected_sections']);
     }
 
