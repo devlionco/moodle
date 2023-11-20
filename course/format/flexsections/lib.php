@@ -1610,10 +1610,15 @@ class format_flexsections extends core_courseformat\base {
         set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
 
         // PTL-9728.
-        $json_indexcollapsed = json_encode($sectionpreferences['indexcollapsed']);
-        if ($json_indexcollapsed === 'null') {
+        if (isset($sectionpreferences['indexcollapsed'])) {
+            $json_indexcollapsed = json_encode($sectionpreferences['indexcollapsed']);
+            if ($json_indexcollapsed === 'null') {
+                $json_indexcollapsed = '[]';
+            }
+        } else {
             $json_indexcollapsed = '[]';
         }
+
         set_user_preference('flexsectionscoursesectionspreferences_' . $course->id,
             $json_indexcollapsed, $USER->id);
 

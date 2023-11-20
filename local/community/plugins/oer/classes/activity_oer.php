@@ -311,6 +311,9 @@ class activity_oer {
 
         $obj->order = $obj->courseid . $obj->section_order . $counter;
 
+        // Default uniqueid.
+        $obj->uniqueid = time() . $obj->cmid . $obj->courseid . $obj->catid;
+
         // Virtual sections.
         $linksectionids = \local_metadata\mcontext::module()->get($obj->cmid, 'linksectionids');
 

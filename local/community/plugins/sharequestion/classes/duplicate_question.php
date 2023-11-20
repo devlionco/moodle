@@ -158,7 +158,6 @@ class duplicate_question {
         $obj = $DB->get_record('question', ['id' => $questionid]);
         $objnew = $DB->get_record('question', ['id' => $targetquestionid]);
         $objnew->stamp = $obj->stamp;
-        $objnew->version = $obj->version;
         $DB->update_record('question', $objnew);
 
         // Copy unit for numerical.

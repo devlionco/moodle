@@ -304,6 +304,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 // If the truncation point is in the middle of a multi-byte unicode char,
                 // we remove the incomplete part with a preg_match() that is unicode aware.
                 $subqid = substr($subqid, 0, $maxbytes);
+                $match = [];
                 if (preg_match('/^(.|\n)*/u', '', $subqid, $match)) {
                     $subqid = $match[0];
                 }

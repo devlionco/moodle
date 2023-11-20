@@ -1111,7 +1111,7 @@ class block_myoverview_external extends core_course_external {
     }
 }
 
-function block_myoverview_cmp($a, $b)
-{
-    return $a->lastaccess < $b->lastaccess;
+function block_myoverview_cmp($a, $b){
+    if ($a->lastaccess == $b->lastaccess) return 0;
+    return ($a->lastaccess < $b->lastaccess) ? -1 : 1;
 }

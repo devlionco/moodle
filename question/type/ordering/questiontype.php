@@ -402,6 +402,7 @@ class qtype_ordering extends question_type {
             $maxbytes = 100;
             if (strlen($subqid) > $maxbytes) {
                 $subqid = substr($subqid, 0, $maxbytes);
+                $match = [];
                 if (preg_match('/^(.|\n)*/u', '', $subqid, $match)) {
                     $subqid = $match[0]; // Incomplete UTF-8 chars will be removed.
                 }

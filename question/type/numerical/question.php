@@ -449,8 +449,12 @@ class qtype_numerical_answer extends question_answer {
         parent::__construct($id, $answer, $fraction, $feedback, $feedbackformat);
         $this->tolerance = abs((float)$tolerance);
 
-        $qn = $DB->get_record('question_numerical', ['answer' => $this->id]);
-        $this->unit = $qn->unit;
+        if ($qn = $DB->get_record('question_numerical', ['answer' => $this->id])) {
+            $this->unit = $qn->unit;
+        } else {
+            $this->unit = '';
+        }
+
     }
 
     public function get_tolerance_interval() {

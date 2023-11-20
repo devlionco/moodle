@@ -134,5 +134,6 @@ function block_sharedwithme_render_courses_content($perpage = 1) {
 }
 
 function block_sharedwithme_cmp($a, $b) {
-    return $a->enrol_time < $b->enrol_time;
+    if ($a->enrol_time == $b->enrol_time) return 0;
+    return ($a->enrol_time < $b->enrol_time) ? -1 : 1;
 }
