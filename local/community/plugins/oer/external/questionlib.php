@@ -696,9 +696,12 @@ class community_oer_question_external extends external_api {
 
         foreach ($data as $qid) {
             $ghidden = \local_metadata\mcontext::question()->get($qid, 'qhidden');
-            $ghidden = ($ghidden != 1) ? 1 : 0;
 
-            \local_metadata\mcontext::question()->save($qid, 'qhidden', $ghidden);
+            if ($ghidden == 1) {
+                \local_metadata\mcontext::question()->saveEmpty($qid, 'qhidden');
+            } else {
+                \local_metadata\mcontext::question()->save($qid, 'qhidden', 1);
+            }
 
             $question->question_recalculate_in_db($qid);
         }
