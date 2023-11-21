@@ -83,6 +83,12 @@ function qtype_savpl_evaluate($answer, $question, $deletesubmissions) {
     $formattedexecfiles = qtype_savpl_format_execution_files($execfiles);
     $files = $reqfile + $execfiles + $formattedexecfiles;
 
+    // Default.
+    $result = new stdClass();
+    $result->vplresult = new stdClass();
+    $result->lastmessage = '';
+    $result->serverwassilent = '';
+
     // Try to evaluate several times (as internal evaluation errors may occur).
     $tries = 0;
     do {
@@ -165,9 +171,6 @@ function qtype_savpl_evaluate($answer, $question, $deletesubmissions) {
  * @return float|null The fraction if any, or null if there was no grade.
  */
 function qtype_savpl_extract_fraction($result, $maxgrade) {
-    //echo '<pre>';
-    //print_r($result);
-    //echo '</pre>';
     if ($result->grade) {
         global $CFG;
         $formattedgrade = floatval(preg_replace('/.*: (.*) *\/.*/', '$1', $result->grade));
