@@ -413,9 +413,9 @@ export const init = ({
                     groupsac
                 ],
 
-                checkbox: [
-                    keynull
-                ],
+                // checkbox: [
+                //     keynull
+                // ],
             };
 
             return ModalFactory.create({
@@ -456,7 +456,9 @@ export const init = ({
         let courseid = jQuery(Selector.COURSE_SELECT).val();
         let roleid = jQuery(Selector.ROLE_SELECT).val();
         let groups = jQuery(Selector.GROUPS_SELECT).val();
-        let nullcheck = jQuery(Selector.NULL_CHECKBOX).is(':checked');
+
+        //let nullcheck = jQuery(Selector.NULL_CHECKBOX).is(':checked');
+        let nullcheck = true;
 
         if (categoryid.length !== 0 && courseid.length !== 0 && roleid.length !== 0) {
             var data = {
