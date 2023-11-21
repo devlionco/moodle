@@ -77,6 +77,12 @@
   }
 }
 
+#block-region-side-pre {
+  .dropdown .dropdown-menu.menu .dropdown-item {
+    white-space: normal;
+  }
+}
+
 #theme_boost-drawers-blocks {
   .block.card {
     border: .0625rem solid $gray-300;
