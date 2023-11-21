@@ -10,12 +10,19 @@
     }
 
     .advancedoverview_report-toggle {
+        label {
+            background-color: $white;
+            outline-color: $secondarymedium;
+            &::after {
+                background-color: $secondary;
+            }
+        }
         .link-btn-text {
             color: $body-color;
         }
 
         input:checked+label {
-            background: $secondarylight;
+            background: $warning;
         }
     }
 
@@ -24,12 +31,34 @@
     }
 
     .averagescore-title {
-        background-color: $secondary;
+        // background-color: $secondary;
         color: $white;
     }
 
+    .advancedoverview_report-dropdown-btn {
+        border: .0625rem solid $secondary;
+        background: $white;
+        span {
+            font-family: $primary-font;
+        }
+        
+     
+        &:not(:disabled):not(.disabled):hover,
+        &:not(:disabled):not(.disabled):focus {
+            border-color: $secondarymedium;
+            background: $light;
+        }
+       
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active {
+            border-color: $primary;
+            background-color: $primary;
+            span {
+                color: $white;
+            }
+        }
+    }
     .advancedoverview_report-btn,
-    .advancedoverview_report-dropdown-btn,
     .advancedoverview_report-dropdown-btn-lg {
         background-color: $white;
         border: 0.0625rem solid $secondary;
@@ -98,8 +127,12 @@
             color: $body-color;
 
             .openquestions-count {
-                background-color: $gray-700;
-                border-color: $gray-700;
+                background-color: $gray-500;
+                border-color: $gray-500;
+                color: $dark;
+            }
+            .text {
+                font-weight: bold;
             }
         }
     }
@@ -277,6 +310,72 @@
 
             .tabulator-row.tabulator-selectable:hover {
                 background-color: $secondarylight;
+            }
+        }
+        .incorrect, .correct,
+		.complete, .partiallycorrect {
+			&:hover {
+				background-color: $gray-200;
+				border: .0625rem solid $secondary;
+			}
+		}
+    }
+    #students-table {
+        .tabulator-footer {
+            background-color: $white;
+            .tabulator-footer-contents {
+                .tabulator-page{
+                    background-color: $white;
+                    color: $gray-600;
+                    border: .0625rem solid transparent;
+                    &:not([data-page="next"]):not([data-page="prev"]).active,
+                    &:not([data-page="next"]):not([data-page="prev"]):active,
+                    &:not([data-page="next"]):not([data-page="prev"]):focus {
+                        background-color: $secondary;
+                        border-color: $secondary;
+                        color: $white;
+                    }
+                    &:not([data-page="next"]):not([data-page="prev"]):hover,
+                    &:not([data-page="next"]):not([data-page="prev"]).active:hover {
+                        border-color: $secondary;
+                        color: $body-color;
+                        background-color: $white;
+                    }
+
+                    &:not([data-page="next"]):not([data-page="prev"]):disabled {
+                        color: $gray-400;
+                    }
+                    &[data-page="next"],
+					&[data-page="prev"] {
+						font-size: 0;
+						&::after {
+							background-color: $gray-600;
+						}
+                        &:not(:disabled):not(.disabled).active::after,
+                        &:not(:disabled):not(.disabled):active::after,
+                        &:not(:disabled):not(.disabled):focus::after {
+                            background-color: $secondary;
+                            border-color: $secondary;
+                        }
+                        &:not(:disabled):not(.disabled):hover::after {
+                            background-color: $white;
+                            border-color: $secondary;
+                            text-stroke: .0625rem $secondary;
+                            -webkit-text-stroke: .0625rem $secondary;
+                        }
+                        &:disabled::after {
+                            background-color: $gray-400;
+                        }
+                 
+					}
+                    &:disabled:not([data-page="next"]):not([data-page="prev"]) {
+                        color: $gray-400;
+                    }
+                }
+                .tabulator-paginator {
+                    display: flex;
+                    justify-content: center;
+                }
             }
         }
     }

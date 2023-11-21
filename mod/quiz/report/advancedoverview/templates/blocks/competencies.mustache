@@ -1,36 +1,37 @@
 {{#competencyenabled}}
-<div class="py-3 bg-white" id="competenciestable">
+<div class="pb-3 bg-white" id="competenciestable">
     <div class="">
-        <h3>
+        <h2 role="button" data-toggle="collapse" data-target="#competencies-table-collapse" aria-expanded="true"
+            aria-controls="competencies-table-collapse">
             {{#str}}competencies_title, quiz_advancedoverview{{/str}}
-        </h3>
-
-        <div class="row ">
-            <div class="col-9">
-                <!-- {{#str}} competencies_title, quiz_advancedoverview {{/str}} -->
+        </h2>
+        <div class="collapse show" id="competencies-table-collapse">
+            <div class="row ">
+                <div class="col-9">
+                    <!-- {{#str}} competencies_title, quiz_advancedoverview {{/str}} -->
+                </div>
+                <div class="col-3">
+                    {{#str}} classsuccess, quiz_competencyoverview{{/str}}
+                </div>
             </div>
-            <div class="col-3">
-                {{#str}} classsuccess, quiz_competencyoverview{{/str}}
-            </div>
-        </div>
-        {{#skills}}
-        <div class="row p-1">
-            <div class="col-9">
-                {{ name }} ( {{ numquestions }} {{#str}} questions, quiz_advancedoverview {{/str}})
-            </div>
-            <div class="col-3">
-                <div class="m-b-1">
-                    <div class="skillsbar p-2 {{ colorclass }}" style="width: {{ rate }}%;">
-                        {{ rate }}%
+            {{#skills}}
+            <div class="row p-1">
+                <div class="col-9">
+                    {{ name }} ( {{ numquestions }} {{#str}} questions, quiz_advancedoverview {{/str}})
+                </div>
+                <div class="col-3">
+                    <div class="m-b-1">
+                        <div class="skillsbar p-2 {{ colorclass }}" style="width: {{ rate }}%;">
+                            {{ rate }}%
+                        </div>
                     </div>
                 </div>
             </div>
+            {{/skills}}
+            <div class="row m-t-5" style="margin: 10px auto; width: fit-content;">
+                {{{ competencybutton }}}
+            </div>
         </div>
-        {{/skills}}
-        <div class="row m-t-5" style="margin: 10px auto; width: fit-content;">
-            {{{ competencybutton }}}
-        </div>
-
     </div>
 </div>
 {{/competencyenabled}}

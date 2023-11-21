@@ -25,13 +25,15 @@
 }
 .advancedoverview_report-toggle label {
   cursor: pointer;
+  box-sizing: border-box;
   text-indent: -9999px;
   width: 2.125rem;
-  height: 1rem;
+  height: 1.125rem;
   background: #b2b2b2;
   display: block;
   border-radius: 1rem;
   position: relative;
+  outline: 0.0625rem solid #b2b2b2;
 }
 .advancedoverview_report-toggle label:active:after {
   width: 2.125rem;
@@ -42,12 +44,10 @@
   top: 0.125rem;
   left: 0.125rem;
   right: unset;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 0.875rem;
+  height: 0.875rem;
   background: #fff;
   border-radius: 100%;
-  /* 	transition: 0.1s; */
-  box-shadow: rgba(99, 99, 99, 0.2) 0rem 0.0625rem 0.25rem 0rem;
 }
 .advancedoverview_report-toggle input:checked + label {
   background: #eee;
@@ -66,9 +66,29 @@
 
 .block_advancedoverview_report {
   /* 
-  	#studentsActionsBtn {
-  		width: 9rem;
-  	} */
+  #studentsActionsBtn {
+  	width: 9rem;
+  } */
+}
+.block_advancedoverview_report h2[data-toggle=collapse] {
+  padding-left: 3rem;
+  position: relative;
+}
+.block_advancedoverview_report h2[data-toggle=collapse]::after {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.5rem;
+  content: "\f107";
+  font-size: 1.75rem;
+  font-family: "Font Awesome 6 Sharp";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  transition: all 0.25s ease;
+}
+.block_advancedoverview_report h2[data-toggle=collapse][aria-expanded=true]::after {
+  transform: scaleY(-1);
+  transition: all 0.25s ease;
 }
 .block_advancedoverview_report .dropdown-menu.show {
   display: flex;
@@ -172,6 +192,7 @@
   width: 12rem;
   height: 12rem;
   border-radius: 100%;
+  background-color: #003F5B;
 }
 .block_advancedoverview_report #charts_average .averagescore-info-wrapper {
   margin-top: 3rem;
@@ -234,17 +255,35 @@
   justify-content: space-between;
   line-height: 1;
   height: 2.5rem;
-  /* 	width: 13rem; */
+  padding: 0.375rem 0.75rem;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  box-shadow: 0rem 0.375rem 0.25rem 0rem rgba(108, 117, 125, 0.15);
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn::after {
   font-size: 1rem;
+  content: "\f0d7";
+  font-family: "Font Awesome 6 Pro";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn[aria-expanded=true]::after {
   transform: scaleY(-1);
   transition: all 0.25s ease;
 }
-.block_advancedoverview_report .advancedoverview_report-dropdown-btn-title {
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn span {
   font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn:hover, .block_advancedoverview_report .advancedoverview_report-dropdown-btn:focus {
+  box-shadow: 0rem 0.375rem 0.75rem 0.25rem rgba(108, 117, 125, 0.2);
+}
+.block_advancedoverview_report .advancedoverview_report-dropdown-btn:active, .block_advancedoverview_report .advancedoverview_report-dropdown-btn.active {
+  box-shadow: none;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg,
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active {
@@ -268,6 +307,7 @@
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:after,
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active:after {
   font-size: 1.75rem;
+  width: 1rem;
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg[aria-expanded=true]:after,
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn-lg:active[aria-expanded=true]:after {
@@ -351,6 +391,9 @@
 }
 .block_advancedoverview_report .advancedoverview_report-dropdown-btn[data-target="#studentsActionsCollapse"] {
   width: 7.5rem;
+}
+.block_advancedoverview_report #studentsActionsCollapse .card {
+  width: auto;
 }
 .block_advancedoverview_report .filter-pic {
   margin-right: 0.5rem;
@@ -510,10 +553,83 @@
 .block_advancedoverview_report #students-table .tabulator-row:hover .row-menu-btn {
   display: block !important;
 }
+.block_advancedoverview_report #students-table .tabulator-footer {
+  background-color: #fff;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents {
+  padding: 0.5rem;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #707070;
+  border: 0.0625rem solid transparent;
+  margin: 0 0.25rem;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page:not([data-page=next]):not([data-page=prev]).active, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page:not([data-page=next]):not([data-page=prev]):active, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page:not([data-page=next]):not([data-page=prev]):focus {
+  background-color: #707070;
+  border-color: #707070;
+  box-shadow: none;
+  outline: none;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page:not([data-page=next]):not([data-page=prev]):hover {
+  border-color: #707070;
+  color: #2B2B2B;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page:not([data-page=next]):not([data-page=prev]):disabled {
+  color: #CED4DA;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=first], .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=last] {
+  display: none;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next], .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev] {
+  font-size: 0;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next]::after, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]::after {
+  content: "\f105";
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 100%;
+  font-family: "Font Awesome 6 Pro";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  color: #fff;
+  font-size: 1rem;
+  border: 0.0625rem solid transparent;
+  line-height: 1.4;
+  text-indent: 0.0625rem;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next]:active, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]:active {
+  box-shadow: none;
+  outline: none;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next]:focus, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]:focus {
+  box-shadow: none;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next]:hover::after, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]:hover::after {
+  color: #fff;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]::after {
+  content: "\f104";
+  text-indent: -0.0625rem;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-paginator {
+  display: flex;
+  justify-content: center;
+}
+.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-pages {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
 .block_advancedoverview_report #students-table .incorrect {
-  width: 1rem;
-  height: 1rem;
-  background-image: url("[[pix:core|i/grade_incorrect]]");
+  background-image: url("[[pix:quiz_advancedoverview|wrong]]");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -524,9 +640,7 @@
 }
 .block_advancedoverview_report #students-table .correct,
 .block_advancedoverview_report #students-table .complete {
-  width: 1rem;
-  height: 1rem;
-  background-image: url("[[pix:core|i/grade_correct]]");
+  background-image: url("[[pix:quiz_advancedoverview|correct]]");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -535,6 +649,23 @@
 .block_advancedoverview_report #students-table .correct .numerical_value,
 .block_advancedoverview_report #students-table .complete .numerical_value {
   display: none;
+}
+.block_advancedoverview_report #students-table .incorrect,
+.block_advancedoverview_report #students-table .correct,
+.block_advancedoverview_report #students-table .complete,
+.block_advancedoverview_report #students-table .partiallycorrect {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-position: center;
+  background-size: 1.25rem;
+}
+.block_advancedoverview_report #students-table .incorrect:hover,
+.block_advancedoverview_report #students-table .correct:hover,
+.block_advancedoverview_report #students-table .complete:hover,
+.block_advancedoverview_report #students-table .partiallycorrect:hover {
+  background-color: #e9ecef;
+  border: 0.0625rem solid #343a40;
+  border-radius: 0.25rem;
 }
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .notanswered .sr-only,
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .requiresgrading .sr-only,
@@ -552,12 +683,10 @@
   display: none;
 }
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .partiallycorrect {
-  width: 1.2rem;
-  height: 1.2rem;
-  background-image: url("[[pix:core|i/grade_partiallycorrect]]");
-  background-size: contain;
+  background-image: url("[[pix:quiz_advancedoverview|wix]]");
   background-repeat: no-repeat;
   background-position: center;
+  background-size: 1.15rem;
   margin: 0 auto;
 }
 .block_advancedoverview_report #students-table .fname,
@@ -614,11 +743,11 @@
 }
 
 html[dir=rtl] .advancedoverview_report-toggle label:after {
-  right: 0.0625rem;
+  right: 0.125rem;
   left: unset;
 }
 html[dir=rtl] .advancedoverview_report-toggle input:checked + label:after {
-  left: 0.0625rem;
+  left: 0.125rem;
   right: unset;
   /* transform: translateX(100%); */
 }
@@ -626,6 +755,9 @@ html[dir=rtl] .chart-tooltip::after {
   transform: rotate(45deg);
   right: -0.25rem;
   left: unset;
+}
+html[dir=rtl] .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=next]::after, html[dir=rtl] .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page=prev]::after {
+  transform: scaleX(-1);
 }
 
 @media (max-width: 1240px) {
@@ -640,23 +772,3 @@ html[dir=rtl] .chart-tooltip::after {
     margin-bottom: 1rem;
   }
 }/*# sourceMappingURL=styles.css.map */
-
-#competenciestable {
-  width: 100%;
-  margin-right: 10px;
-}
-
-.skillsbar {
-  text-align: right;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  color: black;
-}
-
-.grade-low-cell {
-  background-color: #F7DDE4;
-}
-
-.grade-med-cell {
-  background-color: #fffaeb;
-}

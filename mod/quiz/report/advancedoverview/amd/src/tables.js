@@ -33,7 +33,7 @@ export const initquestionstable = function(data, questions) {
   let tabledata = JSON.parse(data);
   QLENGTH = tabledata.length;
 
-  var wrongTitle = locale == 'he-IL' ? "שגו" : "Wrong";
+  var wrongTitle = locale === 'he-IL' ? "שגו" : "Wrong";
 
   let content = {
     headerSortElement: function(column, dir) {
@@ -195,6 +195,10 @@ export const initstudentstable = function(data, anon = 0) {
       component: "quiz_advancedoverview",
     },
     {
+      key: "team",
+      component: "quiz_advancedoverview",
+    },
+    {
       key: "state",
       component: "quiz_advancedoverview",
     },
@@ -231,12 +235,13 @@ export const initstudentstable = function(data, anon = 0) {
       self.translatedStrings.recalculategrades = str[6];
 
       self.translatedStrings.fullname = str[7];
-      self.translatedStrings.state = str[8];
-      self.translatedStrings.attemptNumber = str[9];
-      self.translatedStrings.grade = str[10];
-      self.translatedStrings.starttime = str[11];
-      self.translatedStrings.endtime = str[12];
-      self.translatedStrings.duration = str[13];
+      self.translatedStrings.team = str[8];
+      self.translatedStrings.state = str[9];
+      self.translatedStrings.attemptNumber = str[10];
+      self.translatedStrings.grade = str[11];
+      self.translatedStrings.starttime = str[12];
+      self.translatedStrings.endtime = str[13];
+      self.translatedStrings.duration = str[14];
       const clickMenu = [
         {
           disabled: function(component) {
@@ -347,6 +352,7 @@ export const initstudentstable = function(data, anon = 0) {
         textDirection: textDirection,
         pagination: false,
         paginationSize: 20,
+        rowHeight: 48,
         dataTree: true,
         dataTreeStartExpanded: true,
         layout: "fitDataFill",
@@ -371,6 +377,10 @@ export const initstudentstable = function(data, anon = 0) {
                 column.title = self.translatedStrings.fullname;
                 column.headerSort = false;
                 column.cellStyle = "border-right: none;";
+                break;
+
+              case "team":
+                column.title = self.translatedStrings.team;
                 break;
 
               case "state":
@@ -472,7 +482,7 @@ export const initstudentstable = function(data, anon = 0) {
                 // eslint-disable-next-line
                 let resultText;
                 // eslint-disable-next-line
-                let rawText = outerQuestions.texts[i - 19].replace(/\&nbsp;/g, '');
+                let rawText = outerQuestions.texts[i - 20].replace(/\&nbsp;/g, '');
                 if(rawText.length > 50) {resultText = '...' + rawText.slice(0,49);}
                 else {resultText = rawText;}
                 column.headerTooltip = resultText;
@@ -510,7 +520,7 @@ export const initstudentstable = function(data, anon = 0) {
                 };
                 break;
             }
-            if (i <= 8) {
+            if (i <= 11) {
               column.frozen = true;
             }
           });
@@ -581,7 +591,7 @@ export const initstudentstable = function(data, anon = 0) {
             }
 
             if (row.hasOwnProperty(prop1)) {
-              if (prop1 == "fullname" || prop1 == "grade") {
+              if (prop1 === "fullname" || prop1 === "grade") {
                 var value12 = row[prop1].toString();
                 var match12 = value12.match(/<a[^>]*>([^<]*)<\/a>/i);
                 if (match12) {
@@ -599,6 +609,10 @@ export const initstudentstable = function(data, anon = 0) {
                 switch (prop2) {
                   case "fullname":
                     row[self.translatedStrings.fullname] = row[prop2];
+                    delete row[prop2];
+                    break;
+                  case "team":
+                    row[self.translatedStrings.team] = row[prop2];
                     delete row[prop2];
                     break;
                   case "state":

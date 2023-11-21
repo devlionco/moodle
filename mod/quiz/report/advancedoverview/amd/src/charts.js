@@ -4,8 +4,8 @@ import d3 from 'report/advancedoverview/js/d3.v7.min.js';
 
 
 const chartParams = {
-    gradeColorScheme: ['#b2b2b2', '#ffffff', '#f0f3ef', '#cce3ca', '#6f9c6c', '#3d683c', '#0c3810'],
-    stateColorScheme: ["#0c3810", "#6f9c6c", "#cce3ca"],
+    gradeColorScheme: ['#b2b2b2', '#003F5B', '#003F5B', '#003F5B', '#003F5B', '#003F5B', '#003F5B'],
+    stateColorScheme: ["#003F5B", "#FFBC00", "#5175A8"],
 
 };
 

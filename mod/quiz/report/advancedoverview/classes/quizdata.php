@@ -555,6 +555,7 @@ class quizdata {
                     'firstname' =>  htmlspecialchars($this->participants[$userid]->firstname, ENT_QUOTES, 'UTF-8'),
                     'lastname' => htmlspecialchars($this->participants[$userid]->lastname, ENT_QUOTES, 'UTF-8'),
                     'usermenubtn' => '',
+                    'team' => \local_teamwork\common::get_user_team($this->cm->id, $userid),
                     'state' => get_string($state, 'quiz_advancedoverview'),
                     'attempt_number' => $attemptnumber,
                     'grade' => $attemptgradehtml,
@@ -620,13 +621,9 @@ class quizdata {
         list($sqlin, $inparams) = $DB->get_in_or_equal($qtypes, SQL_PARAMS_NAMED);
         $params += $inparams;
 
-        $sql = "SELECT
-                    *
-                FROM
-                    {question}
-                WHERE
-                    parent = :questionid
-                    AND qtype $sqlin";
+        $sql = "SELECT *
+                FROM {question}
+                WHERE parent = :questionid AND qtype $sqlin";
 
         $childquestions = $DB->get_records_sql($sql, $params);
 

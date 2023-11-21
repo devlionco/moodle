@@ -83,6 +83,7 @@ $string['grade'] = 'ציון';
 $string['starttime'] = 'הותחל ב';
 $string['endtime'] = 'הושלם ב';
 $string['duration'] = 'משך הזמן';
+$string['team'] = 'צוות';
 
 $string['question'] = 'שאלה מס';
 $string['searchstudent'] = 'חיפוש תלמיד...';
@@ -94,7 +95,7 @@ $string['attempt1'] = 'נסיון 1';
 $string['attempt2'] = 'נסיון 2';
 $string['attempt3andmore'] = 'נסיון 3 ומעלה';
 $string['lastattempt'] = 'נסיון אחרון';
-$string['numofquestions'] = 'לפי שאלות ';
+$string['numofquestions'] = 'מידע מפולח לפי שאלות ';
 $string['numofstudents'] = 'לפי תלמידים ';
 
 $string['averagegrade'] = 'ציון ממוצע';
@@ -118,7 +119,7 @@ $string['cachedef_advancedoverview'] = 'ציונים ומשוב מורחב';
 $string['regradingattemptxofy'] = 'חישוב מחדש של ניסיון ({$a->done}/{$a->count})';
 $string['submitted'] = 'הגישו';
 $string['notsubmitted'] = 'בתהליך';
-$string['notstarted'] = 'לא התחילו';
+$string['notstarted'] = 'לא הותחל';
 $string['attempts'] = 'מספר ניסיונות מענה';
 $string['max_grade'] = 'הציון הגבוה בכיתה';
 $string['min_grade'] = 'הציון הנמוך בכיתה';

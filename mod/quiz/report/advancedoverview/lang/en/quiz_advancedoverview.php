@@ -83,6 +83,7 @@ $string['grade'] = 'Grade';
 $string['starttime'] = 'Start time';
 $string['endtime'] = 'End time';
 $string['duration'] = 'Duration';
+$string['team'] = 'Team';
 
 $string['question'] = 'Question';
 $string['searchstudent'] = 'Search student...';
@@ -94,7 +95,7 @@ $string['attempt1'] = 'attempt 1';
 $string['attempt2'] = 'Attempt 2';
 $string['attempt3andmore'] = 'Attempt 3 and more';
 $string['lastattempt'] = 'Last attempt';
-$string['numofquestions'] = 'Questions ';
+$string['numofquestions'] = 'Information segmented by questions ';
 $string['numofstudents'] = 'Students ';
 
 $string['averagegrade'] = 'Average grade';
