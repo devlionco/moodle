@@ -55,8 +55,7 @@ class block_multiblock_external extends external_api {
         $eventdata = [];
         $eventdata['context'] = $context;
         $eventdata['userid'] = $USER->id;
-        $eventdata['other']['type'] = $params['type'];
-        $eventdata['other']['title'] = $params['title'];
+        $eventdata['other'] = ['type' => $params['type'], 'title' => $params['title'], 'subject' => ''];
         $eventdata['objectid'] = $context->instanceid;
 
         \block_multiblock\event\tab_click::create($eventdata)->trigger();

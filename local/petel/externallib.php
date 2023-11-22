@@ -902,27 +902,23 @@ class local_petel_external extends external_api {
 
         switch ($params['type']) {
             case 'notification':
-
                 $eventdata = [];
                 $eventdata['context'] = $context;
                 $eventdata['userid'] = $USER->id;
-                $eventdata['other']['type'] = $params['type'];
+                $eventdata['other'] = ['type' => $params['type'], 'subject' => ''];
                 $eventdata['objectid'] = $context->instanceid;
 
                 \local_petel\event\notification_click::create($eventdata)->trigger();
-
                 break;
 
             case 'chat':
-
                 $eventdata = [];
                 $eventdata['context'] = $context;
                 $eventdata['userid'] = $USER->id;
-                $eventdata['other']['type'] = $params['type'];
+                $eventdata['other'] = ['type' => $params['type'], 'subject' => ''];
                 $eventdata['objectid'] = $context->instanceid;
 
                 \local_petel\event\chat_click::create($eventdata)->trigger();
-
                 break;
         }
 

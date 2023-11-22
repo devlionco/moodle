@@ -80,6 +80,7 @@ if ($form->is_cancelled()) {
             $eventdata['other']['soursecmid'] = $soursecmid;
             $eventdata['other']['targetcmids'] = $targetcmids;
             $eventdata['other']['mdfields'] = $mdfields;
+            $eventdata['other']['subject'] = '';
 
             $eventdata['objectid'] = $context->instanceid;
 
