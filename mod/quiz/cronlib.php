@@ -62,6 +62,9 @@ class mod_quiz_overdue_attempt_updater {
                     $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
                     $cm = get_coursemodule_from_instance('quiz', $attempt->quiz);
                     $quizcount += 1;
+
+                    // EC-310. Insert debug string  for test.
+                    mtrace('  Quiz id=' . $attempt->quiz );
                 }
 
                 // If we have moved on to a different course, fetch the new data.
