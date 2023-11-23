@@ -246,7 +246,9 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                 $overridden = 1;
             }
 
-            $fraction += (int) $category->weight * (int) $catgrade / 100;
+            $fraction += (int) $category->weight * (int) $catgrade / (int) $question_attempt->maxmark;
+            mtrace('for cat ' . $catid . ' result ' . $output->$tag . ' weight: ' . (int) $category->weight . ' cat grade ' .
+                    (int) $catgrade);
             $feedback[] = [
                     'name' => $category->name,
                     'id' => $category->id,
