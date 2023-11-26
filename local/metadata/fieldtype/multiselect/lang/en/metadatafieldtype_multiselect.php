@@ -37,3 +37,6 @@ $string['rightformat_help'] = "The format should be used in the following way: <
 " Here is a full example: 1:en=Checking|he_kids=בדיקה ";
 $string['rightformat'] = 'Write the keys and the values?';
 $string['example'] = 'Example:';
+$string['type'] = 'Display type';
+$string['singlechoice'] = 'Single';
+$string['multichoice'] = 'Multi';

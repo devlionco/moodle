@@ -62,10 +62,6 @@ class metadata extends \local_metadata\fieldtype\metadata {
         // Option for value in HTML.
         $this->options = [];
 
-        // Option for value in language.
-        if (!empty($this->field->required)) {
-            $this->options[''] = get_string('choose').'...';
-        }
         // Multi lang formatting parser.
         foreach ($options as $option) {
             // ID value for separator.
@@ -115,9 +111,39 @@ class metadata extends \local_metadata\fieldtype\metadata {
             $attr = ['disabled'];
         }
 
-        // Show the default value wich is the first one.
-        $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options, $attr);
-        $mform->getElement($this->inputname)->setMultiple(true);
+        //$mform->addElement('header', 'general', format_string($this->field->name));
+
+        $counter = 0;
+        if ($this->field->param2 == 1) {
+            foreach ($this->options as $key => $name) {
+
+                if ($counter == 0) {
+                    $mform->addElement('checkbox', "$this->inputname[{$key}]", format_string($this->field->name), $name, $attr);
+                } else {
+                    $mform->addElement('checkbox', "$this->inputname[{$key}]", '', $name, $attr);
+                }
+
+                $mform->setType("$this->inputname[{$key}]", PARAM_INT);
+
+                if (is_array($this->data) && in_array($key, $this->data)) {
+                    $mform->setDefault("$this->inputname[{$key}]", true);
+                } else {
+                    $mform->setDefault("$this->inputname[{$key}]", false);
+                }
+
+                $counter++;
+            }
+        } else {
+            foreach ($this->options as $key => $name) {
+                if ($counter == 0) {
+                    $mform->addElement('radio', $this->inputname, format_string($this->field->name), $name, $key, $attr);
+                } else {
+                    $mform->addElement('radio', $this->inputname, null, $name, $key, $attr);
+                }
+
+                $counter++;
+            }
+        }
     }
 
     /**
@@ -127,6 +153,10 @@ class metadata extends \local_metadata\fieldtype\metadata {
      */
     public function edit_field_set_required($mform) {
         global $USER;
+
+        if ($this->field->param2 == 1) {
+            return;
+        }
 
         $admins = [];
         foreach (get_admins() as $admin) {
@@ -159,8 +189,50 @@ class metadata extends \local_metadata\fieldtype\metadata {
      */
     public function edit_save_data_preprocess($data, $datarecord) {
 
+        if ($this->field->param2 == 1) {
+
+            $arr = [];
+            if ($data != null) {
+                foreach ($data as $key => $name) {
+                    $arr[] = $key;
+                }
+            }
+
+            $data = $arr;
+        }
+
         $datastr = json_encode($data, JSON_UNESCAPED_UNICODE);
         return $datastr;
+    }
+
+    /**
+     * Saves the data coming from form
+     * @param stdClass $new data coming from the form
+     * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
+     */
+    public function edit_save_data($new) {
+        global $DB;
+
+        if (!isset($new->{$this->inputname})) {
+            // Field not present in form, probably locked and invisible - skip it.
+
+            $new->{$this->inputname} = null;
+        }
+
+        $data = new \stdClass();
+
+        $new->{$this->inputname} = $this->edit_save_data_preprocess($new->{$this->inputname}, $data);
+
+        $data->instanceid  = $new->id;
+        $data->fieldid = $this->field->id;
+        $data->data    = $new->{$this->inputname};
+
+        if ($dataid = $DB->get_field('local_metadata', 'id', ['instanceid' => $data->instanceid, 'fieldid' => $data->fieldid])) {
+            $data->id = $dataid;
+            $DB->update_record('local_metadata', $data);
+        } else {
+            $DB->insert_record('local_metadata', $data);
+        }
     }
 
     /**

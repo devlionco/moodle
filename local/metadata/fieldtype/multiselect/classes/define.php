@@ -40,10 +40,15 @@ class define extends \local_metadata\fieldtype\define_base {
      * @throws coding_exception
      */
     public function define_form_specific($form) {
-        // Sending the second param for yes or no multiselect.
-//        $form->addElement('selectyesno', 'param2', get_string('checkifmultiselectornot', 'metadatafieldtype_multiselect'));
-//        $form->setDefault('defaultdata', 0);
-//        $form->setType('param2', PARAM_BOOL);
+
+        // Select of type.
+        $types = [
+            '0' => get_string('singlechoice', 'metadatafieldtype_multiselect'),
+            '1' => get_string('multichoice', 'metadatafieldtype_multiselect'),
+        ];
+
+        $form->addElement('select', 'param2', get_string('type', 'metadatafieldtype_multiselect'), $types, []);
+        $form->setType('param2', PARAM_INT);
 
         // Sending the first param of multiselect.
         $form->addElement('textarea', 'param1', get_string('profilemenuoptions', 'admin'), array('rows' => 6, 'cols' => 40));
@@ -140,6 +145,7 @@ class define extends \local_metadata\fieldtype\define_base {
 
         $data->param1 = implode("\n", $arr);
         $data->param1 = str_replace("\r", '', $data->param1);
+
         return $data;
     }
 }

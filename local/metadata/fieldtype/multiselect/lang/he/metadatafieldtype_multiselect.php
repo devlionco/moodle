@@ -37,3 +37,6 @@ $string['rightformat_help'] = "The format should be used in the following way: <
     " Here is a full example: 1:en=Checking|he_kids=בדיקה ";
 $string['rightformat'] = 'יש להזין מפתח וערכים לפי תחביר מיוחד המוצג בחלונית העזרה';
 $string['example'] = 'דוגמה:';
+$string['type'] = 'סוג תצוגה';
+$string['singlechoice'] = 'חד-ברירה';
+$string['multichoice'] = 'רב-ברירה';
