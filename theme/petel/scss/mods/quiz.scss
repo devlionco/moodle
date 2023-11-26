@@ -18,6 +18,10 @@
         display: flex;
         align-items: center;
     }
+    .actions a,
+    .activityinstance i {
+        color: $body-color;
+    }
 }
 
 #page-mod-quiz-edit .btn-group.selectmultiplecommand,
