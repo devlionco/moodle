@@ -75,6 +75,7 @@ class quizdata {
     public $childopenquestion = [];
     public $childopenquestionslist = [];
     public $anonymouscount = 1;
+    public $qopentypes = ['essay', 'opensheet', 'mlnlpessay'];
 
     public function __construct($cmid, $groupid = -1, $config = null) {
         global $USER;
@@ -574,6 +575,10 @@ class quizdata {
                 foreach ($this->questionids as $questionid) {
                     $question = $this->questions[$questionid];
                     $mark = $att ? $this->quiz_get_user_question_info($question, $att) : null;
+
+                    if (in_array($question->qtype, $this->qopentypes)) {
+                        continue;
+                    }
 
                     if ($this->quiz->sumgrades == 0) {
                         $questionmaxgrade = 0;
@@ -1257,7 +1262,10 @@ class quizdata {
         $tablequestion = [];
         $questionTexts = [];
         foreach ($this->questions as $q) {
-            global $DB;
+
+            if (in_array($q->qtype, $this->qopentypes)) {
+                continue;
+            }
 
             $questionanswerder = $this->get_question_answered($q->id);
             $questionwrongs = $this->get_question_wrongs($q->id);
