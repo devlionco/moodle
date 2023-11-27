@@ -123,6 +123,7 @@ $string['notstarted'] = 'Not started';
 $string['attempts'] = 'Total Attempts';
 $string['max_grade'] = 'Max grade';
 $string['min_grade'] = 'Min grade';
+$string['summaryrow'] = 'Class average';
 
 // Competency
 $string['competencies_title'] = 'Competencies';

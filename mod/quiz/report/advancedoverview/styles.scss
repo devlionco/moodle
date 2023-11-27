@@ -633,6 +633,25 @@
 	}
 
 	#students-table {
+		#newRow,
+		#customRow {
+			border-bottom: 2px solid #aaa;
+			input[type="checkbox"] {
+				display: none;
+			}
+			.tabulator-cell {
+				border-color: transparent;
+			}
+			[tabulator-field="checkbox"],
+			[tabulator-field="attempt_number"],
+			[tabulator-field="duration"],
+			[tabulator-field^="Q"] {
+				border-right-color: #aaa;
+			}
+			.tabulator-cell.tabulator-frozen.tabulator-frozen-left {
+				border-right: 2px solid #aaa;
+			}
+		}
 		.tabulator-header {
 
 			.tabulator-col {

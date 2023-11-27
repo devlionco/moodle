@@ -123,6 +123,7 @@ $string['notstarted'] = 'לא הותחל';
 $string['attempts'] = 'מספר ניסיונות מענה';
 $string['max_grade'] = 'הציון הגבוה בכיתה';
 $string['min_grade'] = 'הציון הנמוך בכיתה';
+$string['summaryrow'] = 'ממוצע כיתתי';
 
 // Competency
 $string['competencies_title'] = 'קשיים עיקריים של תלמידים';

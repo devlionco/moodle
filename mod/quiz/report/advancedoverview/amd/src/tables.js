@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /* eslint-disable complexity */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
@@ -14,12 +16,13 @@ const locale = getLocale();
 export let QLENGTH = 0;
 const SELECTORS = {};
 export const TEMPCONFIG = {};
+const TEMP = {};
 
 let outerQuestions;
 
 export const TABLES = {};
 export const translatedStrings = {};
-export const initquestionstable = function(data, questions) {
+export const initquestionstable = function (data, questions) {
   SELECTORS.studentstableNavFilter = document.getElementById(
     "studentstableNavFilter"
   );
@@ -36,7 +39,7 @@ export const initquestionstable = function(data, questions) {
   var wrongTitle = locale === 'he-IL' ? "שגו" : "Wrong";
 
   let content = {
-    headerSortElement: function(column, dir) {
+    headerSortElement: function (column, dir) {
       switch (dir) {
         case "asc":
           return "<i class='fas fa-sort-up'>";
@@ -53,7 +56,7 @@ export const initquestionstable = function(data, questions) {
     maxHeight: 280,
     textDirection: textDirection,
     layout: "fitColumns",
-    autoColumnsDefinitions: function(definitions) {
+    autoColumnsDefinitions: function (definitions) {
       definitions.forEach((column, i) => {
         switch (i) {
           case 0:
@@ -96,11 +99,11 @@ export const initquestionstable = function(data, questions) {
       });
       return definitions;
     },
-    rowFormatter: function(row) {
+    rowFormatter: function (row) {
       row.getElement().style.height = "48px";
     },
     initialSort: [
-      {column: wrongTitle, dir: "desc"},
+      { column: wrongTitle, dir: "desc" },
     ],
   };
 
@@ -159,7 +162,7 @@ function attemptNumberSorter(aRow, bRow, dir) {
   }
 }
 
-export const initstudentstable = function(data, anon = 0) {
+export const initstudentstable = function(data, summary = '', anon = 0) {
   const self = this;
   const strings = [
     {
@@ -225,7 +228,7 @@ export const initstudentstable = function(data, anon = 0) {
   ];
 
   Str.get_strings(strings)
-    .done(function(str) {
+    .done(function (str) {
       self.translatedStrings.viewingprofile = str[0];
       self.translatedStrings.passwordreset = str[1];
       self.translatedStrings.loginasthisstudent = str[2];
@@ -244,51 +247,51 @@ export const initstudentstable = function(data, anon = 0) {
       self.translatedStrings.duration = str[14];
       const clickMenu = [
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().userprofilelink ? false : true;
           },
           label: `<span>${self.translatedStrings.viewingprofile}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var link = row.getData().userprofilelink;
             window.open(link, "_blank");
           },
         },
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().resetpasswordlink ? false : true;
           },
           label: `<span>${self.translatedStrings.passwordreset}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var link = row.getData().resetpasswordlink;
             window.open(link, "_blank");
           },
         },
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().loginaslink ? false : true;
           },
           label: `<span>${self.translatedStrings.loginasthisstudent}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var link = row.getData().loginaslink;
             window.open(link, "_blank");
           },
         },
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().completereportlink ? false : true;
           },
           label: `<span>${self.translatedStrings.allcoursereport}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var link = row.getData().completereportlink;
             window.open(link, "_blank");
           },
         },
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().outlinereportlink ? false : true;
           },
           label: `<span>${self.translatedStrings.courseobservationreport}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var link = row.getData().outlinereportlink;
             window.open(link, "_blank");
           },
@@ -298,17 +301,17 @@ export const initstudentstable = function(data, anon = 0) {
         },
         {
           label: `<span>${self.translatedStrings.sendingmessage}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var userid = row.getData().userid;
             Main.showMessagePopup([userid]);
           },
         },
         {
-          disabled: function(component) {
+          disabled: function (component) {
             return component.getData().attemptid ? false : true;
           },
           label: `<span>${self.translatedStrings.recalculategrades}</span>`,
-          action: function(e, row) {
+          action: function (e, row) {
             var rowData = row.getData();
             Main.regradaAttemtps(
               +Main.TEMPDATA.cmid,
@@ -335,7 +338,7 @@ export const initstudentstable = function(data, anon = 0) {
       });
 
       let content = {
-        headerSortElement: function(column, dir) {
+        headerSortElement: function (column, dir) {
           switch (dir) {
             case "asc":
               return "<i class='fas fa-sort-up'>";
@@ -350,13 +353,14 @@ export const initstudentstable = function(data, anon = 0) {
         autoColumns: true,
         movableRows: false,
         textDirection: textDirection,
+        frozenRows: 0,
         pagination: false,
         paginationSize: 20,
         rowHeight: 48,
         dataTree: true,
         dataTreeStartExpanded: true,
         layout: "fitDataFill",
-        autoColumnsDefinitions: function(definitions) {
+        autoColumnsDefinitions: function (definitions) {
           definitions.forEach((column, i) => {
             column.formatter = "html";
             const fieldName = column.field;
@@ -411,7 +415,7 @@ export const initstudentstable = function(data, anon = 0) {
                 column.title = self.translatedStrings.duration;
                 column.sorter = "number";
 
-                column.sorter = function(
+                column.sorter = function (
                   a,
                   b,
                   aRow,
@@ -450,7 +454,7 @@ export const initstudentstable = function(data, anon = 0) {
               case "usermenubtn":
                 column.headerSort = false;
                 column.title = "";
-                column.formatter = function(cell) {
+                column.formatter = function (cell) {
                   if (cell.getValue() === false) {
                     return ""; // Return empty string if usermenubtn is false
                   } else {
@@ -483,10 +487,10 @@ export const initstudentstable = function(data, anon = 0) {
                 let resultText;
                 // eslint-disable-next-line
                 let rawText = outerQuestions.texts[i - 20].replace(/\&nbsp;/g, '');
-                if(rawText.length > 50) {resultText = '...' + rawText.slice(0,49);}
-                else {resultText = rawText;}
+                if (rawText.length > 50) { resultText = '...' + rawText.slice(0, 49); }
+                else { resultText = rawText; }
                 column.headerTooltip = resultText;
-                column.sorter = function(
+                column.sorter = function (
                   a,
                   b,
                   aRow,
@@ -504,11 +508,11 @@ export const initstudentstable = function(data, anon = 0) {
                     if (el[0] === "<" && el.includes("=numerical_value")) {
                       const pattern = /<div class=numerical_value>([\d.]+)<\/div>/;
                       const match = el.match(pattern);
-                      if(el.includes("=complete")) {
+                      if (el.includes("=complete")) {
                         result = 100;
                         return result;
                       }
-                      if(el.includes("=incorrect")) {
+                      if (el.includes("=incorrect")) {
                         result = -1;
                         return result;
                       }
@@ -516,7 +520,7 @@ export const initstudentstable = function(data, anon = 0) {
                     }
                     return result;
                   }
-                  return sortQuestion(b) - sortQuestion(a) ;
+                  return sortQuestion(b) - sortQuestion(a);
                 };
                 break;
             }
@@ -528,7 +532,6 @@ export const initstudentstable = function(data, anon = 0) {
         },
       };
 
-
       // Enable pagination.
       if (tabledata.length > 20) {
         content.pagination = true;
@@ -537,7 +540,7 @@ export const initstudentstable = function(data, anon = 0) {
 
       self.TABLES.studentsTable.on(
         "rowSelectionChanged",
-        function(data, rows) {
+        function (data, rows) {
           Main.TEMPDATA.rowData = data;
           let state = data.length > 0 ? false : true;
           Main.changeStudentActionState(state);
@@ -546,16 +549,16 @@ export const initstudentstable = function(data, anon = 0) {
       );
 
       $("#downloadXlsTable").off("click");
-      $("#downloadXlsTable").on("click", function() {
+      $("#downloadXlsTable").on("click", function () {
         var tableData = self.TABLES.studentsTable.getData();
 
         var td2 = [];
 
         // Attaching children.
-        tableData.forEach(function(row) {
+        tableData.forEach(function (row) {
           if (row.hasOwnProperty("_children")) {
             td2.push(row);
-            row._children.forEach(function(ch) {
+            row._children.forEach(function (ch) {
               td2.push(ch);
             });
             delete row._children;
@@ -565,7 +568,7 @@ export const initstudentstable = function(data, anon = 0) {
         });
 
         // Modifications data for output.
-        td2.forEach(function(row) {
+        td2.forEach(function (row) {
           delete row.checkbox;
           delete row.usermenubtn;
           delete row.attemptid;
@@ -657,13 +660,18 @@ export const initstudentstable = function(data, anon = 0) {
         XLSX.writeFile(workbook, "table-data.xlsx");
       });
 
-      self.TABLES.studentsTable.on("tableBuilt", function() {
+      self.TABLES.studentsTable.on("tableBuilt", function () {
         let tableData = self.TABLES.studentsTable.getSelectedData();
         Main.TEMPDATA.rowData = tableData;
         let state = tableData.length > 0 ? false : true;
         Main.changeStudentActionState(state);
         Main.setSelectedStudentsStr(tableData.length);
-
+        if (summary && JSON.parse(data).length > 0) {
+          self.TABLES.studentsTable.addRow(summary, true).then(function (customRow) {
+            TEMP.summaryRow = customRow;
+            customRow.getElement().id = "customRow";
+          });
+        }
         /**
          * Sets the active class on the clicked target element and removes it from other sibling elements.
          *
@@ -675,9 +683,7 @@ export const initstudentstable = function(data, anon = 0) {
           $(target).addClass("active");
         }
 
-        $(
-          "#students-table .tabulator-sortable.tabulator-col-sorter-element"
-        ).on("click", function(e) {
+        $("#students-table .tabulator-sortable.tabulator-col-sorter-element").on("click", function (e) {
           let target = $(e.target);
           if (!(target.hasClass("fname") || target.hasClass("sname"))) {
             $('[tabulator-field="fullname"]')
@@ -686,14 +692,14 @@ export const initstudentstable = function(data, anon = 0) {
           }
         });
 
-        $('[tabulator-field="fullname"]').on("click", ".fname", function(e) {
+        $('[tabulator-field="fullname"]').on("click", ".fname", function (e) {
           let sort = e.target.dataset.sort;
           let resultSort = sort === "desc" ? "asc" : "desc";
           e.target.setAttribute("data-sort", resultSort);
           setActive(e.target);
           self.TABLES.studentsTable.setSort("firstname", resultSort);
         });
-        $('[tabulator-field="fullname"]').on("click", ".lname", function(e) {
+        $('[tabulator-field="fullname"]').on("click", ".lname", function (e) {
           let sort = e.target.dataset.sort;
           let resultSort = sort === "desc" ? "asc" : "desc";
           e.target.setAttribute("data-sort", resultSort);
@@ -702,17 +708,29 @@ export const initstudentstable = function(data, anon = 0) {
         });
       });
 
+
+      self.TABLES.studentsTable.on("pageLoaded", function () {
+        if (TEMP.summaryRow && JSON.parse(data).length > 0) {
+          const customRow = self.TABLES.studentsTable.searchRows("userid", "=", "summary")[0];
+          customRow.delete();
+          self.TABLES.studentsTable.addRow(summary, true).then(function (newRow) {
+            TEMP.summaryRow = newRow;
+            newRow.getElement().id = "newRow";
+          });
+        }
+      });
+
       studentsTableActions.setAnonToggl(anon);
 
       const page = document.getElementById('page');
       let storedScrollPosition = +sessionStorage.getItem("scrollPosition") || 0;
 
-      $(document).ready(()=> {
-          $(page).scrollTop(storedScrollPosition);
-        });
+      $(document).ready(() => {
+        $(page).scrollTop(storedScrollPosition);
+      });
 
-      window.addEventListener('beforeunload', function() {
-          sessionStorage.setItem("scrollPosition", page.scrollTop);
+      window.addEventListener('beforeunload', function () {
+        sessionStorage.setItem("scrollPosition", page.scrollTop);
       });
 
     })

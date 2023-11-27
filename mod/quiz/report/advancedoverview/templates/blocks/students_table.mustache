@@ -201,7 +201,7 @@
 {{#enable_table_according_students}}
 require(['jquery', 'quiz_advancedoverview/tables', 'quiz_advancedoverview/studentsTableActions'],
     function ($, Tables, StudentsTableActions) {
-        Tables.initstudentstable('{{{data_table_according_students}}}', '{{anonymous_mode}}');
+        Tables.initstudentstable('{{{data_table_according_students}}}','{{{data_table_students_summary}}}', '{{anonymous_mode}}');
         StudentsTableActions.init();
     });
 {{/enable_table_according_students}}

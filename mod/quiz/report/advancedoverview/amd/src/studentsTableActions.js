@@ -29,8 +29,12 @@ export const regenerateTable = function (callback = null) {
             config: JSON.stringify(CONFIG),
         },
         done: function (response) {
-            let data = JSON.parse(response);
-            Tables.default.initstudentstable(data.data_table_according_students, CONFIG.anonymous_mode);
+            const data = JSON.parse(response);
+            const dataTableAccordingStudents = data.data_table_according_students;
+            const dataTableStudentsSummary = data.data_table_students_summary;
+            const anon = CONFIG.anonymous_mode;
+
+            Tables.default.initstudentstable(dataTableAccordingStudents, dataTableStudentsSummary, anon);
             Charts.initcharts(data.charts);
             if (callback) {
                 callback();

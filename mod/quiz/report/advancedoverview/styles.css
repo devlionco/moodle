@@ -519,6 +519,32 @@
   display: inline-flex;
   align-items: center;
 }
+.block_advancedoverview_report #students-table #newRow,
+.block_advancedoverview_report #students-table #customRow {
+  border-bottom: 2px solid #aaa;
+}
+.block_advancedoverview_report #students-table #newRow input[type=checkbox],
+.block_advancedoverview_report #students-table #customRow input[type=checkbox] {
+  display: none;
+}
+.block_advancedoverview_report #students-table #newRow .tabulator-cell,
+.block_advancedoverview_report #students-table #customRow .tabulator-cell {
+  border-color: transparent;
+}
+.block_advancedoverview_report #students-table #newRow [tabulator-field=checkbox],
+.block_advancedoverview_report #students-table #newRow [tabulator-field=attempt_number],
+.block_advancedoverview_report #students-table #newRow [tabulator-field=duration],
+.block_advancedoverview_report #students-table #newRow [tabulator-field^=Q],
+.block_advancedoverview_report #students-table #customRow [tabulator-field=checkbox],
+.block_advancedoverview_report #students-table #customRow [tabulator-field=attempt_number],
+.block_advancedoverview_report #students-table #customRow [tabulator-field=duration],
+.block_advancedoverview_report #students-table #customRow [tabulator-field^=Q] {
+  border-right-color: #aaa;
+}
+.block_advancedoverview_report #students-table #newRow .tabulator-cell.tabulator-frozen.tabulator-frozen-left,
+.block_advancedoverview_report #students-table #customRow .tabulator-cell.tabulator-frozen.tabulator-frozen-left {
+  border-right: 2px solid #aaa;
+}
 .block_advancedoverview_report #students-table .tabulator-header .tabulator-col .tabulator-col-content {
   height: 100%;
 }

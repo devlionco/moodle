@@ -77,6 +77,8 @@ class quizdata {
     public $anonymouscount = 1;
     public $qopentypes = ['essay', 'opensheet', 'mlnlpessay'];
 
+    private $tablestudent = [];
+
     public function __construct($cmid, $groupid = -1, $config = null) {
         global $USER;
 
@@ -376,6 +378,61 @@ class quizdata {
                     count($userattemptsinfo) > 1 ? $this->sort_table_data_user($userattemptsinfo, true) : $userattemptsinfo;
 
             $tabledata = array_merge($tabledata, $userattemptsinfo);
+        }
+
+        $this->tablestudent = $tabledata;
+
+        return $tabledata;
+    }
+
+    public function get_students_table_summary() {
+
+        $tabledata = [];
+        $tabledata['fullname'] = get_string('summaryrow', 'quiz_advancedoverview');
+        $tabledata['userid'] = 'summary';
+        $tabledata['checkbox'] = false;
+        $tabledata['usermenubtn'] = false;
+
+        $columns = [];
+        foreach ($this->questionids as $questionid) {
+            $question = $this->questions[$questionid];
+
+            if (in_array($question->qtype, $this->qopentypes)) {
+                continue;
+            }
+
+            if ($this->quiz->sumgrades == 0) {
+                $questionmaxgrade = 0;
+            } else {
+                $questionmaxgrade = $question->maxmark / $this->quiz->sumgrades * $this->quiz->grade;
+            }
+
+            $columns[] = "Q " . $question->slot . " / " . round($questionmaxgrade);
+        }
+
+        $countstudent = count($this->tablestudent);
+
+        // Grade.
+        $gradetotal = 0;
+        foreach ($this->tablestudent as $item) {
+            if (is_numeric($item['grade'])) {
+                $gradetotal += $item['grade'];
+            }
+        }
+
+        $tabledata['grade'] = $countstudent > 0 ? round($gradetotal/$countstudent, 2) : 0;
+
+        // Per questions.
+        foreach ($columns as $colname) {
+
+            $tabledata[$colname] = 0;
+            foreach ($this->tablestudent as $item) {
+                if (is_numeric($item[$colname])) {
+                    $tabledata[$colname] += $item[$colname];
+                }
+            }
+
+            $tabledata[$colname] = $countstudent > 0 ? round($tabledata[$colname]/$countstudent, 2) : 0;
         }
 
         return $tabledata;
@@ -1339,10 +1396,11 @@ class quizdata {
     public function get_render_students_data() {
 
         $tablestudent = $this->get_students_table();
-
+        $tablestudentsummary = $this->get_students_table_summary();
         $data['count_according_students'] = count($tablestudent);
         $data['enable_table_according_students'] = count($tablestudent) > 0 ? true : false;
         $data['data_table_according_students'] = json_encode($tablestudent, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $data['data_table_students_summary'] = json_encode($tablestudentsummary, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         $allkey = static::get_key_by_value($this->options['participants']['states'], 'name', 'all');
 
