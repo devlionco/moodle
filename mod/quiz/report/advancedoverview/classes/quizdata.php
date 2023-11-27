@@ -80,7 +80,7 @@ class quizdata {
     private $tablestudent = [];
 
     public function __construct($cmid, $groupid = -1, $config = null) {
-        global $USER;
+        global $USER, $CFG;
 
         $this->states = [];
 
@@ -95,6 +95,8 @@ class quizdata {
         }
 
         $this->config = $config ? $config : $defaultconfig;
+
+        $this->config->wwwroot = $CFG->wwwroot;
 
         $this->config->anonymous_mode = isset($this->config->anonymous_mode) && $this->config->anonymous_mode == "1" ? 1 : 0;
         $this->config->participants->show_score =
@@ -423,16 +425,18 @@ class quizdata {
         $tabledata['grade'] = $countstudent > 0 ? round($gradetotal/$countstudent, 2) : 0;
 
         // Per questions.
-        foreach ($columns as $colname) {
+        if ($this->config->participants->full_view) {
+            foreach ($columns as $colname) {
 
-            $tabledata[$colname] = 0;
-            foreach ($this->tablestudent as $item) {
-                if (is_numeric($item[$colname])) {
-                    $tabledata[$colname] += $item[$colname];
+                $tabledata[$colname] = 0;
+                foreach ($this->tablestudent as $item) {
+                    if (is_numeric($item[$colname])) {
+                        $tabledata[$colname] += $item[$colname];
+                    }
                 }
-            }
 
-            $tabledata[$colname] = $countstudent > 0 ? round($tabledata[$colname]/$countstudent, 2) : 0;
+                $tabledata[$colname] = $countstudent > 0 ? round($tabledata[$colname] / $countstudent, 2) : 0;
+            }
         }
 
         return $tabledata;

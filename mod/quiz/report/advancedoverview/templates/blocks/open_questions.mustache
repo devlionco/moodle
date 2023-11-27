@@ -2,14 +2,18 @@
     <div class="row py-3">
         <div class="col-12 d-flex align-items-center">
             <div class="dropdown openquestion-wropdown w-100">
-                <button class="btn advancedoverview_report-dropdown-btn-lg dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                        type="button" id="openQuestionsBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="btn advancedoverview_report-dropdown-btn-lg dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                        id="openQuestionsBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 openquestions-count">{{open_questions_count}}</span>
+                        <!--
+                        TODO: decide what to do with this!
+                        <a class="text mr-auto" href="{{config.wwwroot}}/mod/quiz/report.php?id={{cmid}}&mode=grading" target="_blank" onclick="e=>event.stopPropagation()">
+                            {{#str}}openquestionwaiting, quiz_advancedoverview{{/str}}
+                        </a> -->
                         <span class="text mr-auto">
                             {{#str}}openquestionwaiting, quiz_advancedoverview{{/str}}
                         </span>
-
-                </button>
+                </div>
 
                 <div class="dropdown-menu openquestions-menu w-100" aria-labelledby="openQuestionsBtn">
                     {{#open_questions}}

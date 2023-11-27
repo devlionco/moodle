@@ -291,6 +291,7 @@ $string['stopwatchshowhide'] = 'הצגת/הסתרת שעון עצר';
 $string['notflagged'] = 'לא מסומן';
 $string['timeisup'] = 'זמן תם';
 $string['advancedoverviewlink'] = 'ציונים ומשוב מורחב';
+$string['gradingstudentslink'] = 'מתן ציון לשאלות פתוחות לפי תלמיד';
 $string['ministry_statement_title'] = 'סביבת פטל {$a} מאושרת על-ידי משרד החינוך.';
 $string['ministry_statement_text'] = '
 סביבת פטל {$a}, שאושרה על ידי משרד החינוך, הוערכה מדגמית על ידי האגף לאישור ספרים וחומרי למידה.

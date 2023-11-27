@@ -39,9 +39,20 @@ class custom_navigation {
 
         // Add items.
 
-        // Add advanced overview. PTL-9414.
+        // Add advanced overview and grading students. PTL-9414.
         if (in_array($PAGE->pagetype, ['mod-quiz-view', 'mod-quiz-edit', 'mod-quiz-mod', 'mod-quiz-report', 'mod-quiz-attempt',
                                         'question-edit', 'mod-quiz-override', ''])) {
+
+            if ($PAGE->pagetype == 'mod-quiz-report') {
+                $mode = $cmid = required_param('mode', PARAM_RAW);
+                switch ($mode) {
+                    case 'advancedoverview':
+                        $PAGE->set_secondary_active_tab('reportadvancedoverview');
+                    case 'gradingstudents':
+                        $PAGE->set_secondary_active_tab('reportgradingstudents');
+                }
+            }
+
             $cmid = ($PAGE->cm->id) ?? optional_param('id', 0, PARAM_INT);
             if ($cmid) {
                 $context = \context_module::instance($cmid);
@@ -57,6 +68,10 @@ class custom_navigation {
                     $advancedoverviewurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'advancedoverview'));
                     $PAGE->secondarynav->add(get_string('advancedoverviewlink', 'theme_petel'), $advancedoverviewurl,
                             $PAGE->secondarynav::TYPE_CUSTOM, 'reportadvancedoverview', 'reportadvancedoverview');
+
+                    $gradingstudentsurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'gradingstudents'));
+                    $PAGE->secondarynav->add(get_string('gradingstudentslink', 'theme_petel'), $gradingstudentsurl,
+                            $PAGE->secondarynav::TYPE_CUSTOM, 'reportgradingstudents', 'reportgradingstudents');
                 }
             }
         }
@@ -111,6 +126,9 @@ class custom_navigation {
             foreach ($roles as $role) {
                 if (in_array($role->shortname, ['teacher']) && in_array('reportadvancedoverview', $lists)) {
                     $present[] = 'reportadvancedoverview';
+                }
+                if (in_array($role->shortname, ['teacher']) && in_array('reportgradingstudents', $lists)) {
+                    $present[] = 'reportgradingstudents';
                 }
             }
 

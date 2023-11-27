@@ -18,6 +18,10 @@ export let CONFIG = {
     anonymous_mode: 0
 };
 
+export const showLoadingIcon = () => {
+    document.body.classList.add('petel-loading');
+};
+
 export const regenerateTable = function (callback = null) {
     const cmid = $('#datacmid').data('cmid');
     const groupid = $('#datagroupid').data('groupid');
@@ -86,6 +90,7 @@ export const init = function () {
         let target = $(e.currentTarget);
         let name = target.data('name');
         CONFIG.participants.states = [name];
+        showLoadingIcon();
     });
 
     // Change scores range.
@@ -95,6 +100,7 @@ export const init = function () {
         let checkboxes = target.find('input:checked');
         checkboxes.each((i) => score_ranges.push(checkboxes[i].value));
         CONFIG.participants.score_ranges = score_ranges;
+        showLoadingIcon();
     });
 
     // Change attempts range.
@@ -104,6 +110,7 @@ export const init = function () {
         let checkboxes = target.find('input:checked');
         checkboxes.each((i) => attempts_range.push(checkboxes[i].value));
         CONFIG.participants.attempts_range = attempts_range;
+        showLoadingIcon();
     });
 
     $(document).on('click', '#clearPillsArea', function () {
@@ -125,12 +132,14 @@ export const init = function () {
         let searchValue = $(this).val().trim();
         if (searchValue.length >= 1 || searchValue === '') {
             CONFIG.participants.search = searchValue;
+            showLoadingIcon();
         }
     });
 
     // Full view.
     $('#extendedViewToggler').on('change', function () {
         CONFIG.participants.full_view = $(this).is(':checked') ? 1 : 0;
+        showLoadingIcon();
     });
 
     // Anonymous mode.

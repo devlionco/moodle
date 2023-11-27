@@ -308,6 +308,7 @@ $string['stopwatchshowhide'] = 'Shown/Hidden Stopwatch';
 $string['notflagged'] = 'Not flagged';
 $string['timeisup'] = 'Time is up';
 $string['advancedoverviewlink'] = 'Grades and extended feedback';
+$string['gradingstudentslink'] = 'Grading open questions by student';
 $string['ministry_statement_title'] = ' ';
 $string['ministry_statement_text'] = ' ';
 $string['movetopage'] = 'Change page to: ';

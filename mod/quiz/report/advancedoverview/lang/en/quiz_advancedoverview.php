@@ -76,7 +76,7 @@ $string['closingresponseattempts'] = 'Closing response attempts';
 
 // Table titles.
 $string['fullname'] =
-        '<span class="fname pl-2 pr-3" data-sort="asc">First name</span> / <span class="lname pl-2 pr-3" data-sort="asc">Last name</span>';
+        '<span class="fname pl-2 pr-4" data-sort="asc">First name</span> / <span class="lname pl-2 pr-4" data-sort="asc">Last name</span>';
 $string['state'] = 'State';
 $string['attempt_number'] = 'Attempt number';
 $string['grade'] = 'Grade';

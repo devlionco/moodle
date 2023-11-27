@@ -76,7 +76,7 @@ $string['closingresponseattempts'] = 'סגירת נסיונות מענה';
 
 // Table titles.
 $string['fullname'] =
-        '<span class="fname pl-2 pr-3" data-sort="asc">שם פרטי</span> / <span class="lname pl-2 pr-3" data-sort="asc">שם משפחה</span>';
+        '<span class="fname pl-2 pr-4" data-sort="asc">שם פרטי</span> / <span class="lname pl-2 pr-4" data-sort="asc">שם משפחה</span>';
 $string['state'] = 'מצב';
 $string['attempt_number'] = 'ניסיון';
 $string['grade'] = 'ציון';

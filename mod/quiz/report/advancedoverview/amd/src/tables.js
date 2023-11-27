@@ -22,6 +22,9 @@ let outerQuestions;
 
 export const TABLES = {};
 export const translatedStrings = {};
+export const hideLoadingIcon = () => {
+  document.body.classList.remove('petel-loading');
+};
 export const initquestionstable = function (data, questions) {
   SELECTORS.studentstableNavFilter = document.getElementById(
     "studentstableNavFilter"
@@ -706,6 +709,7 @@ export const initstudentstable = function(data, summary = '', anon = 0) {
           setActive(e.target);
           self.TABLES.studentsTable.setSort("lastname", resultSort);
         });
+        hideLoadingIcon();
       });
 
 

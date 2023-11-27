@@ -73,10 +73,28 @@
 	max-width: 100% !important;
 }
 
+#page-mod-quiz-report {
+	#raspberryLoadingIcon {
+		display: none;
+		position: absolute;
+		left: 0;
+		width: 100%;
+		z-index: 100;
+	}
+
+	&.petel-loading {
+		#raspberryLoadingIcon {
+			display: block;
+		}
+	}
+
+}
+
 .block_advancedoverview_report {
 	h2[data-toggle="collapse"] {
 		padding-left: 3rem;
 		position: relative;
+
 		&::after {
 			position: absolute;
 			top: .125rem;
@@ -89,11 +107,13 @@
 			font-display: block;
 			transition: all .25s ease;
 		}
+
 		&[aria-expanded="true"]::after {
 			transform: scaleY(-1);
 			transition: all .25s ease;
 		}
 	}
+
 	.dropdown-menu.show {
 		display: flex;
 		flex-direction: column;
@@ -114,6 +134,7 @@
 		// height: 18.875rem;
 		border-radius: 0.5rem;
 		width: 32.35%;
+
 		.card-title {
 			font-size: 2rem;
 			font-weight: bold;
@@ -468,6 +489,7 @@
 	.advancedoverview_report-dropdown-btn[data-target="#studentsActionsCollapse"] {
 		width: 7.5rem;
 	}
+
 	#studentsActionsCollapse .card {
 		width: auto;
 	}
@@ -489,6 +511,38 @@
 	#students-table {
 		&.tabulator {
 			font-size: 1.125rem;
+
+			.tabulator-headers {
+				.tabulator-col-sorter i {
+
+					&.fa-sort-up,
+					&.fa-sort-down {
+						color: #fff;
+
+						&::after {
+							position: absolute;
+							left: 0;
+							font-family: 'Font Awesome 6 Pro';
+							font-weight: 900;
+							font-style: normal;
+							font-display: block;
+							color: #bbb;
+						}
+					}
+
+					&.fa-sort-up {
+						&::after {
+							content: '\f0dd';
+						}
+					}
+
+					&.fa-sort-down {
+						&::after {
+							content: '\f0de';
+						}
+					}
+				}
+			}
 
 			.tabulator-header {
 				height: 2.5rem;
@@ -541,7 +595,7 @@
 			.tabulator-data-tree-control {
 				background: none;
 				border: none;
-
+				padding-top: .0625rem;
 				.tabulator-data-tree-control-expand {
 					width: 0;
 					height: 0;
@@ -633,25 +687,31 @@
 	}
 
 	#students-table {
+
 		#newRow,
 		#customRow {
 			border-bottom: 2px solid #aaa;
+
 			input[type="checkbox"] {
 				display: none;
 			}
+
 			.tabulator-cell {
 				border-color: transparent;
 			}
+
 			[tabulator-field="checkbox"],
 			[tabulator-field="attempt_number"],
 			[tabulator-field="duration"],
 			[tabulator-field^="Q"] {
 				border-right-color: #aaa;
 			}
+
 			.tabulator-cell.tabulator-frozen.tabulator-frozen-left {
 				border-right: 2px solid #aaa;
 			}
 		}
+
 		.tabulator-header {
 
 			.tabulator-col {
@@ -893,23 +953,52 @@
 				height: 0;
 				right: 0;
 			}
+			position: relative;
+			&::after,
+			&::before {
+				display: block;
+				position: absolute;
+				font-family: 'Font Awesome 6 Pro';
+				font-weight: 900;
+				font-style: normal;
+				font-display: block;
+				color: #bbb;
+				right: 0;
+				width: auto;
+				height: auto;
+			}
+			&::after {
+				content: '\f0dd';
+			}
 
+			&::before {
+				content: '\f0de';
+			}
 			&.active {
-				&::after {
+	
 
-					display: block;
-					border-left: 6px solid transparent;
-					border-right: 6px solid transparent;
-					color: #bbb;
+				&[data-sort="desc"] {
+					&::after {
+						content: '\f0dd';
+						color: #fff;
+					}
+
+					&::before {
+						content: '\f0de';
+					}
+					
 				}
 
-				&[data-sort="desc"]::after {
-					border-bottom: none;
-					border-top: 6px solid #bbb;
-				}
+				&[data-sort="asc"] {
+					&::after {
+						content: '\f0dd';
+					}
 
-				&[data-sort="asc"]::after {
-					border-bottom: 6px solid #bbb;
+					&::before {
+						content: '\f0de';
+						color: #fff;
+
+					}
 				}
 			}
 		}
@@ -959,7 +1048,8 @@ html[dir="rtl"] {
 		left: unset;
 	}
 
-	.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page="next"]::after, .block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page="prev"]::after {
+	.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page="next"]::after,
+	.block_advancedoverview_report #students-table .tabulator-footer .tabulator-footer-contents .tabulator-page[data-page="prev"]::after {
 		transform: scaleX(-1);
 	}
 }
