@@ -1,5 +1,5 @@
 #page-mod-assign-grading {
-    .quickgradingform {
+    .gradingtable, .quickgradingform {
         // The same style we have at theme/petel/scss/components/forms.scss
         // If this changed - change the style in forms.scss
         .dataTables_filter label:has(input[type="search"]) {
