@@ -178,6 +178,9 @@
 
     .selected-section-block {
         max-height: 2rem;
+        .close {
+            margin: 0;
+        }
     }
 
     .editor_atto_content.form-control {

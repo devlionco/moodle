@@ -145,6 +145,9 @@
 .uploadactivity .selected-section-block {
   max-height: 2rem;
 }
+.uploadactivity .selected-section-block .close {
+  margin: 0;
+}
 .uploadactivity .editor_atto_content.form-control {
   min-height: 10rem !important;
   height: 10rem !important;

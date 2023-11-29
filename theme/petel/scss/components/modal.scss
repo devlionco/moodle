@@ -1,12 +1,12 @@
 .modal {
     .modal-header {
         background-color: $primary;
+        .modal-title,
+        .close {
+            color: $white;
+        }
     }
 
-    .modal-title,
-    .close {
-        color: $white;
-    }
 
     .modal-title {
         font-family: $primary-font;
