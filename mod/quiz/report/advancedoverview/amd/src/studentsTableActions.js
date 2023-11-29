@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import $ from 'jquery';
 import * as Tables from 'quiz_advancedoverview/tables';
 import Ajax from 'core/ajax';
@@ -86,7 +84,7 @@ export const init = function () {
     });
 
     // Change partisipiants filter.
-    $('#studentstableNavFilter').on('click', '.nav-link', function (e) {
+    $(document).on('click', '#studentstableNavFilter .nav-link', function (e) {
         let target = $(e.currentTarget);
         let name = target.data('name');
         CONFIG.participants.states = [name];
@@ -94,7 +92,7 @@ export const init = function () {
     });
 
     // Change scores range.
-    $('#studentsActionsCollapse').on('change', '.custom-control-input[data-type="score_ranges"]', function (e) {
+    $(document).on('change', '#studentsActionsCollapse .custom-control-input[data-type="score_ranges"]', function (e) {
         let target = $(e.currentTarget).closest('.col');
         let score_ranges = [];
         let checkboxes = target.find('input:checked');
@@ -104,7 +102,7 @@ export const init = function () {
     });
 
     // Change attempts range.
-    $('#studentsActionsCollapse').on('change', '.custom-control-input[data-type="attempts_range"]', function (e) {
+    $(document).on('change', '#studentsActionsCollapse .custom-control-input[data-type="attempts_range"]', function (e) {
         let target = $(e.currentTarget).closest('.col');
         let attempts_range = [];
         let checkboxes = target.find('input:checked');
@@ -128,7 +126,7 @@ export const init = function () {
 
     });
     // Search.
-    $('#searchinput').on('keyup', function () {
+    $(document).on('keyup', '#searchinput', function () {
         let searchValue = $(this).val().trim();
         if (searchValue.length >= 1 || searchValue === '') {
             CONFIG.participants.search = searchValue;
@@ -136,11 +134,6 @@ export const init = function () {
         }
     });
 
-    // Full view.
-    $('#extendedViewToggler').on('change', function () {
-        CONFIG.participants.full_view = $(this).is(':checked') ? 1 : 0;
-        showLoadingIcon();
-    });
 
     // Anonymous mode.
     $(document).on('change', '#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3', function () {

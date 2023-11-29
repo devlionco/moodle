@@ -1,6 +1,5 @@
 /* eslint-disable no-debugger */
 /* eslint-disable no-trailing-spaces */
-/* eslint-disable no-console */
 import $ from 'jquery';
 import * as Str from 'core/str';
 import ModalFactory from 'core/modal_factory';
@@ -290,7 +289,12 @@ width=600,height=600,left=100,top=100`;
             });
         }
     });
-
+    studentsTableActions.init();
+       // Full view.
+        $(document).on('change', '#extendedViewToggler', function () {
+            studentsTableActions.CONFIG.participants.full_view = $(this).is(':checked') ? 1 : 0;
+            studentsTableActions.showLoadingIcon();
+    });
 };
 
 export const renderDynamicBlock = function (cmid, groupid) {
