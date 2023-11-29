@@ -567,6 +567,11 @@
 .block_advancedoverview_report #students-table #customRow .tabulator-cell {
   border-color: transparent;
 }
+.block_advancedoverview_report #students-table #newRow .tabulator-cell:not([tabulator-field=fullname]),
+.block_advancedoverview_report #students-table #customRow .tabulator-cell:not([tabulator-field=fullname]) {
+  display: inline-flex;
+  justify-content: center;
+}
 .block_advancedoverview_report #students-table #newRow [tabulator-field=checkbox],
 .block_advancedoverview_report #students-table #newRow [tabulator-field=attempt_number],
 .block_advancedoverview_report #students-table #newRow [tabulator-field=duration],
@@ -595,6 +600,9 @@
 .block_advancedoverview_report #students-table .tabulator-row .tabulator-cell {
   display: inline-flex;
   align-items: center;
+}
+.block_advancedoverview_report #students-table .tabulator-row .tabulator-cell .cellqlink {
+  margin: 0 auto;
 }
 .block_advancedoverview_report #students-table .tabulator-row .tabulator-cell:nth-of-type(5) {
   border-right: none !important;
@@ -690,6 +698,9 @@
   align-items: center;
   margin: 0;
 }
+.block_advancedoverview_report #students-table .numerical_value {
+  text-align: center;
+}
 .block_advancedoverview_report #students-table .incorrect {
   background-image: url("[[pix:quiz_advancedoverview|wrong]]");
   background-size: contain;
@@ -728,6 +739,9 @@
   background-color: #e9ecef;
   border: 0.0625rem solid #343a40;
   border-radius: 0.25rem;
+}
+.block_advancedoverview_report #students-table .wrapped-value {
+  margin: 0 auto;
 }
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .notanswered .sr-only,
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .requiresgrading .sr-only,

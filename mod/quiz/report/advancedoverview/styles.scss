@@ -698,6 +698,10 @@
 
 			.tabulator-cell {
 				border-color: transparent;
+				&:not([tabulator-field="fullname"]) {
+					display: inline-flex;
+  					justify-content: center;
+				}
 			}
 
 			[tabulator-field="checkbox"],
@@ -738,7 +742,9 @@
 			.tabulator-cell {
 				display: inline-flex;
 				align-items: center;
-
+				.cellqlink {
+					margin: 0 auto;
+				}
 				&:nth-of-type(5) {
 					border-right: none !important;
 				}
@@ -864,7 +870,9 @@
 				}
 			}
 		}
-
+		.numerical_value {
+			text-align: center;
+		}
 		.incorrect {
 			background-image: url("[[pix:quiz_advancedoverview|wrong]]");
 			background-size: contain;
@@ -905,7 +913,9 @@
 				border-radius: .25rem;
 			}
 		}
-
+		.wrapped-value {
+			margin: 0 auto;
+		}
 		&.score-display {
 			.tabulator-cell {
 
@@ -923,7 +933,6 @@
 						clip: unset;
 					}
 				}
-
 				.numerical_value {
 					display: none;
 				}
