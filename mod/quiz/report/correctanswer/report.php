@@ -81,7 +81,7 @@ class quiz_correctanswer_report extends quiz_attempts_report {
                 $counter = 0;
                 foreach($hints as $hint){
                     $counter++;
-                    $qhints[] = ['hint' => $hint->hint, 'counter' => $counter];
+                    $qhints[] = ['hint' => format_text($hint->hint), 'counter' => $counter];
                 }
             }
 
@@ -89,8 +89,8 @@ class quiz_correctanswer_report extends quiz_attempts_report {
             $data['hints'] = $qhints;
 
             // Question metadata.
-            $data['qexpectedanswer'] = \local_metadata\mcontext::question()->get($item->questionid, 'qexpectedanswer');
-            $data['qteachercomments'] = \local_metadata\mcontext::question()->get($item->questionid, 'qteachercomments');
+            $data['qexpectedanswer'] = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qexpectedanswer'));
+            $data['qteachercomments'] = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qteachercomments'));
 
             $content .= $OUTPUT->render_from_template('quiz_correctanswer/main', $data);
         }
