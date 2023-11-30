@@ -133,7 +133,7 @@ class title extends \core_courseformat\output\local\content\cm\title {
                     }
                 }
 
-                $title = $mteacherremarks . '<br/> ID=' . $mid . '    ' . get_string("lastmodified") . ': ' . $moddateadded;
+                $title = format_text($mteacherremarks) . '<br/> ID=' . $mid . '    ' . get_string("lastmodified") . ': ' . $moddateadded;
                 $title = str_replace("'", '', $title);
                 $title = str_replace('"', "'", $title);
                 $position = 'top';
