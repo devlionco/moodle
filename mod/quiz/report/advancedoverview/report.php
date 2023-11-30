@@ -63,7 +63,9 @@ class quiz_advancedoverview_report extends quiz_attempts_report {
         $quizdata->prepare_students();
         $data = $quizdata->get_render_data();
         echo $OUTPUT->render_from_template('quiz_advancedoverview/dashboard', $data);
-        $PAGE->requires->js_call_amd('quiz_advancedoverview/main', 'init', [$cm->id, $course->id, $quiz->id]);
+
+        $defaultconfig = json_encode($quizdata->get_config());
+        $PAGE->requires->js_call_amd('quiz_advancedoverview/main', 'init', [$cm->id, $course->id, $quiz->id, $defaultconfig]);
 
         // Export to XLSX prepare.
         echo '<script src="' . $CFG->wwwroot . '/mod/quiz/report/advancedoverview/js/xlsx.full.min.js"></script>';

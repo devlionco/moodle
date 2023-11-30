@@ -38,7 +38,7 @@
             </div>
             <div class="d-flex align-items-center ml-md-4">
                 <div class="d-flex align-items-center advancedoverview_report-toggle mr-2">
-                    <input type="checkbox" id="extendedViewToggler" class="toggle-btn" checked="checked">
+                    <input type="checkbox" id="extendedViewToggler" class="toggle-btn">
                     <label for="extendedViewToggler" class="link-btn-text mb-0">
                     </label>
                 </div>
@@ -67,7 +67,6 @@
                     {{/data_table_according_students_options}}
                 </ul>
             </div>
-
             <div class="d-flex flex-column flex-grow-1 align-items-start students-actions-collapse-wrapper">
                 <button class="btn advancedoverview_report-dropdown-btn dropdown-toggle mb-3" type="button"
                     data-toggle="collapse" data-target="#studentsActionsCollapse" aria-expanded="false"
@@ -187,24 +186,13 @@
 
     <div class="row py-3 bg-white">
         <div class="col-12">
-
-            {{#enable_table_according_students}}
             <div id="students-table"></div>
-            {{/enable_table_according_students}}
-
-            {{^enable_table_according_students}}
-            {{#str}}empty, quiz_advancedoverview{{/str}}
-            {{/enable_table_according_students}}
-
         </div>
     </div>
 </div>
 {{#js}}
-{{#enable_table_according_students}}
 require(['jquery', 'quiz_advancedoverview/tables', 'quiz_advancedoverview/studentsTableActions'],
     function ($, Tables, StudentsTableActions) {
         Tables.initstudentstable('{{{data_table_according_students}}}','{{{data_table_students_summary}}}', '{{anonymous_mode}}');
     });
-{{/enable_table_according_students}}
 {{/js}}
-        {{! StudentsTableActions.init(); }}

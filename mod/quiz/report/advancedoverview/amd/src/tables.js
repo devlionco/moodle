@@ -229,6 +229,10 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
             key: "duration",
             component: "quiz_advancedoverview",
         },
+        {
+            key: "empty",
+            component: "quiz_advancedoverview",
+        },
     ];
 
     Str.get_strings(strings)
@@ -240,7 +244,6 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
             self.translatedStrings.courseobservationreport = str[4];
             self.translatedStrings.sendingmessage = str[5];
             self.translatedStrings.recalculategrades = str[6];
-
             self.translatedStrings.fullname = str[7];
             self.translatedStrings.team = str[8];
             self.translatedStrings.state = str[9];
@@ -249,6 +252,7 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
             self.translatedStrings.starttime = str[12];
             self.translatedStrings.endtime = str[13];
             self.translatedStrings.duration = str[14];
+            self.translatedStrings.emptyTable = str[15];
             const clickMenu = [
                 {
                     disabled: function (component) {
@@ -352,6 +356,8 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                             return "<i class='fas fa-sort'>";
                     }
                 },
+
+                placeholder: self.translatedStrings.emptyTable,
                 locale: locale,
                 data: tabledata,
                 autoColumns: true,
@@ -775,7 +781,7 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                 }
             });
 
-            studentsTableActions.setAnonToggl(anon);
+            // studentsTableActions.setStatesFromConfig(anon);
 
             const page = document.getElementById('page');
             let storedScrollPosition = +sessionStorage.getItem("scrollPosition") || 0;

@@ -65,7 +65,7 @@ if (class_exists('\quiz_advancedoverview\quizdata')) {
     $quizdata->prepare_charts();
     $quizdata->prepare_students();
 
-    $anon = $quizdata->get_anon_state_for_user($attemptobj->get_cm()->id, $USER->id);
+    $anon = $quizdata->get_anon_state_for_user($attemptobj->get_cm()->id);
 }
 
 // Student name.

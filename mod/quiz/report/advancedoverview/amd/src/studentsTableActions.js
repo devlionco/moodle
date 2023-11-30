@@ -3,8 +3,10 @@ import * as Tables from 'quiz_advancedoverview/tables';
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
 import * as Charts from 'quiz_advancedoverview/charts';
+import { hideLoadingIcon } from './tables';
 
 export let anonymousmodestate = 0;
+let PILLS = {};
 export let CONFIG = {
     participants: new Proxy({}, {
         set(target, key, value) {
@@ -16,6 +18,17 @@ export let CONFIG = {
     anonymous_mode: 0
 };
 
+export const changeConfig = (newConfig) => {
+    const participantsProxy = new Proxy(newConfig.participants, {
+        set(target, key, value) {
+            target[key] = value;
+            regenerateTable();
+            return true;
+        }
+    });
+    newConfig.participants = participantsProxy;
+    CONFIG = newConfig;
+};
 export const showLoadingIcon = () => {
     document.body.classList.add('petel-loading');
 };
@@ -23,6 +36,7 @@ export const showLoadingIcon = () => {
 export const regenerateTable = function (callback = null) {
     const cmid = $('#datacmid').data('cmid');
     const groupid = $('#datagroupid').data('groupid');
+
     Ajax.call([{
         methodname: 'quiz_advancedoverview_render_dynamic_block',
         args: {
@@ -41,12 +55,18 @@ export const regenerateTable = function (callback = null) {
             if (callback) {
                 callback();
             }
+            hideLoadingIcon();
+
         },
         fail: Notification.exception
     }]);
 };
 
-export const setAnonToggl = function (state) {
+export const setStatesFromConfig = function () {
+    const state = CONFIG.anonymous_mode;
+    if(!document.getElementById('anonymousStripe')) {
+        createAnonymousStripe();
+    }
     if (+state == 1) {
         $('#anonymousStripe').removeClass('hidden');
         $('#anonymousStripe').attr('style', 'top:' + $('nav.navbar-petel').outerHeight() + 'px');
@@ -63,25 +83,174 @@ export const setAnonToggl = function (state) {
         });
         $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', false);
     }
+    if (CONFIG.participants.states) {
+        $('#studentstableNavFilter').find(`[data-name="${CONFIG.participants.states[0]}"]`)
+        .addClass('active').attr('aria-pressed', 'true');
+    } else {
+        $('#studentstableNavFilter').find('.nav.nav-tabs .nav-link').first().addClass('active').attr('aria-pressed', 'true');
+    }
+
+    // Set Extended view toggle.
+    const fullViewState = (CONFIG.participants.full_view === 0) ? false : true;
+
+    $('#extendedViewToggler')[0].checked = fullViewState;
+
 };
+
+const createAnonymousStripe = () => {
+    if(!document.getElementById('anonymousStripe')) {
+        const stripeContent = `
+            <div class="d-flex align-items-center advancedoverview_report-toggle anonymousmode">
+                <input type="checkbox" id="anonymousmodeToggler3" class="toggle-btn">
+                <label for="anonymousmodeToggler3" class="mb-0 anonymousmodeToggler"> </label>
+                <span class="link-btn-text ml-3"></span>
+            </div>
+            <i class="fas fa-user-secret ml-4"></i>
+            `;
+
+        const navbar = document.querySelector('nav.navbar');
+        const stripeElement = document.createElement('div');
+        stripeElement.classList.add('sticky-stripe', 'align-items-center', 'justify-content-center', 'bg-warning', 'hidden');
+        stripeElement.id = 'anonymousStripe';
+        stripeElement.innerHTML = stripeContent;
+        navbar.insertAdjacentElement('afterbegin', stripeElement);
+    }
+};
+
+
+const addPill = (data, target) => {
+    const template = document.createElement('a');
+    template.innerHTML = data.text;
+    template.classList.add('pill', 'badge', 'badge-light', 'm-1', 'p-2');
+    template.setAttribute('id', 'pill' + data.id);
+    template.setAttribute('data-id', data.id);
+    template.setAttribute('role', 'button');
+    template.setAttribute('data-pilltype', data.type);
+
+    const closeIcon = document.createElement('i');
+    closeIcon.classList.add('fa', 'fa-times', 'pl-2');
+    closeIcon.setAttribute('data-id', data.id);
+    closeIcon.setAttribute('aria-hidden', 'true');
+    template.appendChild(closeIcon);
+
+    target[0].appendChild(template);
+    $('#clearPillsArea').show();
+};
+
+const removePillByClick = (target) => {
+    if (target.classList.contains('pill') || target.closest('.pill.badge')) {
+        let id = target.dataset.id || target.closest('.pill.badge').dataset.id;
+        let pilltype = target.dataset.pilltype || target.closest('.pill.badge').dataset.pilltype;
+        removePill(id, pilltype);
+    }
+};
+
+const removePill = (id, pilltype) => {
+    const element = document.querySelector(`[data-id="${id}"]`);
+
+    $('#studentsActionsCollapse input[type="checkbox"]').each((i) => {
+        if ($('#studentsActionsCollapse input[type="checkbox"]')[i].id === id) {
+
+            if (pilltype !== undefined) {
+                $('#studentsActionsCollapse input[type="checkbox"]')[i].checked = true;
+                $('#studentsActionsCollapse input[type="checkbox"]').eq(i).trigger('click');
+            } else {
+                $('#studentsActionsCollapse input[type="checkbox"]')[i].checked = false;
+                element.remove();
+                delete PILLS[id];
+            }
+            CONFIG.pills = PILLS;
+        }
+    });
+};
+
+const removeAllPills = (e) => {
+    e.preventDefault();
+    for (const key in PILLS) {
+        delete PILLS[key];
+    }
+    $('#studentsActionsCollapse input[type="checkbox"]').each((i) => {
+        $('#studentsActionsCollapse input[type="checkbox"]')[i].checked = false;
+    });
+    $('#pillsAreaInner').empty();
+    $('#clearPillsArea').hide();
+    CONFIG.pills = PILLS;
+    CONFIG.participants.attempts_range = [];
+    CONFIG.participants.score_ranges = [];
+
+};
+
+export const showPills = (confObj) => {
+    const pillsObj = confObj.pills;
+    if (pillsObj && Object.keys(pillsObj).length > 0) {
+        PILLS = confObj.pills;
+        let pillsId = [];
+
+        for (const pill in pillsObj) {
+            const pillData = pillsObj[pill].pilldata;
+            pillsId.push(pillData.id);
+            addPill(pillData, $('#pillsAreaInner'));
+        }
+        if (Object.keys(PILLS).length > 0) {
+            $('#clearPillsArea').show();
+        } else {
+            $('#clearPillsArea').hide();
+        }
+        pillsId.forEach(id => {
+            document.querySelectorAll('#studentsActionsCollapse input[type="checkbox"]').forEach((el) => {
+                if (el.id === id) {
+                    el.setAttribute('checked', true);
+                    el.checked = true;
+                }
+            });
+        });
+
+        $('#studentsActionsCollapse').collapse('show');
+    }
+};
+
+
+$(document).on('change', '#studentsActionsCollapse input[type="checkbox"]', function (e) {
+
+    const data = {
+        text: e.target.dataset.label,
+        id: e.target.id,
+        type: e.target.dataset.type
+    };
+
+    if (PILLS[data.id]) {
+        removePill(data.id);
+    } else {
+        PILLS[data.id] = {};
+        PILLS[data.id].type = data.type;
+        PILLS[data.id].text = data.text;
+        PILLS[data.id].pilldata = {
+            text: e.target.dataset.label,
+            id: e.target.id,
+            type: e.target.dataset.type
+        };
+        addPill(data, $('#pillsAreaInner'));
+    }
+    if (Object.keys(PILLS).length > 0) {
+        $('#clearPillsArea').show();
+    } else {
+        $('#clearPillsArea').hide();
+    }
+    CONFIG.pills = PILLS;
+
+});
+
+$(document).on('click', '#pillsAreaInner', function (e) {
+    removePillByClick(e.target);
+});
+
+$(document).on('click', '#clearPillsArea', function (e) {
+    removeAllPills(e);
+});
 
 export const init = function () {
     // Add anonymous mode sticky stripe.
-    $(function () {
-        let stripeContent = `
-                <div id="anonymousStripe"
-                    class="sticky-stripe align-items-center justify-content-center bg-warning hidden">
-                    <div class="d-flex align-items-center advancedoverview_report-toggle anonymousmode">
-                        <input type="checkbox" id="anonymousmodeToggler3" class="toggle-btn">
-                        <label for="anonymousmodeToggler3" class="mb-0 anonymousmodeToggler"> </label>
-                        <span class="link-btn-text ml-3"></span>
-                    </div>
-                    <i class="fas fa-user-secret ml-4"></i>
-                </div>`;
-
-        $('nav.navbar').after(stripeContent);
-        $('#studentstableNavFilter').find('.nav.nav-tabs .nav-link').first().addClass('active').attr('aria-pressed', 'true');
-    });
+    createAnonymousStripe();
 
     // Change partisipiants filter.
     $(document).on('click', '#studentstableNavFilter .nav-link', function (e) {
@@ -98,7 +267,6 @@ export const init = function () {
         let checkboxes = target.find('input:checked');
         checkboxes.each((i) => score_ranges.push(checkboxes[i].value));
         CONFIG.participants.score_ranges = score_ranges;
-        showLoadingIcon();
     });
 
     // Change attempts range.
@@ -133,24 +301,15 @@ export const init = function () {
             showLoadingIcon();
         }
     });
-
-
     // Anonymous mode.
     $(document).on('change', '#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3', function () {
         const state = $(this).prop('checked');
         $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', state);
         CONFIG.anonymous_mode = state ? 1 : 0;
-        anonymousmodestate = state ? 1 : 0;
-        setAnonToggl(state);
         regenerateTable();
+        setStatesFromConfig();
 
     });
-    $(window).scroll(function () {
-        if ($(window).scrollTop() > 200 && $(window).width() > 1200) {
-            $('#anonymousStripe').not('.hidden').attr('style', 'top:50px');
-        } else {
-            $('#anonymousStripe').not('.hidden').attr('style', 'top:82px');
-        }
-    });
+    setStatesFromConfig();
 };
 

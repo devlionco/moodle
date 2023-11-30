@@ -10,6 +10,7 @@
   z-index: 10;
   position: fixed;
   top: 3.875rem;
+  left: 0;
 }
 .sticky-stripe i {
   font-size: 2rem;

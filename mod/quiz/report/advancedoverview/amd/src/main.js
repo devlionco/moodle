@@ -1,4 +1,6 @@
-/* eslint-disable no-debugger */
+/* eslint-disable camelcase */
+/* eslint-disable no-empty-function */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-trailing-spaces */
 import $ from 'jquery';
 import * as Str from 'core/str';
@@ -9,7 +11,7 @@ import Templates from 'core/templates';
 import Notification from 'core/notification';
 import * as studentsTableActions from 'quiz_advancedoverview/studentsTableActions';
 
-const PILLS = {};
+let PILLS = {};
 const SELECTORS = {
     SelectGroupBtn: '#advancedoverview_groupid',
     dynamicBlock: '.dynamic-block',
@@ -45,75 +47,24 @@ const changeBtnState = (target) => {
                 el.setAttribute('aria-pressed', 'false');
             }
         });
+        // studentsTableActions.CONFIG.participants.states
     }
-};
-
-const addPill = (data, target) => {
-    const template = document.createElement('a');
-    template.innerHTML = data.text;
-    template.classList.add('pill', 'badge', 'badge-light', 'm-1', 'p-2');
-    template.setAttribute('id', 'pill' + data.id);
-    template.setAttribute('data-id', data.id);
-    template.setAttribute('role', 'button');
-    template.setAttribute('data-pilltype', data.type);
-
-    const closeIcon = document.createElement('i');
-    closeIcon.classList.add('fa', 'fa-times', 'pl-2');
-    closeIcon.setAttribute('data-id', data.id);
-    closeIcon.setAttribute('aria-hidden', 'true');
-    template.appendChild(closeIcon);
-
-    target[0].appendChild(template);
-    // $(SELECTORS.clearPillsArea).show();
-};
-
-const removePillByClick = (target) => {
-    if (target.classList.contains('pill') || target.closest('.pill.badge')) {
-        let id = target.dataset.id || target.closest('.pill.badge').dataset.id;
-        let pilltype = target.dataset.pilltype || target.closest('.pill.badge').dataset.pilltype;
-        removePill(id, pilltype);
-    }
-};
-
-const removePill = (id, pilltype) => {
-    const element = document.querySelector(`[data-id="${id}"]`);
-
-    $(SELECTORS.checkboxes).each((i) => {
-        if ($(SELECTORS.checkboxes)[i].id === id) {
-
-            if (pilltype !== undefined) {
-                $(SELECTORS.checkboxes)[i].checked = true;
-                $(SELECTORS.checkboxes).eq(i).trigger('click');
-            } else {
-                $(SELECTORS.checkboxes)[i].checked = false;
-                element.remove();
-                delete PILLS[id];
-            }
-        }
-    });
-};
-
-const removeAllPills = (e) => {
-    e.preventDefault();
-    for (const key in PILLS) {
-        delete PILLS[key];
-    }
-    $(SELECTORS.checkboxes).each((i) => {
-        $(SELECTORS.checkboxes)[i].checked = false;
-    });
-    $(SELECTORS.pillsAreaInner).empty();
-    $(SELECTORS.clearPillsArea).hide();
 };
 
 
 export const TEMPDATA = {};
-export const init = function (cmid, courseid, quizid) {
+export const init = function (cmid, courseid, quizid, defaultconfig) {
     let self = this;
 
     self.TEMPDATA.cmid = cmid;
     self.TEMPDATA.courseid = courseid;
     self.TEMPDATA.quizid = quizid;
+    studentsTableActions.changeConfig(JSON.parse(defaultconfig));
+    studentsTableActions.init();
 
+    $(document).ready(function () {
+        studentsTableActions.showPills(studentsTableActions.CONFIG);
+    });
 
     // Event on change group select.
     $(SELECTORS.SelectGroupBtn).closest('.dropdown').find('.dropdown-item').on('click', function (e) {
@@ -126,44 +77,13 @@ export const init = function (cmid, courseid, quizid) {
         self.renderDynamicBlock(cmid, value);
     });
 
-    $(SELECTORS.btns).on('click', function (e) {
+    $(document).on('click', SELECTORS.btns, function (e) {
         changeBtnState(e.currentTarget);
     });
 
     // Set filters checkboxes to false first load.
     $(SELECTORS.checkboxes).each((i) => {
         $(SELECTORS.checkboxes)[i].checked = false;
-    });
-
-    $(document).on('change', SELECTORS.checkboxes, function (e) {
-
-        const data = {
-            text: e.target.dataset.label,
-            id: e.target.id,
-            type: e.target.dataset.type
-        };
-
-        if (PILLS[data.id]) {
-            removePill(data.id);
-        } else {
-            PILLS[data.id] = {};
-            PILLS[data.id].type = data.type;
-            PILLS[data.id].text = data.text;
-            addPill(data, $(SELECTORS.pillsAreaInner));
-        }
-        if (Object.keys(PILLS).length > 0) {
-            $(SELECTORS.clearPillsArea).show();
-        } else {
-            $(SELECTORS.clearPillsArea).hide();
-        }
-    });
-
-    $(document).on('click', SELECTORS.pillsAreaInner, function (e) {
-        removePillByClick(e.target);
-    });
-
-    $(document).on('click', SELECTORS.clearPillsArea, function (e) {
-        removeAllPills(e);
     });
 
     $(document).on('click', SELECTORS.sendMessage, function () {
@@ -186,7 +106,7 @@ export const init = function (cmid, courseid, quizid) {
         let link = e.currentTarget.href;
 
         let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
-width=600,height=600,left=100,top=100`;
+                        width=600,height=600,left=100,top=100`;
 
         open(link, '', params);
 
@@ -289,11 +209,11 @@ width=600,height=600,left=100,top=100`;
             });
         }
     });
-    studentsTableActions.init();
-       // Full view.
-        $(document).on('change', '#extendedViewToggler', function () {
-            studentsTableActions.CONFIG.participants.full_view = $(this).is(':checked') ? 1 : 0;
-            studentsTableActions.showLoadingIcon();
+
+    // Full view.
+    $(document).on('change', '#extendedViewToggler', function () {
+        studentsTableActions.CONFIG.participants.full_view = $(this).is(':checked') ? 1 : 0;
+        studentsTableActions.showLoadingIcon();
     });
 };
 
@@ -303,16 +223,16 @@ export const renderDynamicBlock = function (cmid, groupid) {
         args: {
             cmid: cmid,
             groupid: groupid,
-            config: '',
+            config: JSON.stringify(studentsTableActions.CONFIG),
         },
         done: function (response) {
             let data = JSON.parse(response);
-
             // Render dinamic block.
             Templates.render('quiz_advancedoverview/dynamic_block', data)
                 .done(function (html, js) {
-                    studentsTableActions.setAnonToggl(data.config.anonymous_mode);
+                    studentsTableActions.setStatesFromConfig();
                     Templates.replaceNodeContents(SELECTORS.dynamicBlock, html, js);
+                    studentsTableActions.showPills(studentsTableActions.CONFIG);
                 })
                 .fail(Notification.exception);
         },

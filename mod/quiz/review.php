@@ -147,7 +147,7 @@ if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $U
         $quizdata->prepare_charts();
         $quizdata->prepare_students();
 
-        $anon = $quizdata->get_anon_state_for_user($attemptobj->get_cm()->id, $USER->id);
+        $anon = $quizdata->get_anon_state_for_user($attemptobj->get_cm()->id);
     }
 
     if ($anon) {

@@ -72,7 +72,6 @@ class quizdata {
     public $slots;
     public $openquestions = [];
     public $openquestionslist = [];
-    public $childopenquestion = [];
     public $childopenquestionslist = [];
     public $anonymouscount = 1;
     public $qopentypes = ['essay', 'opensheet', 'mlnlpessay'];
@@ -84,14 +83,35 @@ class quizdata {
 
         $this->states = [];
 
+        // Default state page.
         $defaultconfig = (object) [
-                'anonymous_mode' => $this->get_anon_state_for_user($cmid, $USER->id),
+                'anonymous_mode' => $this->get_anon_state_for_user($cmid),
                 'participants' => (object) [
+                        'full_view' => $this->get_full_view_state_for_user($cmid),
+                        'states' => $this->get_states_for_user($cmid),
+                        'score_ranges' => $this->get_score_ranges_state_for_user($cmid),
                 ],
+                'pills' => (object) $this->get_pills_state_for_user($cmid),
         ];
 
         if(isset($config->anonymous_mode)) {
-            $this->set_anon_state_for_user($cmid, $USER->id, $config->anonymous_mode);
+            $this->set_anon_state_for_user($cmid, $config->anonymous_mode);
+        }
+
+        if(isset($config->participants->full_view)) {
+            $this->set_full_view_state_for_user($cmid, $config->participants->full_view);
+        }
+
+        if(isset($config->participants->states)) {
+            $this->set_states_for_user($cmid, $config->participants->states);
+        }
+
+        if(isset($config->participants->score_ranges)) {
+            $this->set_score_ranges_state_for_user($cmid, $config->participants->score_ranges);
+        }
+
+        if(isset($config->pills)) {
+            $this->set_pills_state_for_user($cmid, $config->pills);
         }
 
         $this->config = $config ? $config : $defaultconfig;
@@ -127,6 +147,10 @@ class quizdata {
 
         $groups = [];
 
+        if($groupid == -1) {
+            $groupid = $this->get_groupid_for_user($cmid);
+        }
+
         if ($teacher) {
             foreach (groups_get_all_groups($this->course->id, $USER->id) as $group) {
                 $groups[] = [
@@ -158,6 +182,8 @@ class quizdata {
             $this->groupid = ($groupid == -1) ? 0 : $groupid;
         }
 
+        $this->set_groupid_for_user($cmid, $this->groupid);
+
         foreach ($groups as $key => $item) {
             $groups[$key]['selected'] = ($this->groupid == $item['groupid']) ? true : false;
         }
@@ -184,20 +210,127 @@ class quizdata {
 
     }
 
-    public function set_anon_state_for_user($cmid, $userid, $state) {
-
-        $name = 'quiz_advancedoverview_anon_' . $cmid;
-        $value = (int) $state;
-
-        return set_user_preference($name, $value, $userid);
+    public function get_config() {
+        return $this->config;
     }
 
-    public function get_anon_state_for_user($cmid, $userid) {
+    private function check_timeout_wrong($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_timeout_' . $cmid;
+
+        $timeout = get_user_preferences($name, 0, $USER->id);
+        set_user_preference($name, time(), $USER->id);
+
+        return $timeout + 30*60 <= time();
+    }
+
+    private function set_groupid_for_user($cmid, $state) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_groupid_' . $cmid;
+        return set_user_preference($name, (int) $state, $USER->id);
+    }
+
+    public function get_groupid_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_groupid_' . $cmid;
+        if ($this->check_timeout_wrong($cmid)) {
+            unset_user_preference($name, $USER->id);
+        }
+
+        return get_user_preferences($name, -1, $USER->id);
+    }
+
+    private function set_anon_state_for_user($cmid, $state) {
+        global $USER;
 
         $name = 'quiz_advancedoverview_anon_' . $cmid;
-        $state = get_user_preferences($name, 0, $userid);
+        return set_user_preference($name, (int) $state, $USER->id);
+    }
 
-        return $state;
+    public function get_anon_state_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_anon_' . $cmid;
+        return get_user_preferences($name, 0, $USER->id);
+    }
+
+    private function set_full_view_state_for_user($cmid, $state) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_full_view_' . $cmid;
+        return set_user_preference($name, (int) $state, $USER->id);
+    }
+
+    public function get_full_view_state_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_full_view_' . $cmid;
+        if ($this->check_timeout_wrong($cmid)) {
+            unset_user_preference($name, $USER->id);
+        }
+
+        return get_user_preferences($name, 1, $USER->id);
+    }
+
+    private function set_states_for_user($cmid, $state) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_states_' . $cmid;
+        return set_user_preference($name, json_encode($state), $USER->id);
+    }
+
+    public function get_states_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_states_' . $cmid;
+        if ($this->check_timeout_wrong($cmid)) {
+            unset_user_preference($name, $USER->id);
+        }
+
+        $value = get_user_preferences($name, json_encode(['all']), $USER->id);
+        return json_decode($value, true);
+    }
+
+    private function set_score_ranges_state_for_user($cmid, $state) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_score_ranges_' . $cmid;
+        return set_user_preference($name, json_encode($state), $USER->id);
+    }
+
+    public function get_score_ranges_state_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_score_ranges_' . $cmid;
+        if ($this->check_timeout_wrong($cmid)) {
+            unset_user_preference($name, $USER->id);
+        }
+
+        $value = get_user_preferences($name, json_encode([]), $USER->id);
+        return json_decode($value);
+    }
+
+    private function set_pills_state_for_user($cmid, $state) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_pills_' . $cmid;
+        return set_user_preference($name, json_encode($state), $USER->id);
+    }
+
+    public function get_pills_state_for_user($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_pills_' . $cmid;
+
+        if ($this->check_timeout_wrong($cmid)) {
+            unset_user_preference($name, $USER->id);
+        }
+
+        $value = get_user_preferences($name, json_encode([]), $USER->id);
+        return json_decode($value);
     }
 
     public function get_slots() {
@@ -1401,14 +1534,12 @@ class quizdata {
 
         $tablestudent = $this->get_students_table();
         $tablestudentsummary = $this->get_students_table_summary();
-        $data['count_according_students'] = count($tablestudent);
-        $data['enable_table_according_students'] = count($tablestudent) > 0 ? true : false;
+        $data['count_according_students'] = count($this->participants);
         $data['data_table_according_students'] = json_encode($tablestudent, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         $data['data_table_students_summary'] = json_encode($tablestudentsummary, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
         $allkey = static::get_key_by_value($this->options['participants']['states'], 'name', 'all');
-
-        $this->options['participants']['states'][$allkey]['value'] = count($tablestudent);
+        $this->options['participants']['states'][$allkey]['value'] = count($this->participants);
 
         return $data;
     }
