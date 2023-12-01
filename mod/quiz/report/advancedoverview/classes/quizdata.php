@@ -74,7 +74,7 @@ class quizdata {
     public $openquestionslist = [];
     public $childopenquestionslist = [];
     public $anonymouscount = 1;
-    public $qopentypes = ['essay', 'opensheet', 'mlnlpessay'];
+    public $qdisabledviewtypes = ['essay', 'opensheet', 'mlnlpessay', 'description'];
 
     private $tablestudent = [];
 
@@ -538,7 +538,7 @@ class quizdata {
         foreach ($this->questionids as $questionid) {
             $question = $this->questions[$questionid];
 
-            if (in_array($question->qtype, $this->qopentypes)) {
+            if (in_array($question->qtype, $this->qdisabledviewtypes)) {
                 continue;
             }
 
@@ -776,7 +776,7 @@ class quizdata {
                     $question = $this->questions[$questionid];
                     $mark = $att ? $this->quiz_get_user_question_info($question, $att) : null;
 
-                    if (in_array($question->qtype, $this->qopentypes)) {
+                    if (in_array($question->qtype, $this->qdisabledviewtypes)) {
                         continue;
                     }
 
@@ -1463,7 +1463,7 @@ class quizdata {
         $questionTexts = [];
         foreach ($this->questions as $q) {
 
-            if (in_array($q->qtype, $this->qopentypes)) {
+            if (in_array($q->qtype, $this->qdisabledviewtypes)) {
                 continue;
             }
 
