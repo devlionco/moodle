@@ -83,6 +83,11 @@ $string['grade'] = 'ציון';
 $string['starttime'] = 'הותחל ב';
 $string['endtime'] = 'הושלם ב';
 $string['duration'] = 'משך הזמן';
+$string['pagetitle'] = 'עמוד';
+$string['firsttitle'] = 'ראשון';
+$string['lasttitle'] = 'אחרון';
+$string['prevtitle'] = 'קודם';
+$string['nexttitle'] = 'הבא';
 $string['team'] = 'צוות';
 
 $string['question'] = 'שאלה מס';

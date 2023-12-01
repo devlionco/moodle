@@ -208,21 +208,27 @@ class quizdata {
                 $this->usersinprogresslist,
                 $this->usersnotstartedlist) = $this->quiz_submissions_stat();
 
+        $this->set_timeout_settings($cmid);
     }
 
     public function get_config() {
         return $this->config;
     }
 
+    private function set_timeout_settings($cmid) {
+        global $USER;
+
+        $name = 'quiz_advancedoverview_timeout_' . $cmid;
+        return set_user_preference($name, time(), $USER->id);
+    }
+
     private function check_timeout_wrong($cmid) {
         global $USER;
 
         $name = 'quiz_advancedoverview_timeout_' . $cmid;
-
         $timeout = get_user_preferences($name, 0, $USER->id);
-        set_user_preference($name, time(), $USER->id);
 
-        return $timeout + 30*60 <= time();
+        return $timeout + 10*60 <= time();
     }
 
     private function set_groupid_for_user($cmid, $state) {

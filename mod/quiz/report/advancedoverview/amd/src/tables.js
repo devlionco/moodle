@@ -135,6 +135,9 @@ function getLocale() {
         case "he":
             locale = "he-IL";
             break;
+        case "he-kids":
+            locale = "he-IL";
+            break;
         case "en":
             locale = "en-GB";
             break;
@@ -169,70 +172,28 @@ function attemptNumberSorter(aRow, bRow, dir) {
 export const initstudentstable = function (data, summary = '', anon = 0) {
     const self = this;
     const strings = [
-        {
-            key: "viewingprofile",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "passwordreset",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "loginasthisstudent",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "allcoursereport",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "courseobservationreport",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "sendingmessage",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "recalculategrades",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "fullname",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "team",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "state",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "attempt_number",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "grade",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "starttime",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "endtime",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "duration",
-            component: "quiz_advancedoverview",
-        },
-        {
-            key: "empty",
-            component: "quiz_advancedoverview",
-        },
+        {key: "viewingprofile", component: "quiz_advancedoverview"},
+        {key: "passwordreset", component: "quiz_advancedoverview"},
+        {key: "loginasthisstudent", component: "quiz_advancedoverview"},
+        {key: "allcoursereport", component: "quiz_advancedoverview"},
+        {key: "courseobservationreport", component: "quiz_advancedoverview"},
+        {key: "sendingmessage", component: "quiz_advancedoverview"},
+        {key: "recalculategrades", component: "quiz_advancedoverview"},
+        {key: "fullname", component: "quiz_advancedoverview"},
+        {key: "team", component: "quiz_advancedoverview"},
+        {key: "state", component: "quiz_advancedoverview"},
+        {key: "attempt_number", component: "quiz_advancedoverview"},
+        {key: "grade", component: "quiz_advancedoverview"},
+        {key: "starttime", component: "quiz_advancedoverview"},
+        {key: "endtime", component: "quiz_advancedoverview"},
+        {key: "duration", component: "quiz_advancedoverview"},
+        {key: "empty", component: "quiz_advancedoverview"},
+        {key: "pagetitle", component: "quiz_advancedoverview"},
+        {key: "firsttitle", component: "quiz_advancedoverview"},
+        {key: "lasttitle", component: "quiz_advancedoverview"},
+        {key: "prevtitle", component: "quiz_advancedoverview"},
+        {key: "nexttitle", component: "quiz_advancedoverview"},
+        {key: "all", component: "quiz_advancedoverview"},
     ];
 
     Str.get_strings(strings)
@@ -253,6 +214,12 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
             self.translatedStrings.endtime = str[13];
             self.translatedStrings.duration = str[14];
             self.translatedStrings.emptyTable = str[15];
+            self.translatedStrings.pageTitle = str[16];
+            self.translatedStrings.firstTitle = str[17];
+            self.translatedStrings.lastTitle = str[18];
+            self.translatedStrings.prevTitle = str[19];
+            self.translatedStrings.nextTitle = str[20];
+            self.translatedStrings.all = str[21];
             const clickMenu = [
                 {
                     disabled: function (component) {
@@ -359,6 +326,24 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
 
                 placeholder: self.translatedStrings.emptyTable,
                 locale: locale,
+
+                langs:{
+                    "he-IL":{
+                        "pagination":{
+                            "page_title": self.translatedStrings.pageTitle,
+                            "first": self.translatedStrings.firstTitle,
+                            "first_title": self.translatedStrings.firstTitle,
+                            "last": self.translatedStrings.lastTitle,
+                            "last_title": self.translatedStrings.lastTitle,
+                            "prev": self.translatedStrings.prevTitle,
+                            "prev_title": self.translatedStrings.prevTitle,
+                            "next": self.translatedStrings.nextTitle,
+                            "next_title": self.translatedStrings.nextTitle,
+                            "all": self.translatedStrings.all,
+                        },
+                    },
+                },
+
                 data: tabledata,
                 autoColumns: true,
                 movableRows: false,

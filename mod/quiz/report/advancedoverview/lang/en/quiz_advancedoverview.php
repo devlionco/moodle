@@ -83,6 +83,11 @@ $string['grade'] = 'Grade';
 $string['starttime'] = 'Start time';
 $string['endtime'] = 'End time';
 $string['duration'] = 'Duration';
+$string['pagetitle'] = 'Page';
+$string['firsttitle'] = 'First';
+$string['lasttitle'] = 'Last';
+$string['prevtitle'] = 'Previous';
+$string['nexttitle'] = 'Next';
 $string['team'] = 'Team';
 
 $string['question'] = 'Question';

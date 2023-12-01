@@ -267,6 +267,7 @@ export const init = function () {
         let checkboxes = target.find('input:checked');
         checkboxes.each((i) => score_ranges.push(checkboxes[i].value));
         CONFIG.participants.score_ranges = score_ranges;
+        showLoadingIcon();
     });
 
     // Change attempts range.
@@ -290,6 +291,7 @@ export const init = function () {
             }),
             anonymous_mode: anonymousmodestate
         };
+        showLoadingIcon();
         regenerateTable();
 
     });
