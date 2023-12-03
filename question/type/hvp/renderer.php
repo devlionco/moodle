@@ -52,6 +52,7 @@ class qtype_hvp_renderer extends qtype_renderer {
 
         $this->view->validatecontent();
         $result = '';
+        $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
         $result .= html_writer::tag('input', null, $answer);
         $result .= $this->view->outputview();
         return $result;
