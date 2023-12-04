@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/question/type/formulas/variables.php');
 require_once($CFG->dirroot . '/question/type/formulas/answer_unit.php');
 require_once($CFG->dirroot . '/question/type/formulas/conversion_rules.php');
 require_once($CFG->dirroot . '/question/behaviour/adaptivemultipart/behaviour.php');
+require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
 
 /**
  * Base class for formulas questions.
@@ -652,6 +653,48 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
 
     // Grade response for part, and return a list with answer correctness and unit correctness.
     public function grade_responses_individually($part, $response, &$checkunit, $forvalidation = false) {
+
+        // Autocomplete.
+        if ($part->autocomplete && $part->answertype == 0) {
+
+            $tolerance = 0.01;
+
+            $dano = ['value' => $part->answer, 'unit' => $part->postunit];
+
+            $answer = [
+                    'value' =>  isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '',
+                    'unit' =>  isset($response[$part->partindex.'_1']) ? $response[$part->partindex.'_1'] : '',
+            ];
+
+            if (qtype_formulas_compare_answer($dano, $answer, $tolerance)) {
+                $answercorrect = $unitcorrect = 1;
+            } else {
+                $answercorrect = $unitcorrect = 0;
+
+                $obj = qtype_formulas_check_for_penalty($dano, $answer, $tolerance);
+                if ($obj->result == true) {
+
+                    $fraction = $part->answermark - $part->answermark * $obj->penalty;
+
+                    if(isset($obj->penaltytype) && $obj->penaltytype == 'value'){
+                        $answercorrect = $fraction;
+                        $unitcorrect = 1;
+                        $part->feedback = get_string('feedbackwrongvalue', 'qtype_formulas');
+                    }
+
+                    if(isset($obj->penaltytype) && $obj->penaltytype == 'unit'){
+                        $answercorrect = $fraction;
+                        $unitcorrect = 1;
+                        $part->feedback = get_string('feedbackwrongunit', 'qtype_formulas');
+                    }
+                } else {
+                    $part->feedback = get_string('feedbackwronganswer', 'qtype_formulas');
+                }
+            }
+
+            return array($answercorrect, $unitcorrect);
+        }
+
         // Step 1: Split the student's responses to the part into coordinates and unit.
         $coordinates = array();
         $i = $part->partindex;

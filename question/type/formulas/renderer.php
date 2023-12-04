@@ -24,6 +24,8 @@
 
 use qtype_formulas\answer_unit_conversion;
 
+require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
+
 /**
  * Base class for generating the bits of output for formulas questions.
  *
@@ -175,7 +177,8 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                 $number = chr(ord('a') + $num);
                 break;
             case 'ABCD':
-                $number = chr(ord('A') + $num);
+                $letters = explode(',', get_string('alphabet', 'langconfig'));
+                $number = (isset($letters[$num])) ? $letters[$num] : '';
                 break;
             case '123':
                 $number = $num + 1;
@@ -197,12 +200,27 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
 
     // Return the part's text with variables replaced by their values.
     public function get_part_formulation(question_attempt $qa, question_display_options $options, $i, $vars, $sub) {
+        global $PAGE;
+
         $question = $qa->get_question();
         $part = &$question->parts[$i];
         $localvars = $question->get_local_variables($part);
 
         $subqreplaced = $question->formulas_format_text($localvars, $part->subqtext,
                 $part->subqtextformat, $qa, 'qtype_formulas', 'answersubqtext', $part->id, false);
+
+        // PTL-4075. Numbering the questions.
+        if(count($question->parts) > 1 && !empty($this->number_in_style($i, $question->answernumbering))) {
+            $subqreplaced = '
+                <table style="width:100%">              
+                  <tr>
+                    <td style="width:20px;"><p>'.$this->number_in_style($i, $question->answernumbering).'</p></td>
+                    <td>'.$subqreplaced.'</td>                
+                  </tr>              
+                </table>            
+            ';
+        }
+
         $types = array(0 => 'number', 10 => 'numeric', 100 => 'numerical_formula', 1000 => 'algebraic_formula');
         $gradingtype = ($part->answertype != 10 && $part->answertype != 100 && $part->answertype != 1000) ? 0 : $part->answertype;
         $gtype = $types[$gradingtype];
@@ -233,6 +251,24 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                 'maxlength' => 128,
                 'aria-labelledby' => 'lbl_' . str_replace(':', '__', $inputname)
             );
+
+            // Class for enable autocomplete and type מספר.
+            if($part->autocomplete  && $part->answertype == 0) {
+                $inputattributes = array(
+                        'type' => 'text',
+                        'name' => $inputname,
+                        'title' => get_string($gtype . ($part->postunit == '' ? '' : '_unit'), 'qtype_formulas'),
+                        'value' => $currentanswer,
+                        'id' => $inputname,
+                        'class' => 'formulas_' . $gtype . '_unit ' . $sub->feedbackclass . ' autocomplete_formulas ',
+                        'maxlength' => 300,
+                );
+                $keywords = array_values(qtype_formulas_get_units_array());
+                $selectors = array('.autocomplete_formulas', '#input');
+                $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($keywords)));
+            }
+
+            $inputattributes['class'] .= ' answer-formulas';
 
             if ($options->readonly) {
                 $inputattributes['readonly'] = 'readonly';

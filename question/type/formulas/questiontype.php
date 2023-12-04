@@ -58,7 +58,7 @@ class qtype_formulas extends question_type {
      */
     public function part_tags() {
         return array('placeholder', 'answermark', 'answertype', 'numbox', 'vars1', 'answer', 'answernotunique', 'vars2', 'correctness'
-            , 'unitpenalty', 'postunit', 'ruleid', 'otherrule');
+            , 'unitpenalty', 'postunit', 'ruleid', 'otherrule', 'autocomplete');
     }
 
     /**
