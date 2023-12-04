@@ -207,7 +207,21 @@ class condition extends \core_availability\condition {
      * upgrade it now.
      */
     protected function update_question_id_to_question_bank_entry_id_if_required(): void {
+        global $DB;
+
         if ($this->questionbankentryid) {
+            // Nothing to do, really.
+            $this->questionid = null;
+            return;
+        }
+
+        if (!$this->questionid) {
+            // Nothing to do, really.
+            $this->questionid = null;
+            return;
+        }
+
+        if (!$row = $DB->get_record('question', ['id' => $this->questionid])) {
             // Nothing to do, really.
             $this->questionid = null;
             return;
