@@ -118,6 +118,8 @@ $string['vars1'] = 'Local variables';
 $string['vars1_help'] = 'You can define variables here in the same way as global variables are defined at the question level. Variables defined here can be used in the part\'s answer or feedback
 and their scope of visibility is limited to the part.';
 $string['answer'] = 'Answer*';
+$string['answernotunique'] = 'There are other correct answers.';
+$string['answernotunique_help'] = 'If this option is checked, the student will see "One correct answer is: ..." instead of "The correct answer is: ..." when reviewing their attempt.';
 $string['answercombinedunitmulti'] = 'Answer and unit for part {$a->part}';
 $string['answercombinedunitsingle'] = 'Answer and unit';
 $string['answercoordinatemulti'] = 'Answer field {$a->numanswer} for part {$a->part}';
@@ -246,6 +248,7 @@ $string['error_grading_error'] = 'Grading error! Probably result of incorrect im
 
 // The language strings for the renderer.
 $string['correctansweris'] = 'One possible correct answer is: {$a}';
+$string['uniquecorrectansweris'] = 'The correct answer is: {$a}';
 
 // String that were "borrowed" from quiz and are now in calculated plugin.
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'{$a}\'';
@@ -268,11 +271,3 @@ $string['defaultanswermark'] = 'Default part\'s mark';
 $string['defaultanswermark_desc'] = 'Default part\'s mark for new question\'s parts';
 $string['defaultunitpenalty'] = 'Default unit penalty';
 $string['defaultunitpenalty_desc'] = 'Default penalty for wrong unit (0-1)';
-
-//Added strings
-$string['setting_units'] = 'Setting units';
-$string['setting_wrong_value_penalty'] = 'Setting wrong vlue penalty';
-$string['setting_wrong_unit_penalty'] = 'Setting wrong unit penalty';
-$string['autocompleteenabled'] = 'Enable autocomplete';
-$string['autocompletdisabled'] = 'Disable autocomplete';
-$string['correctansweriscutsom'] = 'One possible correct answer is: <span class="petel_custom_formula_view">{$a}</span>';

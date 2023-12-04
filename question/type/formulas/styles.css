@@ -1,10 +1,6 @@
-.answer-formulas{
-    direction: rtl;
-}
-
 .que.formulas .formulas_input_warning_outer {
 
-    display: none;
+    display: inline;
     position: absolute;
     z-index: 1;
 }
@@ -43,7 +39,7 @@
 .que.formulas .formulas_input_info_interpretation_incorrect {
     border-top: 1px solid #88c;
     color: #bbb;
-    padding: 12px;
+    padding: 2px;
 }
 
 .que.formulas .formulas_unit {
@@ -53,12 +49,7 @@
 
 .que.formulas .formulas_number {
     margin: 0 0 0 0;
-    /*width: 40px;*/
-}
-
-html[dir="rtl"] .que.formulas .formulas_number {
-    /*rtl:ignore*/
-    direction: ltr;
+    width: 40px;
 }
 
 .que.formulas .formulas_number_unit {
@@ -149,7 +140,7 @@ body#page-question-type-formulas .formulas_correctness_show {
 
 body#page-question-type-formulas .formulas_input_warning_outer {
 
-    display: none;
+    display: inline;
     position: absolute;
     z-index: 1;
 }
@@ -197,9 +188,4 @@ body#page-question-type-formulas .formulas_input_info_interpretation_incorrect {
     height: 80px;
     direction: ltr;
     text-align: left;
-}
-
-/* PTL-623 question type formulas - properly display variable for students */
-.que.formulas .formulation .formulaspart {
-    display: block;
 }

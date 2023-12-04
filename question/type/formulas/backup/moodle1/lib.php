@@ -77,7 +77,7 @@ class moodle1_qtype_formulas_handler extends moodle1_qtype_handler {
                 'postunit', 'ruleid', 'otherrule', 'subqtext', 'subqtextformat',
                 'feedback', 'feedbackformat', 'partcorrectfb', 'partcorrectfbformat',
                 'partpartiallycorrectfb', 'partpartiallycorrectfbformat',
-                'partincorrectfb', 'partincorrectfbformat', 'autocomplete'
+                'partincorrectfb', 'partincorrectfbformat'
             ) as $fieldname) {
                 if (!array_key_exists($fieldname, $answer)) {
                     throw new moodle1_convert_exception('missing_formulas_answer_field', $fieldname);

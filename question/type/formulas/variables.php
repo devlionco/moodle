@@ -452,6 +452,17 @@ class variables {
     private static $maxdataset = 2e9;      // It is the upper limit for the exhaustive enumeration.
     private static $listmaxsize = 1000;
 
+    /* Defining legacy properties here for compatibility with PHP 8.2 */
+    private $func_const = [];
+    private $func_unary = [];
+    private $func_binary = [];
+    private $func_special = [];
+    private $func_all = [];
+    private $binary_op_map = [];
+    private $func_algebraic = [];
+    private $constlist = ['pi' => '3.14159265358979323846'];
+    private $evalreplacelist = ['ln' => 'log', 'log10' => '(1./log(10.))*log'];
+
     private function initialize_function_list() {
         $this->func_const = array_flip( array('pi', 'fqversionnumber'));
         $this->func_unary = array_flip( array('abs', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh', 'ceil',
@@ -474,9 +485,7 @@ class variables {
         // Note that the implementation is exactly the same as the client so the behaviour should be the same.
         $this->func_algebraic = array_flip( array('sin', 'cos', 'tan', 'asin', 'acos', 'atan',
                                                   'exp', 'log10', 'ln', 'sqrt', 'abs', 'ceil', 'floor', 'fact'));
-        $this->constlist = array('pi' => '3.14159265358979323846');
         // Natural log and log with base 10, no log allowed to avoid ambiguity.
-        $this->evalreplacelist = array('ln' => 'log', 'log10' => '(1./log(10.))*log');
     }
 
     public function __construct() {
@@ -651,9 +660,13 @@ class variables {
     // Return the text with the variables, or evaluable expressions, substituted by their values.
     public function substitute_variables_in_text(&$vstack, $text) {
         $funcpattern = '/(\{=[^{}]+\}|\{([A-Za-z][A-Za-z0-9_]*)(\[([0-9]+)\])?\})/';
-        $results = array();
-        // @codingStandardsIgnoreLine
-        $ts = explode("\n`", $text);     // The ` is the separator, so split it first.
+        $results = [];
+        if (is_string($text)) {
+            // @codingStandardsIgnoreLine
+            $ts = explode("\n`", $text);     // The ` is the separator, so split it first.
+        } else {
+            $ts = [];
+        }
         foreach ($ts as $text) {
             // @codingStandardsIgnoreLine
             $splitted = explode("\n`", preg_replace($funcpattern, "\n`$1\n`", $text));
@@ -688,22 +701,6 @@ class variables {
         return implode('', $splitted);
     }
 
-    // PTL-4296 Test if the question was not changed, and still valid for proper calculations
-    // All relevant variables are available.
-    private function is_question_valid(&$vstack, $text) {
-        $splitted = explode('`', preg_replace('/(@[0-9]+)/', '`$1`', $text));
-        $appearedvars = array();     // Reuse the temporary variable if possible.
-        for ($i = 1; $i < mycount($splitted); $i += 2) {    // The length will always be odd, and the numbers are stored in odd index.
-            $data = $this->vstack_get_variable($vstack, $splitted[$i]);
-            if ($data->type == 'v') {
-                if ($this->vstack_get_variable($vstack, $data->value) === null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     // If substitute_variables_by_placeholders() was used for $text,
     // then this function forward the value of type 'v' to the actual variable value.
     private function substitute_vname_by_variables(&$vstack, $text) {
@@ -731,7 +728,11 @@ class variables {
 
     // Replace the strings in the $text.
     private function substitute_strings_by_placholders(&$vstack, $text) {
-        $text = stripcslashes($text);
+        if (is_string($text)) {
+            $text = stripcslashes($text);
+        } else {
+            $text = '';
+        }
         $splitted = explode("\"", $text);
         if (mycount($splitted) % 2 == 0) {
             throw new Exception(get_string('error_vars_string', 'qtype_formulas'));
@@ -1385,11 +1386,8 @@ class variables {
                     break;
                 }
                 if ($sz == 1) {
-                    // If we have one list, we use natural sorting.
-                    $tmp = $values[0];
-                    natsort($tmp);
-                    $this->replace_middle($vstack, $expression, $l, $r, $types[0], array_values($tmp));
-                    return true;
+                    // If we have one list, we duplicate it.
+                    $values[1] = $values[0];
                 }
                 if (mycount($values[0]) != mycount($values[1])) {
                     break;
@@ -1399,7 +1397,14 @@ class variables {
                 $tmp = $values[0];
                 $order = $values[1];
                 uksort($tmp, function($a, $b) use ($order) {
-                    return strnatcmp($order[$a], $order[$b]);
+                    $first = $order[$a];
+                    $second = $order[$b];
+                    // If both elements are numeric, we compare their numerical value.
+                    if (is_numeric($first) && is_numeric($second)) {
+                        return floatval($first) <=> floatval($second);
+                    }
+                    // Otherwise, we use natural sorting.
+                    return strnatcmp($first, $second);
                 });
                 $this->replace_middle($vstack, $expression, $l, $r, $types[0], array_values($tmp));
                 return true;
