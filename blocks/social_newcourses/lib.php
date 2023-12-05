@@ -100,5 +100,5 @@ function block_social_newcourses_render_courses_content($perpage = 1) {
 
 function block_social_newcourses_cmp($a, $b) {
     if ($a->sharedtime == $b->sharedtime) return 0;
-    return ($a->sharedtime < $b->sharedtime) ? -1 : 1;
+    return ($a->sharedtime < $b->sharedtime) ? 1 : -1;
 }
