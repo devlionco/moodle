@@ -43,6 +43,7 @@ $string['reportregrade'] = 'חישוב ציונים מחדש';
 $string['editingtask'] = 'עריכת משימה';
 $string['studentsnograde'] = 'תלמידים לא קיבלו ציון';
 $string['openquestionwaiting'] = 'שאלות פתוחות ממתינות להשלמת ציון';
+$string['reportgrading'] = 'מתן ציון לשאלות פתוחות';
 $string['wrong'] = 'שגו';
 $string['raiseflag'] = 'הרימו דגל';
 $string['usehint'] = 'השתמשו ברמז';

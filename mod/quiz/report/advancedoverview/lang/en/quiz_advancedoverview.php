@@ -43,6 +43,7 @@ $string['reportregrade'] = 'Report regrade';
 $string['editingtask'] = 'Editing a task';
 $string['studentsnograde'] = 'Students did not receive a grade';
 $string['openquestionwaiting'] = 'Open questions await completion of a grade';
+$string['reportgrading'] = 'Report grading';
 $string['wrong'] = 'Wrong';
 $string['raiseflag'] = 'Raise a flag';
 $string['usehint'] = 'Use a hint';
