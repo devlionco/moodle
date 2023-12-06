@@ -5621,7 +5621,10 @@ class assign {
             if ($feedbackstatus) {
                 $o .= $this->get_renderer()->render($feedbackstatus);
             }
-
+            else {
+                // Show rubric criteria for ungraded students.
+                $o .= $this->print_rubric_status($this->context->id);
+            }
             // If there is more than one submission, show the history.
             $history = $this->get_assign_attempt_history_renderable($user);
             if (count($history->submissions) > 1) {
