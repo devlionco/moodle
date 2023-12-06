@@ -220,6 +220,40 @@ class upload_course_to_catalog extends moodleform {
                 $mform->addElement('html', $html);
                 break;
 
+            case 'multiselect':
+                if ($item->multiselecttype == 'single') {
+                    if (isset($default[$item->shortname])) {
+                        foreach ($item->data_formated as $key => $t) {
+                            if ($t['metadata_value'] == $default[$item->shortname]) {
+                                $item->data_formated[$key]['metadata_checked'] = true;
+                            } else {
+                                $item->data_formated[$key]['metadata_checked'] = false;
+                            }
+                        }
+                    }
+                    if (!isset($item->format_checkbox)) {
+                        $item->format_checkbox = false;
+                        $item->format_radio = true;
+                    }
+                    $html = $OUTPUT->render_from_template('community_sharecourse/elements/radio-buttons-row', $item);
+                    $mform->addElement('html', $html);
+                }
+
+                if ($item->multiselecttype == 'multi') {
+                    if (isset($default[$item->shortname])) {
+                        foreach ($item->data_formated as $key => $t) {
+                            if (in_array($t['metadata_value'], $default[$item->shortname])) {
+                                $item->data_formated[$key]['metadata_checked'] = true;
+                            } else {
+                                $item->data_formated[$key]['metadata_checked'] = false;
+                            }
+                        }
+                    }
+                    $html = $OUTPUT->render_from_template('community_sharecourse/elements/checkbox-buttons', $item);
+                    $mform->addElement('html', $html);
+                }
+                break;
+
             case 'multimenu':
                 if (isset($default[$item->shortname])) {
                     foreach ($item->data_formated as $key => $t) {

@@ -40,7 +40,7 @@ class sharewith {
 
         $this->modulemetadata = \local_metadata\mcontext::module()->get_contextid();
 
-        $query = "SELECT shortname, name, datatype, name as title, description, required, defaultdata, param1 as data
+        $query = "SELECT shortname, name, datatype, name as title, description, required, defaultdata, param1 as data, param2
             FROM {local_metadata_field}
             WHERE contextlevel = ? AND signup != 0
             ORDER BY sortorder ASC";
@@ -76,6 +76,15 @@ class sharewith {
 
             // Add description direction.
             $result[$key]->description_dir = right_to_left() ? 'left' : 'right';
+
+            // Multiselect.
+            if ($item->datatype == 'multiselect') {
+                if ($item->param2 == 1) {
+                    $item->multiselecttype = 'multi';
+                } else {
+                    $item->multiselecttype = 'single';
+                }
+            }
         }
 
         // Remove sourceurl.

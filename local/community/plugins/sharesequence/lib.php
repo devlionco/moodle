@@ -84,6 +84,15 @@ function community_sharesequence_output_fragment_upload_sequence_catalog_page_1(
                         isset($data[$item->shortname . '_checkbox']) ? $data[$item->shortname . '_checkbox'] : '';
                 $default[$item->shortname] = isset($data[$item->shortname]) ? $data[$item->shortname] : '';
                 break;
+            case 'multiselect':
+                if ($item->multiselecttype == 'single') {
+                    $default[$item->shortname] = isset($data[$item->shortname]) ? $data[$item->shortname] : '';
+                }
+
+                if ($item->multiselecttype == 'multi') {
+                    $default[$item->shortname] = isset($data[$item->shortname]) ? explode(',', $data[$item->shortname]) : [];
+                }
+                break;
             case 'multimenu':
                 $default[$item->shortname] = isset($data[$item->shortname]) ? explode(',', $data[$item->shortname]) : [];
                 break;

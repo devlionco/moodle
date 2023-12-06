@@ -490,6 +490,17 @@ class community_sharesequence_external extends external_api {
                                 }
                             }
                             break;
+
+                        case 'multiselect':
+                            if ($field->multiselecttype == 'multi') {
+                                foreach ($data as $key => $item) {
+                                    if ($key == $field->shortname) {
+                                        $arr = explode(',', $data[$field->shortname]);
+                                        $data[$field->shortname] = json_encode($arr, JSON_UNESCAPED_UNICODE);
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
 

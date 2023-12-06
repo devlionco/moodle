@@ -181,6 +181,22 @@ class upload_to_catalog extends moodleform {
                 $mform->addElement('html', $html);
                 break;
 
+            case 'multiselect':
+                if ($item->multiselecttype == 'single') {
+                    if (!isset($item->format_checkbox)) {
+                        $item->format_checkbox = false;
+                        $item->format_radio = true;
+                    }
+                    $html = $OUTPUT->render_from_template('community_sharequestion/elements/radio-buttons-row', $item);
+                    $mform->addElement('html', $html);
+                }
+
+                if ($item->multiselecttype == 'multi') {
+                    $html = $OUTPUT->render_from_template('community_sharequestion/elements/checkbox-buttons', $item);
+                    $mform->addElement('html', $html);
+                }
+                break;
+
             case 'checkbox':
                 $html = $OUTPUT->render_from_template('community_sharequestion/elements/checkbox', $item);
                 $mform->addElement('html', $html);

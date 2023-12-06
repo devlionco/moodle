@@ -115,19 +115,17 @@ class functionHelp {
         $sharewith->setactivityid($sourceactivityid, $courseid);
         $sharewith->prepare_active_fields();
 
-        // Prepare fields for saving.
-        $fields = [];
-        foreach ($sharewith->get_active_fields() as $field) {
-            if (!in_array($field->shortname, ['activitytitle', 'selectsections'])) {
-                $fields[$field->shortname] = $field->datatype;
-            }
-        }
-
         // Userid.
         $this->community_sharewith_update_activity_metadata($sourceactivityid, 'userid', $userid);
 
-        foreach ($fields as $shortname => $datatype) {
-            switch ($datatype) {
+        foreach ($sharewith->get_active_fields() as $item) {
+            if (in_array($item->shortname, ['activitytitle', 'selectsections'])) {
+                continue;
+            }
+
+            $shortname = $item->shortname;
+
+            switch ($item->datatype) {
 
                 // Not standart fields.
                 case 'levelactivity':
@@ -222,6 +220,17 @@ class functionHelp {
                     break;
 
                 case 'multiselect':
+                    if ($item->multiselecttype == 'single') {
+                        $value = isset($post[$shortname]) ? $post[$shortname] : '';
+                        $this->community_sharewith_update_activity_metadata($sourceactivityid, $shortname, $value);
+                    }
+
+                    if ($item->multiselecttype == 'multi') {
+                        $value = json_encode(explode(',', $post[$shortname]), JSON_UNESCAPED_UNICODE);
+                        $this->community_sharewith_update_activity_metadata($sourceactivityid, $shortname, $value);
+                    }
+                    break;
+
                 case 'multimenu':
                     $value = json_encode(explode(',', $post[$shortname]), JSON_UNESCAPED_UNICODE);
                     $this->community_sharewith_update_activity_metadata($sourceactivityid, $shortname, $value);

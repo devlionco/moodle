@@ -215,6 +215,14 @@ function community_sharewith_output_fragment_upload_activity_maagar($args) {
                 }
                 break;
             case 'multiselect':
+                if ($item->multiselecttype == 'single') {
+                    $default[$item->shortname] = isset($data[$item->shortname]) ? $data[$item->shortname] : '';
+                }
+
+                if ($item->multiselecttype == 'multi') {
+                    $default[$item->shortname] = isset($data[$item->shortname]) ? json_decode($data[$item->shortname]) : [];
+                }
+                break;
             case 'multimenu':
                 $default[$item->shortname] = isset($data[$item->shortname]) ? json_decode($data[$item->shortname]) : [];
                 break;
