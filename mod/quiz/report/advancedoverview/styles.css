@@ -712,7 +712,7 @@
 .block_advancedoverview_report #students-table .incorrect .numerical_value {
   display: none;
 }
-.block_advancedoverview_report #students-table .correct,
+/*.block_advancedoverview_report #students-table .correct,*/
 .block_advancedoverview_report #students-table .complete {
   background-image: url("[[pix:quiz_advancedoverview|correct]]");
   background-size: contain;
@@ -720,7 +720,7 @@
   background-position: center;
   margin: 0 auto;
 }
-.block_advancedoverview_report #students-table .correct .numerical_value,
+/*.block_advancedoverview_report #students-table .correct .numerical_value,*/
 .block_advancedoverview_report #students-table .complete .numerical_value {
   display: none;
 }
@@ -761,6 +761,13 @@
 }
 .block_advancedoverview_report #students-table.score-display .tabulator-cell .partiallycorrect {
   background-image: url("[[pix:quiz_advancedoverview|wix]]");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.15rem;
+  margin: 0 auto;
+}
+.block_advancedoverview_report #students-table.score-display .tabulator-cell .correct {
+  background-image: url("[[pix:quiz_advancedoverview|correct]]");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 1.15rem;

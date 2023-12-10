@@ -885,7 +885,7 @@
 			}
 		}
 
-		.correct,
+		//.correct,
 		.complete {
 			background-image: url("[[pix:quiz_advancedoverview|correct]]");
 			background-size: contain;
@@ -945,6 +945,13 @@
 					margin: 0 auto;
 				}
 
+				.correct {
+					background-image: url("[[pix:quiz_advancedoverview|correct]]");
+					background-repeat: no-repeat;
+					background-position: center;
+					background-size: 1.15rem;
+					margin: 0 auto;
+				}
 			}
 		}
 
