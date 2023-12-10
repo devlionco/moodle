@@ -218,7 +218,7 @@ class upload_sequence_to_catalog extends moodleform {
                 }
 
                 if ($item->multiselecttype == 'multi') {
-                    if (isset($default[$item->shortname])) {
+                    if (isset($default[$item->shortname]) && is_array($default[$item->shortname])) {
                         foreach ($item->data_formated as $key => $t) {
                             if (in_array($t['metadata_value'], $default[$item->shortname])) {
                                 $item->data_formated[$key]['metadata_checked'] = true;
@@ -233,7 +233,7 @@ class upload_sequence_to_catalog extends moodleform {
                 break;
 
             case 'multimenu':
-                if (isset($default[$item->shortname])) {
+                if (isset($default[$item->shortname]) && is_array($default[$item->shortname])) {
                     foreach ($item->data_formated as $key => $t) {
                         if (in_array($t['metadata_value'], $default[$item->shortname])) {
                             $item->data_formated[$key]['metadata_checked'] = true;
