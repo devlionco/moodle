@@ -12,3 +12,9 @@ ol,
 ul {
     padding: 0 0 0 25px;
 }
+
+/* EC-489 Disable oercatalog and social menu for mobile. */
+.oer-popup-btn,
+.social-popup-btn {
+    display: none;
+}

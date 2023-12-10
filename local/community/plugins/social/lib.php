@@ -50,5 +50,6 @@ function community_social_get_primarynav_output() {
         'icon' => '',
         'isactive' => $isactive,
         'key' => 'social',
+        'classes' => ['social-popup-btn'],
     ];
 }
