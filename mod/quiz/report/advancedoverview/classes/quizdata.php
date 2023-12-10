@@ -76,8 +76,7 @@ class quizdata {
     public $anonymouscount = 1;
     public $qdisabledviewtypes = ['essay', 'opensheet', 'mlnlpessay', 'description'];
 
-    private $tablestudent = [];
-    private $totalavarage = [];
+    private $tablestudentsdata = [];
 
     public function __construct($cmid, $groupid = -1, $config = null) {
         global $USER, $CFG;
@@ -522,8 +521,6 @@ class quizdata {
             $tabledata = array_merge($tabledata, $userattemptsinfo);
         }
 
-        $this->tablestudent = $tabledata;
-
         return $tabledata;
     }
 
@@ -535,33 +532,30 @@ class quizdata {
         $tabledata['checkbox'] = false;
         $tabledata['usermenubtn'] = false;
 
-        $countstudent = count($this->tablestudent);
+        $countstudent = count($this->tablestudentsdata);
 
         // Grade.
-        $tabledata['grade'] = $countstudent > 0 ? round($this->totalavarage['grade']/$countstudent, 2) : 0;
-
-        // Grade question.
-        $columns = [];
-        foreach ($this->questionids as $questionid) {
-            $question = $this->questions[$questionid];
-
-            if (in_array($question->qtype, $this->qdisabledviewtypes)) {
-                continue;
-            }
-
-            if ($this->quiz->sumgrades == 0) {
-                $questionmaxgrade = 0;
-            } else {
-                $questionmaxgrade = $question->maxmark / $this->quiz->sumgrades * $this->quiz->grade;
-            }
-
-            $columns[] = "Q " . $question->slot . " / " . round($questionmaxgrade);
+        $totalgrade = 0;
+        foreach ($this->tablestudentsdata as $item) {
+            $totalgrade += $item['grade'];
         }
+        $tabledata['grade'] = $countstudent > 0 ? round($totalgrade/$countstudent, 2) : 0;
 
         // Per questions.
         if ($this->config->participants->full_view) {
-            foreach ($columns as $colname) {
-                $tabledata[$colname] = $countstudent > 0 ? round($this->totalavarage[$colname] / $countstudent, 2) : 0;
+            foreach ($this->questionids as $questionid) {
+                $question = $this->questions[$questionid];
+
+                if (in_array($question->qtype, $this->qdisabledviewtypes)) {
+                    continue;
+                }
+
+                $totalgrade = 0;
+                foreach ($this->tablestudentsdata as $item) {
+                    $totalgrade += $item[$question->id]['grade'];
+                }
+
+                $tabledata[$item[$question->id]['colname']] = $countstudent > 0 ? round($totalgrade / $countstudent, 2) : 0;
             }
         }
 
@@ -733,10 +727,6 @@ class quizdata {
                 $attemptgradehtml = '—';
             }
 
-            // Total grade average.
-            $this->totalavarage['grade'] = !isset($this->totalavarage['grade']) ? 0 : $this->totalavarage['grade'];
-            $this->totalavarage['grade'] = $this->totalavarage['grade'] + $attemptgrade;
-
             $rowdata = [
                     'checkbox' => '',
                     'attemptid' => $attempt->id,
@@ -761,6 +751,12 @@ class quizdata {
                     'outlinereportlink' => $outlinereportlink,
             ];
 
+            // Total grade.
+            $specialdata = [
+                    'userid' => $userid,
+                    'grade' => $attemptgrade
+            ];
+
             if ($this->config->participants->full_view) {
                 $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
                 foreach ($this->questionids as $questionid) {
@@ -781,13 +777,20 @@ class quizdata {
 
                     $rowdata[$qindex] = $mark ?: '—';
 
-                    // Total question average.
-                    $grade = $att ? $this->quiz_get_user_question_grade($question, $att) : 0;
-                    $this->totalavarage[$qindex] = !isset($this->totalavarage[$qindex]) ? 0 : $this->totalavarage[$qindex];
-                    $this->totalavarage[$qindex] = $this->totalavarage[$qindex] + $grade;
+                    // Question grade.
+                    $specialdata[$question->id]['gid'] = $question->id;
+                    $specialdata[$question->id]['colname'] = $qindex;
+
+                    $qgrade = $att ? $this->quiz_get_user_question_grade($question, $att) : 0;
+                    $specialdata[$question->id]['grade'] = $qgrade;
+
+                    // Question state.
+                    $specialdata[$question->id]['state'] = $att ? $att->get_question_state_class($question->slot, true) : 'notyetanswered';
                 }
             }
             $data[] = $rowdata;
+
+            $this->tablestudentsdata[] = $specialdata;
         }
 
         return $data;
@@ -1708,37 +1711,67 @@ class quizdata {
     }
 
     public function get_question_wrongs($questionid) {
-        global $DB;
 
-        // Get question attempts.
-        $sql = "SELECT COUNT(*) AS num_wrong
-                FROM {question_attempt_steps} qas
-                JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
-                WHERE qa.questionid = :questionid AND qas.state = 'gradedwrong'";
+        $total = 0;
+        foreach ($this->participants as $student) {
+            $userattempts = quiz_get_user_attempts($this->cm->instance, $student->id, 'all', false);
+            if (!$userattempts) {
+                $attempt = new stdClass;
+                $attempt->userid = $student->id;
+                $attempt->state = null;
+                $attempt->attempt = null;
+                $attempt->sumgrades = null;
+                $attempt->timestart = null;
+                $attempt->timefinish = null;
+                $attempt->id = null;
+                $userattempts = [$attempt];
+            }
 
-        $params = [];
-        $params['questionid'] = $questionid;
+            foreach ($userattempts as $attempt) {
+                $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
+                $question = $this->questions[$questionid];
 
-        $questionattempts = $DB->get_record_sql($sql, $params);
+                // Question state.
+                $state = $att ? $att->get_question_state_class($question->slot, true) : 'notyetanswered';
+                if ($state == 'incorrect') {
+                    $total++;
+                }
+            }
+        }
 
-        return $questionattempts->num_wrong;
+        return $total;
     }
 
     public function get_question_answered($questionid) {
-        global $DB;
 
-        // Get question attempts.
-        $sql = "SELECT COUNT(*) AS answeredcount
-                FROM {question_attempt_steps} qas
-                JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
-                WHERE qa.questionid = :questionid AND qas.state = 'complete'";
+        $total = 0;
+        foreach ($this->participants as $student) {
+            $userattempts = quiz_get_user_attempts($this->cm->instance, $student->id, 'all', false);
+            if (!$userattempts) {
+                $attempt = new stdClass;
+                $attempt->userid = $student->id;
+                $attempt->state = null;
+                $attempt->attempt = null;
+                $attempt->sumgrades = null;
+                $attempt->timestart = null;
+                $attempt->timefinish = null;
+                $attempt->id = null;
+                $userattempts = [$attempt];
+            }
 
-        $params = [];
-        $params['questionid'] = $questionid;
+            foreach ($userattempts as $attempt) {
+                $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
+                $question = $this->questions[$questionid];
 
-        $questionattempts = $DB->get_record_sql($sql, $params);
+                // Question state.
+                $state = $att ? $att->get_question_state_class($question->slot, true) : 'notyetanswered';
+                if (in_array($state, ['correct', 'partiallycorrect'])) {
+                    $total++;
+                }
+            }
+        }
 
-        return $questionattempts->answeredcount;
+        return $total;
     }
 
     public function quiz_advancedoverview_grade_bands($scale, $quizid, $currentgroup,
