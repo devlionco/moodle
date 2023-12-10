@@ -77,6 +77,7 @@ class quizdata {
     public $qdisabledviewtypes = ['essay', 'opensheet', 'mlnlpessay', 'description'];
 
     private $tablestudent = [];
+    private $totalavarage = [];
 
     public function __construct($cmid, $groupid = -1, $config = null) {
         global $USER, $CFG;
@@ -534,6 +535,12 @@ class quizdata {
         $tabledata['checkbox'] = false;
         $tabledata['usermenubtn'] = false;
 
+        $countstudent = count($this->tablestudent);
+
+        // Grade.
+        $tabledata['grade'] = $countstudent > 0 ? round($this->totalavarage['grade']/$countstudent, 2) : 0;
+
+        // Grade question.
         $columns = [];
         foreach ($this->questionids as $questionid) {
             $question = $this->questions[$questionid];
@@ -551,30 +558,10 @@ class quizdata {
             $columns[] = "Q " . $question->slot . " / " . round($questionmaxgrade);
         }
 
-        $countstudent = count($this->tablestudent);
-
-        // Grade.
-        $gradetotal = 0;
-        foreach ($this->tablestudent as $item) {
-            if (is_numeric($item['grade'])) {
-                $gradetotal += $item['grade'];
-            }
-        }
-
-        $tabledata['grade'] = $countstudent > 0 ? round($gradetotal/$countstudent, 2) : 0;
-
         // Per questions.
         if ($this->config->participants->full_view) {
             foreach ($columns as $colname) {
-
-                $tabledata[$colname] = 0;
-                foreach ($this->tablestudent as $item) {
-                    if (is_numeric($item[$colname])) {
-                        $tabledata[$colname] += $item[$colname];
-                    }
-                }
-
-                $tabledata[$colname] = $countstudent > 0 ? round($tabledata[$colname] / $countstudent, 2) : 0;
+                $tabledata[$colname] = $countstudent > 0 ? round($this->totalavarage[$colname] / $countstudent, 2) : 0;
             }
         }
 
@@ -746,6 +733,10 @@ class quizdata {
                 $attemptgradehtml = '—';
             }
 
+            // Total grade average.
+            $this->totalavarage['grade'] = !isset($this->totalavarage['grade']) ? 0 : $this->totalavarage['grade'];
+            $this->totalavarage['grade'] = $this->totalavarage['grade'] + $attemptgrade;
+
             $rowdata = [
                     'checkbox' => '',
                     'attemptid' => $attempt->id,
@@ -790,6 +781,10 @@ class quizdata {
 
                     $rowdata[$qindex] = $mark ?: '—';
 
+                    // Total question average.
+                    $grade = $att ? $this->quiz_get_user_question_grade($question, $att) : 0;
+                    $this->totalavarage[$qindex] = !isset($this->totalavarage[$qindex]) ? 0 : $this->totalavarage[$qindex];
+                    $this->totalavarage[$qindex] = $this->totalavarage[$qindex] + $grade;
                 }
             }
             $data[] = $rowdata;
@@ -798,7 +793,7 @@ class quizdata {
         return $data;
     }
 
-    public function quiz_get_user_question_info($question, $attempt) {
+    private function quiz_get_user_question_grade($question, $attempt) {
 
         if ($attempt->get_question_mark($question->slot)) {
             if ($this->quiz->sumgrades == 0) {
@@ -810,9 +805,15 @@ class quizdata {
             $grade = 0;
         }
 
+        return $grade;
+    }
+
+    private function quiz_get_user_question_info($question, $attempt) {
+
         // Prepare questionlist requiresgrading.
         $this->add_to_openquestions($attempt, $question);
 
+        $grade = $this->quiz_get_user_question_grade($question, $attempt);
         $fullquestionstate = $this->icon_score($attempt, $question->slot, round($grade, 2));
 
         return $fullquestionstate;
