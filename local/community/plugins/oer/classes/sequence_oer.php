@@ -359,8 +359,15 @@ class sequence_oer {
 
         // Activity image.
         $metadataimageactivity = isset($obj->metadata_imageactivity) ? $obj->metadata_imageactivity : '';
-        $context = \context_module::instance($obj->cmid);
-        $obj->imageactivity = \community_oer\main_oer::create_url_image($metadataimageactivity, $context);
+        if (!empty($metadataimageactivity)) {
+            $context = \context_module::instance($obj->cmid);
+            $obj->imageactivity = \community_oer\main_oer::create_url_image($metadataimageactivity, $context);
+        } else {
+            // Sequence image.
+            $sequenceimage = isset($sequence->metadata_simagesequence) ? $sequence->metadata_simagesequence : '';
+            $context = \context_system::instance();
+            $obj->imageactivity = \community_oer\main_oer::create_url_image($sequenceimage, $context);
+        }
 
         // User details.
         $obj->users = [];
