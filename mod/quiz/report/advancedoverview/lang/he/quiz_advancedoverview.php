@@ -62,7 +62,7 @@ $string['late'] = 'באיחור';
 $string['anonymous_firstname'] = 'Anonymous';
 $string['anonymous_lastname'] = 'Username';
 
-$string['viewingprofile'] = 'צפייה בפרויפל';
+$string['viewingprofile'] = 'צפייה בפרופיל';
 $string['passwordreset'] = 'אתחול סיסמא';
 $string['loginasthisstudent'] = 'התחברות כתלמיד זה';
 $string['allcoursereport'] = 'דוח קורס מלא';
