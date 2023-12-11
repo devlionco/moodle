@@ -862,6 +862,7 @@ class quizdata {
             'mlnlpessay',
             'poodllrecording',
             'combined',
+            'indicatoressay',
             'multianswer',
         ];
 

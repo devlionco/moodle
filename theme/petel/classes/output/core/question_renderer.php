@@ -143,7 +143,7 @@ class question_renderer extends \core_question_renderer {
         $output .= html_writer::nonempty_tag('div',
                 $this->response_history($qa, $behaviouroutput, $qtoutput, $options),
                 array('class' => 'history clearfix border p-2'));
-
+        $PAGE->requires->js_call_amd('theme_petel/quiz_comment');
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
