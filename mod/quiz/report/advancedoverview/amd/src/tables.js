@@ -589,7 +589,17 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                     Main.TEMPDATA.rowData = data;
                     let state = data.length > 0 ? false : true;
                     Main.changeStudentActionState(state);
-                    Main.setSelectedStudentsStr(rows.length);
+
+                    let lentable = self.TABLES.studentsTable.getData().length;
+
+                    let len;
+                    if (rows.length === lentable) {
+                        len = lentable - 1;
+                    } else {
+                        len = rows.length;
+                    }
+
+                    Main.setSelectedStudentsStr(len);
                 }
             );
 
