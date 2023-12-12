@@ -759,6 +759,8 @@ class quizdata {
 
             if ($this->config->participants->full_view) {
                 $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
+
+                $qnumberview = 1;
                 foreach ($this->questionids as $questionid) {
                     $question = $this->questions[$questionid];
                     $mark = $att ? $this->quiz_get_user_question_info($question, $att) : null;
@@ -773,7 +775,9 @@ class quizdata {
                         $questionmaxgrade = $question->maxmark / $this->quiz->sumgrades * $this->quiz->grade;
                     }
 
-                    $qindex = "Q " . $question->slot . " / " . round($questionmaxgrade);
+                    //$qnumberview = $question->slot;
+                    $qindex = "Q " . $qnumberview . " / " . round($questionmaxgrade);
+                    $qnumberview++;
 
                     $rowdata[$qindex] = $mark ?: '—';
 
@@ -838,7 +842,6 @@ class quizdata {
 
         return $childquestions;
     }
-
 
     private function add_to_openquestions($attempt, $question) {
 
@@ -1465,6 +1468,8 @@ class quizdata {
         // Table according to questions.
         $tablequestion = [];
         $questionTexts = [];
+
+        $qnumberview = 1;
         foreach ($this->questions as $q) {
 
             if (in_array($q->qtype, $this->qdisabledviewtypes)) {
@@ -1484,10 +1489,12 @@ class quizdata {
             preg_match_all('/<[^>]*>([^<]*)<\/[^>]*>/', $questiontext, $matches);
             $parsedStr = implode(" ", $matches[1]);
             array_push($questionTexts, $parsedStr);
-            $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->slot .
+
+            //$qnumberview = $q->slot;
+            $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $qnumberview .
                     "</span><span class=description>" . $qname . "</span></a>";
             $tablequestion[] = [
-                    '#' => $q->slot,
+                    '#' => $qnumberview,
                     $questiontitle => $questionlink,
                     get_string('answered', 'quiz_advancedoverview') => $questionanswerder,
                     get_string('wrong', 'quiz_advancedoverview') => $questionwrongs,
@@ -1496,6 +1503,7 @@ class quizdata {
                     get_string('usechat', 'quiz_advancedoverview') => $questionchats,
             ];
 
+            $qnumberview++;
         }
 
         $data['count_according_questions'] = count($tablequestion);
