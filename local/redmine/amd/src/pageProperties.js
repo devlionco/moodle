@@ -6,7 +6,7 @@ define(["jquery"], function ($) {
         },
 
         getCourseID: function () {
-            return $('header#page-header').data('courseid');
+            return $('#support-btn-student').data('courseid');
         },
 
         getResolution: function () {

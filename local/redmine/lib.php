@@ -76,9 +76,9 @@ function local_redmine_extend_navigation_menuuser($returnobject, $user, $context
 */
 
 function local_redmine_render_navbar_output() {
-    global $PAGE, $DB, $USER;
+    global $PAGE, $DB, $USER, $COURSE, $CFG;
 
-    $output    = '';
+    $output = '';
 
     if(isloggedin()) {
         $access  = 0;
@@ -87,11 +87,11 @@ function local_redmine_render_navbar_output() {
             $access = 2;
         } else if ($PAGE->context->contextlevel == CONTEXT_COURSE || $PAGE->context->contextlevel == CONTEXT_MODULE) {
 
-            // Get cohort.
-            if ($cohort = $DB->get_record('cohort', ['name' => 'teachers'])) {
-                if (cohort_is_member($cohort->id, $USER->id)) {
-                    $access = 3;
-                }
+            require_once ($CFG->dirroot .'/theme/petel/lib_petel.php');
+
+            $role = add_role_class_to_body();
+            if ($role == 'role-student') {
+                $access = 3;
             }
         }
 
@@ -100,7 +100,7 @@ function local_redmine_render_navbar_output() {
             case '2': // Teacher or editingteacher.
                 $title = get_string('support', 'local_redmine');
 
-            $output = '
+                $output = '
                     <div class="dropdown d-flex align-items-center pr-2 pr-md-3" title="'. $title .'" aria-label="'. $title .'">
                         <a class="support-btn nav-link dropdown-toggle" href="#" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa-light fa-headset"></i>
@@ -134,6 +134,7 @@ function local_redmine_render_navbar_output() {
                         'href'  => '#',
                         'class' => 'support-btn-student fa-light fa-question nav-link',
                         'title' => $title,
+                        'data-courseid' => $COURSE->id,
                         'id'    => 'support-btn-student',
                         'role'  => 'button'));
                 $output .= html_writer::end_tag('a');
