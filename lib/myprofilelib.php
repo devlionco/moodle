@@ -99,7 +99,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $tree->add_node($node);
             }
         }
-        if ($CFG->moe_idp === 'test' || $CFG->moe_idp === NULL) {
+        if (isset($CFG->moe_idp) && ($CFG->moe_idp === 'test' || $CFG->moe_idp === NULL)) {
             $url = 'https://appslimud.education.gov.il/EduLogin/myaccount.aspx';
         } else {
             $url = 'https://apps2.education.gov.il/EduLogin/myaccount.aspx';
