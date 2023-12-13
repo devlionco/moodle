@@ -308,6 +308,7 @@ export const init = function () {
         const state = $(this).prop('checked');
         $("#anonymousmodeToggler1, #anonymousmodeToggler2, #anonymousmodeToggler3").prop('checked', state);
         CONFIG.anonymous_mode = state ? 1 : 0;
+        showLoadingIcon();
         regenerateTable();
         setStatesFromConfig();
 

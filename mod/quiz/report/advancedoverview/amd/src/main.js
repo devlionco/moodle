@@ -74,6 +74,7 @@ export const init = function (cmid, courseid, quizid, defaultconfig) {
         $(SELECTORS.SelectGroupBtn).data('name', name);
         $(SELECTORS.SelectGroupBtn).find('span').html(name);
         $(SELECTORS.SelectGroupBtn).addClass('selected');
+        studentsTableActions.showLoadingIcon();
         self.renderDynamicBlock(cmid, value);
     });
 
