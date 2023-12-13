@@ -432,6 +432,10 @@ class sharewith {
     public function check_quiz_category($cmid = null) {
         global $DB;
 
+        // EC-219 Removed check after adding "fix question flow".
+        return true;
+        /////////////////////////////////////////
+
         $activityid = $cmid ? $cmid : $this->activityid;
 
         // Get mod activity.

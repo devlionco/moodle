@@ -36,6 +36,11 @@
     <div class="activityinstance">
         {{{questionname}}}
     </div>
+    {{#fixquestion}}
+    <div class="fixquestion m-1">
+        {{{fixquestion}}}
+    </div>
+    {{/fixquestion}}
     <span class="actions">
         {{#versionselection}}
             <label for="version-{{slotid}}" class="sr-only">{{#str}}question_version, question{{/str}}</label>

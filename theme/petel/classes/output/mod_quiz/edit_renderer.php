@@ -28,7 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
+use moodle_url;
 use renderable;
+use Std;
+use stdClass;
 
 /**
  * Renderer outputting the quiz editing UI.
@@ -827,6 +830,8 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
      * @return string HTML to output.
      */
     public function question(structure $structure, int $slot, \moodle_url $pageurl) {
+        global $CFG, $PAGE;
+
         // Get the data required by the question_slot template.
         $slotid = $structure->get_slot_id_for_slot($slot);
 
@@ -848,6 +853,24 @@ class edit_renderer extends \mod_quiz\output\edit_renderer {
             'versionselection' => false
         ];
 
+        require_once ($CFG->dirroot . '/local/community/plugins/sharewith/classes/duplicate.php');
+
+        $question = $structure->get_question_in_slot($slot);
+        $quiz = $structure->get_quiz();
+        $quizobj = \quiz::create($quiz->instance);
+
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+        $questioncategoryok = \duplicate::check_question_for_default_category($question, $quizobj);
+        $quizhasattempts = quiz_has_attempts($quiz->id);
+        // Check for attempts.
+        if(!$questioncategoryok && !$quizhasattempts) {
+            $fixquestiondata = new stdClass;
+            $fixquestiondata->url = (new moodle_url('/theme/petel/fix_question.php', ['questionid' => $question->questionid, 'quizid' => $quiz->instance, 'redirecturl' => $PAGE->url]))->out(false);
+            $fixquestiondata->questionid = $question->questionid;
+            $data['fixquestion'] = $this->render_from_template('theme_petel/mod_quiz/fix_question', $fixquestiondata);
+        }
+        $data['questionid'] = $question->questionid;
         $data['versionoptions'] = [];
         if ($structure->get_slot_by_number($slot)->qtype !== 'random') {
             $data['versionselection'] = true;
