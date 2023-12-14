@@ -1,0 +1,77 @@
+.format-flexsections {
+    .petel-custom-tooltip {
+        display: none;
+        min-width: 10rem;
+        font-size: .8rem;
+        background-color: $white;
+        border: 0.0625rem solid $secondary;
+        border-radius: 0.25rem;
+        z-index: 10;
+        box-shadow: 0 0.1875rem 0.375rem 0 rgba(43, 43, 43, .25);
+
+        span {
+            font-family: $primary-font;
+            font-size: 1.125rem;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1;
+            letter-spacing: normal;
+            text-align: left;
+            color: $body-color;
+            white-space: nowrap;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0.5rem 0.3125rem 0 0.3125rem;
+            border-color: $secondary transparent transparent transparent !important;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+
+            border-width: 0.5rem 0.3125rem 0 0.3125rem;
+            border-color: #fff transparent transparent transparent !important;
+            margin-top: 0.0625rem;
+            z-index: 5;
+        }
+
+        &[data-position="top"] {
+            left: 0;
+            bottom: calc(100% + 0.5rem);
+        }
+   
+    
+        &[data-carret-position="center"] {
+            &::before {
+                bottom: -0.5rem;
+                left: 0.5rem;
+            }
+
+            &::after {
+                bottom: -0.5625rem;
+                left: 0.5rem;
+                z-index: -1;
+            }
+        }
+    }
+
+    .activity {
+        .aalink.stretched-link {
+            &:hover {
+                .petel-custom-tooltip {
+                    display: block;
+                }
+            }
+        }
+    }
+}

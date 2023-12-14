@@ -30,12 +30,21 @@
         "modname": "resource"
     }
 }}
-{{#uservisible}}
+<!-- 
     <a href="{{url}}" class="{{linkclasses}} aalink stretched-link" onclick="{{{onclick}}}"
         {{#tooltip}}data-toggle="tooltip" data-placement="{{^position}} top {{/position}}{{position}}"
                             title="{{{tooltip}}}" data-html="true" {{/tooltip}}>
-
         <span class="instancename">{{{instancename}}} {{{altname}}}</span>
+    </a>
+-->
+{{#uservisible}}
+    <a href="{{url}}" class="{{linkclasses}} aalink stretched-link position-relative" onclick="{{{onclick}}}">
+        <span class="instancename">{{{instancename}}} {{{altname}}}</span>
+        {{#tooltip}}
+        <div class="petel-custom-tooltip p-2 position-absolute" data-position="top" data-carret-position="center">
+            <span class="">{{{tooltip}}}</span>
+        </div>
+        {{/tooltip}}
     </a>
 {{/uservisible}}
 {{^uservisible}}
