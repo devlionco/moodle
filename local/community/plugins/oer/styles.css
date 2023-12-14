@@ -1558,7 +1558,8 @@ html[dir=rtl] .sequence-blocks-content .sequence-item-content .nav-control {
 html[dir=rtl] .activity-aside-menu .heading-wrapp .collapse-btn[aria-expanded=false] .fa-sharp.fa-solid.fa-triangle {
   transform: rotate(-90deg);
 }
-html[dir=rtl] .copy-activity-dropdown.show {
+html[dir=rtl] .copy-activity-dropdown.show,
+html[dir=rtl] .copy-sequence-dropdown.show {
   right: 0 !important;
   left: unset;
 }

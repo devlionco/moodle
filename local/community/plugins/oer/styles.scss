@@ -1862,7 +1862,8 @@ html[dir='rtl'] {
         transform: rotate(-90deg);
     }
 
-    .copy-activity-dropdown.show {
+    .copy-activity-dropdown.show,
+    .copy-sequence-dropdown.show {
         right: 0 !important;
         left: unset;
 
