@@ -546,7 +546,7 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
             }
         }
 
-        if ($countcorrectanswer != $countanswered) {
+        if ($countanswered > $countcorrectanswer) {
             return array($fraction, question_state::graded_state_for_fraction($fraction));
         }
 
