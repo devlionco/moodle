@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
-require_once($CFG->dirroot . '/question/type/numerical/numericallib.php');
 
 
 /**
@@ -45,13 +44,6 @@ class qtype_numerical_edit_form extends question_edit_form {
     protected $ap = null;
 
     protected function definition_inner($mform) {
-        global $PAGE;
-
-        $selectors = array('input[name^="unitvalue"]');
-        $numericalunits = array_values(qtype_numerical_get_units_array());
-        $PAGE->requires->js_call_amd('qtype_numerical/autocomplete-teachers', 'init', array(json_encode($selectors), json_encode($numericalunits)));
-        $PAGE->requires->js_call_amd('qtype_numerical/teacher-funcs', 'init');
-
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
                 question_bank::fraction_options());
 
@@ -71,16 +63,6 @@ class qtype_numerical_edit_form extends question_edit_form {
         $elements = $repeated[0]->getElements();
         $elements[0]->setSize(15);
         array_splice($elements, 1, 0, array($tolerance));
-        $repeated[0]->setElements($elements);
-
-        $tolerance = $mform->createElement('text', 'unitvalue',
-                get_string('unit', 'qtype_numerical'), array('size' => 15));
-        $repeatedoptions['unitvalue']['type'] = PARAM_TEXT;
-        $repeatedoptions['unitvalue']['default'] = '';
-        $elements = $repeated[0]->getElements();
-        $elements[0]->setSize(15);
-        array_splice($elements, 1, 0, array($tolerance));
-
         $repeated[0]->setElements($elements);
 
         return $repeated;
@@ -131,12 +113,11 @@ class qtype_numerical_edit_form extends question_edit_form {
             qtype_numerical::UNITINPUT => get_string('editableunittext', 'qtype_numerical'),
             qtype_numerical::UNITRADIO => get_string('unitchoice', 'qtype_numerical'),
             qtype_numerical::UNITSELECT => get_string('unitselect', 'qtype_numerical'),
-            qtype_numerical::UNITNEWTYPE  => get_string('unitnewtype', 'qtype_numerical'),
         );
         $mform->addElement('select', 'multichoicedisplay',
                 get_string('studentunitanswer', 'qtype_numerical'), $unitinputoptions);
         $mform->setDefault('multichoicedisplay',
-                $this->get_default_value('multichoicedisplay', qtype_numerical::UNITNEWTYPE));
+                $this->get_default_value('multichoicedisplay', qtype_numerical::UNITINPUT));
 
         $unitsleftoptions = array(
             0 => get_string('rightexample', 'qtype_numerical'),
@@ -231,11 +212,8 @@ class qtype_numerical_edit_form extends question_edit_form {
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
             unset($this->_form->_defaultValues["tolerance[{$key}]"]);
-            unset($this->_form->_defaultValues["unitvalue[{$key}]"]);
 
             $question->tolerance[$key] = $answer->tolerance;
-            // Kiril, is the following ok?
-            $question->unitvalue[$key] = (isset($answer->unitvalue)) ? $answer->unitvalue : '';
 
             if (is_numeric($question->answer[$key])) {
                 $question->answer[$key] = format_float($question->answer[$key], -1);
@@ -364,11 +342,6 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @return array the updated errors array.
      */
     protected function validate_numerical_options($data, $errors) {
-
-        if($data['multichoicedisplay'] == 3 && $data['unitgradingtypes'] == 1){
-            return $errors;
-        }
-
         if ($data['unitrole'] != qtype_numerical::UNITNONE && trim($data['unit'][0]) == '') {
             $errors['units[0]'] = get_string('unitonerequired', 'qtype_numerical');
         }

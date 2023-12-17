@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot . '/question/type/numerical/numericallib.php');
 
 /**
  * Numerical question renderer class.
@@ -35,26 +34,8 @@ class qtype_numerical_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
-        global $PAGE;
         $question = $qa->get_question();
-
-        $numericalunits = qtype_numerical_prepare_units_for_student($question);
-        $selectors = array('.autocomplete_numerical');
-        $PAGE->requires->js_call_amd('qtype_numerical/autocomplete-student', 'init', array(json_encode($selectors), json_encode($numericalunits)));
-
         $currentanswer = $qa->get_last_qt_var('answer');
-        $currentanswer = str_replace(' ', '', $currentanswer);
-
-        // Correct answer for question preview page.
-        if($options instanceof \qbank_previewquestion\question_preview_options) {
-            foreach($question->answers as $item){
-                if(trim($currentanswer) == trim($item->answer) && isset($item->unit) && !empty($item->unit)){
-                    $currentanswer .= ' '.$item->unit;
-                    break;
-                }
-            }
-        }
-
         if ($question->has_separate_unit_field()) {
             $selectedunit = $qa->get_last_qt_var('unit');
         } else {
@@ -79,35 +60,12 @@ class qtype_numerical_renderer extends qtype_renderer {
         if ($options->correctness) {
             list($value, $unit, $multiplier) = $question->ap->apply_units(
                     $currentanswer, $selectedunit);
-
-            $answer = $question->get_matching_answer($value, $unit, $multiplier);
-
+            $answer = $question->get_matching_answer($value, $multiplier);
             if ($answer) {
-                if(!$answer->newtype && !isset($answer->unitisright)){
-
-                    if(!empty($answer->tolerance)){
-                        $min = $answer->answer - ($answer->answer * $answer->tolerance);
-                        $max = $answer->answer + ($answer->answer * $answer->tolerance);
-                    }else{
-                        $min = $max = $answer->answer;
-                    }
-
-                    if($value >= $min && $value <= $max){
-                        $fraction = 1;
-                    }else{
-                        $fraction = 0;
-                    }
-                }else{
-                    $fraction = $question->apply_unit_penalty($answer->fraction, $answer->unitisright);
-                }
+                $fraction = $question->apply_unit_penalty($answer->fraction, $answer->unitisright);
             } else {
                 $fraction = 0;
             }
-
-            //if($fraction > 0 && $fraction < 1 && isset($answer->penaltytype) && $answer->penaltytype == 'value'){
-            //    $fraction = 0;
-            //}
-
             $inputattributes['class'] .= ' ' . $this->feedback_class($fraction);
             $feedbackimg = $this->feedback_image($fraction);
         }
@@ -118,13 +76,6 @@ class qtype_numerical_renderer extends qtype_renderer {
             $placeholder = $matches[0];
             $inputattributes['size'] = round(strlen($placeholder) * 1.1);
         }
-
-        //If new type enabled
-        if($question->unitdisplay == 3 && $question->unitgradingtype == 1){
-            $inputattributes['class'] .= ' autocomplete_numerical';
-        }
-
-        $inputattributes['class'] .= ' answer-numerical';
 
         $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
 
@@ -177,7 +128,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             $label = $options->add_question_identifier_to_label(get_string('answercolon', 'qtype_numerical'), true);
             $result .= html_writer::tag('label', $label,
                 array('for' => $inputattributes['id']));
-            $result .= html_writer::tag('span', $input, array('class' => 'answer numerical-question'));
+            $result .= html_writer::tag('span', $input, array('class' => 'answer'));
             $result .= html_writer::end_tag('div');
         }
 
@@ -193,8 +144,6 @@ class qtype_numerical_renderer extends qtype_renderer {
     public function specific_feedback(question_attempt $qa) {
         $question = $qa->get_question();
 
-        $feedback = "";
-
         if ($question->has_separate_unit_field()) {
             $selectedunit = $qa->get_last_qt_var('unit');
         } else {
@@ -202,38 +151,17 @@ class qtype_numerical_renderer extends qtype_renderer {
         }
         list($value, $unit, $multiplier) = $question->ap->apply_units(
                 $qa->get_last_qt_var('answer'), $selectedunit);
-        $answer = $question->get_matching_answer($value, $unit, $multiplier);
+        $answer = $question->get_matching_answer($value, $multiplier);
 
         if ($answer && $answer->feedback) {
             $feedback = $question->format_text($answer->feedback, $answer->feedbackformat,
                     $qa, 'question', 'answerfeedback', $answer->id);
         } else {
-
-            if(isset($answer->penaltytype) && $answer->penaltytype == 'value'){
-                $feedback = get_string('feedbackwrongvalue', 'qtype_numerical');
-            }
-
-            if(isset($answer->penaltytype) && $answer->penaltytype == 'unit'){
-                $feedback = get_string('feedbackwrongunit', 'qtype_numerical');
-            }
-
-            if(!isset($answer)){
-                $feedback = get_string('feedbackwronganswer', 'qtype_numerical');
-            }
-
+            $feedback = '';
         }
 
-        //Wrong answer message
-        if($question->unitdisplay == 3 && $question->unitgradingtype == 1){
-            if (!$answer) {
-                $ans = $qa->get_last_qt_var('answer');
-                $ans = str_replace(' ', '', $ans);
-                //$feedback .= html_writer::tag('p', get_string('invalidnumber', 'qtype_numerical'));
-            }
-        }else{
-            if ($question->unitgradingtype && !$question->ap->is_known_unit($unit)) {
-                $feedback .= html_writer::tag('p', get_string('unitincorrect', 'qtype_numerical'));
-            }
+        if ($question->unitgradingtype && !$question->ap->is_known_unit($unit)) {
+            $feedback .= html_writer::tag('p', get_string('unitincorrect', 'qtype_numerical'));
         }
 
         return $feedback;
@@ -246,56 +174,11 @@ class qtype_numerical_renderer extends qtype_renderer {
             return '';
         }
 
-        if($answer->newtype){
-            $response = $answer->answer.' '.$answer->unit;
-        }else {
-            $response = str_replace('.', $question->ap->get_point(), $answer->answer);
-            if ($question->unitdisplay != qtype_numerical::UNITNONE) {
-                $response = $question->ap->add_unit($response);
-            }
+        $response = str_replace('.', $question->ap->get_point(), $answer->answer);
+        if ($question->unitdisplay != qtype_numerical::UNITNONE) {
+            $response = $question->ap->add_unit($response);
         }
 
         return get_string('correctansweris', 'qtype_shortanswer', $response);
-    }
-
-    public function correct_response_old(question_attempt $qa) {
-        $question = $qa->get_question();
-        //$answer = $question->get_correct_answer();
-
-        if ($question->has_separate_unit_field()) {
-            $selectedunit = $qa->get_last_qt_var('unit');
-        } else {
-            $selectedunit = null;
-        }
-        list($value, $unit, $multiplier) = $question->ap->apply_units(
-            $qa->get_last_qt_var('answer'), $selectedunit);
-
-        $answer = null;
-        foreach($question->answers as $correctanswer){
-            if($correctanswer->answer == $value && $correctanswer->unit == $unit){
-                $answer = $correctanswer;
-                break;
-            }
-        }
-
-        if (!$answer) {
-            return '';
-        }
-
-        if($answer->newtype){
-            $response = str_replace('.', $question->ap->get_point(), $answer->answer);
-            if ($question->unitdisplay != qtype_numerical::UNITNONE) {
-                $response = $question->ap->add_unit($response);
-            }
-
-            return get_string('correctansweris', 'qtype_shortanswer', $response.$answer->unit);
-        }else{
-            $response = str_replace('.', $question->ap->get_point(), $answer->answer);
-            if ($question->unitdisplay != qtype_numerical::UNITNONE) {
-                $response = $question->ap->add_unit($response);
-            }
-
-            return get_string('correctansweris', 'qtype_shortanswer', $response);
-        }
     }
 }
