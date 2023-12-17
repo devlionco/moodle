@@ -74,7 +74,7 @@ class quizdata {
     public $openquestionslist = [];
     public $childopenquestionslist = [];
     public $anonymouscount = 1;
-    public $qdisabledviewtypes = ['essay', 'opensheet', 'mlnlpessay', 'description'];
+    public $qdisabledviewtypes = ['description'];
 
     private $tablestudentsdata = [];
 
