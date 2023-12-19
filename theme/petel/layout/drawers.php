@@ -157,3 +157,20 @@ $templatecontext = [
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
+
+// EC-497.
+if ($PAGE->url->get_path() == '/question/bank/editquestion/question.php') {
+    if (strpos($PAGE->url->get_param('returnurl'), '/mod/quiz/attempt.php') !== false) {
+        if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
+
+            $url = new \moodle_url('/mod/quiz/startattempt.php', ['cmid' => $cmid, 'sesskey' => sesskey(), 'forcenew' => 1]);
+
+            $PAGE->requires->js_amd_inline('
+                require(["jquery"], function($) {
+                    let obj = $("input[name='."'returnurl'".']");
+                    obj.val("'.$url->out_as_local_url().'");                                        
+                });
+            ');
+        }
+    }
+}
