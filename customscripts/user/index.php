@@ -27,6 +27,25 @@ if(!isset($CFG->custom_participiants_page_enable) || $CFG->custom_participiants_
     exit;
 }
 
+// Get count of participants.
+$sql = "
+            SELECT u.id FROM {user_enrolments} ue
+            JOIN {enrol} e ON e.id = ue.enrolid
+            JOIN {user} u ON ue.userid = u.id    
+            JOIN {role_assignments} ra ON (u.id = ra.userid)
+            JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = :instanceid)
+            GROUP BY u.id                        
+        ";
+
+$params['instanceid'] = optional_param('id', 0, PARAM_INT);
+
+$countparticipants = count($DB->get_records_sql($sql, $params));
+
+if(isset($CFG->course_participants_cutoff) && $countparticipants > $CFG->course_participants_cutoff ){
+    require_once($CFG->dirroot.'/customscripts/user/index_original.php');
+    exit;
+}
+
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/notes/lib.php');
