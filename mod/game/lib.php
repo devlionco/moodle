@@ -423,7 +423,7 @@ function game_scale_used ($gameid, $scaleid) {
  * @param boolean $nullifnone
  */
 function game_update_grades($game=null, $userid=0, $nullifnone=true) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (!function_exists('grade_update')) { // Workaround for buggy PHP versions.
         if (file_exists( $CFG->libdir.'/gradelib.php')) {
@@ -579,7 +579,9 @@ function game_get_recent_mod_activity(&$activities, &$index, $timestart, $course
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
     if (is_null($modinfo->groups)) {
-        $modinfo->groups = groups_get_user_groups($course->id); // Load all my groups and cache it in modinfo.
+        $groups = groups_get_user_groups($course->id); // Load all my groups and cache it in modinfo.
+    } else {
+        $groups = $modinfo->groups;
     }
 
     $aname = format_string($cm->name, true);
@@ -596,7 +598,7 @@ function game_get_recent_mod_activity(&$activities, &$index, $timestart, $course
                     continue;
                 }
                 $usersgroups = array_keys($usersgroups);
-                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $interset = array_intersect($usersgroups, $groups[$cm->id]);
                 if (empty($intersect)) {
                     continue;
                 }
@@ -937,6 +939,7 @@ function game_extend_settings_navigation($settings, $gamenode) {
 
 /* Returns an array of game type objects to construct menu list when adding new game  */
 require($CFG->dirroot.'/version.php');
+$branch = '401';
 if ($branch >= '31' && $branch < '401') {
     define('USE_GET_SHORTCUTS', '1');
 }
@@ -1230,6 +1233,7 @@ if (defined( 'GAME_MOODLE_401')) {
          \stdClass $user, \stdClass $course, &$types, $kind) {
         global $OUTPUT, $CFG, $DB;
 
+        $type='';
         $name = 'hide'.$type;
         $hide = ( isset( $config->$name) ? ($config->$name != 0) : false);
         if ($hide) {
