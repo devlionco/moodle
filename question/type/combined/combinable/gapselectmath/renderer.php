@@ -95,6 +95,6 @@ class qtype_combined_gapselectmath_embedded_renderer extends qtype_renderer
         // Add accessibility label for input.
         $labelhtml = html_writer::tag('label', get_string('answer') . ' ' . $subq->get_identifier(),
                 array('for' => $attributes['id'], 'class' => 'accesshide'));
-        return html_writer::tag('span', $labelhtml . $selecthtml, array('class' => 'control d-flex align-items-center'));
+        return html_writer::tag('div', $labelhtml . $selecthtml, array('class' => 'control d-inline-flex align-items-center'));
     }
 }
