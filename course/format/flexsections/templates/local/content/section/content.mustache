@@ -95,6 +95,14 @@
 {{/ core_courseformat/local/content/section/header }}
 {{/header}}
 
+{{^header}}
+    {{#singleheader}}
+    {{$ core_courseformat/local/content/section/header }}
+        {{> core_courseformat/local/content/section/header }}
+    {{/ core_courseformat/local/content/section/header }}
+    {{/singleheader}}
+{{/header}}
+
 {{#restrictionlock}}
     <div class="align-self-center ml-2">
         {{#pix}}t/unlock, core{{/pix}}

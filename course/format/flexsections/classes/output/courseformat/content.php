@@ -60,7 +60,9 @@ class content extends \core_courseformat\output\local\content {
         if ($this->format->get_viewed_section()) {
             // Do not display the "General" section when on a page of another section.
             if ($this->format->get_format_option('section0') == FORMAT_FLEXSECTIONS_SECTION0_COURSEPAGE) {
-                $data->initialsection = null;
+                if (isset($data->initialsection) && $data->initialsection->num == 0) {
+                    $data->initialsection = null;
+                }
             }
 
             // Add 'back to parent' control.
