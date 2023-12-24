@@ -532,13 +532,16 @@ class quizdata {
         $tabledata['checkbox'] = false;
         $tabledata['usermenubtn'] = false;
 
-        $countstudent = count($this->tablestudentsdata);
-
         // Grade.
-        $totalgrade = 0;
+        $totalgrade = $countstudent = 0;
         foreach ($this->tablestudentsdata as $item) {
-            $totalgrade += $item['grade'];
+            if ($item['grade'] > 0) {
+                $totalgrade += $item['grade'];
+                $countstudent++;
+            }
+
         }
+
         $tabledata['grade'] = $countstudent > 0 ? round($totalgrade/$countstudent, 2) : 0;
 
         // Per questions.
@@ -550,9 +553,12 @@ class quizdata {
                     continue;
                 }
 
-                $totalgrade = 0;
+                $totalgrade = $countstudent = 0;
                 foreach ($this->tablestudentsdata as $item) {
-                    $totalgrade += $item[$question->id]['grade'];
+                    if (in_array($item[$question->id]['state'], ['correct', 'partiallycorrect', 'incorrect', 'notanswered'])) {
+                        $totalgrade += $item[$question->id]['grade'];
+                        $countstudent++;
+                    }
                 }
 
                 $tabledata[$item[$question->id]['colname']] = $countstudent > 0 ? round($totalgrade / $countstudent, 2) : 0;
