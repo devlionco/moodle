@@ -96,8 +96,6 @@ class section extends \core_courseformat\output\local\content\section {
             'lazyload' => $lazyload
         ];
         $haspartials = [];
-        $haspartials['header'] = $this->add_header_data($data, $output);
-
         $haspartials['availability'] = $this->add_availability_data($data, $output);
         $haspartials['visibility'] = $this->add_visibility_data($data, $output);
         $haspartials['editor'] = $this->add_editor_data($data, $output);
