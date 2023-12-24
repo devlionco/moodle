@@ -49,12 +49,23 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
         //applet1,
 
         init: function (appletParametersID) {
+            window.addEventListener("beforeprint", () => {$('body').width(20000)});
+            window.addEventListener("afterprint", () => {$('body').width(window.innerWidth)});
             window.GGBQ = this;
             var ggbDataset = document.getElementById(appletParametersID).dataset;
             var slot = ggbDataset.slot;
             // Add current scaling container to the object store for being able to access it later on.
             scalingContainers[slot] = ggbDataset.scalingcontainerclass;
-
+            const geogebraLoadedInterval = setInterval(() => {
+                //Check if geogebras are fully loaded
+                if($('.ggbcontainer').length === $('.applet_scaler:has(canvas)').length) {
+                    $('.EuclidianPanel').on('click', (e) => {
+                        const previousWidth = $('.GeoGebraFrame.applet-focused')[0].parentElement.offsetHeight
+                        $('.GeoGebraFrame.applet-focused').css('height', `${previousWidth}px`)
+                    })
+                    clearInterval(geogebraLoadedInterval)
+                }
+            }, 500)
             $('.ggbloading').hide()
             window.ggbAppletOnLoad = function (ggbAppletId) {
                 if (ggbAppletId != -1) {

@@ -19,9 +19,6 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
                 $('input[name="ggbparameters"]').val(JSON.stringify(window.applet1.getParameters()));
                 $('input[name="ggbviews"]').val(JSON.stringify(window.applet1.getViews()));
                 $('input[name="ggbcodebaseversion"]').val(window.applet1.getHTML5CodebaseVersion());
-                if(document.getElementById('applet_container1').offsetWidth < 700) {
-                    document.ggbApplet.setWidth(1000)
-                }
                 if (typeof (this.ggbcheckb) == "undefined") {
                     var applet = document.ggbApplet;
                     $('input[name="ggbxml"]').val(applet.getXML());

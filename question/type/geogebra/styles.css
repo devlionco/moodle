@@ -13,17 +13,10 @@
 .ggb_preview {
     z-index: 0 !important;
 }
-.highlightDraggers{
-    min-height: 765px !important;
-}
-
 html[dir=rtl] .ggbcontainer{
     direction: rtl;
 }
 
-#page-mod-quiz-review .highlightDraggers{
-    min-width: 950px !important;
-}
 #page:has(.GeoGebraFrame) {
     overflow-x: hidden;
 }
