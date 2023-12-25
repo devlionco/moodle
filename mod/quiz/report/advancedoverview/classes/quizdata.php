@@ -482,6 +482,18 @@ class quizdata {
 
     public function prepare_questions() {
         $this->questions = $this->quizobj->get_questions();
+
+        $numberview = 1;
+        foreach ($this->questions as $key => $question) {
+            if (in_array($question->qtype, $this->qdisabledviewtypes)) {
+                continue;
+            }
+
+            $question->numberview = $numberview;
+            $this->questions[$key] = $question;
+
+            $numberview++;
+        }
     }
 
     public function prepare_students() {
@@ -764,7 +776,6 @@ class quizdata {
             if ($this->config->participants->full_view) {
                 $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
 
-                $qnumberview = 1;
                 foreach ($this->questionids as $questionid) {
                     $question = $this->questions[$questionid];
                     $mark = $att ? $this->quiz_get_user_question_info($question, $att) : null;
@@ -780,8 +791,7 @@ class quizdata {
                     }
 
                     //$qnumberview = $question->slot;
-                    $qindex = "Q " . $qnumberview . " / " . round($questionmaxgrade);
-                    $qnumberview++;
+                    $qindex = "Q " . $question->numberview . " / " . round($questionmaxgrade);
 
                     $rowdata[$qindex] = $mark ?: '—';
 
@@ -897,11 +907,10 @@ class quizdata {
     }
 
     private function prepare_openquestions() {
+
         foreach ($this->openquestions as $key => $value) {
 
             $question = $this->questions[$key] ?? $this->childopenquestionslist[$key];
-
-            $item = new stdClass;
 
             $link = new moodle_url('/mod/quiz/report.php', [
                 'id' => $this->cm->id,
@@ -911,10 +920,11 @@ class quizdata {
                 'grade' => 'needsgrading',
             ]);
 
+            $item = new stdClass;
             $item->count_students = $value;
             $item->name = $question->name;
             $item->link = $link->out(false);
-            $item->qnumber = $question->slot;
+            $item->qnumber = $question->numberview;
 
             $this->openquestionslist[] = $item;
         }
@@ -1480,7 +1490,6 @@ class quizdata {
         $tablequestion = [];
         $questionTexts = [];
 
-        $qnumberview = 1;
         foreach ($this->questions as $q) {
 
             if (in_array($q->qtype, $this->qdisabledviewtypes)) {
@@ -1502,10 +1511,10 @@ class quizdata {
             array_push($questionTexts, $parsedStr);
 
             //$qnumberview = $q->slot;
-            $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $qnumberview .
+            $questionlink = "<a class=d-flex target=_blank href=" . $url . "><span class=qname>" . $questiontitle . " " . $q->numberview .
                     "</span><span class=description>" . $qname . "</span></a>";
             $tablequestion[] = [
-                    '#' => $qnumberview,
+                    '#' => $q->numberview,
                     $questiontitle => $questionlink,
                     get_string('answered', 'quiz_advancedoverview') => $questionanswerder,
                     get_string('wrong', 'quiz_advancedoverview') => $questionwrongs,
@@ -1513,8 +1522,6 @@ class quizdata {
                     get_string('usehint', 'quiz_advancedoverview') => $questionhints,
                     get_string('usechat', 'quiz_advancedoverview') => $questionchats,
             ];
-
-            $qnumberview++;
         }
 
         $data['count_according_questions'] = count($tablequestion);
