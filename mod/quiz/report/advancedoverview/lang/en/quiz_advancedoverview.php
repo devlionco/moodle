@@ -93,7 +93,7 @@ $string['team'] = 'Team';
 
 $string['question'] = 'Question';
 $string['searchstudent'] = 'Search student...';
-$string['scoredisplay'] = 'Score display';
+$string['scoredisplay'] = 'Partial score display';
 $string['extendedview'] = 'Extended view';
 $string['scoreranges'] = 'Score ranges';
 $string['responseattempts'] = 'Response attempts';

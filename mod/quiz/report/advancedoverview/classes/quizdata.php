@@ -499,7 +499,6 @@ class quizdata {
             $userattempts = quiz_get_user_attempts($this->cm->instance, $student->id, 'all', false);
 
             if (!$userattempts) {
-
                 $attempt = new stdClass;
                 $attempt->userid = $student->id;
                 $attempt->state = null;
@@ -510,7 +509,6 @@ class quizdata {
                 $attempt->id = null;
 
                 $userattempts = [$attempt];
-
             }
 
             $userattemptsinfo = $this->table_data_user($userattempts, $student->id);
@@ -939,6 +937,13 @@ class quizdata {
             $questionstate = '—';
         }
 
+        if (in_array($questionstateclass, ['partiallycorrect', 'incorrect', 'correct'])) {
+            $celltransform = true;
+        } else {
+            $celltransform = false;
+        }
+
+        $data->celltransform = $celltransform;
         $data->questionstate = $questionstate;
         $data->grade = $grade;
         $data->link = $link->out(false);
@@ -1516,6 +1521,7 @@ class quizdata {
         $data['questionTexts'] = json_encode(['texts' => $questionTexts]);
         $data['enable_table_according_questions'] = count($tablequestion) > 0 ? true : false;
         $data['data_table_according_questions'] = json_encode($tablequestion, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
         // Students table.
         $data = array_merge($data, $this->get_render_students_data());
 

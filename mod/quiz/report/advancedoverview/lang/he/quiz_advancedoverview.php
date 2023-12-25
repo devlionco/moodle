@@ -93,7 +93,7 @@ $string['team'] = 'צוות';
 
 $string['question'] = 'שאלה מס';
 $string['searchstudent'] = 'חיפוש תלמיד...';
-$string['scoredisplay'] = 'הצגת ניקוד';
+$string['scoredisplay'] = 'ניקוד חלקי';
 $string['extendedview'] = 'תצוגה מורחבת';
 $string['scoreranges'] = 'טווחי ציונים';
 $string['responseattempts'] = 'נסיונות מענה';

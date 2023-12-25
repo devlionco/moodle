@@ -1,1 +1,7 @@
+{{#celltransform}}
 <a href={{link}} target=popup class=cellqlink><div class={{questionstateclass}} state><div class=sr-only>{{questionstate}}</div><div class=numerical_value>{{grade}}</div></div></a>
+{{/celltransform}}
+
+{{^celltransform}}
+    <a href={{link}} target=popup class=cellqlink><div class= state><div>{{questionstate}}</div></div></a>
+{{/celltransform}}
