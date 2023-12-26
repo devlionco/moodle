@@ -131,6 +131,8 @@ class qtype_essay_renderer extends qtype_renderer {
             }
         }
 
+        $result = preg_replace('/brokenfile.php#/', 'draftfile.php', $result);
+
         return $result;
     }
 
@@ -392,8 +394,21 @@ class qtype_essay_format_editor_renderer extends qtype_essay_format_renderer_bas
                 $name, $step, $context);
 
         $editor->set_text($response);
-        $editor->use_editor($id, $this->get_editor_options($context),
-                $this->get_filepicker_options($context, $draftitemid));
+
+        $args = new \stdClass();
+        // need these three to filter repositories list.
+        $args->accepted_types = ['web_image'];
+        $args->return_types = 15;
+        $args->context = $context;
+        $args->maxbytes = 0;
+        //$args->itemid = $draftitemid;
+        $args->env = 'filepicker';
+
+        // Advimage plugin.
+        $fpoptions = $this->get_filepicker_options($context, $draftitemid);
+        $fpoptions['image'] = (object)initialise_filepicker($args);
+
+        $editor->use_editor($id, $this->get_editor_options($context), $fpoptions);
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_essay'));
         $output = html_writer::tag('label', $responselabel, [

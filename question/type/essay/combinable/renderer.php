@@ -133,6 +133,8 @@ STYLE;
                     array('class' => 'alert quizfeedback'));
         }
 
+        $result = preg_replace('/brokenfile.php#/', 'draftfile.php', $result);
+
         return $result;
     }
 
