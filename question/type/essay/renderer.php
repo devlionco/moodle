@@ -262,7 +262,7 @@ class qtype_essay_renderer extends qtype_renderer {
                 LEFT JOIN {question_references} qr ON qr.itemid = qs.id
                 WHERE qr.questionbankentryid = ?";
 
-        $params = [$qa->get_question()->id];
+        $params = [$qa->get_question()->questionbankentryid];
 
         if ($quiz = $DB->get_record_sql($sql, $params)) {
             $response = in_array($quiz->preferredbehaviour, $allowedbehaviours) ? true : false;
