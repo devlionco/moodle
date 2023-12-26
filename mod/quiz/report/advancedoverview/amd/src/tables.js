@@ -611,6 +611,10 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
 
                 // Attaching children.
                 tableData.forEach(function (row) {
+                    if (row.userid === "summary") {
+                        return;
+                    }
+
                     if (row.hasOwnProperty("_children")) {
                         td2.push(row);
                         row._children.forEach(function (ch) {
@@ -663,46 +667,44 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                     // Changing titles.
                     for (var prop2 in row) {
                         if (row.hasOwnProperty(prop2)) {
-                            if (row.hasOwnProperty(prop2)) {
-                                switch (prop2) {
-                                    case "fullname":
-                                        row[self.translatedStrings.fullname] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "team":
-                                        row[self.translatedStrings.team] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "state":
-                                        row[self.translatedStrings.state] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "attempt_number":
-                                        row[self.translatedStrings.attemptNumber] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "grade":
-                                        row[self.translatedStrings.grade] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "starttime":
-                                        row[self.translatedStrings.starttime] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "endtime":
-                                        row[self.translatedStrings.endtime] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    case "duration":
-                                        row[self.translatedStrings.duration] = row[prop2];
-                                        delete row[prop2];
-                                        break;
-                                    default:
-                                        var value = row[prop2];
-                                        delete row[prop2];
-                                        row[prop2] = value;
-                                        break;
-                                }
+                            switch (prop2) {
+                                case "fullname":
+                                    row[self.translatedStrings.fullname] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "team":
+                                    row[self.translatedStrings.team] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "state":
+                                    row[self.translatedStrings.state] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "attempt_number":
+                                    row[self.translatedStrings.attemptNumber] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "grade":
+                                    row[self.translatedStrings.grade] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "starttime":
+                                    row[self.translatedStrings.starttime] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "endtime":
+                                    row[self.translatedStrings.endtime] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "duration":
+                                    row[self.translatedStrings.duration] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                default:
+                                    var value = row[prop2];
+                                    delete row[prop2];
+                                    row[prop2] = value;
+                                    break;
                             }
                         }
                     }
