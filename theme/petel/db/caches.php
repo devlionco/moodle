@@ -15,17 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package local_diagnostic
- * @copyright 2021 Devlion.co
- * @author Evgeniy Voevodin
+ * Plugin cache definitions.
+ *
+ * @package   theme_petel
+ * @copyright   2023 Devlion <info@devlion.co>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version   = 2023121800;
-$plugin->release   = '1.0';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->requires  = 2020082200;
-$plugin->dependencies = [
-    'local_clusters' => 2022071600
-];
-$plugin->component = 'local_diagnostic';
+defined('MOODLE_INTERNAL') || die();
+
+$definitions = array(
+    'instancecolors' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+    ),
+);

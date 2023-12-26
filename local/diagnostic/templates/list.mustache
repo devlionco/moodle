@@ -5,6 +5,16 @@
         {{name}}
     </div>
     <div data-select="{{name}}" class="question-scroll-table">
+        {{#hasimportant}}
+            <div class="important-shifter" style="background-color:{{{secondarylight}}}">
+                <div class="important-shifter-obj selected allquestions" style="background-color:{{{secondary}}}">
+                    {{#str}}allquestions, local_diagnostic{{/str}}
+                </div>
+                <div class="important-shifter-obj">
+                    {{#str}}requiredquestions, local_diagnostic{{/str}}
+                </div>
+            </div>
+        {{/hasimportant}}
         <table class="question-table">
             <tr>
                 <th>
@@ -13,8 +23,8 @@
                 {{#clusters}}
                     <th
                             class="list-table-p-tooltip"
-                            data-toggle="tooltip"
                             data-placement="top"
+                            data-selector="true"
                             title="{{#str}}avggrade, local_diagnostic, {{prc}}{{/str}}">
                         {{name}}<br/>{{prc}}%
                     </th>
@@ -23,14 +33,14 @@
             {{#rows}}
                 <tr>
                     <td
-                            class="list-table-p-tooltip"
-                            data-toggle="tooltip"
+                            class="list-table-p-tooltip{{#important}} importanthdr{{/important}}"
                             data-placement="top"
+                            data-selector="true"
                             title="{{qname}}">
                         {{question}}
                     </td>
                     {{#value}}
-                        <td class="{{color}}">
+                        <td class="{{color}} list-table-p-val{{#important}} importantval{{/important}}">
                             {{prc}}
                         </td>
                     {{/value}}

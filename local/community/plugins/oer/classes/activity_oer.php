@@ -701,6 +701,17 @@ class activity_oer {
                 $obj->data[$key]->metadata_sourceurl = $string;
             }
 
+            if ($obj->data[$key]->mod_type == 'quiz') {
+                $obj->data[$key]->diagnostic = false;
+                $allowedtags = get_config('local_diagnostic','allowedtags');
+                if (isset($obj->data[$key]->tags))  {
+                    $activitytags = array_map('trim', explode(',', $obj->data[$key]->tags));
+                    $allowedtags = array_map('trim', explode(',', $allowedtags));
+                    if (array_intersect($activitytags, $allowedtags)) {
+                        $obj->data[$key]->diagnostic = true;
+                    }
+                }
+            }
         }
 
         return $obj;

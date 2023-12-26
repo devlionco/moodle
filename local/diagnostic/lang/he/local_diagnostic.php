@@ -167,3 +167,10 @@ $string['repositorytoptitle'] = 'הקצאת פעילות ממאגר עבור';
 $string['mlnpmenutext'] = '{$a->quizname}(MLNP {$a->questionname})';
 $string['rebuildlimit'] = 'Rebuild limit';
 $string['rebuildlimitdesc'] = 'Number of attempts starting from which the script will not rebuild centroids';
+
+$string['allquestions'] = 'סטטיסטיקה כללית';
+$string['requiredquestions'] = 'שאלות חשובות ברמה כללית';
+$string['importantquestions'] = 'Enable Important questions functionality';
+$string['importantnum'] = 'מס. שאלות חשובות';
+$string['importantnumdesc'] = 'How many ofss top heatmapped questions will be rendered as important in grouper table';
+$string['oercatalogtooltip'] = 'מותאם לגרופר - כלי לאבחון מתקדם';
