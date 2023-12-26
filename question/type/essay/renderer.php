@@ -125,6 +125,10 @@ class qtype_essay_renderer extends qtype_renderer {
                 $result .= html_writer::tag('div', $check, array('class' => 'im-controls'));
                 $PAGE->requires->js_call_amd('qtype_essay/main', 'init', $jsparams);
             }
+
+            if ($qa->get_state() == question_state::$complete) {
+                $result .=  html_writer::nonempty_tag('div', $this->general_feedback($qa), array('class' => 'generalfeedback outcome clearfix'));
+            }
         }
 
         return $result;
