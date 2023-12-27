@@ -655,7 +655,7 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
     public function grade_responses_individually($part, $response, &$checkunit, $forvalidation = false) {
 
         // Autocomplete.
-        if ($part->autocomplete && $part->answertype == 0) {
+        if ($part->autocomplete && $part->answertype == 0 && is_numeric($part->answer)) {
 
             $tolerance = 0.01;
 
