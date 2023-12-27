@@ -1482,16 +1482,16 @@ class quizdata {
                 continue;
             }
 
-            $questionanswerder = $this->get_question_answered($q->id);
-            $questionwrongs = $this->get_question_wrongs($q->id);
-            $questionflags = $this->get_question_flags($q->id);
-            $questionhints = $this->get_question_hints($q->id);
-            $questionchats = $this->get_question_chats($q->id);
+            $questionanswerder = $this->get_question_answered($q->questionid);
+            $questionwrongs = $this->get_question_wrongs($q->questionid);
+            $questionflags = $this->get_question_flags($q->questionid);
+            $questionhints = $this->get_question_hints($q->questionid);
+            $questionchats = $this->get_question_chats($q->questionid);
 
             $questiontitle = get_string('question');
             $qname = htmlspecialchars($q->name, ENT_QUOTES, 'UTF-8');
             $url = quiz_advancedoverview_get_question_link($q, $this->cm->id);
-            $questiontext = $DB->get_field('question', 'questiontext', array('id' => $q->id));
+            $questiontext = $DB->get_field('question', 'questiontext', array('id' => $q->questionid));
             preg_match_all('/<[^>]*>([^<]*)<\/[^>]*>/', $questiontext, $matches);
             $parsedStr = implode(" ", $matches[1]);
             array_push($questionTexts, $parsedStr);
