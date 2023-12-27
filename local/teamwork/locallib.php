@@ -125,20 +125,25 @@ function if_user_student_on_course($courseid) {
 }
 
 // Return users data for students fo HTML.
-function return_data_for_student_tohtml($cmid, $moduletype, $courseid, $jsonselectgroupid) {
+function return_data_for_student_tohtml($cmid, $moduletype, $courseid) {
     global $USER;
 
-    $result = [];
-    $cards = get_cards($cmid, $moduletype, $courseid, $jsonselectgroupid[0]);
+    $groups = view_groups_select($courseid, $cmid);
 
-    foreach ($cards as $card) {
-        foreach ($card['users'] as $user) {
-            if ($user->userid == $USER->id) {
-                $result[] = $card;
-                break;
+    $result = [];
+    foreach ($groups as $group) {
+        $cards = get_cards($cmid, $moduletype, $courseid, $group->id);
+
+        foreach ($cards as $card) {
+            foreach ($card['users'] as $user) {
+                if ($user->userid == $USER->id) {
+                    $result[] = $card;
+                    break;
+                }
             }
         }
     }
+
     return $result;
 }
 
@@ -339,7 +344,10 @@ function get_students_by_group($groupid, $courseid) {
 
     $roles = $result = [];
 
-    if ($groupmemberroles = groups_get_members_by_role($groupid, $courseid, 'u.id, ' . get_all_user_name_fields(true, 'u'))) {
+    $userfieldsapi = \core_user\fields::for_name();
+    $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+
+    if ($groupmemberroles = groups_get_members_by_role($groupid, $courseid, 'u.id, ' . $allnames)) {
         foreach ($groupmemberroles as $roleid => $roledata) {
             $shortroledata = new stdClass();
             $shortroledata->name = $roledata->name;

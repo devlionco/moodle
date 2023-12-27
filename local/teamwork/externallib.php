@@ -124,7 +124,7 @@ class local_teamwork_external extends external_api {
         }
         // Get information for student.
         if (if_user_student_on_course($courseid)) {
-            $datastudent = return_data_for_student_tohtml($activityid, $moduletype, $courseid, $selectgroupid);
+            $datastudent = return_data_for_student_tohtml($activityid, $moduletype, $courseid);
             $block .= $OUTPUT->render_from_template('local_teamwork/student-info', array('studentCard' => $datastudent));
         }
 
