@@ -26,7 +26,7 @@ export const init = (singleuse) => {
   draggables.forEach(function(e) {
     e.addEventListener('dragstart', dragStart);
   });
-  document.querySelectorAll('input[class*="droptarget"]').forEach(function(e) {
+  document.querySelectorAll('div[class*="droptarget"]').forEach(function(e) {
     e.addEventListener("dblclick", function() {
       if (Window.singleuse) {
         dragShow(this);
@@ -42,7 +42,9 @@ export const init = (singleuse) => {
    * @param {*} that
    */
   function dragShow(that) {
-    var targetVal = that.value;
+    const dropTarget = that.classList.contains('droptarget') ? that : that.closest(".droptarget");
+    const dropTargetInput = dropTarget.nextElementSibling;
+    var targetVal = dropTargetInput.value;
     draggables.forEach(function(e) {
       if (e.innerText.trim() === targetVal.trim()) {
         e.classList.remove("hide");
@@ -66,7 +68,15 @@ export const init = (singleuse) => {
    */
   function drop(e) {
     dragShow(this);
-    e.target.value = e.dataTransfer.getData('text/plain');
+    e.stopPropagation();
+    e.preventDefault();
+    const dropTarget = e.currentTarget.classList.contains('droptarget') ? e.currentTarget : e.currentTarget.closest(".droptarget");
+    const dropTargetInput = dropTarget.nextElementSibling;
+    dropTargetInput.value = e.dataTransfer.getData('text/plain');
+    dropTarget.dataset.contentValue = e.dataTransfer.getData('content');
+    dropTarget.innerHTML = e.dataTransfer.getData('content');
+
+
     var sourceId = e.dataTransfer.getData("sourceId");
     var sourceEl = document.getElementById(sourceId);
     if (Window.singleuse) {
@@ -81,6 +91,7 @@ export const init = (singleuse) => {
    */
    function dragStart(e) {
     e.dataTransfer.setData('text/plain', e.target.innerText);
+    e.dataTransfer.setData('content', e.target.innerHTML);
     e.dataTransfer.setData('sourceId', this.id);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.dropEffect = "move";

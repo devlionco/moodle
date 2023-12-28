@@ -240,48 +240,47 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
             return html_writer::empty_tag('input', $inputattributes) . $aftergaptext;
         } else {
             /* it is a drag/drop quesiton type */
-            $inputattributes['class'] = 'droptarget ' . $inputclass;
+            $inputattributes['class'] = /* 'droptarget ' .  */ "hidden" . $inputclass;
             if ($question->letterhints) {
                 $inputattributes = $question->get_letter_hints($qa, $inputattributes, $rightanswer, $currentanswer);
             }
 
-            if(isset($inputattributes['disabled']) && $inputattributes['disabled']) {
+            if($currentanswer){
+                $result = '';
+                foreach ($this->allanswers as $potentialanswer) {
+                   if($currentanswer == strip_tags($potentialanswer))
+                   $result = $potentialanswer;
+               }
+               $formula =  $result;
+            }
 
-                $classes = $styles = '';
-                if ($currentanswer) {
-                    $result = '';
-                    foreach ($this->allanswers as $potentialanswer) {
-                        if ($currentanswer == strip_tags($potentialanswer)) {
-                            $result = $potentialanswer;
-                        }
-                    }
-                    $formula = '<span  class= "cloned">' . $result . "</span>";
-                }
+            $classes = '';
+            $styles = '';
 
-                if (!empty($formula)) {
-                    $classes = " dropped";
-                    $styles = "background-color: rgb(255, 255, 255);";
-                }
+            if(!empty($formula)) {
+                $classes = " dropped";
+                $styles = "background-color: rgb(255, 255, 255);";
+            }
 
+            if(isset($inputattributes['disabled']) && $inputattributes['disabled']){
                 $classes .= ' position-relative mr-2 ';
                 $inputattributes['type'] = 'hidden';
-                $aftergaptext .= html_writer::empty_tag('span', array('class' => 'px-1'));
-
-                $html = html_writer::start_tag('div',
-                        array('class' => 'droptarget-wrapper d-inline-flex position-relative align-items-center'));
-                $html .= html_writer::start_tag('div',
-                        array('class' => 'droptarget px-2 d-flex align-items-center h-100 rounded border ' . $classes,
-                                'style' => $styles));
-                if (!empty($formula)) {
-                    $html .= $formula;
-                }
-                $html .= html_writer::end_tag('div');
-                $html .= html_writer::empty_tag('input', $inputattributes) . $aftergaptext;
-                $html .= html_writer::end_tag('div');
-                return $html;
+                $aftergaptext .=  html_writer::empty_tag('span', array('class' => 'px-1'));
             }else{
-                return html_writer::empty_tag('input', $inputattributes) . $aftergaptext;
+                $classes .= ' position-absolute ';
+                $styles .= 'min-width: 100%;';
             }
+
+            $html = html_writer::start_tag('div', array('class' => 'droptarget-wrapper d-flex position-relative align-items-center'));
+            $html .= html_writer::start_tag('div', array('class' => 'droptarget p-2 d-flex align-items-center h-100 bg-white rounded border ' . $classes,
+                    'style' => $styles));
+            if(!empty($formula)) {
+                $html .= $formula;
+            }
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::empty_tag('input', $inputattributes) . $aftergaptext;
+            $html .= html_writer::end_tag('div');
+            return $html;
         }
     }
 
