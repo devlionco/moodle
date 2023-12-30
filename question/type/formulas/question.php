@@ -655,11 +655,12 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
     public function grade_responses_individually($part, $response, &$checkunit, $forvalidation = false) {
 
         // Autocomplete.
-        if ($part->autocomplete && $part->answertype == 0 && is_numeric($part->answer)) {
+        if ($this->is_autocomplete_state($part)) {
 
+            $partanswer = $this->compute_var_answer_for_autocomplete($part);
             $tolerance = 0.01;
 
-            $dano = ['value' => $part->answer, 'unit' => $part->postunit];
+            $dano = ['value' => $partanswer, 'unit' => $part->postunit];
 
             $answer = [
                     'value' =>  isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '',
@@ -965,6 +966,25 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
         }
 
         return $fractionsum / $fractionmax;
+    }
+
+    public function compute_var_answer_for_autocomplete($part) {
+
+        if (is_numeric($part->answer)) {
+            return $part->answer;
+        }
+
+        $vars = $this->get_local_variables($part);     // Contains both global and local variables.
+        if (isset($vars->all[$part->answer]) && !empty($vars->all[$part->answer])) {
+            return isset($vars->all[$part->answer]->value) ? $vars->all[$part->answer]->value : false;
+        }
+
+        return false;
+    }
+
+    public function is_autocomplete_state($part) {
+        $answer = $this->compute_var_answer_for_autocomplete($part);
+        return $part->autocomplete && $part->answertype == 0 && $answer != false ? true : false;
     }
 }
 

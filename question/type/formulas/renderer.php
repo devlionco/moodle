@@ -253,7 +253,7 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
             );
 
             // Class for enable autocomplete and type מספר.
-            if($part->autocomplete  && $part->answertype == 0) {
+            if($question->is_autocomplete_state($part)) {
                 $inputattributes = array(
                         'type' => 'text',
                         'name' => $inputname,
