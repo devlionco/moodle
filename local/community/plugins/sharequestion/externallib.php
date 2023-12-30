@@ -849,9 +849,32 @@ class community_sharequestion_external extends external_api {
                 )
         );
 
+        $courses = [];
+        foreach (\community_sharequestion\copy_from_mycourses::get_courses_for_current_user($params['search']) as $course) {
+
+            if (empty(trim($params['search']))) {
+                $courses[] = $course;
+            } else {
+                $bank = \community_sharequestion\copy_from_mycourses::get_bank_categories_by_course($course->courseid, $params['search']);
+                $categories = \community_sharequestion\copy_from_mycourses::get_quiz_categories_by_course($course->courseid, $params['search']);
+
+                if (!empty($bank) || !empty($categories)) {
+                    $courses[] = $course;
+                }
+            }
+        }
+
+        if (!empty(trim($params['search']))) {
+            $courses = array_values($courses);
+
+            foreach ($courses as $key => $item) {
+                $item->course_show = $key == 0 ? true : false;
+            }
+        }
+
         $result = [
                 'uniqueid' => $uniqueid,
-                'courses' => \community_sharequestion\copy_from_mycourses::get_courses_for_current_user($params['search']),
+                'courses' => $courses,
         ];
 
         return json_encode(['result' => $result]);

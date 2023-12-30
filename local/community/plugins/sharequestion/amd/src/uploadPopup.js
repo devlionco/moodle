@@ -9,26 +9,26 @@ define([
     'core/fragment',
     'jqueryui',
 
-], function ($, Ajax, str, Templates, Notification, ModalFactory, Fragment) {
+], function($, Ajax, str, Templates, Notification, ModalFactory, Fragment) {
 
-    return{
+    return {
 
-        init: function (uniqueid) {
-            var form = $('#sharing_activities_form_'+uniqueid),
+        init: function(uniqueid) {
+            var form = $('#sharing_activities_form_' + uniqueid),
                 self = this;
-            form.on('keydown','input[type="text"]', function(e) {
-                if (e.keyCode === 13 ) {
+            form.on('keydown', 'input[type="text"]', function(e) {
+                if (e.keyCode === 13) {
                     e.preventDefault();
                 }
             });
 
-            form.delegate('[data-descr="addtag"]', 'keydown', function (e) {
+            form.delegate('[data-descr="addtag"]', 'keydown', function(e) {
                 if (e.keyCode === 13 && $(this).val()) {
                     var tag = $('<div class = "tags-item">' + $(this).val() +
                         '<input type = "hidden" name = "tags[]" value = "' + $(this).val() + '"></div>');
                     tag.css("background-color", self.getRandColor());
                     tag.appendTo($(this).parent());
-                    tag.on('click', function () {
+                    tag.on('click', function() {
                         $(this).remove();
                     });
                     $(this).val('');
@@ -47,7 +47,7 @@ define([
 
         },
 
-        uploadActivity: function (e, form) {
+        uploadActivity: function(e, form) {
             let self = this;
 
             e.preventDefault();
@@ -60,36 +60,36 @@ define([
             var serializedForm = form.serializeArray(),
                 data = {};
 
-            serializedForm.forEach(function (item) {
+            serializedForm.forEach(function(item) {
                 data[item.name] = data[item.name] ? data[item.name] + ',' + item.value : item.value;
             });
 
             // Serialized selected sections.
             let selected_sections = [];
-            form.find('.selected-section-block').each(function( index ) {
-                if(!$(this).hasClass('hidden')){
+            form.find('.selected-section-block').each(function(index) {
+                if (!$(this).hasClass('hidden')) {
                     selected_sections.push({
-                        'cat_id':$(this).data("cat_id"),
-                        'course_id':$(this).data("course_id"),
-                        'section_id':$(this).data("section_id"),
+                        'cat_id': $(this).data("cat_id"),
+                        'course_id': $(this).data("course_id"),
+                        'section_id': $(this).data("section_id"),
                     });
                 }
             });
 
-            data['selected_sections'] = selected_sections;
+            data.selected_sections = selected_sections;
 
             // Serialized selected competencies.
             let selected_competencies = [];
-            form.find('.selected-competency-block').each(function( index ) {
-                if(!$(this).hasClass('hidden')){
+            form.find('.selected-competency-block').each(function(index) {
+                if (!$(this).hasClass('hidden')) {
                     selected_competencies.push({
-                        'competency_id':$(this).data("comp_id"),
-                        'section_id':$(this).data("section_id"),
+                        'competency_id': $(this).data("comp_id"),
+                        'section_id': $(this).data("section_id"),
                     });
                 }
             });
 
-            data['selected_competencies'] = selected_competencies;
+            data.selected_competencies = selected_competencies;
 
             // Selected_questions.
             const questionsContainer = document.querySelector('div.mod-quiz-edit-content');
@@ -113,24 +113,24 @@ define([
                 }
             });
 
-            data['selected_questions'] = JSON.stringify(selected_questions);
+            data.selected_questions = JSON.stringify(selected_questions);
 
-            var parseResponse = function (response) {
+            var parseResponse = function(response) {
                 if (response.result) {
 
                     if (!response.validation) {
                         let firstNameError = '';
                         let errors = JSON.parse(response.errors);
-                        $.each(errors, function( index, value ) {
-                            if(index == 0) {
+                        $.each(errors, function(index, value) {
+                            if (index === 0) {
                                 firstNameError = value;
                             }
-                            form.find('.error-'+value).show();
+                            form.find('.error-' + value).show();
                         });
                         // Scroll to first error.
                         var parentModal = form.closest('.modal-body');
-                        var uploadActivityOffset = +parentModal.find('.uploadactivity').offset().top*(-1);
-                        var targetOffset = parentModal.find('.error-' + firstNameError).closest('.form-group').offset().top*(-1);
+                        var uploadActivityOffset = +parentModal.find('.uploadactivity').offset().top * (-1);
+                        var targetOffset = parentModal.find('.error-' + firstNameError).closest('.form-group').offset().top * (-1);
                         var result = uploadActivityOffset - targetOffset;
                         parentModal.closest('.modal-body').animate({scrollTop: result}, 500);
 
@@ -172,7 +172,7 @@ define([
             }]);
         },
 
-        getRandColor: function () {
+        getRandColor: function() {
             var color = Math.floor(Math.random() * Math.pow(256, 3)).toString(16);
             while (color.length < 6) {
                 color = "0" + color;
@@ -180,7 +180,7 @@ define([
             return "#" + color;
         },
 
-        informationPopup: function (title, html) {
+        informationPopup: function(title, html) {
             var modalPromise = ModalFactory.create({
                 type: ModalFactory.types.ALERT,
                 title: title,
@@ -193,16 +193,17 @@ define([
             }).fail(Notification.exception);
         },
 
-        closeModalFactory: function (form) {
+        closeModalFactory: function(form) {
             form.parent().parent().parent().find('.close').click();
         },
 
         /**
          * Show spinner.
          *
+         * @param form
          * @method addSpinner
          */
-        addBtnSpinner: function (form) {
+        addBtnSpinner: function(form) {
             form.find('.modalspinner').removeClass('d-none');
             form.find('.modalspinner').addClass('loading');
             form.find('.modalspinner').parent().prop('disabled', true);
@@ -211,9 +212,10 @@ define([
         /**
          * Remove spinner.
          *
+         * @param form
          * @method addSpinner
          */
-        removeBtnSpinner: function (form) {
+        removeBtnSpinner: function(form) {
             form.find('.modalspinner').removeClass('loading');
             form.find('.modalspinner').addClass('d-none');
             form.find('.modalspinner').parent().prop('disabled', false);

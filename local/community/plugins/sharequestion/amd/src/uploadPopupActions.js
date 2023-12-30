@@ -8,7 +8,7 @@ define([
     'core/templates',
     'core/str',
     'core/notification',
-], function ($, Ajax, Templates, str, Notification,) {
+], function($, Ajax, Templates, str, Notification,) {
 
     var competencies = {};
     var maxNumberOfSection = 1;
@@ -17,17 +17,20 @@ define([
         el.html('');
 
     }
+
     function disableDropdownBtn(el) {
         if (!el.hasClass('disabled')) {
             el.addClass('disabled');
         }
     }
+
     function enableDropdownBtn(el) {
 
         if (el.hasClass('disabled')) {
             el.removeClass('disabled');
         }
     }
+
     function getCompetencies(data) {
         var unique = Math.floor(Date.now() / 1000);
         data.categories.forEach(cat => {
@@ -49,6 +52,7 @@ define([
             });
         });
     }
+
     function showCompetenciesBtn(target, courseid, sectionid) {
 
         var prop = 'course_id-' + courseid;
@@ -56,19 +60,19 @@ define([
             $('.select-competencies-dropdown-wrapper').removeClass('hidden').attr('data-section_id', sectionid);
             var dropdownMenu = target.find('.select-competency-dropdown-menu');
             let context;
-            if(competencies[prop].competencies.length > 0 ) {
+            if (competencies[prop].competencies.length > 0) {
                 context = competencies[prop];
-            } else if(competencies[prop].sections.length > 0) {
+            } else if (competencies[prop].sections.length > 0) {
                 context = {};
-                competencies[prop].sections.forEach(function(el){
-                    if(+el.section_id === sectionid) {
+                competencies[prop].sections.forEach(function(el) {
+                    if (+el.section_id === sectionid) {
                         context.competencies = el.section_competency;
                     }
                 });
-                
+
             }
             Templates.render('community_sharequestion/elements/dropdown-competency-selector', context)
-                .done(function (html, js) {
+                .done(function(html, js) {
                     Templates.replaceNodeContents(dropdownMenu, html, js);
 
                     $(document).on('click', '.category-dropdown-item', (e) => {
@@ -85,9 +89,10 @@ define([
 
         }
     }
+
     function showOercatalogHierarchy(data, dropdownMenu) {
         Templates.render('community_sharequestion/elements/dropdown-category-selector', data)
-            .done(function (html, js) {
+            .done(function(html, js) {
                 Templates.replaceNodeContents(dropdownMenu, html, js);
 
                 $(document).on('click', 'a.category-dropdown-item, a.course-dropdown-item', (e) => {
@@ -105,7 +110,7 @@ define([
             args: {
                 selected: json
             },
-            done: function (response) {
+            done: function(response) {
                 let data = JSON.parse(response.hierarchy);
                 showOercatalogHierarchy(data, dropdownMenu);
             },
@@ -142,6 +147,7 @@ define([
             root.addClass('selected');
         }
     }
+
     function addSelectedCompetency(data, parent) {
 
         var selectedPill = `
@@ -162,20 +168,23 @@ define([
         }
 
     }
+
     function removeSelectedCompetencies(target) {
         target.find('.selected-competency-block').remove();
         target.find('.select-competency-dropdown-menu').empty();
         target.addClass('hidden');
         target.siblings('.add-section-competency-block').hide();
     }
+
     function removeSelectedCompetencyBlock(el) {
         var comp_id = el.closest('.selected-competency-block').data('comp_id');
-        if (el.closest('.section-competency-block').find('.selected-competency-block').length == 0) {
+        if (el.closest('.section-competency-block').find('.selected-competency-block').length === 0) {
             el.closest('.section-competency-block').find('.add-section-competency-block').hide();
         }
         el.closest('.select-competencies-dropdown-wrapper')
             .find('.competency-dropdown-item[data-comp_id="' + comp_id + '"] input').trigger('click');
     }
+
     function removeSelectedSectionBlock(el) {
         var btn = el.siblings('.dropdown-toggle');
         var target = el.closest('.section-competency-block').find('.select-competencies-dropdown-wrapper');
@@ -196,22 +205,24 @@ define([
         enableDropdownBtn(btn);
         btn.closest('.section-competency-block').find('.add-section-competency-block').hide();
     }
+
     function showAllCompetencies(parent) {
         parent.find('.competency-dropdown-item').show();
     }
 
     function competencyAutocomplete(symbol, parent) {
-        parent.find('.competency-dropdown-item').each(function () {
+        parent.find('.competency-dropdown-item').each(function() {
             var el = $(this);
             var string = el.find('label').text();
             var text = symbol.toLowerCase();
-            if (string.toLowerCase().indexOf(text) == -1) {
+            if (string.toLowerCase().indexOf(text) === -1) {
                 el.hide();
             } else {
                 el.show();
             }
         });
     }
+
     function checkCompetenciesAreaHeight(target) {
         var btnHeight = +target.find('button.dropdown-toggle').outerHeight() + 10;
         var pillsHeight = +target.find('.selected-competencies-area-wrapper').outerHeight();
@@ -226,7 +237,7 @@ define([
     function addSectionCompetencyBlock(prevElement) {
         var data = [];
         Templates.render('community_sharequestion/elements/section-competency-block', data)
-            .done(function (html, js) {
+            .done(function(html, js) {
                 Templates.appendNodeContents(prevElement, html, js);
             })
             .fail(Notification.exception);
@@ -234,16 +245,16 @@ define([
 
     return {
 
-        init: function (uniqueid, number_sections) {
+        init: function(uniqueid, number_sections) {
 
             maxNumberOfSection = +number_sections;
             var form = $('#sharing_activities_form_' + uniqueid);
 
-            form.on('show.bs.dropdown', '.select-section-dropdown-wrapper', function (e) {
+            form.on('show.bs.dropdown', '.select-section-dropdown-wrapper', function(e) {
                 var target = $(e.target).find('.dropdown-menu');
                 clearDropdown(target);
                 let selected_sections = [];
-                $('.selected-section-block').each(function () {
+                $('.selected-section-block').each(function() {
                     if (!$(this).hasClass('hidden')) {
                         selected_sections.push($(this).data("section_id"));
                     }
@@ -252,16 +263,16 @@ define([
                 getOercatalogHierarchy(data, target);
             });
 
-            form.on('click', '.selected-section-block .close', function () {
+            form.on('click', '.selected-section-block .close', function() {
                 let parent = $(this).closest('.selected-section-block');
                 removeSelectedSectionBlock(parent);
             });
 
-            form.on('click', '.selected-competency-block .close', function () {
+            form.on('click', '.selected-competency-block .close', function() {
                 removeSelectedCompetencyBlock($(this));
             });
 
-            form.on('click', '.section-dropdown-item', function (e) {
+            form.on('click', '.section-dropdown-item', function(e) {
                 var btn = $(e.target).closest('.dropdown-menu').siblings('.dropdown-toggle');
                 const data = {
                     cat_id: $(this).data('cat_id'),
@@ -273,12 +284,12 @@ define([
                 };
                 addSelectedSection(data, btn);
             });
-            form.on('click', '.competency-dropdown-item input', function (e) {
+            form.on('click', '.competency-dropdown-item input', function(e) {
                 var compId = $(e.target).closest('.competency-dropdown-item').data('comp_id');
                 var target = $(e.target).closest('.section-competency-block').find('.select-competencies-dropdown-wrapper');
                 if (target.find('#selected-competency-block-' + compId).length > 0) {
                     target.find('#selected-competency-block-' + compId).remove();
-                    if (target.find('.selected-competency-block').length == 0) {
+                    if (target.find('.selected-competency-block').length === 0) {
                         target.siblings('.add-section-competency-block').hide();
                     }
                 } else {
@@ -293,27 +304,27 @@ define([
                 checkCompetenciesAreaHeight(target);
             });
 
-            form.on('shown.bs.dropdown', '.select-competencies-dropdown-wrapper', function (e) {
+            form.on('shown.bs.dropdown', '.select-competencies-dropdown-wrapper', function(e) {
                 var target = $(e.target).closest('.section-competency-block');
-                setTimeout(function () {
+                setTimeout(function() {
                     checkCompetenciesAreaHeight(target);
                 }, 10);
             });
 
-            form.on('click', '.select-competency-dropdown-menu', function (e) {
+            form.on('click', '.select-competency-dropdown-menu', function(e) {
                 e.stopPropagation();
             });
 
-            form.on('click', '.no_copyright', function (e) {
+            form.on('click', '.no_copyright', function(e) {
                 var parent = $(e.target).closest('.form-group');
                 parent.find('.question-activity-url-wrapper').slideUp();
             });
-            form.on('click', '.based_on_another_activity', function (e) {
+            form.on('click', '.based_on_another_activity', function(e) {
                 var parent = $(e.target).closest('.form-group');
                 parent.find('.question-activity-url-wrapper').slideDown();
             });
 
-            form.on('keyup', '#competency-auotocmplete', function (e) {
+            form.on('keyup', '#competency-auotocmplete', function(e) {
                 var timer;
                 if (timer) {
                     clearTimeout(timer);
@@ -322,15 +333,15 @@ define([
                 var parent = $(e.target).closest('.select-competency-dropdown-menu');
                 var symbol = $(e.target).val();
 
-                timer = setTimeout(function () {
-                    if (symbol == '') {
+                timer = setTimeout(function() {
+                    if (symbol === '') {
                         showAllCompetencies(parent);
                     } else {
                         competencyAutocomplete(symbol, parent);
                     }
                 }, 500);
             });
-            form.on('click', '.add-section-competency-btn', function (e) {
+            form.on('click', '.add-section-competency-btn', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 var prevElement = $(e.target).closest('.section-competency-block-wrapper');

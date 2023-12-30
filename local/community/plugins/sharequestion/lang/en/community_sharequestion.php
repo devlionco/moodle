@@ -127,3 +127,4 @@ $string['course_categories'] = 'Course categories';
 $string['noquestions'] = 'No questions';
 $string['nocategories'] = 'No categories';
 $string['notificationmessage'] = 'השאלות אשר בחרתם להוסיף למשימה {$a->name} זמינות כעת וניתנות לצפיה בעמוד <a href="{$a->url}">"עריכת שאלות"</a>';
+$string['noresult'] = 'No result';

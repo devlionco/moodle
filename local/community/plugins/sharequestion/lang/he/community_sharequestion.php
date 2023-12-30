@@ -131,3 +131,4 @@ $string['noquestions'] = 'אין שאלות';
 $string['nocategories'] = 'אין קטגוריות';
 $string['notificationmessage'] =
         'השאלות אשר בחרתם להוסיף למשימה {$a->name} זמינות כעת וניתנות לצפיה בעמוד <a href="{$a->url}">"עריכת שאלות"</a>';
+$string['noresult'] = 'אין תוצאה';

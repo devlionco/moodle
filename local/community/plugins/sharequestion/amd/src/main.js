@@ -11,7 +11,7 @@ define([
     'community_sharequestion/sendtoteacher',
     'community_sharequestion/select2'
 
-], function ($, Y, Str, ModalFactory, ModalEvents, Ajax, Templates, Notification, Fragment, SendToTeacher) {
+], function($, Y, Str, ModalFactory, ModalEvents, Ajax, Templates, Notification, Fragment, SendToTeacher) {
     `use strict`;
 
     const sesskey = M.cfg.sesskey;
@@ -22,8 +22,12 @@ define([
     const large = false;
     const context_template = {};
 
-    function build_select2(modal, sclass){
-        var select2Target =  modal.body.find(sclass);
+    /**
+     * @param modal
+     * @param sclass
+     */
+    function build_select2(modal, sclass) {
+        var select2Target = modal.body.find(sclass);
         var dropdownParent = select2Target.closest('.select-wrapper');
         select2Target.select2({
             dropdownAutoWidth: true,
@@ -31,12 +35,24 @@ define([
         });
     }
 
+    /**
+     * @param selected
+     * @param currentcourseid
+     * @param currentcoursecontext
+     * @param type
+     */
     function open_selector(selected = null, currentcourseid = null, currentcoursecontext = null, type = null) {
         let self = this;
 
-        if(selected != null) this.selected_questions = selected;
-        if(currentcourseid != null) this.currentcourseid = currentcourseid;
-        if(currentcoursecontext != null) this.currentcoursecontext = currentcoursecontext;
+        if (selected !== null) {
+            this.selected_questions = selected;
+        }
+        if (currentcourseid !== null) {
+            this.currentcourseid = currentcourseid;
+        }
+        if (currentcoursecontext !== null) {
+            this.currentcoursecontext = currentcoursecontext;
+        }
 
         switch (type) {
             case 'all':
@@ -46,7 +62,7 @@ define([
                     copyquestionstoteacher: true,
                     copyquestionstocategory: true,
                     copyquestionstoquiz: true,
-                }
+                };
                 break;
             case 'all-nooer':
                 self.large = true;
@@ -55,30 +71,30 @@ define([
                     copyquestionstoteacher: true,
                     copyquestionstocategory: true,
                     copyquestionstoquiz: true,
-                }
+                };
                 break;
             case 'message':
                 self.large = false;
                 self.context_template = {
                     copyquestionstocategory: true,
                     copyquestionstoquiz: true,
-                }
+                };
                 break;
             case 'oer':
                 self.large = false;
                 self.context_template = {
-                    //copyquestionstoteacher: true,
+                    // Copyquestionstoteacher: true,
                     copyquestionstocategory: true,
                     copyquestionstoquiz: true,
-                }
+                };
                 break;
         }
 
-        if(this.selected_questions.length != 0) {
+        if (this.selected_questions.length !== 0) {
                 Str.get_strings([
                     {key: 'menupopuptitle', component: 'community_sharequestion'},
                     {key: 'cancel', component: 'community_sharequestion'},
-                ]).done(function(strings){
+                ]).done(function(strings) {
                     Templates.render('community_sharequestion/selector', self.context_template)
                         .done(function(html) {
                             var modalPromise = ModalFactory.create({
@@ -88,13 +104,13 @@ define([
                                 body: html
                             });
 
-                            $.when(modalPromise).then(function (modal) {
+                            $.when(modalPromise).then(function(modal) {
                                 modal.setButtonText('cancel', strings[1]);
                                 modal.getRoot()[0].classList.add('sharemodal');
                                 $(modal.getRoot()[0]).find('.modal-header .close').html('<i class="fa-light fa-circle-xmark"></i>');
                                 modal.show();
 
-                                modal.body.find('button').on( "click", function(e) {
+                                modal.body.find('button').on("click", function(e) {
                                     e.stopPropagation();
                                     switch (e.currentTarget.dataset.handler) {
                                         case 'copyQuestionsToQuiz':
@@ -120,17 +136,17 @@ define([
                                     }
                                 });
 
-                                modal.getRoot().on(ModalEvents.hidden, function (e) {
-                                    if(self.flag_background_enable == true){
+                                modal.getRoot().on(ModalEvents.hidden, function(e) {
+                                    if (self.flag_background_enable === true) {
                                         $(".modal-backdrop").removeClass('hide');
                                         $(".modal-backdrop").addClass('show');
-                                    }else{
+                                    } else {
                                         $(".modal-backdrop").removeClass('show');
                                         $(".modal-backdrop").addClass('hide');
                                     }
                                 });
 
-                                modal.getRoot().on(ModalEvents.shown, function (e) {
+                                modal.getRoot().on(ModalEvents.shown, function(e) {
                                     self.flag_background_enable = false;
                                 });
 
@@ -138,20 +154,23 @@ define([
                             }).fail(Notification.exception);
                         })
                         .fail(Notification.exception);
-            })
+            });
         }
     }
 
+    /**
+     *
+     */
     function open_copy_to_quiz() {
         let self = this;
 
-        if(this.selected_questions.length != 0) {
+        if (this.selected_questions.length !== 0) {
             Str.get_strings([
                 {key: 'copyquestionstoquiz', component: 'community_sharequestion'},
                 {key: 'copy', component: 'community_sharequestion'},
                 {key: 'back', component: 'community_sharequestion'},
                 {key: 'copyquestionstoquizsuccess', component: 'community_sharequestion'},
-            ]).done(function (strings) {
+            ]).done(function(strings) {
 
                 // Set html in modal.
                 Ajax.call([{
@@ -159,13 +178,13 @@ define([
                     args: {
                         currentcourseid: self.currentcourseid
                     },
-                    done: function (response) {
+                    done: function(response) {
 
                         ModalFactory.create({
                             type: ModalFactory.types.SAVE_CANCEL,
                             title: strings[0],
                             body: response
-                        }).done(function (modal) {
+                        }).done(function(modal) {
                             modal.setSaveButtonText(strings[1]);
                             modal.setButtonText('cancel', strings[2]);
 
@@ -175,7 +194,7 @@ define([
                             build_select2(modal, ".select-quiz");
 
                             // Event change course.
-                            modal.body.find('.select-course').on( "change", function(e) {
+                            modal.body.find('.select-course').on("change", function(e) {
                                 modal.body.find('.select-quiz-error').hide();
 
                                 let courseid = this.value;
@@ -184,13 +203,13 @@ define([
                                     args: {
                                         courseid: courseid,
                                     },
-                                    done: function (response) {
+                                    done: function(response) {
                                         let data = JSON.parse(response);
 
                                         // Fill options.
                                         modal.body.find('.select-quiz').empty();
-                                        $.each(data.activities, function( index, obj ) {
-                                            modal.body.find('.select-quiz').append('<option value="'+obj.cmid+'">'+obj.name+'</option>');
+                                        $.each(data.activities, function(index, obj) {
+                                            modal.body.find('.select-quiz').append('<option value="' + obj.cmid + '">' + obj.name + '</option>');
                                         });
                                     },
                                     fail: Notification.exception
@@ -198,14 +217,14 @@ define([
                             });
 
                             // Send to cron.
-                            modal.getRoot().on(ModalEvents.save, function (e) {
+                            modal.getRoot().on(ModalEvents.save, function(e) {
                                 e.preventDefault();
 
                                 self.flag_background_enable = true;
 
                                 let value = modal.body.find('.select-quiz').val();
 
-                                if(value != null){
+                                if (value !== null) {
 
                                     // Save to cron table.
                                     Ajax.call([{
@@ -215,42 +234,42 @@ define([
                                             targetid: value,
                                             questionids: JSON.stringify(self.selected_questions)
                                         },
-                                        done: function (response) {
+                                        done: function(response) {
                                             let data = JSON.parse(response);
-                                            if(data.result){
+                                            if (data.result) {
                                                 modal.destroy();
                                                 open_success_popup(strings[0], strings[3]);
                                             }
                                         },
                                         fail: Notification.exception
                                     }]);
-                                }else{
-                                    modal.body.find('.select-quiz-error').show()
+                                } else {
+                                    modal.body.find('.select-quiz-error').show();
                                 }
                             });
 
                             // Back button.
-                            modal.getRoot().on(ModalEvents.cancel, function (e) {
+                            modal.getRoot().on(ModalEvents.cancel, function(e) {
                                 self.flag_background_enable = true;
                                 open_selector();
                             });
 
-                            modal.getRoot().on(ModalEvents.hidden, function (e) {
-                                if(self.flag_background_enable == true){
+                            modal.getRoot().on(ModalEvents.hidden, function(e) {
+                                if (self.flag_background_enable === true) {
                                     $(".modal-backdrop").removeClass('hide');
                                     $(".modal-backdrop").addClass('show');
-                                }else{
+                                } else {
                                     $(".modal-backdrop").removeClass('show');
                                     $(".modal-backdrop").addClass('hide');
                                 }
                             });
 
-                            modal.getRoot().on(ModalEvents.shown, function (e) {
+                            modal.getRoot().on(ModalEvents.shown, function(e) {
                                 self.flag_background_enable = false;
                             });
 
                             modal.show();
-                        }.bind(this));
+                        });
 
                     },
                     fail: Notification.exception
@@ -259,16 +278,19 @@ define([
         }
     }
 
+    /**
+     *
+     */
     function open_copy_to_category() {
         let self = this;
 
-        if(this.selected_questions.length != 0) {
+        if (this.selected_questions.length !== 0) {
             Str.get_strings([
                 {key: 'copyquestionstocategory', component: 'community_sharequestion'},
                 {key: 'copy', component: 'community_sharequestion'},
                 {key: 'back', component: 'community_sharequestion'},
                 {key: 'copyquestionstoquizsuccess', component: 'community_sharequestion'},
-            ]).done(function (strings) {
+            ]).done(function(strings) {
 
                 // Set html in modal.
                 Ajax.call([{
@@ -276,13 +298,13 @@ define([
                     args: {
                         currentcourseid: self.currentcourseid
                     },
-                    done: function (response) {
+                    done: function(response) {
 
                         ModalFactory.create({
                             type: ModalFactory.types.SAVE_CANCEL,
                             title: strings[0],
                             body: response
-                        }).done(function (modal) {
+                        }).done(function(modal) {
                             modal.setSaveButtonText(strings[1]);
                             modal.setButtonText('cancel', strings[2]);
 
@@ -292,7 +314,7 @@ define([
                             build_select2(modal, ".select-category");
 
                             // Event change course.
-                            modal.body.find('.select-course').on( "change", function(e) {
+                            modal.body.find('.select-course').on("change", function(e) {
                                 modal.body.find('.select-category-error').hide();
 
                                 let courseid = this.value;
@@ -301,13 +323,13 @@ define([
                                     args: {
                                         courseid: courseid,
                                     },
-                                    done: function (response) {
+                                    done: function(response) {
                                         let data = JSON.parse(response);
 
                                         // Fill options.
                                         modal.body.find('.select-category').empty();
-                                        $.each(data.categories, function( index, obj ) {
-                                            modal.body.find('.select-category').append('<option value="'+obj.id+'">'+obj.name+'</option>');
+                                        $.each(data.categories, function(index, obj) {
+                                            modal.body.find('.select-category').append('<option value="' + obj.id + '">' + obj.name + '</option>');
                                         });
                                     },
                                     fail: Notification.exception
@@ -315,14 +337,14 @@ define([
                             });
 
                             // Send to cron.
-                            modal.getRoot().on(ModalEvents.save, function (e) {
+                            modal.getRoot().on(ModalEvents.save, function(e) {
                                 e.preventDefault();
 
                                 self.flag_background_enable = true;
 
                                 let value = modal.body.find('.select-category').val();
 
-                                if(value != null){
+                                if (value != null) {
 
                                     // Save to cron table.
                                     Ajax.call([{
@@ -332,42 +354,42 @@ define([
                                             targetid: value,
                                             questionids: JSON.stringify(self.selected_questions)
                                         },
-                                        done: function (response) {
+                                        done: function(response) {
                                             let data = JSON.parse(response);
-                                            if(data.result){
+                                            if (data.result) {
                                                 modal.destroy();
                                                 open_success_popup(strings[0], strings[3]);
                                             }
                                         },
                                         fail: Notification.exception
                                     }]);
-                                }else{
-                                    modal.body.find('.select-category-error').show()
+                                } else {
+                                    modal.body.find('.select-category-error').show();
                                 }
                             });
 
                             // Back button.
-                            modal.getRoot().on(ModalEvents.cancel, function (e) {
+                            modal.getRoot().on(ModalEvents.cancel, function(e) {
                                 self.flag_background_enable = true;
                                 open_selector();
                             });
 
-                            modal.getRoot().on(ModalEvents.hidden, function (e) {
-                                if(self.flag_background_enable == true){
+                            modal.getRoot().on(ModalEvents.hidden, function(e) {
+                                if (self.flag_background_enable === true) {
                                     $(".modal-backdrop").removeClass('hide');
                                     $(".modal-backdrop").addClass('show');
-                                }else{
+                                } else {
                                     $(".modal-backdrop").removeClass('show');
                                     $(".modal-backdrop").addClass('hide');
                                 }
                             });
 
-                            modal.getRoot().on(ModalEvents.shown, function (e) {
+                            modal.getRoot().on(ModalEvents.shown, function(e) {
                                 self.flag_background_enable = false;
                             });
 
                             modal.show();
-                        }.bind(this));
+                        });
 
                     },
                     fail: Notification.exception
@@ -376,10 +398,13 @@ define([
         }
     }
 
+    /**
+     *
+     */
     function open_upload_to_catalog() {
         let self = this;
 
-        if(this.selected_questions.length != 0) {
+        if (this.selected_questions.length !== 0) {
 
             const getBody = function() {
 
@@ -390,7 +415,7 @@ define([
 
             Str.get_strings([
                 {key: 'share_national_shared', component: 'community_sharequestion'},
-            ]).done(function (strings) {
+            ]).done(function(strings) {
                 var modalPromise = ModalFactory.create({
                     type: ModalFactory.types.DEFAULT,
                     title: strings[0],
@@ -402,12 +427,12 @@ define([
                     fmodal.setLarge();
 
                     var root = fmodal.getRoot();
-                    root.on(ModalEvents.bodyRendered, function () {
+                    root.on(ModalEvents.bodyRendered, function() {
                         root.find('.modal-body').animate({
                             scrollTop: 0
                         }, 0);
 
-                        setTimeout(function(){
+                        setTimeout(function() {
                             root.find('input:not([type=hidden])').first().focus();
                         }, 300);
                     });
@@ -420,21 +445,25 @@ define([
         }
     }
 
+    /**
+     * @param title
+     * @param html
+     */
     function open_success_popup(title, html) {
         let self = this;
 
         Str.get_strings([
             {key: 'back', component: 'community_sharequestion'},
             {key: 'end', component: 'community_sharequestion'},
-        ]).done(function(strings){
+        ]).done(function(strings) {
             var modalPromise = ModalFactory.create({
                 type: ModalFactory.types.SAVE_CANCEL,
-                //large: true,
+                // Large: true,
                 title: title,
                 body: html
             });
 
-            $.when(modalPromise).then(function (modal) {
+            $.when(modalPromise).then(function(modal) {
                 modal.setSaveButtonText(strings[0]);
                 modal.setButtonText('cancel', strings[1]);
                 modal.show();
@@ -446,41 +475,44 @@ define([
                 // }, 4000);
 
                 // Back button.
-                modal.getRoot().on(ModalEvents.save, function (e) {
+                modal.getRoot().on(ModalEvents.save, function(e) {
                     self.flag_background_enable = true;
                     open_selector();
                 });
 
-                modal.getRoot().on(ModalEvents.hidden, function (e) {
-                    if(self.flag_background_enable == true){
+                modal.getRoot().on(ModalEvents.hidden, function(e) {
+                    if (self.flag_background_enable === true) {
                         $(".modal-backdrop").removeClass('hide');
                         $(".modal-backdrop").addClass('show');
-                    }else{
+                    } else {
                         $(".modal-backdrop").removeClass('show');
                         $(".modal-backdrop").addClass('hide');
                     }
                 });
 
-                modal.getRoot().on(ModalEvents.shown, function (e) {
+                modal.getRoot().on(ModalEvents.shown, function(e) {
                     self.flag_background_enable = false;
                 });
 
                 return modal;
             }).fail(Notification.exception);
-        })
+        });
 
     }
 
+    /**
+     *
+     */
     function open_copy_to_teacher() {
         let self = this;
 
-        if(this.selected_questions.length != 0) {
+        if (this.selected_questions.length !== 0) {
             Str.get_strings([
                 {key: 'copyquestionstoteacher', component: 'community_sharequestion'},
                 {key: 'send', component: 'community_sharequestion'},
                 {key: 'back', component: 'community_sharequestion'},
                 {key: 'copyquestionstoquizsuccess', component: 'community_sharequestion'},
-            ]).done(function (strings) {
+            ]).done(function(strings) {
 
                 // Set html in modal.
                 Ajax.call([{
@@ -489,19 +521,19 @@ define([
                         currentcourseid: self.currentcourseid,
                         questionids: JSON.stringify(self.selected_questions)
                     },
-                    done: function (response) {
+                    done: function(response) {
 
                         ModalFactory.create({
                             type: ModalFactory.types.SAVE_CANCEL,
                             title: strings[0],
                             body: response
-                        }).done(function (modal) {
+                        }).done(function(modal) {
                             modal.setSaveButtonText(strings[1]);
                             modal.setButtonText('cancel', strings[2]);
                             $(modal.body).closest('.modal-content').addClass('share-with-teacher-modal');
 
                             // Send to teacher.
-                            modal.getRoot().on(ModalEvents.save, function (e) {
+                            modal.getRoot().on(ModalEvents.save, function(e) {
                                 e.preventDefault();
                                 self.flag_background_enable = true;
                                 modal.body.find('.error-teachers').hide();
@@ -519,7 +551,7 @@ define([
                                     errors.push('No users');
                                 }
 
-                                if(errors.length == 0){
+                                if (errors.length === 0) {
                                     Ajax.call([{
                                         methodname: 'community_sharequestion_submit_teachers',
                                         args: {
@@ -527,44 +559,44 @@ define([
                                             teachersid: JSON.stringify(teachersId),
                                             message: message
                                         },
-                                        done: function (response) {
+                                        done: function(response) {
                                             let data = JSON.parse(response);
-                                            if(data.result){
+                                            if (data.result) {
                                                 modal.destroy();
                                                 open_success_popup(strings[0], strings[3]);
                                             }
                                         },
                                         fail: Notification.exception
                                     }]);
-                                }else{
+                                } else {
                                     self.flag_background_enable = false;
                                     modal.body.find('.error-teachers').show();
                                 }
                             });
 
                             // Back button.
-                            modal.getRoot().on(ModalEvents.cancel, function (e) {
+                            modal.getRoot().on(ModalEvents.cancel, function(e) {
                                 self.flag_background_enable = true;
                                 open_selector();
                             });
 
-                            modal.getRoot().on(ModalEvents.hidden, function (e) {
-                                if(self.flag_background_enable == true){
+                            modal.getRoot().on(ModalEvents.hidden, function(e) {
+                                if (self.flag_background_enable === true) {
                                     $(".modal-backdrop").removeClass('hide');
                                     $(".modal-backdrop").addClass('show');
-                                }else{
+                                } else {
                                     $(".modal-backdrop").removeClass('show');
                                     $(".modal-backdrop").addClass('hide');
                                 }
                             });
 
-                            modal.getRoot().on(ModalEvents.shown, function (e) {
+                            modal.getRoot().on(ModalEvents.shown, function(e) {
                                 self.flag_background_enable = false;
-                                SendToTeacher.init(modal)
+                                SendToTeacher.init(modal);
                             });
 
                             modal.show();
-                        }.bind(this));
+                        });
 
                     },
                     fail: Notification.exception
@@ -574,11 +606,11 @@ define([
     }
 
     return {
-        question_edit_init: function (currentcourseid, currentcoursecontext, visiblebuttons) {
+        question_edit_init: function(currentcourseid, currentcoursecontext, visiblebuttons) {
 
             // Insert button via JS.
-            $('.modulespecificbuttonscontainer').find('input').each(function( index ) {
-                if(index == 1){
+            $('.modulespecificbuttonscontainer').find('input').each(function(index) {
+                if (index === 1) {
 
                     let self = this;
 
@@ -588,20 +620,20 @@ define([
 
                         let disabled = 'disabled="1"';
 
-                        let element = '<input type=button class="btn-share-questions btn btn-secondary mr-1" value="'+strings[0]+'" data-action="toggle" data-togglegroup="qbank" data-toggle="action" '+disabled+'>';
+                        let element = '<input type=button class="btn-share-questions btn btn-secondary mr-1" value="' + strings[0] + '" data-action="toggle" data-togglegroup="qbank" data-toggle="action" ' + disabled + '>';
                         $(element).insertBefore($(self));
 
                         // Event on button.
-                        $('.btn-share-questions').on( "click", function(e) {
+                        $('.btn-share-questions').on("click", function(e) {
                             // Get selected questions.
                             var checkedVals = $('#categoryquestions').find('input:checked').map(function() {
                                 return this.name;
                             }).get();
 
                             let selected = [];
-                            $.each(checkedVals, function( index, value ) {
+                            $.each(checkedVals, function(index, value) {
                                 var sd = value.replace(/[^0-9]/gi, '');
-                                if(sd.length != 0){
+                                if (sd.length !== 0) {
                                     var number = parseInt(sd, 10);
                                     selected.push(number);
                                 }
@@ -609,17 +641,17 @@ define([
 
                             open_selector(selected, currentcourseid, currentcoursecontext, visiblebuttons);
                         });
-                    })
+                    });
                 }
             });
         },
 
-        mod_quiz_edit_init: function (currentcourseid, currentcoursecontext, visiblebuttons) {
+        mod_quiz_edit_init: function(currentcourseid, currentcoursecontext, visiblebuttons) {
 
             mod_quiz_edit_toogle_buttons();
 
             // Event on button share.
-            $('.btn-share-questions').on( "click", function(e) {
+            $('.btn-share-questions').on("click", function(e) {
 
                 // Selected_questions.
                 const questionsContainer = document.querySelector('div.mod-quiz-edit-content');
@@ -646,11 +678,14 @@ define([
                 open_selector(selected_questions, currentcourseid, currentcoursecontext, visiblebuttons);
             });
 
+            /**
+             *
+             */
             function mod_quiz_edit_recalculate_page() {
                 let pageid = '';
 
-                $('.section li').each(function( index ) {
-                    if($(this).hasClass('pagenumber')){
+                $('.section li').each(function(index) {
+                    if ($(this).hasClass('pagenumber')) {
                         pageid = $(this).attr('id');
                     }
 
@@ -658,45 +693,48 @@ define([
                 });
             }
 
+            /**
+             *
+             */
             function mod_quiz_edit_toogle_buttons() {
 
                 let flag = false;
 
-                $('.select-multiple-checkbox-share').each(function( index ) {
-                    if($(this).find('input').is(':checked')) {
+                $('.select-multiple-checkbox-share').each(function(index) {
+                    if ($(this).find('input').is(':checked')) {
                         flag = true;
                     }
                 });
 
-                if(flag) {
+                if (flag) {
                     $('.btn-delete-questions').attr('disabled', false);
                     $('.btn-share-questions').attr('disabled', false);
-                }else{
+                } else {
                     $('.btn-delete-questions').attr('disabled', true);
                     $('.btn-share-questions').attr('disabled', true);
                 }
 
-                if($('.btn-delete-questions').data('hasattempts') === 1){
+                if ($('.btn-delete-questions').data('hasattempts') === 1) {
                     $('.btn-delete-questions').attr('disabled', true);
                 }
             }
 
             // Select all checkboxes in group.
-            $('.checkbox-select-all-questions').on( "click", function(e) {
+            $('.checkbox-select-all-questions').on("click", function(e) {
 
                 mod_quiz_edit_recalculate_page();
 
                 let pageid = $(this).data('pageid');
 
-                if($(this).is(':checked')) {
-                    $('.select-multiple-checkbox-share').each(function( index ) {
-                        if($(this).find('input').data('pageid') === pageid) {
+                if ($(this).is(':checked')) {
+                    $('.select-multiple-checkbox-share').each(function(index) {
+                        if ($(this).find('input').data('pageid') === pageid) {
                             $(this).find('input').prop("checked", true);
                         }
                     });
-                }else{
-                    $('.select-multiple-checkbox-share').each(function( index ) {
-                        if($(this).find('input').data('pageid') === pageid) {
+                } else {
+                    $('.select-multiple-checkbox-share').each(function(index) {
+                        if ($(this).find('input').data('pageid') === pageid) {
                             $(this).find('input').prop("checked", false);
                         }
                     });
@@ -706,16 +744,16 @@ define([
             });
 
             // Click on single button.
-            $('.select-multiple-checkbox').on( "click", function(e) {
+            $('.select-multiple-checkbox').on("click", function(e) {
 
                 mod_quiz_edit_recalculate_page();
 
-                if(!$(this).is(':checked')) {
+                if (!$(this).is(':checked')) {
                     let pageid = $(this).data('pageid');
 
-                    $('.checkbox-select-all-questions').each(function( index ) {
-                        if($(this).data('pageid') === pageid) {
-                            $(this).prop( "checked", false );
+                    $('.checkbox-select-all-questions').each(function(index) {
+                        if ($(this).data('pageid') === pageid) {
+                            $(this).prop("checked", false);
                         }
                     });
                 }
@@ -724,20 +762,20 @@ define([
             });
         },
 
-        message_edit_init: function (currentcourseid, currentcoursecontext) {
+        message_edit_init: function(currentcourseid, currentcoursecontext) {
 
             // Event on button.
-            $('body').on( "click", function(e) {
-                if($(e.target).data('handler') === 'copyQuestionsFromMessage'){
+            $('body').on("click", function(e) {
+                if ($(e.target).data('handler') === 'copyQuestionsFromMessage') {
 
                     let selected = $(e.target).data('questionids');
                     open_selector(selected, currentcourseid, currentcoursecontext, 'message');
                 }
-            })
+            });
         },
 
-        community_oer_question: function (selected) {
+        community_oer_question: function(selected) {
             open_selector(selected, 0, 0, 'oer');
         },
-    }
+    };
 });

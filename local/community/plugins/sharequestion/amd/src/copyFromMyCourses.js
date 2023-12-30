@@ -9,7 +9,7 @@ define([
     'core/fragment',
     'community_sharequestion/inview'
 
-], function ($, Str, ModalFactory, ModalEvents, Ajax, Templates,
+], function($, Str, ModalFactory, ModalEvents, Ajax, Templates,
     Notification, Fragment, inView) {
     `use strict`;
 
@@ -20,11 +20,14 @@ define([
         buttonEvent: '.addquestionfrommycourses'
     };
 
+    /**
+     *
+     */
     function updateCountSelected() {
         let form = $('#copy_from_my_courses_' + uniqueid);
         let counter = 0;
 
-        form.find('.checkbox-select-question').each(function (index) {
+        form.find('.checkbox-select-question').each(function(index) {
             if ($(this).prop('checked')) {
                 counter++;
             }
@@ -34,35 +37,42 @@ define([
     }
 
     // Render loading.
+    /**
+     * @param target
+     */
     function loadingIcon(target) {
-        Templates.render('community_sharequestion/loading', {}).done(function (html, js) {
+        Templates.render('community_sharequestion/loading', {}).done(function(html, js) {
             Templates.replaceNodeContents(target, html, js);
         }).fail(Notification.exception);
     }
 
     // Render courses.
-    function renderCoursesForUser(){
-        
-        loadingIcon($('#popup_block_content_courses_'+uniqueid));
+    /**
+     *
+     */
+    function renderCoursesForUser() {
 
-        let search = $('#search_'+uniqueid).val();
-        if(search === undefined) {
+        loadingIcon($('#popup_block_content_courses_' + uniqueid));
+
+        let search = $('#search_' + uniqueid).val();
+        if (search === undefined) {
             search = "";
         }
+
         Ajax.call([{
             methodname: 'community_sharequestion_get_courses_by_user',
             args: {
                 search: search,
                 uniqueid: uniqueid
             },
-            done: function (response) {
+            done: function(response) {
 
                 let data = JSON.parse(response);
                 // Render courses.
                 Templates.render('community_sharequestion/copy_from_my_courses/courses', data.result)
-                    .done(function (html, js) {
+                    .done(function(html, js) {
 
-                        Templates.replaceNodeContents($('#popup_block_content_courses_'+uniqueid), html, js);
+                        Templates.replaceNodeContents($('#popup_block_content_courses_' + uniqueid), html, js);
 
                         $('#all_checkboxes_' + uniqueid).prop('checked', false);
                         updateCountSelected();
@@ -74,44 +84,44 @@ define([
     }
 
     return {
-        init: function (currentcourseid, currentcoursecontext) {
+        init: function(currentcourseid, currentcoursecontext) {
 
             // Get the content of the modal.
-            const getBody = function (coursemoduleid) {
+            const getBody = function(coursemoduleid) {
                 uniqueid = Date.now();
                 cmid = coursemoduleid;
 
-                let params = { cmid: coursemoduleid, uniqueid: uniqueid };
+                let params = {cmid: coursemoduleid, uniqueid: uniqueid};
                 return Fragment.loadFragment('community_sharequestion', 'copy_questions_from_my_courses', currentcoursecontext, params);
             };
 
-            $(SELECTORS.buttonEvent).on("click", function (e) {
+            $(SELECTORS.buttonEvent).on("click", function(e) {
                 e.preventDefault();
 
                 let cmid = $(this).data('cmid');
 
                 Str.get_strings([
-                    { key: 'copyquestionsfrommycourses', component: 'community_sharequestion' },
-                    { key: 'qshare', component: 'community_sharequestion' },
-                ]).done(function (strings) {
+                    {key: 'copyquestionsfrommycourses', component: 'community_sharequestion'},
+                    {key: 'qshare', component: 'community_sharequestion'},
+                ]).done(function(strings) {
                     var modalPromise = ModalFactory.create({
                         type: ModalFactory.types.SAVE_CANCEL,
                         title: strings[0],
                         body: getBody(cmid)
                     });
 
-                    $.when(modalPromise).then(function (fmodal) {
+                    $.when(modalPromise).then(function(fmodal) {
 
                         fmodal.setSaveButtonText(strings[1]);
 
                         // Handle save event.
-                        fmodal.getRoot().on(ModalEvents.save, function (e) {
+                        fmodal.getRoot().on(ModalEvents.save, function(e) {
                             e.preventDefault();
 
                             let form = $('#copy_from_my_courses_' + uniqueid);
                             let selected = [];
 
-                            form.find('.checkbox-select-question').each(function (index) {
+                            form.find('.checkbox-select-question').each(function(index) {
                                 if ($(this).prop('checked')) {
                                     selected.push($(this).data('qid'));
                                 }
@@ -124,11 +134,11 @@ define([
 
                                 // Success popup.
                                 Str.get_strings([
-                                    { key: 'popupmessagesuccesstitle', component: 'community_sharequestion' },
-                                    { key: 'popupmessagesuccesscontent', component: 'community_sharequestion' },
-                                    { key: 'popupbuttondisabled', component: 'community_sharequestion' },
-                                    { key: 'popupbuttonenabled', component: 'community_sharequestion' }
-                                ]).done(function (strings) {
+                                    {key: 'popupmessagesuccesstitle', component: 'community_sharequestion'},
+                                    {key: 'popupmessagesuccesscontent', component: 'community_sharequestion'},
+                                    {key: 'popupbuttondisabled', component: 'community_sharequestion'},
+                                    {key: 'popupbuttonenabled', component: 'community_sharequestion'}
+                                ]).done(function(strings) {
 
                                     var modalPromise = ModalFactory.create({
                                         type: ModalFactory.types.ALERT,
@@ -136,14 +146,14 @@ define([
                                         body: strings[1]
                                     });
 
-                                    $.when(modalPromise).then(function (fmodal) {
+                                    $.when(modalPromise).then(function(fmodal) {
                                         fmodal.show();
                                         let root = fmodal.getRoot();
 
                                         // Refresh page.
                                         root.on(ModalEvents.cancel, function() {
                                             location.reload();
-                                        })
+                                        });
 
                                         // When shown popup.
                                         root.on(ModalEvents.shown, function() {
@@ -156,7 +166,7 @@ define([
                                                     cmid: cmid,
                                                     qids: JSON.stringify(selected)
                                                 },
-                                                done: function (response) {
+                                                done: function(response) {
                                                     let data = JSON.parse(response);
 
                                                     root.find('*[data-action="cancel"]').text(strings[3]);
@@ -174,9 +184,9 @@ define([
                             } else {
                                 // Fail popup.
                                 Str.get_strings([
-                                    { key: 'popupmessagefailtitle', component: 'community_sharequestion' },
-                                    { key: 'popupmessagefailcontent', component: 'community_sharequestion' }
-                                ]).done(function (strings) {
+                                    {key: 'popupmessagefailtitle', component: 'community_sharequestion'},
+                                    {key: 'popupmessagefailcontent', component: 'community_sharequestion'}
+                                ]).done(function(strings) {
 
                                     var modalPromise = ModalFactory.create({
                                         type: ModalFactory.types.ALERT,
@@ -184,7 +194,7 @@ define([
                                         body: strings[1]
                                     });
 
-                                    $.when(modalPromise).then(function (fmodal) {
+                                    $.when(modalPromise).then(function(fmodal) {
                                         fmodal.show();
                                         return fmodal;
                                     }).fail(Notification.exception);
@@ -196,9 +206,9 @@ define([
                         fmodal.getModal().addClass('modal-xlg');
                         fmodal.getModal().addClass('import-questions-modal');
                         var root = fmodal.getRoot();
-                        root.on(ModalEvents.shown, function () {
+                        root.on(ModalEvents.shown, function() {
 
-                            setTimeout(function(){
+                            setTimeout(function() {
                                     root.find('.modal-body').animate({
                                         scrollTop: 0
                                     }, 200);
@@ -209,61 +219,59 @@ define([
                         });
 
                         return fmodal;
-                    }).done(function (modal) {
+                    }).done(function(modal) {
                         modal.show();
                     }).fail(Notification.exception);
                 });
 
-            })
+            });
         },
 
-        actionsMain: function () {
+        actionsMain: function() {
             let form = $('#copy_from_my_courses_' + uniqueid);
-            let search = $('#search_'+uniqueid).val();
 
             // Search input change.
-            $('#search_' + uniqueid).change(function () {
+            let search = $('#search_' + uniqueid);
+            search.change(function() {
 
                 // Render courses.
                 renderCoursesForUser();
 
-                if($('#search_'+uniqueid).val() == '') {
-                    // hide close icon and show search icon
-                    $('#search_' + uniqueid).siblings('.question-search-icon').show();
-                    $('#search_' + uniqueid).siblings('.question-search-close-icon').hide();
-                }else{
-                    // hide search icon and show close icon
-                    $('#search_' + uniqueid).siblings('.question-search-icon').hide();
-                    $('#search_' + uniqueid).siblings('.question-search-close-icon').show();
+                if (search.val() === '') {
+                    // Hide close icon and show search icon.
+                    search.siblings('.question-search-icon').show();
+                    search.siblings('.question-search-close-icon').hide();
+                } else {
+                    // Hide search icon and show close icon.
+                    search.siblings('.question-search-icon').hide();
+                    search.siblings('.question-search-close-icon').show();
                 }
-
             });
 
             // Clear search input
             form.find('.question-search-close-icon').on('click keydown', (e) => {
-                if(e.type == "click" || e.type == "keydown" && e.which == 13){
+                if (e.type === "click" || e.type === "keydown" && e.which === 13) {
 
-                    const targetInput = $("#search_"+uniqueid);
+                    const targetInput = $("#search_" + uniqueid);
 
                     // Refreash search results
-                    $('#search_'+uniqueid).val('');
+                    $('#search_' + uniqueid).val('');
                     renderCoursesForUser();
 
                     // Show search icon
                     targetInput.siblings('.question-search-close-icon').hide();
                     targetInput.siblings('.question-search-icon').show();
-
-                    }
+                }
             });
 
             // Checkbox select all.
-            $('#all_checkboxes_' + uniqueid).change(function () {
+            $('#all_checkboxes_' + uniqueid).change(function() {
                 if (this.checked) {
-                    form.find('.checkbox-select-question').each(function (index) {
+                    form.find('.checkbox-select-question').each(function(index) {
                         $(this).prop('checked', true);
                     });
                 } else {
-                    form.find('.checkbox-select-question').each(function (index) {
+                    form.find('.checkbox-select-question').each(function(index) {
                         $(this).prop('checked', false);
                     });
                 }
@@ -272,15 +280,15 @@ define([
             });
         },
 
-        actionsCategories: function () {
+        actionsCategories: function() {
             let form = $('#copy_from_my_courses_' + uniqueid);
 
             // Open collapse - all course categories
-            $(form).find('.all-course-categories-wrapper-collapse').on('show.bs.collapse', function (e) {
+            $(form).find('.all-course-categories-wrapper-collapse').on('show.bs.collapse', function(e) {
                 e.stopPropagation();
                 let target = $(e.target);
                 let courseid = target.data('courseid');
-                let search = $('#search_'+uniqueid).val();
+                let search = $('#search_' + uniqueid).val();
 
                 // Open course categories.
                 if (!target.hasClass('view-done') && target.hasClass('all-course-categories-wrapper-collapse')) {
@@ -293,10 +301,10 @@ define([
                             uniqueid: uniqueid,
                             search: search
                         },
-                        done: function (response) {
+                        done: function(response) {
                             let data = JSON.parse(response);
                             Templates.render('community_sharequestion/copy_from_my_courses/course-categories', data.result)
-                                .done(function (html, js) {
+                                .done(function(html, js) {
                                     Templates.replaceNodeContents(target, html, js);
                                     target.addClass('view-done');
                                 })
@@ -318,11 +326,11 @@ define([
                             uniqueid: uniqueid,
                             search: search
                         },
-                        done: function (response) {
+                        done: function(response) {
                                 let data = JSON.parse(response);
                                 // Render block category questions.
                                 Templates.render('community_sharequestion/copy_from_my_courses/category-questions', data.result)
-                                    .done(function (html, js) {
+                                    .done(function(html, js) {
                                         Templates.replaceNodeContents(target, html, js);
                                         target.addClass('view-done');
                                     })
@@ -335,15 +343,15 @@ define([
 
         },
 
-        actionsBankCategories: function () {
+        actionsBankCategories: function() {
             let form = $('#copy_from_my_courses_' + uniqueid);
 
             // Open collapse - all course categories
-            $(form).find('.all-bank-categories-wrapper-collapse').on('show.bs.collapse', function (e) {
+            $(form).find('.all-bank-categories-wrapper-collapse').on('show.bs.collapse', function(e) {
                 e.stopPropagation();
                 let target = $(e.target);
                 let courseid = target.data('courseid');
-                let search = $('#search_'+uniqueid).val();
+                let search = $('#search_' + uniqueid).val();
 
                 // Open course categories.
                 if (!target.hasClass('view-done') && target.hasClass('all-bank-categories-wrapper-collapse')) {
@@ -356,10 +364,10 @@ define([
                             uniqueid: uniqueid,
                             search: search
                         },
-                        done: function (response) {
+                        done: function(response) {
                             let data = JSON.parse(response);
                             Templates.render('community_sharequestion/copy_from_my_courses/bank-categories', data.result)
-                                .done(function (html, js) {
+                                .done(function(html, js) {
                                     Templates.replaceNodeContents(target, html, js);
                                     target.addClass('view-done');
                                 })
@@ -381,11 +389,11 @@ define([
                             uniqueid: uniqueid,
                             search: search
                         },
-                        done: function (response) {
+                        done: function(response) {
                             let data = JSON.parse(response);
                             // Render block category questions.
                             Templates.render('community_sharequestion/copy_from_my_courses/category-questions', data.result)
-                                .done(function (html, js) {
+                                .done(function(html, js) {
                                     Templates.replaceNodeContents(target, html, js);
                                     target.addClass('view-done');
                                 })
@@ -398,11 +406,11 @@ define([
 
         },
 
-        actionsQuestions: function () {
+        actionsQuestions: function() {
             let form = $('#copy_from_my_courses_' + uniqueid);
 
             // Open iframe question.
-            inView('#copy_from_my_courses_' + uniqueid + ' .question-collapse').on('enter', function (e) {
+            inView('#copy_from_my_courses_' + uniqueid + ' .question-collapse').on('enter', function(e) {
                 let parent = $(e);
                 if (!parent.hasClass('inview-done')) {
                     parent.addClass('inview-done');
@@ -411,7 +419,7 @@ define([
                     spinner.show();
                     let html = '<iframe id="iframe' + qid + uniqueid + '" scrolling="no" style="width:100%; height:300px;" src="' + M.cfg.wwwroot + '/local/community/plugins/oer/previewquestion.php?id=' + qid + '&behaviour=adaptive"></iframe>';
                     parent.find('.question-collapse-inner').html(html);
-                    document.querySelector('#iframe' + qid + uniqueid).addEventListener('load', function () {
+                    document.querySelector('#iframe' + qid + uniqueid).addEventListener('load', function() {
                         spinner = parent.find('.raspberry_loading');
                         spinner.remove();
 
@@ -423,43 +431,43 @@ define([
             }).on('exit', el => { });
 
 
-            $('.course-wrapper-name').on('click', function () {
+            $('.course-wrapper-name').on('click', function() {
                 const target = $(this);
                 if (target.hasClass('collapsed')) {
-                    return
+                    return;
                 } else {
                     const catCollapse = target.next('.course-wrapper-name-collapse').find('.cat-wrapper-collapse');
-                    catCollapse.each(function (el) {
+                    catCollapse.each(function(el) {
                         $(this).collapse('hide');
-                    })
+                    });
                 }
-            })
+            });
 
-            $('.type-cell, .name-cell, .create-cell, .create-date-cell, .update-date-cell').on("click", function (e) {
+            $('.type-cell, .name-cell, .create-cell, .create-date-cell, .update-date-cell').on("click", function(e) {
                 const target = $(e.currentTarget);
                 const parent = target.closest('.question-item-wrapper');
                 const collapseBtn = parent.find('.collapse-question-btn');
                 collapseBtn.trigger('click');
             });
 
-            form.find('.checkbox-select-question').change(function () {
+            form.find('.checkbox-select-question').change(function() {
                 updateCountSelected();
 
-                let flag_selected = true;
-                form.find('.checkbox-select-question').each(function (index) {
+                let flagselected = true;
+                form.find('.checkbox-select-question').each(function(index) {
                     if ($(this).prop('checked') === false) {
-                        flag_selected = false;
+                        flagselected = false;
                     }
                 });
 
-                if (flag_selected === false) {
+                if (flagselected === false) {
                     $('#all_checkboxes_' + uniqueid).prop('checked', false);
                 } else {
                     $('#all_checkboxes_' + uniqueid).prop('checked', true);
                 }
-            })
+            });
 
         },
 
-    }
+    };
 });

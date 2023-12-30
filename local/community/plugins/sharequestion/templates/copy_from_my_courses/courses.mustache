@@ -49,16 +49,19 @@
             </div>
 
         {{/courses}}
+
+        {{^courses}}
+            <h3>{{#str}}noresult, community_sharequestion{{/str}}</h3>
+        {{/courses}}
     </div>
 
 {{#js}}
-require(['community_sharequestion/copyFromMyCourses', 'jquery'], function(copyFromMyCourses, $) {
-    copyFromMyCourses.actionsMain();
-    copyFromMyCourses.actionsCategories();
-    copyFromMyCourses.actionsBankCategories();
+    require(['community_sharequestion/copyFromMyCourses', 'jquery'], function(copyFromMyCourses, $) {
+        copyFromMyCourses.actionsCategories();
+        copyFromMyCourses.actionsBankCategories();
 
-    $('.inner').on('click', '.course-wrapper-name, .bank-categories-wrapper-name, .all-course-categories-wrapper-name, .all-bank-categories-wrapper-name, .cat-wrapper-name', function () {
-        $(this).next().find('.collapse.show').collapse('hide');
-    })
-});
+        $('.inner').on('click', '.course-wrapper-name, .bank-categories-wrapper-name, .all-course-categories-wrapper-name, .all-bank-categories-wrapper-name, .cat-wrapper-name', function () {
+            $(this).next().find('.collapse.show').collapse('hide');
+        })
+    });
 {{/js}}
