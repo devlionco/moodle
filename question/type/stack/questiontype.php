@@ -1096,6 +1096,11 @@ class qtype_stack extends question_type {
 
         foreach ($q->prts as $index => $prt) {
             foreach ($prt->get_nodes_summary() as $nodeid => $choices) {
+                //EC-283 (10487) - solution to set supposed grade if question is not graded
+                if ($choices->falsescore == 'grade') {
+                    $choices->falsescore = 0;
+                    $choices->truescore = 1;
+                }
                 $parts[$index . '-' . $nodeid] = array(
                     $choices->falseanswernote => new question_possible_response(
                             $choices->falseanswernote, $choices->falsescore * $prt->get_value()),
