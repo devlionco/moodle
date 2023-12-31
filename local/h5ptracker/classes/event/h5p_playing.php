@@ -35,7 +35,7 @@ class h5p_playing extends \core\event\base {
      */
     protected function init() {
         $this->data['objecttable'] = 'course_modules';
-        $this->data['crud'] = 'w';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
