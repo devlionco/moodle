@@ -42,6 +42,8 @@ $links = array(
             array('link' => (string) new moodle_url('/question/type/stack/adminui/studentinputs.php'))),
     get_string('bulktestindexintro_desc', 'qtype_stack',
             array('link' => (string) new moodle_url('/question/type/stack/adminui/bulktestindex.php'))),
+    get_string('dependenciesintro_desc', 'qtype_stack',
+        array('link' => (string) new moodle_url('/question/type/stack/adminui/dependencies.php'))),
     get_string('stackInstall_replace_dollars_desc', 'qtype_stack',
             array('link' => (string) new moodle_url('/question/type/stack/adminui/replacedollarsindex.php'))),
 );
@@ -68,15 +70,15 @@ $settings->add(new admin_setting_configselect('qtype_stack/platform',
 $settings->add(new admin_setting_configselect('qtype_stack/maximaversion',
         get_string('settingcasmaximaversion', 'qtype_stack'),
         get_string('settingcasmaximaversion_desc', 'qtype_stack'), null,
-                array('5.38.1' => '5.38.1', '5.39.0' => '5.39.0',
-                      '5.40.0' => '5.40.0', '5.41.0' => '5.41.0', '5.42.0' => '5.42.0',
+                array('5.40.0' => '5.40.0', '5.41.0' => '5.41.0', '5.42.0' => '5.42.0',
                       '5.42.1' => '5.42.1', '5.42.2' => '5.42.2',
                       '5.43.0' => '5.43.0', '5.43.1' => '5.43.1', '5.43.2' => '5.43.2',
-                      '5.44.0' => '5.44.0', 'default' => 'default')));
+                      '5.44.0' => '5.44.0', '5.46.0' => '5.46.0', '5.47.0' => '5.47.0',
+                      'default' => 'default')));
 
 $settings->add(new admin_setting_configtext('qtype_stack/castimeout',
         get_string('settingcastimeout', 'qtype_stack'),
-        get_string('settingcastimeout_desc', 'qtype_stack'), 10, PARAM_INT, 3));
+        get_string('settingcastimeout_desc', 'qtype_stack'), 20, PARAM_INT, 3));
 
 $settings->add(new admin_setting_configselect('qtype_stack/casresultscache',
         get_string('settingcasresultscache', 'qtype_stack'),
@@ -270,47 +272,3 @@ $settings->add(new admin_setting_configselect('qtype_stack/matrixparens',
         get_string('matrixparens', 'qtype_stack'),
         get_string('matrixparens_help', 'qtype_stack'), '[',
         stack_options::get_matrix_parens_options()));
-
-// Options for mathlive.
-$settings->add(new admin_setting_heading('mathliveoptionsheading',
-        get_string('settingheadmathlivenoptions', 'qtype_stack'),
-        get_string('settingheadmathlivenoptions_desc', 'qtype_stack')));
-
-// Mathlive
-$settings->add(new admin_setting_configcheckbox('qtype_stack/mathlive_enable',
-        get_string('stackmathliveenable', 'qtype_stack'),
-        get_string('stackmathliveenable_desc', 'qtype_stack'), 0));
-
-$default = '';
-$settings->add(new admin_setting_configtextarea('qtype_stack/mathlive_keyboard', new lang_string('stackmathlivesettings', 'qtype_stack'),
-        new lang_string('descstackmathlivesettings', 'qtype_stack'), $default, PARAM_RAW));
-
-global $PAGE;
-$PAGE->requires->js_amd_inline('
-    require(["jquery", "local_jsoneditor/usage"], function($, JSONEditor) {
-    
-        let divEditorId = "jsoneditor_mathlive";
-              
-        $("#admin-mathlive_keyboard .form-textarea").attr("id", divEditorId);
-        $("#" + divEditorId).css({"width": "100%", "height": "400px"});
-                
-        let options = {
-            onChangeText: function (jsonString) {
-                $("#id_s_qtype_stack_mathlive_keyboard").text(jsonString);
-            }
-        };
-        
-        let json = "{}";
-        if($("#id_s_qtype_stack_mathlive_keyboard").val() !== undefined){
-            let val = $("#id_s_qtype_stack_mathlive_keyboard").val().trim();  
-            if (val.length !== 0) {
-                json = val;
-            }
-        }
-        
-        if($("#id_s_qtype_stack_mathlive_keyboard").is(":visible")){        
-            new JSONEditor.init(document.getElementById(divEditorId), JSON.parse(json), options);            
-            $("#id_s_qtype_stack_mathlive_keyboard").hide();  
-        }
-    });
-');

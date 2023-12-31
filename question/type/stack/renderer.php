@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 require_once(__DIR__ . '/vle_specific.php');
-require_once($CFG->dirroot . '/lib/form/mathlive.php');
 
 /**
  * Generates the output for Stack questions.
@@ -90,101 +89,9 @@ class qtype_stack_renderer extends qtype_renderer {
             $fieldname = $qa->get_qt_field_name($name);
             $state = $question->get_input_state($name, $response);
 
-            // Mathlive enable.
-            if($question->options->get_option('mathliveenable') == 1 && get_config('qtype_stack', 'mathlive_enable') == 1){
-                $mathlive = new \form_mathlive();
-
-                $inputrender = '<div class="d-none">'.$input->render($state, $fieldname, $options->readonly, $tavalue).'</div>';
-                $mathname = str_replace(':', '', $fieldname);
-                $answer = array_key_exists(0, $state->contents) ? $state->contents[0] : '';
-
-                $inputrender .= '<math-field virtual-keyboard-mode=manual
-                    style="
-                            background-color: white;
-                            font-size: 16px;
-                            border-radius: 8px;
-                            border: 1px solid rgba(0, 0, 0, .3);
-                            /* box-shadow: 0 0 8px rgba(0, 0, 0, .2); */
-                            min-width: 15rem;
-                            min-height: 2rem;
-                            direction: ltr;
-                            max-width: max-content;
-                            padding: 3px;
-                        "        
-                    id="'.$mathname.'" value="'.$answer.'">                    
-                </math-field>';
-
-                $direction = right_to_left() ? 'rtl' : 'ltr';
-                $inputrender .= '<style>.ML__keyboard {direction:'.$direction.';}</style>';
-
-                $json = get_config('qtype_stack', 'mathlive_keyboard');
-
-                // Check json.
-                json_decode($json);
-                if(json_last_error() !== JSON_ERROR_NONE || $json == '{}'){
-                    $json = '';
-                }
-
-                $keyboard = 'HIGH_SCHOOL_KEYBOARD_'.strtoupper($mathname);
-                $keyboardlayer = 'HIGH_SCHOOL_KEYBOARD_LAYER_'.strtoupper($mathname);
-                $mf = 'mf_'.$mathname;
-                if(!empty($json)) {
-                    $jscode = '
-                    const '.$keyboardlayer.' = {
-                          "high-school-layer": ' . $json . '
-                        };
-                    const '.$keyboard.' = {
-                          "high-school-keyboard": {
-                            "label": "High School", // Label displayed in the Virtual Keyboard Switcher
-                            "tooltip": "High School Level", // Tooltip when hovering over the label
-                            "layer": "high-school-layer"
-                          }
-                        };                
-                    ';
-                }
-
-                $jscode .= "                
-                    setTimeout(function() {
-                        const ".$mf." = document.getElementById('$mathname');
-                        ";
-
-                if(!empty($json)) {
-                    $jscode .= "
-                            ".$mf.".setOptions({
-                                virtualKeyboardMode: 'manual',
-                                //virtualKeyboards: 'numeric symbols functions'
-                                customVirtualKeyboardLayers: $keyboardlayer,
-                                customVirtualKeyboards: $keyboard,
-                                virtualKeyboards: 'high-school-keyboard'
-                            });                        
-                        ";
-                }
-
-                $jscode .= "
-                        // Set default.
-                        //let val = document.getElementById('$fieldname').value;
-                        //".$mf.".setValue(val);
-                            
-                        // Event in mathlive.     
-                        ".$mf.".addEventListener('input',(ev) => {
-                            document.getElementById('$fieldname').value = ".$mf.".value;
-                            
-                            let element = document.getElementById('$fieldname');
-                            element.dispatchEvent(new Event('input'));
-                        });
-                    }, 800);
-                ";
-
-                $inputrender .= html_writer::script($jscode, '');
-
-                $questiontext = str_replace("[[input:{$name}]]",
-                    $inputrender,
-                    $questiontext);
-            }else {
-                $questiontext = str_replace("[[input:{$name}]]",
+            $questiontext = str_replace("[[input:{$name}]]",
                     $input->render($state, $fieldname, $options->readonly, $tavalue),
                     $questiontext);
-            }
 
             $questiontext = $input->replace_validation_tags($state, $fieldname, $questiontext);
 
@@ -252,14 +159,6 @@ class qtype_stack_renderer extends qtype_renderer {
         }
 
         $urlparams = array('questionid' => $question->id);
-
-        $links = array();
-        if (stack_user_can_edit_question($question)) {
-            $links[] = html_writer::link(
-                    $question->qtype->get_tidy_question_url($question),
-                    stack_string('tidyquestion'));
-        }
-
         $urlparams['seed'] = $question->seed;
 
         // Quite honestly fellow developers I'm getting fed up of fixing live questions written by colleagues!
@@ -267,6 +166,7 @@ class qtype_stack_renderer extends qtype_renderer {
         // Make these problems more obvious to authors, who don't yet understand what tests/variants are for.
         // Alert a teacher to questions without tests or deployed variants.
         $testscases = question_bank::get_qtype('stack')->load_question_tests($question->id);
+        $links = array();
         if (($question->has_random_variants() && count($question->deployedseeds) == 0) ||
             count($testscases) == 0) {
             $links[] = html_writer::link(
@@ -306,6 +206,10 @@ class qtype_stack_renderer extends qtype_renderer {
             $question->castextprocessor = new castext2_qa_processor($qa);
         }
 
+        if ($question->specificfeedbackinstantiated === null) {
+            // Invalid question, otherwise this would be here.
+            return '';
+        }
         $feedbacktext = $question->specificfeedbackinstantiated->get_rendered($question->castextprocessor);
         if (!$feedbacktext) {
             return '';
@@ -618,6 +522,23 @@ class qtype_stack_renderer extends qtype_renderer {
                 $question->get_generalfeedback_castext()->get_rendered($question->castextprocessor), $this),
                 FORMAT_HTML, // All CASText2 processed content has already been formatted to HTML.
                 $qa, 'question', 'generalfeedback', $question->id);
+    }
+
+    public function question_description(question_attempt $qa) {
+        $question = $qa->get_question();
+        if (empty($question->questiondescription)) {
+            return '';
+        }
+
+        // If called out of order.
+        if ($question->castextprocessor === null) {
+            $question->castextprocessor = new castext2_qa_processor($qa);
+        }
+
+        return $qa->get_question()->format_text(stack_maths::process_display_castext(
+            $question->get_questiondescription_castext()->get_rendered($question->castextprocessor), $this),
+            FORMAT_HTML, // All CASText2 processed content has already been formatted to HTML.
+            $qa, 'question', 'questiondescription', $question->id);
     }
 
     /**

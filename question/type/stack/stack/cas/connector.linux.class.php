@@ -50,7 +50,7 @@ class stack_cas_connection_linux extends stack_cas_connection_base {
 
     protected function call_maxima($command) {
         // For unicode support, we need to add something like 'LANG' => 'en_GB.UTF-8' to the environment below.
-        $env = array('PATH' => getenv('PATH') ,'LANG' => 'he_IL.utf8');
+        $env = array('PATH' => getenv('PATH'));
 
         $descriptors = array(
             0 => array('pipe', 'r'),

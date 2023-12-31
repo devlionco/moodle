@@ -208,8 +208,6 @@ function stack_string_sanitise($str) {
  * @return array page context, selected seed (or null), and URL parameters.
  */
 function qtype_stack_setup_question_test_page($question) {
-    global $PAGE;
-
     $seed = optional_param('seed', null, PARAM_INT);
     $urlparams = array('questionid' => $question->id);
     if (!is_null($seed) && $question->has_random_variants()) {
@@ -230,30 +228,17 @@ function qtype_stack_setup_question_test_page($question) {
         $urlparams['courseid'] = $courseid;
 
     } else {
-        require_login();
         $context = $question->get_context();
-        $PAGE->set_context($context);
-        // Note that in the other cases, require_login will set the correct page context.
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $urlparams['cmid'] = $context->instanceid;
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $urlparams['courseid'] = $context->instanceid;
+        } else {
+            $urlparams['courseid'] = SITEID;
+        }
     }
 
     return array($context, $seed, $urlparams);
-}
-
-function qtype_stack_get_between($string, $start = "", $end = ""){
-    if (mb_strpos(' '.$string, $start)) {
-        $startCharCount = mb_strpos($string, $start) + mb_strlen($start);
-        $firstSubStr = mb_substr($string, $startCharCount, mb_strlen($string));
-        $endCharCount = mb_strpos($firstSubStr, $end);
-        if ($endCharCount == 0) {
-            $endCharCount = mb_strlen($firstSubStr);
-        }
-
-        $tagcontent = mb_substr($firstSubStr, 0, $endCharCount);
-
-        return $tagcontent;
-    } else {
-        return '';
-    }
 }
 
 /* This class is needed to ignore requests for pluginfile rewrites in the bulk tester
