@@ -31,12 +31,13 @@ define(
     function($, Ajax, inView, Notification) {
         var courseid = null;
 
-        let getStatus = function(cmids) {
+        let getStatus = function(cmids, sectionid) {
             if (courseid) {
                 Ajax.call([{
                     methodname: 'format_flexsections_get_activity_grade_status',
                     args: {
                         cmids: cmids,
+                        sectionid: sectionid,
                         courseid: courseid
                     },
                     done: function(resp) {
@@ -51,23 +52,32 @@ define(
             }
         };
         let inview = function() {
-            let stack = [];
+            let stackcmids = [];
+            let sectionid = 0;
             inView('.inviewgrade')
                 .on('enter', function(e) {
+
                     if (!$(e).hasClass('inview-done')) {
-                        $(e).addClass('inview-done');
-                        let cmid = $(e).attr("data-cmid");
                         courseid = $(e).attr("data-courseid");
 
-                        stack.push(cmid);
+                        // Working by sectionid.
+                        let area = $(e).closest('.section-area');
+                        sectionid = area.attr("data-cmlistid");
+                        area.find('.inviewgrade').addClass('inview-done');
+
+                        // Working by cmid.
+                        // $(e).addClass('inview-done');
+                        // let cmid = $(e).attr("data-cmid");
+                        // stackcmids.push(cmid);
                     }
                 });
 
             setInterval(function() {
-                if (stack.length > 0) {
-                    let cmids = JSON.stringify(stack);
-                    getStatus(cmids);
-                    stack = [];
+                if (stackcmids.length > 0 || sectionid > 0) {
+                    let cmids = JSON.stringify(stackcmids);
+                    getStatus(cmids, sectionid);
+                    stackcmids = [];
+                    sectionid = 0;
                 }
             }, 500);
 

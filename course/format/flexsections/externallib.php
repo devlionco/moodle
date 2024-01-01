@@ -214,6 +214,7 @@ class format_flexsections_external extends external_api {
         return new external_function_parameters(
             array(
                 'cmids' => new external_value(PARAM_RAW, 'Activity ID'),
+                'sectionid' => new external_value(PARAM_INT, 'Section ID'),
                 'courseid' => new external_value(PARAM_INT, 'Course ID'),
             )
         );
@@ -223,8 +224,8 @@ class format_flexsections_external extends external_api {
      * Returns get_activity_grade_status
      * @return string
      */
-    public static function get_activity_grade_status($cmids, $courseid) {
-        global $CFG, $OUTPUT, $PAGE;
+    public static function get_activity_grade_status($cmids, $sectionid, $courseid) {
+        global $CFG, $OUTPUT, $PAGE, $DB;
 
         $context = context_system::instance();
         $PAGE->set_context($context);
@@ -232,12 +233,20 @@ class format_flexsections_external extends external_api {
         $params = self::validate_parameters(self::get_activity_grade_status_parameters(),
                 array(
                         'cmids' => $cmids,
+                        'sectionid' => $sectionid,
                         'courseid' => (int) $courseid,
                 )
         );
 
+        if ($sectionid > 0) {
+            $section = $DB->get_record('course_sections', ['id' => $sectionid]);
+            $cmids = explode(',', $section->sequence);
+        } else{
+            $cmids = json_decode($cmids);
+        }
+
         $result = [];
-        foreach(json_decode($cmids) as $cmid) {
+        foreach($cmids as $cmid) {
             $modinfo = get_fast_modinfo($params['courseid']);
             $cm = $modinfo->get_cm($cmid);
 
