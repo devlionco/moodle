@@ -282,3 +282,4 @@ $string['correctansweriscutsom'] = 'One possible correct answer is: <span class=
 $string['feedbackwrongunit'] = 'Check the measurement units';
 $string['feedbackwrongvalue'] = 'Check the measurement values';
 $string['feedbackwronganswer'] = 'Check the measurement values and units';
+$string['requiredfield'] = 'Required field';

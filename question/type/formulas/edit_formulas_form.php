@@ -352,6 +352,21 @@ class qtype_formulas_edit_form extends question_edit_form {
         if (isset($instantiationresult->errors)) {
             $errors = array_merge($errors, $instantiationresult->errors);
         }
+
+        // Validation autocomplete.
+        foreach ($data->autocomplete as $key => $val) {
+            if ($data->autocomplete[$key] == 1 && $data->answertype[$key] == 0) {
+
+                if (empty($data->postunit[$key])) {
+                    $errors['postunit['.$key.']'] = get_string('requiredfield', 'qtype_formulas');
+                }
+
+                if (empty($data->answer[$key])) {
+                    $errors['answer['.$key.']'] = get_string('requiredfield', 'qtype_formulas');
+                }
+            }
+        }
+
         return $errors;
     }
 

@@ -8,4 +8,4 @@ $string['correctansweriscutsom'] = 'תשובה נכונה אפשרית היא: <
 $string['feedbackwrongunit'] = 'בדקו את יחידות המידה';
 $string['feedbackwrongvalue'] = 'בדקו את ערכי המדידה';
 $string['feedbackwronganswer'] = 'בדקו את הערכים והיחידות של המדידה';
-?>
+$string['requiredfield'] = 'שדה נדרש';
