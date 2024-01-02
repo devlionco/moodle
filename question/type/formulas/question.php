@@ -974,9 +974,13 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
             return $part->answer;
         }
 
-        $vars = $this->get_local_variables($part);     // Contains both global and local variables.
-        if (isset($vars->all[$part->answer]) && !empty($vars->all[$part->answer])) {
-            return isset($vars->all[$part->answer]->value) ? $vars->all[$part->answer]->value : false;
+        // Contains both global and local variables.
+        //$vars = $this->get_local_variables($part);
+
+        $modelanswer = $this->get_evaluated_answer($part);
+
+        if (isset($modelanswer[0]) && is_numeric($modelanswer[0])) {
+            return $modelanswer[0];
         }
 
         return false;
