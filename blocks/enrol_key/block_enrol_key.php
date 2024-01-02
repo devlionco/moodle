@@ -36,8 +36,12 @@ class block_enrol_key extends block_base {
         $text = '
             <div id="enrolkeyform" class="d-inline-block ">
                 <form action="' . $CFG->wwwroot . '/enrol/self/enrolwithkey.php" method="post">
+                
                     <input type="text" id="enrolkey" name="enrolkey" size="10" maxlength="15"
                             placeholder="' . get_string('enrol_key', 'block_enrol_key') . '">
+                            
+                    <input type="hidden" name="sesskey" value="'.sesskey().'">
+                            
                     <input class="btn btn-primary btn-sm px-20 font-weight-500 font-size-14 h-35" type="submit" 
                             value="' . get_string('enrol_me', 'block_enrol_key') . '" style="margin-top: -6px;">
                 </form>

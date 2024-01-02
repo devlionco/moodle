@@ -24,6 +24,7 @@
  */
 
 require('../../config.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 $enrolkey = required_param('enrolkey', PARAM_TEXT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -31,6 +32,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $enrolkey = rtrim(ltrim($enrolkey)); // Remove redundant spaces (left and right)
 $instance = $DB->get_record('enrol', array('password' => $enrolkey, 'enrol' => 'self'));
 $groups = $DB->get_records('groups', array( 'enrolmentkey' => $enrolkey));
+
 if ((null === $instance && null === $groups) || '' === $enrolkey) {
     $PAGE->set_url('/enrol/self/enrolwithkey.php', array('enrolkey' => $enrolkey));
     $PAGE->set_title(get_string('error'));
@@ -38,25 +40,30 @@ if ((null === $instance && null === $groups) || '' === $enrolkey) {
     redirect(new moodle_url('/my'), get_string('enrolkey_error', 'theme_petel'), 5);
     echo $OUTPUT->footer();
 }
+
 $group = false;
+$courseid = 0;
 if (!$instance) {
-    $group = array_shift($groups);
-    $courseid = $group->courseid;
+    if ($group = array_shift($groups)) {
+        $courseid = $group->courseid;
+    }
 } else {
     $courseid = $instance->courseid;
 }
+
+if (!$courseid) {
+    redirect(new moodle_url('/my'), get_string('enrolkey_error', 'theme_petel'), 5);
+}
+
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 $PAGE->set_context($context);
 
 require_login();
 
-if (!$enrol_self = enrol_get_plugin('self')) {
+if (!$enrolself = enrol_get_plugin('self')) {
     throw new coding_exception('Can not instantiate enrol_self');
 }
-
-$PAGE->set_url('/enrol/self/enrolwithkey.php', array('enrolkey' => $enrolkey));
-$PAGE->set_title($enrol_self->get_instance_name($instance));
 
 if ($confirm && confirm_sesskey()) {
     // Enrol user as "student" into course.
@@ -68,7 +75,7 @@ if ($confirm && confirm_sesskey()) {
     }
     // Enrol user with role from course enrolment instance (should be set to student, as default)
     // but, also allow other types of roles.
-    $enrol_self->enrol_user($instance, $USER->id, $instance->roleid);
+    $enrolself->enrol_user($instance, $USER->id, $instance->roleid);
 
     // Also, add users to group(s), if a proper key was given.
     if ($group) {
@@ -79,13 +86,14 @@ if ($confirm && confirm_sesskey()) {
                 continue;
             }
             if ($group->enrolmentkey === $enrolkey) {
+
                 // Add user to group.
-                require_once($CFG->dirroot.'/group/lib.php');
                 groups_add_member($group->id, $USER->id);
                 break;
             }
         }
     }
+
     // Send welcome message.
     //if ($instance->customint4 != ENROL_DO_NOT_SEND_EMAIL) {
         //$this->email_welcome_message($instance, $USER);
@@ -94,6 +102,9 @@ if ($confirm && confirm_sesskey()) {
     // Take user to course.
     redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
+
+$PAGE->set_url('/enrol/self/enrolwithkey.php', array('enrolkey' => $enrolkey));
+$PAGE->set_title($enrolself->get_instance_name($instance));
 
 echo $OUTPUT->header();
 $yesurl = new moodle_url($PAGE->url, array('confirm' => 1, 'sesskey' => sesskey(), 'enrolkey' => $enrolkey));
