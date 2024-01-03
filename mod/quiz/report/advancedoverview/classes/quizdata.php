@@ -545,11 +545,8 @@ class quizdata {
         // Grade.
         $totalgrade = $countstudent = 0;
         foreach ($this->tablestudentsdata as $item) {
-            if ($item['grade'] > 0) {
-                $totalgrade += $item['grade'];
-                $countstudent++;
-            }
-
+            $totalgrade += $item['grade'];
+            $countstudent++;
         }
 
         $tabledata['grade'] = $countstudent > 0 ? round($totalgrade/$countstudent, 2) : 0;
