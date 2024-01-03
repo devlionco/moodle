@@ -947,16 +947,15 @@ class quizdata {
             $questionstate = '—';
         }
 
-        if (in_array($questionstateclass, ['partiallycorrect', 'incorrect', 'correct'])) {
-            $celltransform = true;
-        } else {
-            $celltransform = false;
-        }
+        $celltransform = in_array($questionstateclass, ['partiallycorrect', 'incorrect', 'correct']) ? true : false;
+
+        // Link to attempt.
+        $url = in_array($questionstateclass, ['notyetanswered', 'answersaved']) ? false : $link->out(false);
 
         $data->celltransform = $celltransform;
         $data->questionstate = $questionstate;
         $data->grade = $grade;
-        $data->link = $link->out(false);
+        $data->link = $url;
 
         $html = $OUTPUT->render_from_template('quiz_advancedoverview/gradeicon', $data);
 
