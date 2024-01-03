@@ -253,6 +253,23 @@ class observer_quiz {
 
                 $targetqasid = $DB->insert_record('question_attempt_steps', $targetquestionattemptsstep);
 
+                // EC-540 Duplicate file for this stepid if any.
+                $sql = 'SELECT *
+                        FROM {files}
+                        WHERE `itemid` = ?
+                            AND `userid` = ?
+                            AND `filename` <> "."
+                        ORDER BY id DESC';
+                $params = [];
+                $params[] = $sourceqasid;
+                $params[] = $sourceuserid;
+                if($file = $DB->get_record_sql($sql, $params, )) {
+                    $newitem = new \stdClass();
+                    $newitem->userid = $targetuserid;
+                    $newitem->itemid = $targetqasid;
+                    self::duplicate_file_by_id($file->id, $newitem);
+                }
+
                 self::tw_clone_question_attempt_step_data($sourceqasid, $targetqasid);
             }
         }
@@ -288,4 +305,34 @@ class observer_quiz {
 
         return null;
     }
+
+    // EC-540.
+    /**
+     * Function to duplicate a file by ID.
+     *
+     * @param int $fileid The ID of the file to duplicate.
+     * @param object $newitem An object containing properties to update in the resulting file record.
+     *
+     * @return mixed The duplicated file if successful, otherwise false.
+     */
+    static function duplicate_file_by_id($fileid, $newitem) {
+        global $DB;
+
+        $fs = get_file_storage();
+        $filerecord = $DB->get_record('files', array('id' => $fileid));
+        $storedfile = $fs->get_file_instance($filerecord);
+        $newfilerecord = clone $filerecord;
+        foreach ($newitem as $property => $value) {
+            if (property_exists($newfilerecord, $property)) {
+                $newfilerecord->$property = $value;
+            }
+        }
+        $duplicatedfile = $fs->create_file_from_storedfile($newfilerecord, $storedfile);
+        if ($duplicatedfile) {
+            return $duplicatedfile;
+        } else {
+            return false;
+        }
+    }
+
 }
