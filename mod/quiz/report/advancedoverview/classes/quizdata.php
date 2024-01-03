@@ -1485,6 +1485,9 @@ class quizdata {
 
         // Build users and questions table.
 
+        // Students table.
+        $data = array_merge($data, $this->get_render_students_data());
+
         // Table according to questions.
         $tablequestion = [];
         $questionTexts = [];
@@ -1527,9 +1530,6 @@ class quizdata {
         $data['questionTexts'] = json_encode(['texts' => $questionTexts]);
         $data['enable_table_according_questions'] = count($tablequestion) > 0 ? true : false;
         $data['data_table_according_questions'] = json_encode($tablequestion, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-
-        // Students table.
-        $data = array_merge($data, $this->get_render_students_data());
 
         $data['charts']['average'] = $this->chartaverage;
         $data['charts']['state'] = $this->chartstate;
@@ -1739,27 +1739,9 @@ class quizdata {
     public function get_question_wrongs($questionid) {
 
         $total = 0;
-        foreach ($this->participants as $student) {
-            $userattempts = quiz_get_user_attempts($this->cm->instance, $student->id, 'all', false);
-            if (!$userattempts) {
-                $attempt = new stdClass;
-                $attempt->userid = $student->id;
-                $attempt->state = null;
-                $attempt->attempt = null;
-                $attempt->sumgrades = null;
-                $attempt->timestart = null;
-                $attempt->timefinish = null;
-                $attempt->id = null;
-                $userattempts = [$attempt];
-            }
-
-            foreach ($userattempts as $attempt) {
-                $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
-                $question = $this->questions[$questionid];
-
-                // Question state.
-                $state = $att ? $att->get_question_state_class($question->slot, true) : 'notyetanswered';
-                if ($state == 'incorrect') {
+        foreach ($this->tablestudentsdata as $item) {
+            if (isset($item[$questionid]) && isset($item[$questionid]['state'])) {
+                if (in_array($item[$questionid]['state'], ['incorrect'])) {
                     $total++;
                 }
             }
@@ -1771,27 +1753,9 @@ class quizdata {
     public function get_question_answered($questionid) {
 
         $total = 0;
-        foreach ($this->participants as $student) {
-            $userattempts = quiz_get_user_attempts($this->cm->instance, $student->id, 'all', false);
-            if (!$userattempts) {
-                $attempt = new stdClass;
-                $attempt->userid = $student->id;
-                $attempt->state = null;
-                $attempt->attempt = null;
-                $attempt->sumgrades = null;
-                $attempt->timestart = null;
-                $attempt->timefinish = null;
-                $attempt->id = null;
-                $userattempts = [$attempt];
-            }
-
-            foreach ($userattempts as $attempt) {
-                $att = $attempt->id ? quiz_attempt::create($attempt->id) : null;
-                $question = $this->questions[$questionid];
-
-                // Question state.
-                $state = $att ? $att->get_question_state_class($question->slot, true) : 'notyetanswered';
-                if (in_array($state, ['correct', 'partiallycorrect'])) {
+        foreach ($this->tablestudentsdata as $item) {
+            if (isset($item[$questionid]) && isset($item[$questionid]['state'])) {
+                if (in_array($item[$questionid]['state'], ['correct', 'partiallycorrect'])) {
                     $total++;
                 }
             }
