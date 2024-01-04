@@ -921,7 +921,7 @@ class quizdata {
             $item->count_students = $value;
             $item->name = $question->name;
             $item->link = $link->out(false);
-            $item->qnumber = $question->numberview;
+            $item->qnumber = isset($question->numberview) ? $question->numberview : '' ;
 
             $this->openquestionslist[] = $item;
         }
