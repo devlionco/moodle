@@ -826,7 +826,7 @@ class auth extends \auth_plugin_base {
 
         // Make sure all user data is fetched.
         $user = get_complete_user_data('username', $user->username, null, false);
-        complete_user_login($user);
+        complete_user_login($user, ['auth'=>'saml2']);
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
         set_moodle_cookie($USER->username);
