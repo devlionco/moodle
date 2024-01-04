@@ -70,6 +70,14 @@ define([
     }
 
     /**
+     * Check is mobile
+     * @returns {any}
+     */
+    function isMobile() {
+        const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        return regex.test(navigator.userAgent);
+    }
+    /**
      * In each group, resize all the items to be the same size.
      */
     DragDropToTextQuestion.prototype.resizeAllDragsAndDrops = function() {
@@ -439,6 +447,110 @@ define([
     };
 
     /**
+     * Handles mobile events on drops.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropToTextQuestion.prototype.handleMobileDropClick = function(e) {
+        var drop = $(e.target).closest('.drop');
+
+        if (questionManager.mobileClickNdrop.currentDrop) {
+            questionManager.mobileClickNdrop.currentDrop.focus();
+        }
+        drop.focus();
+        questionManager.mobileClickNdrop.currentDrop = drop;
+
+        if (drop.length === 0) {
+            var placedDrag = $(e.target);
+            var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+            if (currentPlace !== null) {
+                drop = this.getDrop(placedDrag, currentPlace);
+            }
+        }
+
+        e.preventDefault();
+    };
+
+    /**
+     * Handles mobile events on drops.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropToTextQuestion.prototype.handleMobileDropSwapClick = function(e) {
+        $(e.currentTarget).focus();
+        var drop = $(e.currentTarget).prev();
+        if (drop.hasClass('drop')) {
+            if (questionManager.mobileClickNdrop.currentDrop) {
+                questionManager.mobileClickNdrop.currentDrop.focus();
+            }
+            drop.focus();
+            questionManager.mobileClickNdrop.currentDrop = drop;
+
+            if (drop.length === 0) {
+                var placedDrag = $(e.target);
+                var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+                if (currentPlace !== null) {
+                    drop = this.getDrop(placedDrag, currentPlace);
+                }
+            }
+
+            e.preventDefault();
+        }
+
+    };
+
+
+    /**
+     * Handles mobile events on draghomes.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropToTextQuestion.prototype.handleMobileDragClick = function(e) {
+        var draghome = $(e.target).closest('.draghome');
+
+        if (draghome && questionManager.mobileClickNdrop.currentDrop) {
+
+            questionManager.mobileClickNdrop.currentDrag = draghome;
+            draghome.data('isfocus', true);
+            draghome.addClass('beingdragged');
+            var hiddenDrag = this.getDragClone(draghome);
+            if (hiddenDrag.length) {
+                if (draghome.hasClass('infinite')) {
+                    var noOfDrags = this.noOfDropsInGroup(this.getGroup(draghome));
+                    var cloneDrags = this.getInfiniteDragClones(draghome, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = draghome.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
+                        draghome.offset(cloneDrag.offset());
+                    } else {
+                        hiddenDrag.addClass('active');
+                        draghome.offset(hiddenDrag.offset());
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                    draghome.offset(hiddenDrag.offset());
+                }
+            }
+            this.sendDragToDrop(draghome, questionManager.mobileClickNdrop.currentDrop);
+        }
+
+        // If (drop.length === 0) {
+        //     var placedDrag = $(e.target);
+        //     var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+        //     if (currentPlace !== null) {
+        //         drop = this.getDrop(placedDrag, currentPlace);
+        //     }
+        // }
+
+        e.preventDefault();
+
+    };
+
+
+    /**
      * Handles keyboard events on drops.
      *
      * Drops are focusable. Once focused, right/down/space switches to the next choice, and
@@ -799,6 +911,16 @@ define([
         eventHandlersInitialised: false,
 
         /**
+         * {boolean} is mobile.
+         */
+        isMobile: isMobile(),
+
+        mobileClickNdrop: {
+            currentDrag: null,
+            currentDrop: null
+        },
+
+        /**
          * {Object} ensures that the drag event handlers are only initialised once per question,
          * indexed by containerId (id on the .que div).
          */
@@ -842,14 +964,29 @@ define([
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            $('body')
-                .on('keydown',
-                    '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drop',
-                    questionManager.handleKeyPress)
-                .on('keydown',
-                    '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome.placed:not(.beingdragged)',
-                    questionManager.handleKeyPress)
-                .on('qtype_ddwtos-dragmoved', questionManager.handleDragMoved);
+            if (questionManager.isMobile) {
+                $('body')
+                    .on('touchend',
+                        '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drop',
+                        questionManager.handleMobileDropClick)
+                    .on('touchend',
+                        '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome.placed:not(.beingdragged)',
+                        questionManager.handleMobileDropSwapClick)
+                    .on('touchend',
+                        '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome.unplaced',
+                        questionManager.handleMobileDragClick)
+                    .on('qtype_ddwtos-dragmoved', questionManager.handleDragMoved);
+            } else {
+                $('body')
+                    .on('keydown',
+                        '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drop',
+                        questionManager.handleKeyPress)
+                    .on('keydown',
+                        '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome.placed:not(.beingdragged)',
+                        questionManager.handleKeyPress)
+                    .on('qtype_ddwtos-dragmoved', questionManager.handleDragMoved);
+            }
+
         },
 
         /**
@@ -858,9 +995,11 @@ define([
          * @param {jQuery} element Element to bind the event
          */
         addEventHandlersToDrag: function(element) {
-            // Unbind all the mousedown and touchstart events to prevent double binding.
-            element.unbind('mousedown touchstart');
-            element.on('mousedown touchstart', questionManager.handleDragStart);
+            if (!questionManager.isMobile) {
+                // Unbind all the mousedown and touchstart events to prevent double binding.
+                element.unbind('mousedown touchstart');
+                element.on('mousedown touchstart', questionManager.handleDragStart);
+            }
         },
 
         /**
@@ -889,6 +1028,40 @@ define([
                 question.handleKeyPress(e);
             }
         },
+
+        /**
+         * Handle mobile click on drops.
+         * @param {Event} e
+         */
+        handleMobileDropClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleMobileDropClick(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drops.
+         * @param {Event} e
+         */
+        handleMobileDropSwapClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleMobileDropSwapClick(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drags.
+         * @param {Event} e
+         */
+        handleMobileDragClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleMobileDragClick(e);
+            }
+        },
+
 
         /**
          * Given an event, work out which question it affects.
@@ -938,6 +1111,9 @@ define([
                 // Save the new answered value.
                 thisQ.questionAnswer = thisQ.getQuestionAnsweredValues();
             }
+            questionManager.mobileClickNdrop.currentDrag = null;
+            questionManager.mobileClickNdrop.currentDrop = null;
+
         },
 
         /**
