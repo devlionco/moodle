@@ -239,37 +239,46 @@ class qtype_numerical_question extends question_graded_automatically {
                 return null;
             }
 
+            $answert = [
+                'value' =>  $num,
+                'unit' =>  $unit,
+            ];
+
+            // Check if present right answer.
+            foreach ($this->answers as $answer) {
+                $dano = [
+                    'value' =>  $answer->answer,
+                    'unit' =>  $answer->unit,
+                ];
+
+                if (qtype_numerical_compare_answer($dano, $answert, $answer->tolerance)) {
+                    $answer->unitisright = true;
+                    return $answer;
+                }
+            }
+
+            // Check with penalty.
             foreach ($this->answers as $answer) {
                 $dano = [
                         'value' =>  $answer->answer,
                         'unit' =>  $answer->unit,
                 ];
 
-                $answert = [
-                        'value' =>  $num,
-                        'unit' =>  $unit,
-                ];
+                $obj = qtype_numerical_check_for_penalty($dano, $answert, $answer->tolerance);
 
-                if (qtype_numerical_compare_answer($dano, $answert, $answer->tolerance)) {
+                if ($obj->result == true) {
+                    $answer->fraction = $answer->fraction - $answer->fraction * $obj->penalty;
                     $answer->unitisright = true;
-                    return $answer;
-                } else {
-                    $obj = qtype_numerical_check_for_penalty($dano, $answert, $answer->tolerance);
 
-                    if ($obj->result == true) {
-                        $answer->fraction = $answer->fraction - $answer->fraction * $obj->penalty;
-                        $answer->unitisright = true;
-
-                        if(isset($obj->penaltytype) && $obj->penaltytype == 'value'){
-                            $answer->feedback = get_string('feedbackwrongvalue', 'qtype_numerical');
-                        }
-
-                        if(isset($obj->penaltytype) && $obj->penaltytype == 'unit'){
-                            $answer->feedback = get_string('feedbackwrongunit', 'qtype_numerical');
-                        }
-
-                        return $answer;
+                    if(isset($obj->penaltytype) && $obj->penaltytype == 'value'){
+                        $answer->feedback = get_string('feedbackwrongvalue', 'qtype_numerical');
                     }
+
+                    if(isset($obj->penaltytype) && $obj->penaltytype == 'unit'){
+                        $answer->feedback = get_string('feedbackwrongunit', 'qtype_numerical');
+                    }
+
+                    return $answer;
                 }
             }
 
