@@ -257,49 +257,17 @@ class duplicate_question {
     }
 
     public static function copy_question_metadata($sourcequestionid, $targetquestionid) {
-        global $DB;
 
-        $sql = "
-            SELECT lmf.id
-            FROM {local_metadata_field} lmf 
-            LEFT JOIN {local_metadata_category} lmc ON (lmf.categoryid = lmc.id)
-            WHERE lmc.contextlevel = ?        
-        ";
-        $fieldids = $DB->get_records_sql($sql, [\local_metadata\mcontext::question()->get_contextid()]);
+        // Copy all metadata.
+        \local_metadata\mcontext::question()->copy_all_metadata($sourcequestionid, $targetquestionid);
 
-        if (!empty($fieldids)) {
-            $res = [];
-            foreach ($fieldids as $item) {
-                $res[] = $item->id;
-            }
-            $str = implode(',', $res);
+        // Save qid.
+        \local_metadata\mcontext::question()->save($targetquestionid, 'qid', $sourcequestionid);
 
-            $localdata = $DB->get_records_sql("SELECT * FROM {local_metadata} WHERE fieldid IN (" . $str . ") AND instanceid=?",
-                    [$sourcequestionid]);
-            if (!empty($localdata)) {
-                foreach ($localdata as $item) {
-                    $item->instanceid = $targetquestionid;
+        // Save qid history.
+        \local_metadata\mcontext::question()->save($targetquestionid, 'qidhistory', $sourcequestionid);
 
-                    if (!$meta =
-                            $DB->get_record('local_metadata', ['fieldid' => $item->fieldid, 'instanceid' => $item->instanceid])) {
-                        $DB->insert_record('local_metadata', $item);
-                    } else {
-                        $meta->data = $item->data;
-                        $DB->update_record('local_metadata', $meta);
-                    }
-                }
-            }
-
-            // Save qid.
-            \local_metadata\mcontext::question()->save($targetquestionid, 'qid', $sourcequestionid);
-
-            // Save qid history.
-            \local_metadata\mcontext::question()->save($targetquestionid, 'qidhistory', $sourcequestionid);
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public static function add_metadata_to_question($targetquestionid, $sourcequestionid, $data = []) {
