@@ -110,6 +110,8 @@ class qtype_oumultiresponse_embedded_renderer extends qtype_renderer
                 [$qa->get_outer_question_div_unique_id()]);
         }
 
+        $result = preg_replace('/brokenfile.php#/', 'draftfile.php', $result);
+
         return $result;
     }
 }
