@@ -199,6 +199,10 @@ function question_duplicate_single_question($questionid, $cmid, $intoquestioncat
         }
     }
 
+
+    // Copy all metadata.
+    \local_metadata\mcontext::question()->copy_all_metadata($questionid, $targetquestionid);
+
     // Save qid metadata.
     \local_metadata\mcontext::question()->save($targetquestionid, 'qid', $questionid);
 
