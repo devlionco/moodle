@@ -51,3 +51,4 @@ $string['notice_submissionoverwrite'] = '<span class="text-danger font-weight-bo
 
 $string['saveandeval'] = 'הגשת תשובה';
 $string['finishactivity'] = 'סיום הפעילות...';
+$string['requestedfilescustom'] = 'קבצי הגשה';

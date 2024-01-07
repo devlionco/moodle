@@ -575,6 +575,7 @@ function mod_vpl_get_fontawesome_icon_map() {
             'mod_vpl:test' => 'fa-flask',
             'mod_vpl:executionoptions' => 'fa-sliders',
             'mod_vpl:requestedfiles' => 'fa-shield',
+            'mod_vpl:requestedfilescustom' => 'fa-shield',
             'mod_vpl:maxresourcelimits' => 'fa-tachometer',
             'mod_vpl:resourcelimits' => 'fa-tachometer',
             'mod_vpl:executionfiles' => 'fa-code',
@@ -738,7 +739,7 @@ function vpl_extend_settings_navigation(settings_navigation $settings, navigatio
         $node = vpl_navi_node_create($vplnode, 'executionoptions', $url, navigation_node::TYPE_SETTING);
         $vplnode->add_node( $node, $fkn );
         $url = new moodle_url( '/mod/vpl/forms/requiredfiles.php', $parms );
-        $node = vpl_navi_node_create($vplnode, 'requestedfiles', $url, navigation_node::TYPE_SETTING);
+        $node = vpl_navi_node_create($vplnode, 'requestedfilescustom', $url, navigation_node::TYPE_SETTING);
         $vplnode->add_node( $node, $fkn );
 
         if ( $CFG->release >= '4.0' ) { // Remove submenu for compatibility with Moodle >= 4.0.

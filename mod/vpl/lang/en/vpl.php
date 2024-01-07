@@ -479,3 +479,4 @@ $string['executionkeepfiles'] = 'Files to keep';
 
 $string['saveandeval'] = 'Submit answer';
 $string['finishactivity'] = 'Finish activity';
+$string['requestedfilescustom'] = 'Fitxers requerits';

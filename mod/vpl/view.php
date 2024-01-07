@@ -88,7 +88,7 @@ $vpl->print_variation( $userid );
 $vpl->print_fulldescription();
 
 if ( $showfr ) {
-    echo '<h2>' . get_string( 'requestedfiles', VPL ) . "</h2>\n";
+    echo '<h2>' . get_string( 'requestedfilescustom', VPL ) . "</h2>\n";
     $fr->print_files( false );
 }
 if ( $showfe ) {

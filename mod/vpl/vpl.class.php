@@ -1482,7 +1482,7 @@ class mod_vpl {
                 $maintabs[] = $viewtab;
             }
             $href = vpl_mod_href( 'forms/requiredfiles.php', 'id', $cmid );
-            $maintabs[] = vpl_create_tabobject( 'requiredfiles.php', $href, 'requestedfiles' );
+            $maintabs[] = vpl_create_tabobject( 'requiredfiles.php', $href, 'requestedfilescustom' );
 
             $href = vpl_mod_href( 'forms/testcasesfile.php', 'id', $cmid );
             $maintabs[] = vpl_create_tabobject( 'testcasesfile.php', $href, 'testcases' );
@@ -1724,7 +1724,7 @@ class mod_vpl {
             $link .= '">';
             $link .= get_string( 'download', VPL );
             $link .= '</a>)';
-            $this->print_restriction( 'requestedfiles', $text . $link );
+            $this->print_restriction( 'requestedfilescustom', $text . $link );
         }
         $instance = $this->get_instance();
         if (count( $files ) != $instance->maxfiles) {
