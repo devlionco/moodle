@@ -124,7 +124,7 @@ define(['jquery'], function(){
         <div class="bottom-block">
         <div class="bottom-container">
           <div 
-            class="tooltip-block-n circle-first-button cfb-activity"
+            class="tooltip-block-n circle-first-button cfb-activity btn btn-primary"
             data-claster="${this.data.id}"
           >
             <i class="fas fa-caret-down cfb-activity"></i>
@@ -135,7 +135,7 @@ define(['jquery'], function(){
             data-class="tooltip-list"
             data-x="${this.p_.clastersIndent - this.p_.diameter - 50 + this.p_.diameter/2 - 10}" 
             data-y="${this.p_.diameter + 15}"
-            class="tooltip-block">
+            class="tooltip-block btn btn-primary">
             <i class="fas fa-info icon-info" style="transform: ${this.p_.currentLang ? 'scale(-1, 1)' : 'none'}"></i>
           </div>
           <div 
@@ -143,7 +143,7 @@ define(['jquery'], function(){
             data-class="tooltip-list"
             data-x="${this.p_.clastersIndent - this.p_.diameter - 50 + this.p_.diameter/2 - 10}" 
             data-y="${this.p_.diameter + 15}"
-            class="tooltip-block" 
+            class="tooltip-block btn btn-primary" 
             data-claster="${this.data.id}"
           >
             <i class="fas fa-users icon-cub"></i>

@@ -190,7 +190,6 @@
                         </div>
                         <p class="text-body m-0">{{count_student_response}}</p>
                     </div>
-
                     {{! TODO: remove this option PTL-4658 }}
                     {{#showteachercomments}}
                     <div class="activity-info-block">
@@ -203,6 +202,18 @@
                         </a>
                     </div>
                     {{/showteachercomments}}
+
+                    {{#diagnostic}}
+                        <div class="activity-info-block">
+                            <div class="text-primary activity-info-tooltip position-relative">
+                                <i class="fa-light fa-chart-network"></i>
+                                <div class="oer-tooltip p-2 position-absolute" data-position="bottom-left"
+                                     data-carret-position="top-left">
+                                    <span>{{#str}}oercatalogtooltip, local_diagnostic{{/str}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {{/diagnostic}}
 
                     <div class="activity-info-block">
                         {{#metadata_sourceurl}}

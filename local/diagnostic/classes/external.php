@@ -42,6 +42,7 @@ class local_diagnostic_external extends external_api {
     static $result_filename = 'students_petel.csv';
     static $Rscript_name = 'Kmeans.R';
     static $optimal_name = 'find_optimal.py';
+    static $important_name = 'important_questions.py';
     static $gapestimateRscript_name = 'GapEstimateKmeans.R';
 
     const DEFAULT_REBUILD_LIMIT = 350;
@@ -705,6 +706,7 @@ class local_diagnostic_external extends external_api {
     public static function get_clusters_json($params) {
         global $DB, $PAGE;
 
+        $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
         $params['metadatafieldid'] = $metadatafieldid = $DB->get_field('local_metadata_field', 'id', ['shortname' => 'ID']);
         $config = get_config('local_diagnostic');
         $resultobject = new \stdClass();
@@ -793,8 +795,7 @@ class local_diagnostic_external extends external_api {
                     }
                 }
 
-                $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
-                $arrcluster['clustername'] = get_string('clustername', 'local_diagnostic', $heb_group_name[$i - 1]);
+                $arrcluster['clustername'] = isset($heb_group_name[$i - 1]) ? get_string('clustername', 'local_diagnostic', $heb_group_name[$i - 1]) : get_string('clustername', 'local_diagnostic', $i);
                 $arrcluster['clusternum'] = $i;
 
                 $arrcluster['users'] = [];
@@ -863,16 +864,30 @@ class local_diagnostic_external extends external_api {
             foreach ($clusters['table'] as $mid => $clusterstabledata) {
                 $arrtable[$mid] = [
                     'data' => [],
-                    'name' => $clusterstabledata['name']
+                    'name' => $clusterstabledata['name'],
+                    //TODO Maybe we should put more complicated logic here
+                    'hasimportant' => $config->importantquestions
                 ];
+
                 foreach (array_values($clusterstabledata['data']) as $i => $tabledata) {
                     $tablekey = $i + 1;
-                    $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
                     if (isset($tabledata['tabledata']) && !in_array($tablekey, $excludefromtable)) {
+                        if ($config->importantquestions) {
+                            $importancearray = array_map(function($questiontabledata){
+                                return $questiontabledata['importance'];
+                            }, $tabledata['tabledata']);
+                            arsort($importancearray);
+                            $importancearray = array_slice($importancearray, 0, $config->importantnum);
+                            foreach ($tabledata['tabledata'] as $questiontablekey => $questiontabledata) {
+                                if ($questiontabledata['importance']) {
+                                    $tabledata['tabledata'][$questiontablekey]['important'] = in_array($questiontabledata['importance'], $importancearray);
+                                }
+                            }
+                        }
                         $arrtable[$mid]['data'][$tablekey] = [
                             'table' => $tabledata['tabledata'],
                             'avg' => $tabledata['prc'],
-                            'clustername' => get_string('clustername', 'local_diagnostic', $heb_group_name[$i])
+                            'clustername' => isset($heb_group_name[$i]) ? get_string('clustername', 'local_diagnostic', $heb_group_name[$i]) : get_string('clustername', 'local_diagnostic', $i)
                         ];
                     }
                 }
@@ -905,6 +920,7 @@ class local_diagnostic_external extends external_api {
         $results = [];
         $config = get_config('local_diagnostic');
         $randomcluster = static::get_clusternum();
+        $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
 
         $usersnum = 10;
         $questions = rand(5, 20);
@@ -965,8 +981,7 @@ class local_diagnostic_external extends external_api {
                 }
             }
 
-            $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
-            $arrcluster['clustername'] = get_string('clustername', 'local_diagnostic', $heb_group_name[$i-1]);
+            $arrcluster['clustername'] = isset($heb_group_name[$i-1]) ? get_string('clustername', 'local_diagnostic', $heb_group_name[$i-1]) : get_string('clustername', 'local_diagnostic', $i-1);
             $arrcluster['clusternum'] = $i+1;
             $arrcluster['info'] = get_string('clusterinfo' . $i, 'local_diagnostic', rand(0,100));
             $arrcluster['text'] = get_string('clusterinfo' . $i, 'local_diagnostic', rand(0,100));
@@ -991,13 +1006,13 @@ class local_diagnostic_external extends external_api {
                         'data' => []
                     ];
                 }
-                $heb_group_name = explode(',', get_string('alphabet', 'langconfig'));
+
                 $arrtable[$mid]['data'][$i] = [
                     'table' => [],
                     'avg' => 0,
                     'sum' => 0,
                     'count' => 0,
-                    'clustername' => get_string('clustername', 'local_diagnostic', $heb_group_name[$i-1])
+                    'clustername' => isset($heb_group_name[$i-1]) ? get_string('clustername', 'local_diagnostic', $heb_group_name[$i-1]) : get_string('clustername', 'local_diagnostic', $i-1)
                 ];
 
                 for ($question=1; $question<=$questions; $question++) {
@@ -1175,7 +1190,6 @@ class local_diagnostic_external extends external_api {
                         $timestamps[$userdatakey][$uniquekey] = isset($data['keys'][$uniquekey]['timecreated']) ? $data['keys'][$uniquekey]['timecreated'] : null;
 
                         $userdata[$userdatakey]['keys'][$uniquekey] = $point;
-                        $userdata[$userdatakey]['export'][$uniquekey] = (isset($data['keys'][$uniquekey]['fraction']) && !empty($data['keys'][$uniquekey]['fraction'])) ? $data['keys'][$uniquekey]['fraction'] : 0;
                         $userdata[$userdatakey]['sum'] += $point;
                     }
 
@@ -1215,7 +1229,7 @@ class local_diagnostic_external extends external_api {
                     //echo ' POINTS: ' . count($points);
                     //echo ' TOCENTROIDS: ' . count($tocentroids);
 
-                    list($clusters, $centroids) = static::Rcluster($points, $tocentroids, $params);
+                    list($clusters, $centroids, $importancedata) = static::Rcluster($points, $tocentroids, $params);
                 } else {
                     static::add_new_attempts_to_clusters($userdata, $activitydata, $params, $readytouse);
                     return [[], [] ,[] ,[], $readytouse, [], []];
@@ -1267,7 +1281,6 @@ class local_diagnostic_external extends external_api {
 
                             $keycounts[$mid]++;
 
-
                             $countkey = get_string('question', 'local_diagnostic', $keycounts[$mid]);
 
                             if (!isset($perqavg[$mid]['data'][$num]['tabledata'][$countkey])) {
@@ -1276,6 +1289,11 @@ class local_diagnostic_external extends external_api {
                                     'count' => 0,
                                     'qname' => $allkeysdata['qname']
                                 ];
+                                //We have importance count starting from 0
+                                $importanceindex = $keycounts[$mid] - 1;
+                                if (isset($importancedata[$importanceindex])) {
+                                    $perqavg[$mid]['data'][$num]['tabledata'][$countkey]['importance'] = $importancedata[$importanceindex];
+                                }
                             }
 
                             $perqavg[$mid]['data'][$num]['sum'] += $userdata[$userdatakey]['keys'][$uniquekey];
@@ -1505,7 +1523,7 @@ class local_diagnostic_external extends external_api {
                 $rebuild = static::get_rebuild($attemptscount, $params);
 
                 if ($rebuild) {
-                    list($clusters, $centroids) = static::Rcluster($matrix, [], $params);
+                    list($clusters, $centroids, $importancedata) = static::Rcluster($matrix, [], $params);
                 } else {
                     static::mlnlp_add_new_attempts_to_clusters($userdata, $params, $question->id);
                     return [$params['cache']->get('extra')[$question->id], $params['cache']->get('extracentroids')[$question->id]];
@@ -1572,6 +1590,10 @@ class local_diagnostic_external extends external_api {
                                     'count' => 0,
                                     'qname' => $catname
                                 ];
+                                $importanceindex = $keycounts[$mid] - 1;
+                                if (isset($importancedata[$importanceindex])) {
+                                    $perqavg[$mid]['data'][$num]['tabledata'][$countkey]['importance'] = $importancedata[$importanceindex];
+                                }
                             }
 
                             $perqavg[$mid]['data'][$num]['sum'] += $point[$uniquekey];
@@ -1856,11 +1878,10 @@ class local_diagnostic_external extends external_api {
         return $mids;
     }
 
-    private static function Rcluster($points, $tocentroids, $params) {
+    public static function Rcluster($points, $tocentroids, $params, $forcebrad = false) {
         global $CFG;
 
         $config = get_config('local_diagnostic');
-        $scriptname = get_config('local_diagnostic', 'gapestimate') ? static::$gapestimateRscript_name : static::$Rscript_name;
         $clustercount = isset($params['clusters']) && !empty($params['clusters']) ? $params['clusters'] : static::get_clusternum();
         if (isset($params['rdebug']) && !empty($params['rdebug'])) {
             $dir = make_writable_directory($CFG->dataroot . '/rscripts');
@@ -1868,43 +1889,8 @@ class local_diagnostic_external extends external_api {
             $dir = make_temp_directory(random_string());
         }
 
+        $pathtopython = $CFG->pathtopython ?: static::DEFAULT_PATHTOPYTHON;
         $filepath = $dir . '/' . static::$source_filename;
-
-        switch ($config->clusternummethod) {
-            case static::CLUSTERNUM_GAPESTIMATE:
-                $scriptname = get_config('local_diagnostic', 'gapestimate');
-                break;
-            case static::CLUSTERNUM_OPTIMAL:
-                $nmax = $config->nmax ?: static::NMAX;
-                $nmin = $config->nmin ?: static::NMIN;
-                $optimal_script_path = $CFG->dirroot . '/local/diagnostic/scripts/' . static::$optimal_name;
-
-                $pathtopython = $CFG->pathtopython ?: static::DEFAULT_PATHTOPYTHON;
-                $time = time();
-                exec("$pathtopython $optimal_script_path $filepath $nmin $nmax", $optimal_output);
-                if (is_array($optimal_output) && !empty($optimal_output)) {
-                    $firstline = array_shift($optimal_output);
-                    $optimal_output = json_decode($firstline);
-                    mtrace('python result ' . $firstline . ", RUN time " . (time() - $time) . " sec");
-                    if (is_array($optimal_output) && !empty($optimal_output)) {
-                        $optimal_output = array_shift($optimal_output);
-                        if (is_array($optimal_output) && !empty($optimal_output)) {
-                            $clustercount = array_shift($optimal_output);
-                        }
-                    }
-                } else {
-                    mtrace('python result ", RUN time:' . (time() - $time) . " sec");
-                }
-
-                break;
-            case static::CLUSTERNUM_FIXED:
-                break;
-            default:
-                throw new \moodle_exception('unknownclustermethod', 'local_diagnostic');
-        }
-
-        $outputfilepath = $dir . '/' . static::$result_filename;
-        $script_path = $CFG->dirroot . '/local/diagnostic/Rscripts/' . $scriptname;
 
         $fp = fopen($filepath, 'w');
         $mapper = [];
@@ -1914,6 +1900,43 @@ class local_diagnostic_external extends external_api {
         }
 
         fclose($fp);
+
+        $clusternummethod = $forcebrad ? static::CLUSTERNUM_OPTIMAL : $config->clusternummethod;
+        switch ($clusternummethod) {
+            case static::CLUSTERNUM_GAPESTIMATE:
+                $scriptname = $config->gapestimate ?: static::$gapestimateRscript_name;
+                break;
+            case static::CLUSTERNUM_OPTIMAL:
+                $nmax = $config->nmax ?: static::NMAX;
+                $nmin = $config->nmin ?: static::NMIN;
+                $optimal_script_path = $CFG->dirroot . '/local/diagnostic/scripts/' . static::$optimal_name;
+
+                $time = time();
+                exec("$pathtopython $optimal_script_path $filepath $nmin $nmax", $optimal_output);
+                if (is_array($optimal_output) && !empty($optimal_output)) {
+                    $firstline = array_shift($optimal_output);
+                    $optimal_outputs = json_decode($firstline);
+                    mtrace('python result ' . $firstline . ", RUN time " . (time() - $time) . " sec");
+                    $clustercount = min($optimal_outputs);
+                    if ($forcebrad) {
+                        return $optimal_outputs;
+                    }
+                } else {
+                    mtrace('python result empty ar not an array, RUN time:' . (time() - $time) . " sec");
+                }
+                if ($forcebrad) {
+                    return [];
+                }
+                break;
+            case static::CLUSTERNUM_FIXED:
+                $scriptname = static::$Rscript_name;
+                break;
+            default:
+                throw new \moodle_exception('unknownclustermethod', 'local_diagnostic');
+        }
+
+        $outputfilepath = $dir . '/' . static::$result_filename;
+        $script_path = $CFG->dirroot . '/local/diagnostic/Rscripts/' . $scriptname;
 
         exec("Rscript $script_path $filepath $outputfilepath $dir $clustercount");
 
@@ -1955,6 +1978,8 @@ class local_diagnostic_external extends external_api {
             $rowcount++;
         }
 
+        fclose($fp);
+
         foreach ($sums as $clusternum => $sumsbyquestion) {
             foreach ($sumsbyquestion as $uniquekey => $sum) {
                 $centroids[$clusternum][$uniquekey] = number_format($sum / $pointcounts[$clusternum], 4);
@@ -1967,7 +1992,32 @@ class local_diagnostic_external extends external_api {
             }
         }
 
-        return [$clusters, $centroids];
+        $importancedata = [];
+
+        if ($config->importantquestions) {
+            $important_script_path = $CFG->dirroot . '/local/diagnostic/scripts/' . static::$important_name;
+
+            $time = time();
+            exec("$pathtopython $important_script_path $filepath $clustercount", $important_output);
+            if (is_array($important_output) && !empty($important_output)) {
+                foreach ($important_output as $responseline) {
+                    $values = explode('   ', $responseline);
+                    if (count($values) !== 2) {
+                        //if it least one line has no expected output - trace and break
+                        mtrace('Importance calculation error, unexpected output line: ' . $responseline);
+                        $importancedata = [];
+                        break;
+                    } else {
+                        $questionposition = trim($values[0]);
+                        $importancedata[$questionposition] = trim($values[1]);
+                    }
+                }
+            } else {
+                mtrace('Importance calculation error, empty or faulty response');
+            }
+        }
+
+        return [$clusters, $centroids, $importancedata];
     }
 
     public static function get_attempts_count($cache) :int {

@@ -56,7 +56,7 @@ if ($params['type'] == 'mid') {
                     }
                 }
                 $valuearr = [implode(',', $data['courses']), implode(',', $activitycmids), $data['user']['id']];
-                foreach ($data['export'] as $key => $value) {
+                foreach ($data['keys'] as $key => $value) {
                     $valuearr[] = $value;
                     if (!$header) {
                         list($temp_mid, $temp_key) = explode('-', $key);

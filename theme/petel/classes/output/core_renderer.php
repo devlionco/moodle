@@ -202,7 +202,7 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
     public function full_header() {
         global $PAGE, $COURSE, $DB, $OUTPUT, $CFG, $USER;
         $PAGE->requires->js_call_amd('theme_petel/quiz_review');
-        
+
         $iscoursepage = preg_match("/course-view/", $PAGE->pagetype);
 
         $header = new stdClass();
@@ -370,7 +370,8 @@ class core_renderer extends \theme_boost_union\output\core_renderer {
                     ? explode(',', get_config('local_diagnostic', 'cohorts'))
                     : [];
                 if (array_intersect(array_keys($cohorts), $allowedcohorts)) {
-                    $PAGE->requires->js_call_amd('local_diagnostic/main', 'init', ['.popup-trigger', $COURSE->id, [$CFG->wwwroot]]);
+                    $colors = \theme_petel\utility::get_instance_colors();
+                    $PAGE->requires->js_call_amd('local_diagnostic/main', 'init', ['.popup-trigger', $COURSE->id, [$CFG->wwwroot, $colors]]);
                     $title = get_string('analytics', 'local_diagnostic');
                     $icon = html_writer::tag('i', '', array('class' =>'fa-light fa-chart-network'));
                     $html .= html_writer::tag('a', $icon, array('href' => '', 'class' => $btnclass . ' popup-trigger',

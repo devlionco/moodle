@@ -16,6 +16,8 @@
         <FIELD NAME="extracentroids" TYPE="binary" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Extra blob centroid data"/>
         <FIELD NAME="activities" TYPE="binary" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Selectbox data with courses activities and attempts"/>
         <FIELD NAME="buildtime" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Build time"/>
+        <FIELD NAME="bradclusternum" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Brad cluster num"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Successful attempts"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -23,6 +25,25 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="mid" TYPE="unique" FIELDS="mid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_diagnostic_brad" COMMENT="Brad predictions table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="mid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="mid"/>
+        <FIELD NAME="bradclusternum" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Brad cluster num"/>
+        <FIELD NAME="allbradclusters" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="All brad clusters"/>
+        <FIELD NAME="bradmin" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Brad cluster num"/>
+        <FIELD NAME="bradmax" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Brad cluster num"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Successful attempts"/>
+        <FIELD NAME="questions" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of questions used"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="bradclusternummid" TYPE="unique" FIELDS="mid,bradclusternum"/>
       </KEYS>
     </TABLE>
   </TABLES>

@@ -162,6 +162,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
 
             formdata.imageTop = M.util.image_url('a/ufo_t', 'local_diagnostic');
             formdata.imageContent = M.util.image_url('a/ufo_100', 'local_diagnostic');
+            formdata.secondarycolor = this.adParams[1].secondarylight;
 
             // Get the content of the modal.
             return Templates.render('local_diagnostic/popup', formdata);
@@ -505,9 +506,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
                     let jsondata = JSON.parse(data.json);
 
                     // console.log('jsondata ', jsondata);
-
                     BuubleAnimation(".svgСharts", jsondata, "div.popup-local-diagnostic", self.adParams, self.courseid, jsondata.attempt, jsondata.mid, jsondata.cmid);
-
                 } else {
                     Notification.addNotification({
                         message: data.message,

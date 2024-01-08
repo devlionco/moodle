@@ -10,7 +10,7 @@ define([
     'local_diagnostic/activities',
     'core/ajax',
     'local_diagnostic/toast',
-], function ($, Str, d3, CircleAnimation, Rectangle, CommonBlock, QuestionList, BottomBlock, ActivitiesClass, Ajax, Toast) {
+], function($, Str, d3, CircleAnimation, Rectangle, CommonBlock, QuestionList, BottomBlock, ActivitiesClass, Ajax, Toast) {
     class BuubleAnimation {
         constructor(d3, htmlRootElement, data, translateObj, popupElement, adParams, courseId, attempt, pmid, pcmid) {
             this.adParams = adParams;
@@ -30,7 +30,7 @@ define([
             this.popupElement = popupElement;
             this.currentLang;
             this.courseId = courseId;
-            //ltr rtl
+            // Ltr rtl
             if ($("html").attr("dir") === "ltr") {
                 this.currentLang = false;
             } else {
@@ -39,8 +39,8 @@ define([
 
             this.sizeCircle = 20;
             this.marginCircle = 20;
-            this.backBorderColor = '#F5F2F7';
-            this.backgroundColor = '#F5F2F7';
+            this.backBorderColor = this.adParams[1].light;
+            this.backgroundColor = this.adParams[1].light;
 
             this.activitiesItem;
             this.activitiesRepoItem;
@@ -114,17 +114,17 @@ define([
         mainActions() {
             let self = this;
 
-            // actions main popup
+            // Actions main popup
             // cancel btn
             $('body').off('click', '.popup-local-diagnostic-main-p #main_cancel');
-            $('body').on('click', '.popup-local-diagnostic-main-p #main_cancel', function () {
+            $('body').on('click', '.popup-local-diagnostic-main-p #main_cancel', function() {
                 self.activitiesItem.clearData();
                 $('div.popup-local-diagnostic-main-modal .modal-footer').css('display', 'none');
             });
 
-            // submit btn
+            // Submit btn
             $('body').off('click', '.popup-local-diagnostic-main-p #main_submit');
-            $('body').on('click', '.popup-local-diagnostic-main-p #main_submit', async function () {
+            $('body').on('click', '.popup-local-diagnostic-main-p #main_submit', async function() {
                 let result = {};
 
                 result.courseid = self.courseId;
@@ -145,17 +145,17 @@ define([
                     self.data.forEach(function(objcluster) {
                         if (objcluster.clusternum == key) {
                             objcluster.users.forEach(function(obj) {
-                                users.push(obj['id'].replace('UID', ''));
+                                users.push(obj.id.replace('UID', ''));
                             });
                         }
                     });
 
                     result.data.push({
-                        'cmidsCourse': cmidsAndDesc[key]['cmidsCourse'],
-                        'cmidsRecom': cmidsAndDesc[key]['cmidsRecom'],
-                        'cmidsRepo': cmidsAndDesc[key]['cmidsRepo'],
-                        'description': cmidsAndDesc[key]['description'],
-                        'recommend': cmidsAndDesc[key]['recommend'],
+                        'cmidsCourse': cmidsAndDesc[key].cmidsCourse,
+                        'cmidsRecom': cmidsAndDesc[key].cmidsRecom,
+                        'cmidsRepo': cmidsAndDesc[key].cmidsRepo,
+                        'description': cmidsAndDesc[key].description,
+                        'recommend': cmidsAndDesc[key].recommend,
                         'clusternum': key,
                         'userids': users,
                         'type': type,
@@ -164,18 +164,18 @@ define([
 
                     console.log(result.data);
 
-                    if (cmidsAndDesc[key]['cmidsCourse'].length > 0) {
+                    if (cmidsAndDesc[key].cmidsCourse.length > 0) {
                         cmidsCourseHasData = true;
                     }
-                    if (cmidsAndDesc[key]['cmidsRecom'].length > 0) {
+                    if (cmidsAndDesc[key].cmidsRecom.length > 0) {
                         cmidsRecomHasData = true;
                     }
-                    if (cmidsAndDesc[key]['cmidsRepo'].length > 0) {
+                    if (cmidsAndDesc[key].cmidsRepo.length > 0) {
                         cmidsRepoHasData = true;
                     }
                 }
 
-                // console.log('result ! ', JSON.stringify(result, null, 2));
+                // Console.log('result ! ', JSON.stringify(result, null, 2));
                 // return;
 
                 // disable btn submit
@@ -187,11 +187,11 @@ define([
 
                 if (cmidsRecomHasData) {
                     let data = $.extend(true, {}, result);
-                    data.data.forEach(function (el) {
-                        el['cmids'] = [...el['cmidsRecom']];
-                        delete el['cmidsCourse'];
-                        delete el['cmidsRepo'];
-                        delete el['cmidsRecom'];
+                    data.data.forEach(function(el) {
+                        el.cmids = [...el.cmidsRecom];
+                        delete el.cmidsCourse;
+                        delete el.cmidsRepo;
+                        delete el.cmidsRecom;
                     });
 
                     data.source = 'recommend';
@@ -206,11 +206,11 @@ define([
 
                 if (cmidsCourseHasData) {
                     let data = $.extend(true, {}, result);
-                    data.data.forEach(function (el) {
-                        el['cmids'] = [...el['cmidsCourse']];
-                        delete el['cmidsCourse'];
-                        delete el['cmidsRepo'];
-                        delete el['cmidsRecom'];
+                    data.data.forEach(function(el) {
+                        el.cmids = [...el.cmidsCourse];
+                        delete el.cmidsCourse;
+                        delete el.cmidsRepo;
+                        delete el.cmidsRecom;
                     });
 
                     data.source = 'mycourses';
@@ -225,11 +225,11 @@ define([
 
                 if (cmidsRepoHasData) {
                     let data = $.extend(true, {}, result);
-                    data.data.forEach(function (el) {
-                        el['cmids'] = [...el['cmidsRepo']];
-                        delete el['cmidsCourse'];
-                        delete el['cmidsRepo'];
-                        delete el['cmidsRecom'];
+                    data.data.forEach(function(el) {
+                        el.cmids = [...el.cmidsRepo];
+                        delete el.cmidsCourse;
+                        delete el.cmidsRepo;
+                        delete el.cmidsRecom;
                     });
 
                     data.source = 'repository';
@@ -247,9 +247,9 @@ define([
                 }
             });
 
-            // close modal
+            // Close modal
             $('body').off('click', '.popup-local-diagnostic-main-p .close');
-            $('body').on('click', '.popup-local-diagnostic-main-p .close', function () {
+            $('body').on('click', '.popup-local-diagnostic-main-p .close', function() {
                 self.activitiesItem.clearData();
                 $('div.popup-local-diagnostic-main-modal .modal-footer').css('display', 'none');
             });
@@ -282,7 +282,7 @@ define([
 
             toastItem.toastHandle({
                 method: 'hidden.bs.toast',
-                fn: function () {
+                fn: function() {
                     $('.popup-local-diagnostic-main-modal #main_submit').removeAttr('disabled');
                 }
             });
@@ -305,17 +305,23 @@ define([
             let sizeCircle = this.sizeCircle;
             let item = 0;
 
+            /**
+             * @param node
+             */
             function recurse(node) {
-                if (node.users) node.users.forEach(function (child) {
+                if (node.users) {
+ node.users.forEach(function(child) {
                     recurse(child);
                 });
-                else classes.push({
+} else {
+ classes.push({
                     value: sizeCircle,
                     icon: node.icon,
                     id: node.id,
                     fullname: node.fullname,
                     item: item++
                 });
+}
             }
 
             recurse(root);
@@ -352,7 +358,7 @@ define([
                 topBlockRightSpace: this.topBlockRightSpace,
                 clastersIndent: this.clastersIndent,
                 clasterTop: this.clasterTop,
-            }
+            };
 
             for (let i = 0; i < this.data.length; ++i) {
                 if (i === 0) {
@@ -372,7 +378,7 @@ define([
 
                     paramShape.lcdescription = this.data[i].lcdescription;
 
-                    let circlItem = new CircleAnimation(paramShape, this.data[i], this.translateObj)
+                    let circlItem = new CircleAnimation(paramShape, this.data[i], this.translateObj);
                     circlItem.addCircle();
                     this.shapes.push(circlItem);
 
@@ -399,7 +405,7 @@ define([
             this.questionListItem.addAction(this);
 
             this.initActivitiesDialog();
-            // this.initActivitiesRepo();
+            // This.initActivitiesRepo();
         }
 
         initActivitiesDialog() {
@@ -408,7 +414,7 @@ define([
                 currentLang: this.currentLang,
                 wwwRoot: this.adParams[0],
                 data: this.data
-            }
+            };
 
             this.activitiesItem = new ActivitiesClass(
                 params,
@@ -430,7 +436,7 @@ define([
                 documentWith: this.documentWith,
                 topBlockWith: this.topBlockWith,
                 topBlockRightSpace: this.topBlockRightSpace,
-            }
+            };
 
             let block = new CommonBlock(params, this.totalData, this.translateObj);
             this.commonBlockItem = block;
@@ -464,10 +470,10 @@ define([
                         let clasterTop = this.shapes[i].p_.clasterTop;
                         this.shapes[i].p_.clastersIndent = clasterLeft;
 
-                        let claster = this.d3.select(`g.claster-${this.shapes[i].data.id}`)
+                        let claster = this.d3.select(`g.claster-${this.shapes[i].data.id}`);
 
                         claster
-                            .attr("transform", "translate(" + clasterLeft + "," + clasterTop + ")")
+                            .attr("transform", "translate(" + clasterLeft + "," + clasterTop + ")");
                     }
                 }
 
@@ -480,7 +486,7 @@ define([
             let self = this;
             let allSvg = this.svg.selectAll("foreignObject.image");
 
-            allSvg.on("mousedown", function (d) {
+            allSvg.on("mousedown", function(d) {
                 let currentClaster = self.d3.select(this.parentNode.parentNode).attr("data-id");
 
                 let currentUser = {...d.data, claster: currentClaster};
@@ -494,8 +500,11 @@ define([
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended)
-            )
+            );
 
+            /**
+             * @param d
+             */
             function dragstarted(d) {
                 self.d3.event.sourceEvent.stopPropagation();
                 let hmParentNode = this.parentNode;
@@ -512,6 +521,9 @@ define([
                 self.startY = current.attr("y");
             }
 
+            /**
+             * @param d
+             */
             function dragged(d) {
                 self.d3.select(this)
                     .attr("x", self.d3.event.x + this.deltaX)
@@ -520,8 +532,11 @@ define([
                 self.tooltip.style("display", "none");
             }
 
+            /**
+             * @param d
+             */
             async function dragended(d) {
-                let thisElement = self.d3.select(this)
+                let thisElement = self.d3.select(this);
                 self.isDown = false;
                 let hmParentNode = this.parentNode;
 
@@ -535,7 +550,7 @@ define([
                 thisElement.attr("style", "display: none");
 
                 let overEl = self.d3.select(document.elementFromPoint(self.d3.event.sourceEvent.clientX, self.d3.event.sourceEvent.clientY));
-                self.clasterTo = overEl.attr("data-claster")
+                self.clasterTo = overEl.attr("data-claster");
                 self.clasterToSimple = self.datamapper[self.clasterTo];
                 self.d3.select(this).attr("style", "display: initial;color:" + self.iconsColors[d.data.icon]);
 
@@ -544,33 +559,33 @@ define([
                     self.clasterFrom !== self.clasterTo &&
                     self.data[self.clasterToSimple].users.length < self.clasterMaxLength) {
 
-                    //get current user
+                    // Get current user
                     const userObj =
                         self.data[self.clasterFromSimple].users.filter(obj => {
-                            return obj.id.toString() === self.currentId.toString()
+                            return obj.id.toString() === self.currentId.toString();
                         })[0];
 
-                    //delete user from old claster
+                    // Delete user from old claster
                     self.data[self.clasterFromSimple].users =
                         self.data[self.clasterFromSimple].users.filter(obj => {
-                            return obj.id.toString() !== self.currentId.toString()
+                            return obj.id.toString() !== self.currentId.toString();
                         });
 
                     let userId = userObj.id;
 
-                    //delete user id
+                    // Delete user id
                     // delete userObj.id
 
-                    //create new user id
+                    // create new user id
                     // userObj.id = (new Date().getTime()).toString();
 
-                    //add user to new claster
+                    // add user to new claster
                     self.data[self.clasterToSimple].users.push(userObj);
 
-                    // redraw
+                    // Redraw
                     self.redraw();
 
-                    // ajax request
+                    // Ajax request
                     let promise = Ajax.call([{
                         methodname: 'local_diagnostic_user_dragdrop',
                         args: {
@@ -591,7 +606,7 @@ define([
                 } else {
                     self.tooltip.style("display", "initial");
 
-                    //set old coordinates
+                    // Set old coordinates
                     self.d3.select(this).attr('x', self.startX);
                     self.d3.select(this).attr('y', self.startY);
                 }
@@ -618,9 +633,9 @@ define([
 
         setCircleTop() {
             if (this.clasterTop > this.clasterTopStart) {
-                this.clasterTop = this.clasterTop - this.clasterTopStep
+                this.clasterTop = this.clasterTop - this.clasterTopStep;
             } else {
-                this.clasterTop = this.clasterTop + this.clasterTopStep
+                this.clasterTop = this.clasterTop + this.clasterTopStep;
             }
         }
 
@@ -638,10 +653,10 @@ define([
                 .append("svg")
                 .attr("transform", this.currentLang ? "scale(-1, 1)" : "")
                 .attr("width", "100%")
-                .on("mousedown", function (d) {
+                .on("mousedown", function(d) {
                     let allSvg = self.svg.selectAll("foreignObject.image");
                     allSvg.attr("data-select", "");
-                })
+                });
         }
 
         createTooltip() {
@@ -656,10 +671,11 @@ define([
             this.tooltipSelect = this.d3.select(this.htmlRootElement)
                 .append("div")
                 .attr("class", "svgСharts-tooltip-select")
+                .attr("style", "background-color:" + this.adParams[1].primary + "; border: 1px solid " + this.adParams[1].secondary + ";")
                 .html(`
-                        <div class="activity-course" data-id="0">${this.translateObj.shareactivitycourse}</div>
-                        <div class="activity-repo" data-id="1">${this.translateObj.shareactivityrepo}</div>
-                        <div class="activity-recom hidden" data-id="2">${this.translateObj.shareactivityrecom}</div>
+                        <div class="activity-course btn btn-primary" style="display:block;" data-id="0">${this.translateObj.shareactivitycourse}</div>
+                        <div class="activity-repo btn btn-primary" style="display:block;" data-id="1">${this.translateObj.shareactivityrepo}</div>
+                        <div class="activity-recom btn btn-primary hidden" style="display:block;" data-id="2">${this.translateObj.shareactivityrecom}</div>
                 `);
         }
 
@@ -689,13 +705,13 @@ define([
 
         changeDiameter(obj) {
             if (obj instanceof CircleAnimation) {
-                let circle = this.d3.select(`circle.circle-${obj.data.id}`)
+                let circle = this.d3.select(`circle.circle-${obj.data.id}`);
                 let diameter = this.getDiameter(obj.data);
 
                 circle
                     .attr("r", diameter / 2 - 2)
                     .attr("cx", diameter / 2)
-                    .attr("cy", diameter / 2)
+                    .attr("cy", diameter / 2);
 
                 obj.p_.diameter = diameter;
 
@@ -718,12 +734,12 @@ define([
                 if (this.shapes[i] instanceof CircleAnimation) {
                     this.shapes[i].clastersIndent = this.clastersIndent;
 
-                    let claster = this.d3.select(`g.claster-${this.shapes[i].data.id}`)
+                    let claster = this.d3.select(`g.claster-${this.shapes[i].data.id}`);
                     claster
-                        .attr("transform", "translate(" + this.clastersIndent + "," + this.clasterTop + ")")
+                        .attr("transform", "translate(" + this.clastersIndent + "," + this.clasterTop + ")");
 
                     this.setCircleTop();
-                    this.indentBetweenCircle(this.shapes[i].p_.diameter)
+                    this.indentBetweenCircle(this.shapes[i].p_.diameter);
                 }
             }
         }
@@ -731,18 +747,18 @@ define([
         tooltipHandle() {
             let self = this;
             this.d3.selectAll('.svgСharts .bottom-block .tooltip-block')
-                .on("mouseover", function () {
-                    let selectThis = self.d3.select(this)
-                    let x = selectThis.attr("data-x")
-                    let y = selectThis.attr("data-y")
-                    let text = selectThis.attr("data-text")
-                    let dataClass = selectThis.attr("data-class")
-                    let dataPosition = selectThis.attr("data-position")
+                .on("mouseover", function() {
+                    let selectThis = self.d3.select(this);
+                    let x = selectThis.attr("data-x");
+                    let y = selectThis.attr("data-y");
+                    let text = selectThis.attr("data-text");
+                    let dataClass = selectThis.attr("data-class");
+                    let dataPosition = selectThis.attr("data-position");
 
                     self.tooltip.style("visibility", "visible");
-                    self.tooltip.html(text)
+                    self.tooltip.html(text);
                     self.tooltip.attr("class", `svgСharts-tooltip ${dataClass}`);
-                    let tooltipParams = self.tooltip.node().getBoundingClientRect()
+                    let tooltipParams = self.tooltip.node().getBoundingClientRect();
                     self.tooltip.style("left", (event.pageX - $(self.htmlRootElement).offset().left - tooltipParams.width / 2) + "px");
 
                     if (dataPosition) {
@@ -751,37 +767,37 @@ define([
                         self.tooltip.style("top", (event.pageY - $(self.htmlRootElement).offset().top - tooltipParams.height - 25) + "px");
                     }
                 })
-                .on("mouseout", function () {
+                .on("mouseout", function() {
                     self.tooltip.style("visibility", "hidden");
                     self.tooltip.attr("class", "svgСharts-tooltip");
-                })
+                });
         }
 
         tooltipSelectHandle() {
             let self = this;
-            let tooltipParams = self.tooltipSelect.node().getBoundingClientRect();
             this.d3.selectAll('.svgСharts .bottom-block .circle-first-button')
-                .on("click", function () {
+                .on("click", function() {
                     let thisEl = $(this);
-                    // console.log(thisEl.offset().left, $(self.popupElement).offset().left);
+                    // Console.log(thisEl.offset().left, $(self.popupElement).offset().left);
                     let claster = thisEl.attr("data-claster");
+                    let activityRecomBtn = self.tooltipSelect.select('div.activity-recom');
                     if (self.data[claster] && self.data[claster].recommend) {
-                        self.tooltipSelect.select('div.activity-recom').attr("class", "activity-recom");
+                        activityRecomBtn.style("display", "block");
                     } else {
-                        self.tooltipSelect.select('div.activity-recom').attr("class", "activity-recom hidden");
+                        activityRecomBtn.style("display", "none");
                     }
                     self.tooltipSelect.style("top", (thisEl.offset().top - $(self.popupElement).offset().top - 80) + "px");
                     self.tooltipSelect.style("left", (thisEl.offset().left - $(self.popupElement).offset().left - 20) + "px");
                     self.tooltipSelect.attr("data-claster", claster);
                     self.tooltipSelect.style("visibility", "visible");
-                })
+                });
             $(self.popupElement).off("click");
-            $(self.popupElement).on("click", function (event) {
+            $(self.popupElement).on("click", function(event) {
                 if (!$(event.target).attr('class') || !$(event.target).attr('class').includes("cfb-activity")) {
                     self.tooltipSelect.style("visibility", "hidden");
                     self.tooltipSelect.attr("data-claster", "");
                 }
-            })
+            });
         }
 
         addBottomBlock() {
@@ -795,14 +811,14 @@ define([
                 topBlockWidth: this.topBlockWith,
                 currentLang: this.currentLang,
                 svg: this.svg
-            }
+            };
             this.bottomBlockItem = new BottomBlock(params, this.translateObj);
             this.bottomBlockItem.addBlock();
         }
 
         resolutionCheck() {
             let windowWidth = $(window).width();
-            // console.log(windowWidth, "===========<======");
+            // Console.log(windowWidth, "===========<======");
 
             if (windowWidth >= 1000 && windowWidth < 1200) {
                 return 1;
@@ -819,7 +835,7 @@ define([
 
     }
 
-    return function (htmlRootElement, data, popupElement, adParams, courseId, attempt, pmid, pcmid) {
+    return function(htmlRootElement, data, popupElement, adParams, courseId, attempt, pmid, pcmid) {
         Str.get_strings([
             {
                 key: 'commontitle',
@@ -866,7 +882,7 @@ define([
                 key: 'shareactivityrecom',
                 component: 'local_diagnostic'
             },
-        ]).then(function (arr) {
+        ]).then(function(arr) {
             let translate = {
                 commontitle: arr[0],
                 rectangletitle: arr[1],
@@ -880,9 +896,9 @@ define([
                 share_activities_course_title_all: arr[9],
                 all_clusters: arr[10],
                 shareactivityrecom: arr[11],
-            }
+            };
             let buubleItem = new BuubleAnimation(d3, htmlRootElement, data, translate, popupElement, adParams, courseId, attempt, pmid, pcmid);
             buubleItem.start();
         });
-    }
+    };
 });
