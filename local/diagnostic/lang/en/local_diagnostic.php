@@ -225,3 +225,10 @@ $string['customactivitytext'] = '<b>Custom settings for Activity (MID) {$a} </b>
 $string['customactivitytextdesc'] = 'Please, folow this link to reset & rebuild the cache for current activity <a href="{$a}">Reset&Rebuild</a> <br> 1)Procces should take a lot of time.<br> 2) Before running it clear Core Config cache';
 $string['croncustommids'] = 'cron custom mids';
 $string['croncustommidsdesc'] = 'cron custom mids';
+
+$string['allquestions'] = 'All questions';
+$string['requiredquestions'] = 'Required questions';
+$string['importantquestions'] = 'Enable Important questions functionality';
+$string['importantnum'] = 'Number of important questions';
+$string['importantnumdesc'] = 'How many of top heatmapped questions will be rendered as important in grouper table';
+$string['oercatalogtooltip'] = 'Adapted to Grouper - a tool for advanced diagnosis';

@@ -14,8 +14,8 @@ define(['jquery'], function($){
       console.log(totalData);
       if ('cmids' in totalData && totalData.cmids !== '') {
         let href = M.cfg.wwwroot + '/local/diagnostic/excel.php?cmids=' + totalData.cmids + '&type=' + totalData.type + '&questionid=' + totalData.questionid;
-        this.exportBtn = `<div class="tooltip-block" data-text="${this.translateObj.export_excel}" id="export_to_excel">
-                            <a class="fa fa-file-excel-o" target="_blank" aria-hidden="true" href="${href}"></a>
+        this.exportBtn = `<div class="tooltip-block btn btn-primary" data-text="${this.translateObj.export_excel}" id="export_to_excel">
+                            <a class="fa fa-file-excel" target="_blank" aria-hidden="true" href="${href}"></a>
                          </div>`;
       }
     }
@@ -122,7 +122,7 @@ define(['jquery'], function($){
             <div class="bottom-block" style="margin-bottom: 6px">
               <div class="bottom-container">
                 <div 
-                  class="tooltip-block-n circle-first-button cfb-activity"
+                  class="tooltip-block-n circle-first-button cfb-activity btn btn-primary"
                   data-claster="all"
                 >
                   <i class="fas fa-caret-down cfb-activity"></i>
@@ -134,7 +134,7 @@ define(['jquery'], function($){
                 <div 
                   data-text="${self.totalDataInfo}"
                   data-x="0" data-y="0"
-                  class="tooltip-block">
+                  class="tooltip-block btn btn-primary">
                   <i class="fas fa-info icon-info" style="transform: ${this.p_.currentLang ? 'scale(-1, 1)' : 'none'}"></i>
                 </div>
                 ${self.exportBtn}

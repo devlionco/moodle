@@ -941,14 +941,15 @@ class quizdata {
         $data = new stdClass;
         $data->questionstateclass = $questionstateclass;
 
-        if ($questionstateclass == 'notyetanswered') {
+        // Link to attempt and render.
+        if (in_array($questionstateclass, ['notyetanswered', 'answersaved', 'notchanged'])) {
             $questionstate = '—';
+            $url = false;
+        } else {
+            $url = $link->out(false);
         }
 
         $celltransform = in_array($questionstateclass, ['partiallycorrect', 'incorrect', 'correct']) ? true : false;
-
-        // Link to attempt.
-        $url = in_array($questionstateclass, ['notyetanswered', 'answersaved']) ? false : $link->out(false);
 
         $data->celltransform = $celltransform;
         $data->questionstate = $questionstate;

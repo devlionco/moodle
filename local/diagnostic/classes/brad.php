@@ -29,9 +29,9 @@ use core\persistent;
 
 defined('MOODLE_INTERNAL') || die();
 
-class cache extends persistent
+class brad extends persistent
 {
-    const TABLE = 'local_diagnostic_cache';
+    const TABLE = 'local_diagnostic_brad';
 
     /**
      * Return the list of properties.
@@ -44,41 +44,31 @@ class cache extends persistent
             'mid' => array(
                 'type' => PARAM_INT,
             ),
-            'rebuild' => array(
+            'bradclusternum' => array(
                 'type' => PARAM_INT,
-            ),
-            'readytouse' => array(
-                'type' => PARAM_INT,
-            ),
-            'data' => array(
-                'type' => PARAM_RAW,
                 'default' => null,
                 'null' => NULL_ALLOWED
             ),
-            'extra' => array(
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ),
-            'centroids' => array(
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ),
-            'extracentroids' => array(
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ),
-            'activities' => array(
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ),
-            'buildtime' => array(
+            'allbradclusters' => array(
                 'type' => PARAM_TEXT,
                 'default' => null,
                 'null' => NULL_ALLOWED
+            ),
+            'bradmin' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ),
+            'bradmax' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ),
+            'attempts' => array(
+                'type' => PARAM_INT,
+            ),
+            'questions' => array(
+                'type' => PARAM_INT,
             ),
         );
     }

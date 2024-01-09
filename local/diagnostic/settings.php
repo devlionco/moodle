@@ -127,6 +127,25 @@ if ($hassiteconfig) {
 
     $settings->add(
         new admin_setting_configcheckbox(
+            'local_diagnostic/importantquestions',
+            get_string('importantquestions', 'local_diagnostic'),
+            '',
+            1
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'local_diagnostic/importantnum',
+            get_string('importantnum', 'local_diagnostic'),
+            get_string('importantnumdesc', 'local_diagnostic'),
+            3,
+            PARAM_INT
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configcheckbox(
             'local_diagnostic/severalattempts',
             get_string('severalattempts', 'local_diagnostic'),
             '',

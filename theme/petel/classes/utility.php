@@ -1099,4 +1099,37 @@ class utility {
         }
     }
 
+    public static function get_instance_colors()
+    {
+        global $CFG;
+        $cache = \cache::make('theme_petel', 'instancecolors');
+
+        if ($data = $cache->get('data')) {
+            return $data;
+        }
+
+        $data = [];
+
+        $filename = $CFG->instancename ? 'variables_' . $CFG->instancename . '.scss' : 'variables_default.scss';
+        $scssfilepath = $CFG->dirroot . '/theme/petel/scss/globals/' . $filename;
+        $fp = @fopen($scssfilepath, "r");
+        if ($fp) {
+            while (($line = fgets($fp, 4096)) !== false) {
+                // Splitting the variable name and value
+                $linedata = explode(':', str_replace(';', '', $line));
+                if (count($linedata) === 2) {
+                    $variable = trim($linedata[0]);
+                    $value = trim($linedata[1]);
+                    if (strpos($variable, '$') === 0) {
+                        $data[str_replace('$petel-', '', $variable)] = trim(str_replace('!default', '', $value));
+                    }
+                }
+            }
+
+            fclose($fp);
+        }
+
+        $cache->set('data', $data);
+        return $data;
+    }
 }

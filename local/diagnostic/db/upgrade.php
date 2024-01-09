@@ -167,5 +167,58 @@ function xmldb_local_diagnostic_upgrade($oldversion)
         }
     }
 
+    if ($oldversion < 2023112301) {
+
+        $table = new xmldb_table('local_diagnostic_brad');
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+
+        $table->add_field('mid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('bradclusternum', XMLDB_TYPE_INTEGER, '10');
+        $table->add_field('attempts', XMLDB_TYPE_INTEGER, '10');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('mid', XMLDB_KEY_UNIQUE, ['mid']);
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    }
+
+    if ($oldversion < 2023120302) {
+
+        $table = new xmldb_table('local_diagnostic_brad');
+        $field = new \xmldb_field('questions', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'attempts');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
+    if ($oldversion < 2023121800) {
+
+        $table = new xmldb_table('local_diagnostic_brad');
+        $field = new \xmldb_field('allbradclusters', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'bradclusternum');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new \xmldb_field('bradmin', XMLDB_TYPE_INTEGER, '2', null, null, null, null, 'allbradclusters');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new \xmldb_field('bradmax', XMLDB_TYPE_INTEGER, '2', null, null, null, null, 'bradmin');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
     return true;
 }

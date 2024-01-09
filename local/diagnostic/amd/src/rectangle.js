@@ -6,11 +6,11 @@ define(['jquery'], function(){
       this.translateObj = translateObj;
       this.usersList = `<div class='tooltip-list-title'>${this.translateObj.userlisttitle}</div>` + data.users.map((el) => `<div>${el.fullname}</div>`).join('');
     }
-  
+
     addRectangle(contain) {
       var this_ = this;
       let container;
-  
+
       if (contain) {
         container = contain;
       } else {
@@ -18,7 +18,7 @@ define(['jquery'], function(){
           .attr("data-id", this.data.id)
           .attr("class", `claster-${this.data.id}`)
       }
-  
+
       container.append('rect')
         .attr("x", 0)
         .attr("y", 50)
@@ -26,9 +26,9 @@ define(['jquery'], function(){
         .attr("height", 70)
         .attr("fill", "#ffffff")
         .attr("data-claster", this.data.id)
-  
+
       let claster0Text = this.translateObj.rectangletitle;
-    
+
       container.append('svg:foreignObject')
         .attr("width", 582)
         .attr("height", 35)
@@ -38,10 +38,7 @@ define(['jquery'], function(){
           <div 
             class='claster0-text' 
             style="transform: ${this.params.currentLang ? 'scale(-1, 1)' : 'none'};
-            text-align: ${this.params.currentLang ? 'right' : 'left'};
-            font-family: OEMeodedPashutPro;
-            font-size: 18px;
-            color: #23164f;"
+            text-align: ${this.params.currentLang ? 'right' : 'left'};"
           >
             <div class="claster0-text-inside">
               ${claster0Text}
@@ -52,7 +49,7 @@ define(['jquery'], function(){
               data-text="${this.usersList}"
               data-class="tooltip-list tooltip-list-rect"
               data-position="bottom"
-              class="tooltip-block" 
+              class="tooltip-block btn btn-primary" 
               data-claster="${this.data.id}"
             >
               <i class="fas fa-users icon-cub"></i>
@@ -60,9 +57,9 @@ define(['jquery'], function(){
             </div>
           </div>
         `)
-  
+
       var root = this.params.d3.hierarchy(this.params.classes(this.data));
-  
+
       if (this.data.users.length > 0){
         var node = container.selectAll(".node")
           .data(root.children)
@@ -107,7 +104,7 @@ define(['jquery'], function(){
           this_.params.tooltip.style("top", (event.pageY - $(this_.params.htmlRootElement).offset().top - tooltipParams.height - 25)+"px")
           this_.params.tooltip.style("left",(event.pageX - $(this_.params.htmlRootElement).offset().left - tooltipParams.width / 2)+"px");
           })
-        .on("mouseout", function(d){  
+        .on("mouseout", function(d){
           this_.params.tooltip.style("visibility", "hidden");
         })
       }
@@ -115,7 +112,7 @@ define(['jquery'], function(){
 
     recreate(){
       let container = this.params.d3.select(`g.claster-${this.data.id}`)
-      
+
       let rectItem = new Rectangle(this.params, this.data, this.translateObj)
       rectItem.addRectangle(container)
     }

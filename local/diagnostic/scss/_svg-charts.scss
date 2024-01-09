@@ -21,8 +21,8 @@
   display: inline-block;
   width: 30px;
   height: 30px;
+  padding: 0;
   background-color: #514571;
-  color: #fff;
   border-radius: 5px;
 }
 
@@ -33,12 +33,11 @@
   font-size: 18px;
 }
 
-.svgСharts .tooltip-block .fa-file-excel-o {
+.svgСharts .tooltip-block .fa-file-excel {
   position: relative;
   cursor: pointer;
   top: 4px;
   font-size: 18px;
-  color: white;
 }
 
 .svgСharts .tooltip-block-n {
@@ -115,7 +114,6 @@
 }
 
 .svgСharts div.claster-name{
-  color: #3B3562;
   font-weight: 600;
   font-size: 16px;
 }
@@ -271,7 +269,7 @@
   width: initial;
   height: initial;
   background-color: initial;
-  color: initial;
+  color: revert;
 }
 
 .svgСharts .text-under-claster-chosen.tooltip-block{
