@@ -932,25 +932,23 @@ class quizdata {
         global $OUTPUT;
 
         $questionstateclass = $attempt->get_question_state_class($questionslot, true);
-
         $questionstate = $attempt->get_question_status($questionslot, true);
-
-        $link = $attempt->get_attempt()->id ?
-                new moodle_url('/mod/quiz/comment.php', ['attempt' => $attempt->get_attempt()->id, 'slot' => $questionslot]) : '';
-
-        $data = new stdClass;
-        $data->questionstateclass = $questionstateclass;
 
         // Link to attempt and render.
         if (in_array($questionstateclass, ['notyetanswered', 'answersaved', 'notchanged'])) {
             $questionstate = '—';
             $url = false;
         } else {
-            $url = $link->out(false);
+            $link = $attempt->get_attempt()->id ?
+                    new moodle_url('/mod/quiz/comment.php', ['attempt' => $attempt->get_attempt()->id, 'slot' => $questionslot]) : false;
+
+            $url = $link ? $link->out(false) : false;
         }
 
         $celltransform = in_array($questionstateclass, ['partiallycorrect', 'incorrect', 'correct']) ? true : false;
 
+        $data = new stdClass;
+        $data->questionstateclass = $questionstateclass;
         $data->celltransform = $celltransform;
         $data->questionstate = $questionstate;
         $data->grade = $grade;
