@@ -81,7 +81,9 @@ class quiz_correctanswer_report extends quiz_attempts_report {
                 $counter = 0;
                 foreach($hints as $hint){
                     $counter++;
-                    $qhints[] = ['hint' => format_text($hint->hint), 'counter' => $counter];
+                    $html = format_text($hint->hint);
+                    $html = preg_replace('/brokenfile.php#/', 'draftfile.php', $html);
+                    $qhints[] = ['hint' => $html, 'counter' => $counter];
                 }
             }
 
@@ -89,8 +91,13 @@ class quiz_correctanswer_report extends quiz_attempts_report {
             $data['hints'] = $qhints;
 
             // Question metadata.
-            $data['qexpectedanswer'] = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qexpectedanswer'));
-            $data['qteachercomments'] = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qteachercomments'));
+            $qexpectedanswer = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qexpectedanswer'));
+            $qexpectedanswer = preg_replace('/brokenfile.php#/', 'draftfile.php', $qexpectedanswer);
+            $data['qexpectedanswer'] = $qexpectedanswer;
+
+            $qteachercomments = format_text(\local_metadata\mcontext::question()->get($item->questionid, 'qteachercomments'));
+            $qteachercomments = preg_replace('/brokenfile.php#/', 'draftfile.php', $qteachercomments);
+            $data['qteachercomments'] = $qteachercomments;
 
             $content .= $OUTPUT->render_from_template('quiz_correctanswer/main', $data);
         }
