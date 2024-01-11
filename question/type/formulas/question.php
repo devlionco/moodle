@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/question/type/formulas/variables.php');
 require_once($CFG->dirroot . '/question/type/formulas/answer_unit.php');
 require_once($CFG->dirroot . '/question/type/formulas/conversion_rules.php');
 require_once($CFG->dirroot . '/question/behaviour/adaptivemultipart/behaviour.php');
-require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
 
 /**
  * Base class for formulas questions.
@@ -658,21 +657,22 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
         if ($this->is_autocomplete_state($part)) {
 
             $partanswer = $this->compute_var_answer_for_autocomplete($part);
-            $tolerance = 0.01;
 
-            $dano = ['value' => $partanswer, 'unit' => $part->postunit];
+            $given = ['value' => $partanswer, 'unit' => $part->postunit];
 
             $answer = [
                     'value' =>  isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '',
                     'unit' =>  isset($response[$part->partindex.'_1']) ? $response[$part->partindex.'_1'] : '',
             ];
 
-            if (qtype_formulas_compare_answer($dano, $answer, $tolerance)) {
+            $autocomplete = new qtype_formulas\autocomplete($given, $answer, $part->correctness);
+
+            if ($autocomplete->compare_answer()) {
                 $answercorrect = $unitcorrect = 1;
             } else {
                 $answercorrect = $unitcorrect = 0;
 
-                $obj = qtype_formulas_check_for_penalty($dano, $answer, $tolerance);
+                $obj = $autocomplete->check_for_penalty();
                 if ($obj->result == true) {
 
                     $fraction = $part->answermark - $part->answermark * $obj->penalty;

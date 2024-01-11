@@ -24,8 +24,6 @@
 
 use qtype_formulas\answer_unit_conversion;
 
-require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
-
 /**
  * Base class for generating the bits of output for formulas questions.
  *
@@ -263,7 +261,8 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                         'class' => 'formulas_' . $gtype . '_unit ' . $sub->feedbackclass . ' autocomplete_formulas ',
                         'maxlength' => 300,
                 );
-                $keywords = array_values(qtype_formulas_get_units_array());
+
+                $keywords = qtype_formulas\autocomplete::get_units_array();
                 $selectors = array('.autocomplete_formulas', '#input');
                 $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($keywords)));
             }
