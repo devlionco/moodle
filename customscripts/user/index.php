@@ -395,6 +395,9 @@ $PAGE->requires->js_amd_inline("
             // Add header of new column.
             $('#participants').find('thead tr .head-last').remove();
             
+            // Remove show count button.            
+            $('*[data-action=showcount]').remove();
+            
             let parenthead = $('#participants').find('thead tr');
             let clonehead = $('#participants').find('thead tr th').last().clone().appendTo(parenthead);
             
