@@ -75,3 +75,16 @@
         }
     }
 }
+
+// EC-585. Trick to fix atto editor btns dropdown menu on rtl.
+html[dir="rtl"] {
+    .format-flexsections {
+        .uploadactivity,
+        .uploadcourse {
+            ul.dropdown-menu:is([id*="_menubutton_"]) {
+                right: unset;
+                left: calc(100% - 2.5rem);
+            }
+        }
+    }
+}
