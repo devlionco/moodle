@@ -222,6 +222,9 @@ class autocomplete {
         $answer = $this->answer;
         $tolerance = $this->tolerance;
 
+        $wrongvaluepenalty = $this->get_wrongvaluepenalty();
+        $wrongunitpenalty = $this->get_wrongunitpenalty();
+
         // Conversion K => C.
         if (in_array($given['unit'], ['C', '°C']) && $answer['unit'] == 'K') {
             $answer['unit'] = $given['unit'];
@@ -246,7 +249,11 @@ class autocomplete {
         $obj->penalty = 0;
         $obj->penaltytype = '';
 
-        if (empty($answer['unit'])) {
+        // If empty unit.
+        if ($answer['value'] == $given['value'] && empty($answer['unit'])) {
+            $obj->result = true;
+            $obj->penalty = $wrongunitpenalty;
+            $obj->penaltytype = 'unit';
             return $obj;
         }
 
@@ -312,9 +319,6 @@ class autocomplete {
         if (!$value_validation && !$unit_validation_aprox && !$unit_validation_accur) {
             return $obj;
         }
-
-        $wrongvaluepenalty = $this->get_wrongvaluepenalty();
-        $wrongunitpenalty = $this->get_wrongunitpenalty();
 
         if ($wrongvaluepenalty != '0' && $wrongunitpenalty != '0') {
             if ($value_validation) {

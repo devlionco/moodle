@@ -119,6 +119,9 @@ function qtype_numerical_get_units_row_array($danounit) {
 
 function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
 
+    $wrongvaluepenalty = qtype_numerical_get_wrongvaluepenalty();
+    $wrongunitpenalty = qtype_numerical_get_wrongunitpenalty();
+
     // Conversion K => C.
     if(in_array($dano['unit'], ['C', '°C']) && $answer['unit'] == 'K'){
         $answer['unit'] = $dano['unit'];
@@ -141,9 +144,15 @@ function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
     $obj = new \stdClass;
     $obj->result = false;
     $obj->penalty = 0;
+    $obj->penaltytype = '';
 
-    if(empty($answer['unit'])){
-        $answer['unit'] = 'empty unit';
+    // If empty unit.
+    if ($answer['value'] == $dano['value'] && empty($answer['unit'])) {
+        $obj->result = true;
+        $obj->penalty = $wrongunitpenalty;
+        $obj->penaltytype = 'unit';
+        $obj->feedback = get_string('feedbackwrongunit', 'qtype_numerical');
+        return $obj;
     }
 
     //Compare Unit
@@ -205,9 +214,6 @@ function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
         return $obj;
     }
 
-    $wrongvaluepenalty = qtype_numerical_get_wrongvaluepenalty();
-    $wrongunitpenalty = qtype_numerical_get_wrongunitpenalty();
-
     if($wrongvaluepenalty != '0' && $wrongunitpenalty != '0'){
         if($value_validation){
             $obj->result = true;
@@ -227,10 +233,6 @@ function qtype_numerical_check_for_penalty($dano, $answer, $tolerance) {
 
 function qtype_numerical_compare_answer($dano, $answer, $tolerance) {
     global $CFG, $DB;
-
-    if(empty($answer['unit'])){
-        return false;
-    }
 
     // Conversion K => C.
     if(in_array($dano['unit'], ['C', '°C']) && $answer['unit'] == 'K'){

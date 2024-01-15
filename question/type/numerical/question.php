@@ -157,7 +157,7 @@ class qtype_numerical_question extends question_graded_automatically {
             }
 
             if ($unit == null) {
-                return get_string('invalidunit', 'qtype_numerical');
+                //return get_string('invalidunit', 'qtype_numerical');
             }
 
             return '';
@@ -235,9 +235,9 @@ class qtype_numerical_question extends question_graded_automatically {
         if($this->if_autocomplete_enable()){
             list($num, $unit) = qtype_numerical_split_answer($value);
 
-            if ($num == null || $unit == null) {
-                return null;
-            }
+//            if ($num == null || $unit == null) {
+//                return null;
+//            }
 
             $answert = [
                 'value' =>  $num,
