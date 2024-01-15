@@ -128,7 +128,8 @@ define([
      * @param {int} height
      */
     DragDropToTextQuestion.prototype.setElementSize = function(element, width, height) {
-        $(element).width(width).height(height).css('lineHeight', height + 'px');
+        $(element).width('auto').height(height).css('lineHeight', height + 'px').css('minWidth', width + 'px');
+
     };
 
     /**
