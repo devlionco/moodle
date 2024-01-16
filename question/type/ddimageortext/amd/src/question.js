@@ -61,20 +61,13 @@ define([
         this.waitForAllImagesToBeLoaded();
     }
 
+    /**
+     * Check is mobile
+     * @returns {any}
+     */
     function isMobile() {
-        const toMatch = [
-            /Android/i,
-            /webOS/i,
-            /iPhone/i,
-            /iPad/i,
-            /iPod/i,
-            /BlackBerry/i,
-            /Windows Phone/i
-        ];
-
-        return toMatch.some((toMatchItem) => {
-            return navigator.userAgent.match(toMatchItem);
-        });
+        const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        return regex.test(navigator.userAgent);
     }
 
     /**
@@ -151,7 +144,7 @@ define([
         var thisQ = this;
         this.getRoot().find('.draghomes > div').each(function(i, node) {
             thisQ.resizeAllDragsAndDropsInGroup(
-                    thisQ.getClassnameNumericSuffix($(node), 'dragitemgroup'));
+                thisQ.getClassnameNumericSuffix($(node), 'dragitemgroup'));
         });
     };
 
@@ -203,8 +196,8 @@ define([
                 label = M.util.get_string('blank', 'qtype_ddimageortext');
             }
             root.find('.dropzones').append('<div class="dropzone active group' + place.group +
-                            ' place' + i + '" tabindex="0">' +
-                    '<span class="accesshide">' + label + '</span>&nbsp;</div>');
+                ' place' + i + '" tabindex="0">' +
+                '<span class="accesshide">' + label + '</span>&nbsp;</div>');
             root.find('.dropzone.place' + i).width(maxWidth - 2).height(maxHeight - 2);
         }
     };
@@ -422,37 +415,12 @@ define([
             }
         }
 
-        if (!isMobile()) {
-            dragDrop.start(e, drag, function (x, y, drag) {
-                thisQ.dragMove(x, y, drag);
-            }, function (x, y, drag) {
-                thisQ.dragEnd(x, y, drag);
-            });
-        }
 
-        if (isMobile()) {
-            if (questionManager.clickedObjects.drag !== undefined && questionManager.clickedObjects.drop !== undefined) {
-
-                let drop = questionManager.clickedObjects.drop;
-                let x = drop.pageX;
-                let y = drop.pageY;
-
-                thisQ.dragMove(x, y, drag);
-                setTimeout(function () {
-                    thisQ.dragEnd(x, y, drag);
-
-                    // Revert to normal view.
-                    let area = drag.parent().parent().parent();
-                    area.find('img.draghome').each(function( index ) {
-                        $(this).removeClass('clicked');
-                        $(this).removeData("clicked");
-                    });
-
-                    questionManager.clickedObjects.drag = undefined;
-                    questionManager.clickedObjects.drop = undefined;
-                }, 100);
-            }
-        }
+        dragDrop.start(e, drag, function(x, y, drag) {
+            thisQ.dragMove(x, y, drag);
+        }, function(x, y, drag) {
+            thisQ.dragEnd(x, y, drag);
+        });
 
     };
 
@@ -582,6 +550,163 @@ define([
         drag.data('unplaced', true);
 
         this.animateTo(drag, this.getDragHome(this.getGroup(drag), this.getChoice(drag)));
+    };
+
+    /**
+     * Handles mobile events on drops.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropOntoImageQuestion.prototype.handleMobileDropClick = function(e) {
+        var drop = $(e.target).closest('.dropzone');
+
+        if (questionManager.mobileClickNdrop.currentDrop) {
+            questionManager.mobileClickNdrop.currentDrop.focus();
+        }
+        drop.focus();
+        questionManager.mobileClickNdrop.currentDrop = drop;
+
+        if (drop.length === 0) {
+            var placedDrag = $(e.target);
+            var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+            if (currentPlace !== null) {
+                drop = this.getDrop(placedDrag, currentPlace);
+            }
+        }
+
+        // e.preventDefault();
+    };
+
+    /**
+     * Handles mobile events on drops.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropOntoImageQuestion.prototype.handleMobileDropSwapClick = function(e) {
+        $(e.currentTarget).focus();
+        var drop = $(e.currentTarget).prev();
+        questionManager.mobileClickNdrop.currentDrag = $(e.currentTarget);
+
+        if (drop.hasClass('dropzone')) {
+            if (questionManager.mobileClickNdrop.currentDrop) {
+                questionManager.mobileClickNdrop.currentDrop.focus();
+            }
+            drop.focus();
+            questionManager.mobileClickNdrop.currentDrop = drop;
+
+            if (drop.length === 0) {
+                var placedDrag = $(e.target);
+                var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+                if (currentPlace !== null) {
+                    drop = this.getDrop(placedDrag, currentPlace);
+                }
+            }
+
+            e.preventDefault();
+        }
+
+    };
+
+
+    /**
+     * Handles mobile events on draghomes.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropOntoImageQuestion.prototype.handleMobileDragClick = function(e) {
+        var draghome = $(e.target).closest('.draghome');
+
+        if (draghome && questionManager.mobileClickNdrop.currentDrop) {
+
+            questionManager.mobileClickNdrop.currentDrag = draghome;
+            draghome.data('isfocus', true);
+            draghome.addClass('beingdragged');
+            var hiddenDrag = this.getDragClone(draghome);
+            if (hiddenDrag.length) {
+                if (draghome.hasClass('infinite')) {
+                    var noOfDrags = this.noOfDropsInGroup(this.getGroup(draghome));
+                    var cloneDrags = this.getInfiniteDragClones(draghome, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = draghome.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
+                        draghome.offset(cloneDrag.offset());
+                    } else {
+                        hiddenDrag.addClass('active');
+                        draghome.offset(hiddenDrag.offset());
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                    draghome.offset(hiddenDrag.offset());
+                }
+            }
+            this.sendDragToDrop(draghome, questionManager.mobileClickNdrop.currentDrop);
+        }
+
+        e.preventDefault();
+
+    };
+
+    /**
+     * Handles mobile events on click.
+     *
+     * @param {KeyboardEvent} e
+     */
+    DragDropOntoImageQuestion.prototype.handleMobileDragBackClick = function(e) {
+        if (isMobile) {
+
+            var thisQ = this,
+                drag = questionManager.mobileClickNdrop.currentDrag,
+                currentIndex = this.calculateZIndex(),
+                newIndex = currentIndex + 2;
+
+            if (drag) {
+
+                drag.addClass('beingdragged').css('transform', '').css('z-index', newIndex);
+                var currentPlace = this.getClassnameNumericSuffix(drag, 'inplace');
+                if (currentPlace !== null) {
+                    this.setInputValue(currentPlace, 0);
+                    drag.removeClass('inplace' + currentPlace);
+                    var hiddenDrop = thisQ.getDrop(drag, currentPlace);
+                    if (hiddenDrop.length) {
+                        hiddenDrop.addClass('active');
+                        drag.offset(hiddenDrop.offset());
+                    }
+                } else {
+                    var hiddenDrag = thisQ.getDragClone(drag);
+                    if (hiddenDrag.length) {
+                        if (drag.hasClass('infinite')) {
+                            var noOfDrags = this.noOfDropsInGroup(thisQ.getGroup(drag));
+                            var cloneDrags = this.getInfiniteDragClones(drag, false);
+                            if (cloneDrags.length < noOfDrags) {
+                                var cloneDrag = drag.clone();
+                                cloneDrag.removeClass('beingdragged');
+                                cloneDrag.removeAttr('tabindex');
+                                hiddenDrag.after(cloneDrag);
+                                questionManager.addEventHandlersToDrag(cloneDrag);
+                                drag.offset(cloneDrag.offset());
+                            } else {
+                                hiddenDrag.addClass('active');
+                                drag.offset(hiddenDrag.offset());
+                            }
+                        } else {
+                            hiddenDrag.addClass('active');
+                            drag.offset(hiddenDrag.offset());
+                        }
+                    }
+                }
+
+                e.type = "mousedown";
+                dragDrop.start(e, drag, function() {
+                   return;
+                }, function(x, y, drag) {
+                    thisQ.dragEnd(x, y, drag);
+                });
+            }
+        }
+
     };
 
     /**
@@ -1049,6 +1174,17 @@ define([
         eventHandlersInitialised: false,
 
         /**
+         * {boolean} is mobile.
+         */
+        isMobile: isMobile(),
+
+        mobileClickNdrop: {
+            currentQuestion: null,
+            currentDrag: null,
+            currentDrop: null
+        },
+
+        /**
          * {Object} ensures that the drag event handlers are only initialised once per question,
          * indexed by containerId (id on the .que div).
          */
@@ -1068,8 +1204,6 @@ define([
          * {Object} all the questions on this page, indexed by containerId (id on the .que div).
          */
         questions: {}, // An object containing all the information about each question on the page.
-
-        clickedObjects: {},
 
         /**
          * Initialise one question.
@@ -1102,17 +1236,33 @@ define([
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
+            if (questionManager.isMobile) {
+                $('body')
+                    .on('touchend',
+                        '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
+                        questionManager.handleMobileDropClick)
+                    .on('touchend',
+                        '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.placed:not(.beingdragged)',
+                        questionManager.handleMobileDropSwapClick)
+                    .on('touchend', questionManager.handleMobileDragBackClick)
+                    .on('touchend',
+                        '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.unplaced',
+                        questionManager.handleMobileDragClick)
+                    .on('qtype_ddimageortext-dragmoved', questionManager.handleDragMoved);
 
-            questionManager.addEventHandlersToClick();
 
-            $('body')
-                .on('keydown',
-                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
-                    questionManager.handleKeyPress)
-                .on('keydown',
-                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.placed:not(.beingdragged)',
-                    questionManager.handleKeyPress)
-                .on('qtype_ddimageortext-dragmoved', questionManager.handleDragMoved);
+            } else {
+                $('body')
+                    .on('keydown',
+                        '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
+                        questionManager.handleKeyPress)
+                    .on('keydown',
+                        '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.placed:not(.beingdragged)',
+                        questionManager.handleKeyPress)
+                    .on('qtype_ddimageortext-dragmoved', questionManager.handleDragMoved);
+            }
+
+
             $(window).on('resize', function() {
                 questionManager.handleWindowResize(false);
             });
@@ -1135,28 +1285,10 @@ define([
          * @param {jQuery} element Element to bind the event
          */
         addEventHandlersToDrag: function(element) {
-            // Unbind all the mousedown and touchstart events to prevent double binding.
-            element.unbind('mousedown touchstart');
-            element.on('mousedown touchstart', questionManager.handleDragStart);
-        },
-
-        /**
-         * Binding the click event again for newly created element.
-         *
-         * @param {jQuery} element Element to bind the event
-         */
-        addEventHandlersToClick: function() {
-            if (isMobile()) {
-                document.addEventListener("click", function (e) {
-                    if (questionManager.clickedObjects.drag !== undefined) {
-                        if (Object.is(questionManager.clickedObjects.drag.currentTarget, e.target)) {
-                            questionManager.clickedObjects.drop = undefined;
-                        } else {
-                            questionManager.clickedObjects.drop = e;
-                            questionManager.handleDragStart(questionManager.clickedObjects.drag);
-                        }
-                    }
-                });
+            if (!questionManager.isMobile) {
+                // Unbind all the mousedown and touchstart events to prevent double binding.
+                element.unbind('mousedown touchstart');
+                element.on('mousedown touchstart', questionManager.handleDragStart);
             }
         },
 
@@ -1168,28 +1300,6 @@ define([
             e.preventDefault();
             var question = questionManager.getQuestionForEvent(e);
             if (question) {
-
-                if (isMobile()) {
-                    // Change to clicked view.
-                    let area = $(e.target).parent().parent().parent();
-
-                    let flag = false;
-                    if($(e.target).data("clicked") === 1){
-                        flag = true;
-                    }
-
-                    area.find('img.draghome').each(function( index ) {
-                        $(this).removeClass('clicked');
-                        $(this).removeData("clicked");
-                    });
-
-                    if(!flag) {
-                        $(e.target).data("clicked", 1);
-                        $(e.target).addClass('clicked');
-                    }
-                }
-
-                questionManager.clickedObjects.drag = e;
                 question.handleDragStart(e);
             }
         },
@@ -1206,6 +1316,55 @@ define([
             var question = questionManager.getQuestionForEvent(e);
             if (question) {
                 question.handleKeyPress(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drops.
+         * @param {Event} e
+         */
+        handleMobileDropClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            questionManager.mobileClickNdrop.currentQuestion = question;
+            if (question) {
+                question.handleMobileDropClick(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drops.
+         * @param {Event} e
+         */
+        handleMobileDropSwapClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            questionManager.mobileClickNdrop.currentQuestion = question;
+            if (question) {
+                question.handleMobileDropSwapClick(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drags.
+         * @param {Event} e
+         */
+        handleMobileDragClick: function(e) {
+            var question = questionManager.getQuestionForEvent(e);
+            if (question) {
+                question.handleMobileDragClick(e);
+            }
+        },
+
+        /**
+         * Handle mobile click on drags.
+         * @param {Event} e
+         */
+        handleMobileDragBackClick: function(e) {
+            if (questionManager.mobileClickNdrop.currentDrop && questionManager.mobileClickNdrop.currentQuestion) {
+                var isDraghome = $(e.target).hasClass('draghome') || false;
+                var isDropzone = $(e.target).hasClass('dropzone') || false;
+                if (isDraghome === false && isDropzone === false) {
+                    questionManager.mobileClickNdrop.currentQuestion.handleMobileDragBackClick(e);
+                }
             }
         },
 
@@ -1280,6 +1439,9 @@ define([
                 // Save the new answered value.
                 thisQ.questionAnswer = thisQ.getQuestionAnsweredValues();
             }
+            questionManager.mobileClickNdrop.currentDrag = null;
+            questionManager.mobileClickNdrop.currentDrop = null;
+            questionManager.mobileClickNdrop.currentQuestion = null;
         },
 
         /**
