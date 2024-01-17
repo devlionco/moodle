@@ -815,7 +815,7 @@ class block_myoverview_external extends core_course_external {
         }
 
         if (!empty($content->text)) {
-            $content->text = '<h6>' .get_string('grademelable', 'block_myoverview'). '</h6><dl>' . $content->text . '</dl>';
+            $content->text = '<h6>' .get_string('grademelabeltext', 'block_myoverview'). '</h6><dl>' . $content->text . '</dl>';
         }
 
         return $content;
