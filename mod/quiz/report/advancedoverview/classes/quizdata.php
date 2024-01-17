@@ -545,8 +545,7 @@ class quizdata {
         // Grade.
         $totalgrade = $countstudent = 0;
         foreach ($this->tablestudentsdata as $item) {
-            if($item['grade'] && $item['grade'] > 0)
-            {
+            if($item['grade'] && $item['grade'] >= 0) {
                 $totalgrade += $item['grade'];
                 $countstudent++;
             }
@@ -565,7 +564,7 @@ class quizdata {
 
                 $totalgrade = $countstudent = 0;
                 foreach ($this->tablestudentsdata as $item) {
-                    if ($item['grade'] && $item['grade'] > 0 && in_array($item[$question->id]['state'], ['correct', 'partiallycorrect', 'incorrect', 'notanswered'])) {
+                    if ($item['grade'] && $item['grade'] >= 0 && in_array($item[$question->id]['state'], ['correct', 'partiallycorrect', 'incorrect', 'notanswered'])) {
                         $totalgrade += $item[$question->id]['grade'];
                         $countstudent++;
                     }
@@ -1383,7 +1382,7 @@ class quizdata {
                     "SELECT AVG(qa.sumgrades) AS averagegrade, MAX(qa.sumgrades) AS maxgrade, MIN(qa.sumgrades) AS mingrade, COUNT(qa.sumgrades) AS numgrades";
             $from = "FROM {quiz_attempts} qa JOIN {quiz} q ON qa.quiz = q.id";
             $where = "WHERE q.id = ? AND qa.userid IN (" . implode(',', $this->participantsids) .
-                    ") AND qa.preview = 0 AND qa.state = 'finished' AND qa.sumgrades > 0";
+                    ") AND qa.preview = 0 AND qa.state = 'finished' AND qa.sumgrades >= 0";
             $params[] = $this->quizobj->get_quiz()->id;
 
             if ($this->course) {
