@@ -861,6 +861,14 @@
   align-items: center;
 }
 
+.grade-low-cell {
+  background-color: #F7DDE4;
+}
+
+.grade-med-cell {
+  background-color: #fffaeb;
+}
+
 html[dir=rtl] .advancedoverview_report-toggle label:after {
   right: 0.125rem;
   left: unset;
