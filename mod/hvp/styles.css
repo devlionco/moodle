@@ -81,6 +81,11 @@
 .h5p-data-view th[role="button"].h5p-sort:hover:after {
     color: #999;
 }
+
+.h5p-dir-rtl .ui-draggable.ui-draggable-handle.h5p-drag-dropped {
+    margin: -0.1em -1.7em 0 0;
+}
+
 .content-upgrade-log {
   color: red;
 }
