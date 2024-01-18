@@ -223,8 +223,15 @@ class qtype_formulas extends question_type {
                 $ans->subqtext = $subqtextarr['text'];
                 $ans->subqtextformat = $subqtextarr['format'];
                 $feedbackarr = $ans->feedback;
-                $ans->feedback = $feedbackarr['text'];
-                $ans->feedbackformat = $feedbackarr['format'];
+
+                if (is_array($feedbackarr)) {
+                    $ans->feedback = $feedbackarr['text'];
+                    $ans->feedbackformat = $feedbackarr['format'];
+                } else {
+                    $ans->feedback = $feedbackarr;
+                    $ans->feedbackformat = 1;
+                }
+
                 $correctfbarr = $ans->partcorrectfb;
                 $ans->partcorrectfb = $correctfbarr['text'];
                 $ans->partcorrectfbformat = $correctfbarr['format'];
@@ -763,6 +770,14 @@ class qtype_formulas extends question_type {
     public function validate($form) {
         $errors = array();
         $answerschecked = $this->check_and_filter_answers($form);
+
+        // If autocomplete.
+        foreach ($answerschecked->answers as $answer) {
+            if ($answer->autocomplete && $answer->answertype == 0) {
+                return (object)array('errors' => $errors, 'answers' => $answerschecked->answers);
+            }
+        }
+
         if (isset($answerschecked->errors)) {
             $errors = array_merge($errors, $answerschecked->errors);
         }
