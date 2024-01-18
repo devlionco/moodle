@@ -98,7 +98,7 @@ class question_renderer extends \core_question_renderer {
 
         // Build question title.
         $arrtitle = [];
-        if (in_array($PAGE->pagetype,['mod-quiz-attempt', 'mod-quiz-report'])) {
+        if (in_array($PAGE->pagetype,['mod-quiz-attempt', 'mod-quiz-report', 'mod-quiz-review'])) {
             $lqsoptions = local_quiz_summary_option_get_quiz_config();
 
             if (isset($lqsoptions->summary_numbering) && !$lqsoptions->summary_numbering) {
