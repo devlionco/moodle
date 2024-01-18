@@ -158,6 +158,14 @@ define(['jquery', 'qtype_geogebra/deployggb'], function ($, GGBApplet) {
             this.answerinput[slot] = $(document.getElementById(ggbDataset.answerinput));
             this.exerciseresultinput[slot] = $(document.getElementById(ggbDataset.exerciseresultinput));
             this.responsevars[slot] = JSON.parse(ggbDataset.responsevars);
+
+            let splitterInterval = setInterval(() => {
+                if(!$('.vsplitter')[0]) return;
+                $('.vsplitter').on('click',() => {
+                    document.ggbApplet.reset();
+                })
+                clearInterval(splitterInterval)
+            }, 500)
         },
         checkEnter: function(e) {
             e = e || event;

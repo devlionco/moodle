@@ -26,3 +26,19 @@ html[dir=rtl] .ggbcontainer{
 #page-mod-quiz-attempt{
     padding-bottom: 0px !important;
 }
+#responseform:has(#splitpanel) {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+#page.drawers div[role="main"]:has(#splitpanel) {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.right_panel::-webkit-scrollbar, .left_panel::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+.right_panel::-webkit-scrollbar-thumb, .left_panel::-webkit-scrollbar-thumb {
+    background: #707070;
+    border-radius: 16px;
+}
