@@ -428,6 +428,11 @@ class qtype_numerical_question extends question_graded_automatically {
     public function if_autocomplete_enable() {
         global $DB;
 
+        // Disable for qtype_calculated.
+        if($this instanceof qtype_calculated_question) {
+            return false;
+        }
+
         $qno = $DB->get_record('question_numerical_options', ['question' => $this->id]);
 
         if($this->unitdisplay == 3 && $this->unitgradingtype == 1 && $qno->showunits == qtype_numerical::UNITAUTOCOMPLETE){
