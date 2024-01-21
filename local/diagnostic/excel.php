@@ -25,6 +25,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
+require_once($CFG->libdir . '/grade/constants.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grade.php');
 
@@ -47,11 +48,15 @@ if ($cmids) {
     $PAGE->set_context($context);
     require_capability('moodle/grade:viewall', $context);
 
-    @$gradeitem = new \grade_item([
-        'itemtype' => 'mod',
-        'itemmodule' => $cm->modname,
-        'iteminstance' => $cm->instance
-    ]);
+    try {
+        $gradeitem = new \grade_item([
+            'itemtype' => 'mod',
+            'itemmodule' => $cm->modname,
+            'iteminstance' => $cm->instance
+        ]);
+    } catch (\Throwable $e) {
+        $gradeitem = null;
+    }
 
     if ($gradeitem) {
 
@@ -95,7 +100,8 @@ if ($cmids) {
             foreach ($clusters['clusters'] as $clusternum => $clusterdata) {
                 $clusterprcsum = $clusterprccount = 0;
                 foreach ($clusterdata['users'] as $userid => $userdata) {
-                    if (in_array($cm->course, $userdata['courses']) || $type == 'extra') {
+                    $courses = is_array($userdata['courses']) ? $userdata['courses'] : [];
+                    if (in_array($cm->course, $courses) || $type == 'extra') {
                         $clustermapper[$userid] = [
                             'cluster' => $clusternum,
                             'prc' => $userdata['prc'],
