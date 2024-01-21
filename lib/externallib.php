@@ -235,6 +235,12 @@ class external_api {
                 }
             }
             // Validate params, this also sorts the params properly, we need the correct order in the next part.
+
+            // PTL-11233.
+            if (isset($args['lang']) && strpos($args['lang'], '{')) {
+                $args['lang'] = current_language();
+            }
+
             $callable = array($externalfunctioninfo->classname, 'validate_parameters');
             $params = call_user_func($callable,
                                      $externalfunctioninfo->parameters_desc,
