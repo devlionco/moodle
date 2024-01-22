@@ -284,12 +284,18 @@ class duplicate_question {
         foreach ($fieldids as $field) {
             foreach ($data as $shortname => $value) {
                 if ($field->shortname == $shortname) {
-                    $obj = new \StdClass();
-                    $obj->instanceid = $targetquestionid;
-                    $obj->fieldid = $field->id;
-                    $obj->data = $value;
-                    $obj->dataformat = 0;
-                    $DB->insert_record('local_metadata', $obj);
+                    if ($existing = $DB->get_record('local_metadata', ['instanceid' => $targetquestionid, 'fieldid' => $field->id])) {
+                        $existing->data = $value;
+                        $existing->dataformat = 0;
+                        $DB->update_record('local_metadata', $existing);
+                    } else {
+                        $obj = new \StdClass();
+                        $obj->instanceid = $targetquestionid;
+                        $obj->fieldid = $field->id;
+                        $obj->data = $value;
+                        $obj->dataformat = 0;
+                        $DB->insert_record('local_metadata', $obj);
+                    }
                 }
             }
         }
