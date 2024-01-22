@@ -150,8 +150,8 @@ class local_redmine_external extends external_api {
             if ($cmid) {
                 // Guess parent module url from preview attempt.
                 $moduletype = $DB->get_record_sql('SELECT m.name
-                                    FROM mdl_course_modules cm
-                                    JOIN mdl_modules m ON m.id = cm.module
+                                    FROM {course_modules} cm
+                                    JOIN {modules} m ON m.id = cm.module
                                     WHERE cm.id=' . $cmid);
                 $moduleurl = $CFG->wwwroot . '/mod/' . $moduletype->name . '/view.php?id=' . $cmid;
                 $description .= ' [Guess] Parent module: ' . $moduleurl . PHP_EOL;
@@ -159,10 +159,10 @@ class local_redmine_external extends external_api {
             if ($id) {
                 // Try to guess the OER catalog module that was the source for this module
                 $oermodule = $DB->get_record_sql('SELECT m.name \'type\', lm.data \'oer_cmid\'
-                                                FROM mdl_local_metadata lm
-                                                 JOIN mdl_local_metadata_field lmf ON lm.fieldid = lmf.id
-                                                 JOIN mdl_course_modules cm ON cm.id = lm.instanceid
-                                                 JOIN mdl_modules m ON m.id = cm.module
+                                                FROM {local_metadata} lm
+                                                 JOIN {local_metadata_field} lmf ON lm.fieldid = lmf.id
+                                                 JOIN {course_modules} cm ON cm.id = lm.instanceid
+                                                 JOIN {modules} m ON m.id = cm.module
                                                 WHERE lmf.shortname = \'ID\' and cm.id = ' . $id);
                 $moduleurl = $CFG->wwwroot.'/mod/'.$oermodule->type.'/view.php?id='.$oermodule->oer_cmid;
                 $description .= ' [Guess] OER catalog module: '.$moduleurl. PHP_EOL;

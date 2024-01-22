@@ -39,20 +39,20 @@ if ($openpopup) {
 
 $sql = "
         SELECT cm.id 'cmid', lm.data 'mid', m.name 'name'
-        FROM mdl_course_modules cm
-         JOIN mdl_modules m ON m.id = cm.module
-         JOIN mdl_course c ON c.id = cm.course
-         JOIN mdl_course_categories oercat ON oercat.id = c.category
-         JOIN mdl_local_metadata lm ON lm.instanceid = cm.id
-         JOIN mdl_local_metadata_field ldf ON ldf.id = lm.fieldid
+        FROM {course_modules} cm
+         JOIN {modules} m ON m.id = cm.module
+         JOIN {course} c ON c.id = cm.course
+         JOIN {course_categories} oercat ON oercat.id = c.category
+         JOIN {local_metadata} lm ON lm.instanceid = cm.id
+         JOIN {local_metadata_field} ldf ON ldf.id = lm.fieldid
             AND ldf.contextlevel = 70
             AND ldf.shortname = 'ID'
         WHERE FIND_IN_SET(c.category,
                           (SELECT GROUP_CONCAT(ccc.id) 'OER catalog 2nd level categories'
-                           FROM mdl_course_categories cc
-                            JOIN mdl_course_categories ccc ON ccc.parent = cc.id
+                           FROM {course_categories} cc
+                            JOIN {course_categories} ccc ON ccc.parent = cc.id
                            WHERE cc.id = (SELECT config.value
-                                          FROM mdl_config_plugins config
+                                          FROM {config_plugins} config
                                           WHERE config.plugin = 'local_community'
                                             AND config.name = 'catalogcategoryid')))
             AND lm.data = ?

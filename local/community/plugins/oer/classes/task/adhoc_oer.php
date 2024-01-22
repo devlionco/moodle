@@ -164,7 +164,7 @@ class adhoc_oer extends \core\task\adhoc_task {
                 // Add oer_reviews block to teacher my page, if they are in research cohort.
                 if(isset($CFG->eladresearch_cohort_a)){
                     $sqlupdateblock = "
-                    INSERT INTO mdl_block_instances(blockname,parentcontextid,showinsubcontexts,requiredbytheme,pagetypepattern,
+                    INSERT INTO {block_instances} (blockname,parentcontextid,showinsubcontexts,requiredbytheme,pagetypepattern,
                                     subpagepattern,defaultregion,defaultweight,configdata,timecreated,timemodified)
                     SELECT 'oer_reviews', c.id 'parentcontextid', 0,0,'my-index', mp.id 'subpagepattern','side-pre',1,'',NOW(),NOW()
                     FROM {user} u
