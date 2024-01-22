@@ -130,6 +130,8 @@ $string['attempts'] = 'Total Attempts';
 $string['max_grade'] = 'Max grade';
 $string['min_grade'] = 'Min grade';
 $string['summaryrow'] = 'Class average';
+$string['firstname'] = 'First name';
+$string['lastname'] = 'Last name';
 
 // Competency
 $string['competencies_title'] = 'Competencies';

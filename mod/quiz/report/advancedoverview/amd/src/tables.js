@@ -194,6 +194,8 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
         {key: "prevtitle", component: "quiz_advancedoverview"},
         {key: "nexttitle", component: "quiz_advancedoverview"},
         {key: "all", component: "quiz_advancedoverview"},
+        {key: "firstname", component: "quiz_advancedoverview"},
+        {key: "lastname", component: "quiz_advancedoverview"},
     ];
 
     Str.get_strings(strings)
@@ -220,6 +222,8 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
             self.translatedStrings.prevTitle = str[19];
             self.translatedStrings.nextTitle = str[20];
             self.translatedStrings.all = str[21];
+            self.translatedStrings.firstname = str[22];
+            self.translatedStrings.lastname = str[23];
             const clickMenu = [
                 {
                     disabled: function (component) {
@@ -639,6 +643,13 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                     delete row.completereportlink;
                     delete row.outlinereportlink;
 
+                    delete row.fullname;
+
+                    function stripHtml(dirtyString) {
+                        const doc = new DOMParser().parseFromString(dirtyString, 'text/html');
+                        return doc.body.textContent || '';
+                    }
+
                     // Numeric value from HTML.
                     for (var prop1 in row) {
                         if (row.hasOwnProperty(prop1)) {
@@ -649,6 +660,8 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                                     var newValue11 = match11[1];
                                     row[prop1] = newValue11;
                                 }
+
+                                row[prop1] = stripHtml(row[prop1]);
                             }
                         }
 
@@ -668,6 +681,14 @@ export const initstudentstable = function (data, summary = '', anon = 0) {
                     for (var prop2 in row) {
                         if (row.hasOwnProperty(prop2)) {
                             switch (prop2) {
+                                case "firstname":
+                                    row[self.translatedStrings.firstname] = row[prop2];
+                                    delete row[prop2];
+                                    break;
+                                case "lastname":
+                                    row[self.translatedStrings.lastname] = row[prop2];
+                                    delete row[prop2];
+                                    break;
                                 case "fullname":
                                     row[self.translatedStrings.fullname] = row[prop2];
                                     delete row[prop2];
