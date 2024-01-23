@@ -338,16 +338,29 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
                 $complete = $complete && array_key_exists($part->partindex . "_", $response)
                         && $response[$part->partindex . "_"] !== '';
             } else {
-                foreach (range(0, $part->numbox - 1) as $j) {
-                    $complete = $complete && array_key_exists($part->partindex . "_$j", $response)
-                            && $response[$part->partindex . "_$j"] !== '';
-                }
-                if ($part->part_has_separate_unit_field()) {
-                    $complete = $complete && array_key_exists($part->partindex . "_" . $part->numbox, $response)
-                            && $response[$part->partindex . "_" . $part->numbox] != '';
+
+                // Autocomplete.
+                if ($this->is_autocomplete_state($part)) {
+                    foreach (range(0, $part->numbox - 1) as $j) {
+
+                        if ($j > 0) {
+                            $complete = $complete && !empty($response[$part->partindex . "_$j"]);
+                        }
+                    }
+                } else {
+                    foreach (range(0, $part->numbox - 1) as $j) {
+                        $complete = $complete && array_key_exists($part->partindex . "_$j", $response)
+                                && $response[$part->partindex . "_$j"] !== '';
+                    }
+
+                    if ($part->part_has_separate_unit_field()) {
+                        $complete = $complete && array_key_exists($part->partindex . "_" . $part->numbox, $response)
+                                && $response[$part->partindex . "_" . $part->numbox] != '';
+                    }
                 }
             }
         }
+
         return $complete;
     }
 
@@ -660,10 +673,20 @@ class qtype_formulas_question extends question_graded_automatically_with_countba
 
             $given = ['value' => $partanswer, 'unit' => $part->postunit];
 
-            $answer = [
-                    'value' =>  isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '',
-                    'unit' =>  isset($response[$part->partindex.'_1']) ? $response[$part->partindex.'_1'] : '',
-            ];
+            if ($part->part_has_combined_unit_field()) {
+                $answer = [
+                        'value' =>  isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '',
+                        'unit' =>  isset($response[$part->partindex.'_1']) ? $response[$part->partindex.'_1'] : '',
+                ];
+            } else {
+                $value = isset($response[$part->partindex.'_0']) ? $response[$part->partindex.'_0'] : '';
+                $split = qtype_formulas\autocomplete::split_answer($value);
+
+                $answer = [
+                        'value' =>  $split[0],
+                        'unit' =>  $split[1]
+                ];
+            }
 
             $autocomplete = new qtype_formulas\autocomplete($given, $answer, $part->correctness);
 

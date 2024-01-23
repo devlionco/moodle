@@ -39,7 +39,7 @@ class autocomplete {
         $this->tolerance = 0;
 
         // Prepare tolerance.
-        if (isset($answer['value'])) {
+        if (isset($answer['value']) && is_numeric($answer['value'])) {
             list($type, $sign, $value) = explode(' ', $texpression);
 
             switch ($type) {
@@ -70,6 +70,34 @@ class autocomplete {
         }
 
         return array_values($result);
+    }
+
+    public static function split_answer($value) {
+        $num = $unit = null;
+
+        $length = strlen($value);
+        for ($i=0; $i <= $length; $i++) {
+
+            $str = substr($value, 0, $length - $i);
+            if (is_numeric($str)) {
+                $num = floatval($str);
+                $unit = substr($value, -$i, $i);
+                break;
+            }
+        }
+
+        $num = str_replace(' ', '', $num);
+        $unit = str_replace(' ', '', $unit);
+
+        if (strlen($num) == 0 || !is_numeric($num)) {
+            $num = null;
+        }
+
+        if (empty($unit)) {
+            $unit = null;
+        }
+
+        return [$num, $unit];
     }
 
     private static function prepare_units() {
