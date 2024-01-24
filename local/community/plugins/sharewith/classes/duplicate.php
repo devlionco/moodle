@@ -513,8 +513,8 @@ class duplicate extends \external_api {
         $response = false;
 
         $contextmodule = context_module::instance($quizobj->get_cm()->id);
-        $categorydefault = $DB->get_records('question_categories', array('contextid' => $contextmodule->id), 'sortorder DESC');
-        $newquestionid = duplicate::question_duplicate_single_question($question->id, $quizobj->get_cm()->id, reset($categorydefault)->id);
+        $categorydefault = question_make_default_categories([$contextmodule]);
+        $newquestionid = duplicate::question_duplicate_single_question($question->id, $quizobj->get_cm()->id, $categorydefault->id);
         $addonpage = 0;
         $PAGE->set_context($contextmodule);
         $structure = $quizobj->get_structure();
