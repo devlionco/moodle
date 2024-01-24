@@ -272,7 +272,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $html = html_writer::start_tag('div', array('class' => 'droptarget-wrapper d-flex position-relative align-items-center'));
-            $html .= html_writer::start_tag('div', array('class' => 'droptarget p-2 d-flex align-items-center h-100 bg-white rounded border ' . $classes,
+            $html .= html_writer::start_tag('div', array('class' => 'droptarget px-2 h-100 bg-white rounded border ' . $classes,
                     'style' => $styles));
             if(!empty($formula)) {
                 $html .= $formula;
