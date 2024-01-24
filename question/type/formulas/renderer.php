@@ -24,8 +24,6 @@
 
 use qtype_formulas\answer_unit_conversion;
 
-require_once($CFG->dirroot . '/question/type/formulas/formulaslib.php');
-
 /**
  * Base class for generating the bits of output for formulas questions.
  *
@@ -263,7 +261,8 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                         'class' => 'formulas_' . $gtype . '_unit ' . $sub->feedbackclass . ' autocomplete_formulas ',
                         'maxlength' => 300,
                 );
-                $keywords = array_values(qtype_formulas_get_units_array());
+
+                $keywords = qtype_formulas\autocomplete::get_units_array();
                 $selectors = array('.autocomplete_formulas', '#input');
                 $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($keywords)));
             }
@@ -429,6 +428,17 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                             'id' => 'lbl_' . str_replace(':', '__', $inputattributes['id'])
                         )
                     );
+
+                    // Class for enable autocomplete and type מספר.
+                    if($question->is_autocomplete_state($part)) {
+                        $inputattributes['class'] = 'formulas_unit formulas_number_unit '.$sub->unitfeedbackclass . ' autocomplete_formulas ';
+                        $inputattributes['maxlength'] = 300;
+
+                        $keywords = qtype_formulas\autocomplete::get_units_array();
+                        $selectors = array('.autocomplete_formulas', '#input');
+                        $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($keywords)));
+                    }
+
                     $inputs[$placeholder] .= html_writer::empty_tag('input', $inputattributes);
                 }
             } else {
@@ -460,6 +470,17 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
                         'id' => 'lbl_' . str_replace(':', '__', $inputattributes['id'])
                     )
                 );
+
+                // Class for enable autocomplete and type מספר.
+                if($question->is_autocomplete_state($part)) {
+                    $inputattributes['class'] = 'formulas_'.$gtype.' '.$sub->boxfeedbackclass . ' autocomplete_formulas ';
+                    $inputattributes['maxlength'] = 300;
+
+                    $keywords = qtype_formulas\autocomplete::get_units_array();
+                    $selectors = array('.autocomplete_formulas', '#input');
+                    $PAGE->requires->js_call_amd('qtype_formulas/autocomplete-student', 'init', array(json_encode($selectors), json_encode($keywords)));
+                }
+
                 $inputs[$placeholder] .= html_writer::empty_tag('input', $inputattributes);
             }
         }
