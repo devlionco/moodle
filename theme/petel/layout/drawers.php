@@ -159,7 +159,10 @@ $templatecontext = [
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
 
 // EC-497.
-if ($PAGE->url->get_path() == '/question/bank/editquestion/question.php') {
+$p = $PAGE->url;
+$p->remove_all_params();
+
+if ($p->out_as_local_url() == '/question/bank/editquestion/question.php') {
     if (strpos($PAGE->url->get_param('returnurl'), '/mod/quiz/attempt.php') !== false) {
         if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
 
