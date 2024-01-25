@@ -208,7 +208,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
             mtrace('Genegarating wrong answer cos of empty answer');
             $output = (object) $output;
         }
-        $fraction = 0;
+        $fraction = $sumweghts = 0;
         $feedback = [];
 
         $question_attempt_id = $question_attempt->id;
@@ -246,7 +246,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                 $overridden = 1;
             }
 
-            $fraction += (int) $category->weight * (int) $catgrade / (int) $question_attempt->maxmark;
+            $sumweghts += (int) $category->weight * (int) $catgrade;
             mtrace('for cat ' . $catid . ' result ' . $output->$tag . ' weight: ' . (int) $category->weight . ' cat grade ' .
                     (int) $catgrade);
             $feedback[] = [
@@ -258,6 +258,8 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
                     'overriden' => $overridden
             ];
         }
+
+        $fraction = number_format((int) $sumweghts / (int) $question_attempt->maxmark, 2);
 
         mtrace('Feedback: ');
         mtrace(print_r($feedback, 1));
