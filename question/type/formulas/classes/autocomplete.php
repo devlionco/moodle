@@ -39,16 +39,16 @@ class autocomplete {
         $this->tolerance = 0;
 
         // Prepare tolerance.
-        if (isset($answer['value']) && is_numeric($answer['value'])) {
-            list($type, $sign, $value) = explode(' ', $texpression);
+        list($type, $sign, $value) = explode(' ', $texpression);
 
+        if (is_numeric($value) && $value >= 0) {
             switch ($type) {
                 case '_err':
                     $this->tolerance = $value;
                     break;
                 case '_relerr':
-                    if (!empty($answer['value']) && $value > 0 && $value < 1) {
-                        $this->tolerance = $answer['value'] * $value;
+                    if (!empty($answer['value']) && is_numeric($answer['value']) && $value > 0 && $value < 1) {
+                        $this->tolerance = abs($answer['value'] * $value);
                     }
                     break;
             }
