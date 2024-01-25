@@ -236,6 +236,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
         }
 
         mtrace('Run for each category');
+        $totalweight = 0;
         foreach ($categoriesweight as $catid => $category) {
             $tag = get_config('qtype_mlnlpessay', 'tag' . ($catid + 1) . 'name');
             $catgrade = $output->$tag;
@@ -247,6 +248,7 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
             }
 
             $sumweghts += (int) $category->weight * (int) $catgrade;
+            $totalweight += (int) $category->weight;
             mtrace('for cat ' . $catid . ' result ' . $output->$tag . ' weight: ' . (int) $category->weight . ' cat grade ' .
                     (int) $catgrade);
             $feedback[] = [
@@ -259,8 +261,8 @@ class adhoc_graderesponse extends \core\task\adhoc_task {
             ];
         }
 
-        $fraction = number_format((int) $sumweghts / (int) $question_attempt->maxmark, 2);
-
+        $fraction = number_format((int) $sumweghts / (int) $totalweight, 2);
+        mtrace('FRaction: ' . $fraction);
         mtrace('Feedback: ');
         mtrace(print_r($feedback, 1));
 
