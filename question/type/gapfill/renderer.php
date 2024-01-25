@@ -64,6 +64,11 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+        global $CFG;
+
+        // EC-530.
+        $CFG->forceclean = false;
+
         $this->displayoptions = $options;
         $question = $qa->get_question();
         if (!$options->readonly) {
@@ -86,6 +91,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
             }
             // Format the non entry field parts of the question text.
             // This will also ensure images get displayed.
+
             $questiontext .= $question->format_text($fragment, $question->questiontextformat,
                 $qa, 'question', 'questiontext', $question->id);
 
@@ -94,7 +100,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
         if ($question->answerdisplay == 'dragdrop') {
             $questiontext = $this->app_connect($question, $questiontext);
             if ($question->optionsaftertext == true) {
-                $output .= '<div>'.$questiontext . '</div>' . $answeroptions;
+                //$output .= '<div>'.$questiontext . '</div>' . $answeroptions;
             } else {
                 $output .= '<div>'.$answeroptions . '</div>' . $questiontext;
             }
@@ -108,6 +114,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
              ['class' => 'validationerror']);
         }
         $output = html_writer::tag('div', $output, ['class' => 'qtext']);
+
         return $output;
     }
     /**
