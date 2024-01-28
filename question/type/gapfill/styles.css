@@ -95,6 +95,9 @@ question editing form
     z-index: 3;
     border-radius: 4px;
     width: max-content;
+
+    /*rtl:ignore*/
+    direction: ltr;
 }
 .que.gapfill span.draggable.answers.hide {
     display: none;
