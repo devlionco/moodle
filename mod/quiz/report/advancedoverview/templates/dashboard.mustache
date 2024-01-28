@@ -49,14 +49,14 @@
                     {{#str}}anonymousmodeoff, quiz_advancedoverview{{/str}}
                 </span>
             </div>
-            
-            <a href="{{{href_edit_question}}}" target="__blank" class="btn advancedoverview_report-btn ml-4" role="button" id="edit_questions_btn">
-                    <i class="icon fa-light fa-pencil"></i>
-                    <span class="title">
-                        {{#str}}editingquestions, quiz_advancedoverview{{/str}}
-                    </span>
-            </a>
-
+            {{#isrepository}}
+                <a href="{{{href_edit_question}}}" target="__blank" class="btn advancedoverview_report-btn ml-4" role="button" id="edit_questions_btn">
+                        <i class="icon fa-light fa-pencil"></i>
+                        <span class="title">
+                            {{#str}}editingquestions, quiz_advancedoverview{{/str}}
+                        </span>
+                </a>
+            {{/isrepository}}
             <a href="{{{href_preview_question}}}" target="__blank" class="btn advancedoverview_report-btn ml-4" id="preview_btn">
                 <i class="icon fa-light fa-magnifying-glass-plus"></i>
                 <span class="title">
@@ -64,7 +64,7 @@
                 </span>
             </a>
 
-            <!-- TODO: temporary hidden 
+            <!-- TODO: temporary hidden
             <div class="course-group-wrapper d-flex align-items-center ml-md-4">
                 <div class="dropdown">
                     <button class="btn btn-link-secondary dropdown-toggle" type="button" id="courseGroupBtn"

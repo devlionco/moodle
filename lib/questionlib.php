@@ -1556,6 +1556,13 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         $params = ['courseid' => $context->instanceid];
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         $params = ['cmid' => $context->instanceid];
+        //EC-596
+        if (has_capability('mod/quiz:manage', \context_module::instance($context->instanceid))) {
+            $isrepo = \community_oer\main_oer::is_activity_in_repository($context->instanceid);
+            if (!$isrepo) {
+                return $navigationnode;
+            }
+        }
     } else {
         return;
     }
@@ -1565,7 +1572,7 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
     }
 
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
-            new moodle_url($baseurl, $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
+        new moodle_url($baseurl, $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
 
     $corenavigations = [
             'questions' => [

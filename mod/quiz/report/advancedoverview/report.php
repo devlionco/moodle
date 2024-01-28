@@ -62,6 +62,7 @@ class quiz_advancedoverview_report extends quiz_attempts_report {
         $quizdata->prepare_charts();
         $quizdata->prepare_students();
         $data = $quizdata->get_render_data();
+        $data['isrepository'] = \community_oer\main_oer::is_activity_in_repository($cm->id);
         echo $OUTPUT->render_from_template('quiz_advancedoverview/dashboard', $data);
 
         $defaultconfig = json_encode($quizdata->get_config());

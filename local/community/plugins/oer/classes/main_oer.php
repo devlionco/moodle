@@ -575,4 +575,12 @@ class main_oer {
 
         return false;
     }
+
+    public static function is_activity_in_repository($cmid) {
+        global $CFG, $DB;
+
+        list($categories, $courses, $activities) = self::get_main_structure_elements();
+
+        return in_array($cmid, $activities);
+    }
 }

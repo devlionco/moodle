@@ -1730,10 +1730,13 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
     }
 
     if (has_capability('mod/quiz:manage', $settings->get_page()->cm->context)) {
-        $node = navigation_node::create(get_string('questions', 'quiz'),
-            new moodle_url('/mod/quiz/edit.php', array('cmid' => $settings->get_page()->cm->id)),
-            navigation_node::TYPE_SETTING, null, 'mod_quiz_edit', new pix_icon('t/edit', ''));
-        $quiznode->add_node($node, $beforekey);
+        //EC-596
+        if ($isrepo = \community_oer\main_oer::is_activity_in_repository($settings->get_page()->cm->id)) {
+            $node = navigation_node::create(get_string('questions', 'quiz'),
+                new moodle_url('/mod/quiz/edit.php', array('cmid' => $settings->get_page()->cm->id)),
+                navigation_node::TYPE_SETTING, null, 'mod_quiz_edit', new pix_icon('t/edit', ''));
+            $quiznode->add_node($node, $beforekey);
+        }
     }
 
     if (has_capability('mod/quiz:preview', $settings->get_page()->cm->context)) {

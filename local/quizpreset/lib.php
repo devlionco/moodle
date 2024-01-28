@@ -22,7 +22,7 @@
  */
 
 function local_quizpreset_render_navbar_output() {
-    global $PAGE, $COURSE, $USER;
+    global $PAGE, $COURSE, $USER, $DB;
 
     $id = optional_param('id', 0, PARAM_INT);
     $updateid = optional_param('update', 0, PARAM_INT);
@@ -35,13 +35,21 @@ function local_quizpreset_render_navbar_output() {
             $cmid = $updateid;
         }
     }
-
-    $PAGE->requires->js_call_amd('local_quizpreset/hiddenvalues', 'init', array(
+    //EC-596
+    if (\community_oer\main_oer::is_activity_in_repository($cmid)) {
+        $PAGE->requires->js_call_amd('local_quizpreset/hiddenvalues', 'init', array(
             'cmid' => $cmid
-    ));
+        ));
 
-    $PAGE->requires->js_call_amd('local_quizpreset/settings', 'init');
-    $PAGE->requires->js_call_amd('local_quizpreset/main', 'init');
+        $PAGE->requires->js_call_amd('local_quizpreset/settings', 'init');
+
+        $PAGE->requires->js_call_amd('local_quizpreset/main', 'init');
+    } elseif ($PAGE->url->compare(new moodle_url('/course/modedit.php'), URL_MATCH_BASE)) {
+        $sql = 'SELECT cm.id FROM {course_modules} cm JOIN {modules} m ON (cm.module = m.id AND m.name = "quiz") WHERE cm.id = ?';
+        if ($DB->get_record_sql($sql, [$cmid])) {
+            $PAGE->requires->js_call_amd('local_quizpreset/quizedit', 'init');
+        }
+    }
 }
 
 function local_quizpreset_output_fragment_popup_preset($args) {
