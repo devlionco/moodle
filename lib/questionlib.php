@@ -1559,7 +1559,7 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         //EC-596
         if (has_capability('mod/quiz:manage', \context_module::instance($context->instanceid))) {
             $isrepo = \community_oer\main_oer::is_activity_in_repository($context->instanceid);
-            if (!$isrepo) {
+            if ($isrepo) {
                 return $navigationnode;
             }
         }
