@@ -312,3 +312,11 @@ $string['gradingstudentslink'] = 'Examination by students';
 $string['ministry_statement_title'] = ' ';
 $string['ministry_statement_text'] = ' ';
 $string['movetopage'] = 'Change page to: ';
+
+// EC-219
+$string['fixbuttonlabel'] = 'Fix';
+$string['fixpopuplabel'] = 'Fix';
+$string['fixlabel'] = 'Not in current category';
+$string['fixpopupmessage'] = 'Are you sure you want recreated this question and unsigned old one';
+$string['cancel'] = 'No';
+$string['confirm'] = 'Yes';

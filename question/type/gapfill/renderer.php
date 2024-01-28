@@ -278,7 +278,7 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
                 $styles .= 'min-width: 100%;';
             }
 
-            $html = html_writer::start_tag('div', array('class' => 'droptarget-wrapper d-flex position-relative align-items-center'));
+            $html = html_writer::start_tag('div', array('class' => 'droptarget-wrapper d-inline-flex position-relative align-items-center'));
             $html .= html_writer::start_tag('div', array('class' => 'droptarget px-2 h-100 bg-white rounded border ' . $classes,
                     'style' => $styles));
             if(!empty($formula)) {

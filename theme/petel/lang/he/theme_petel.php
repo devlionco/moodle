@@ -302,3 +302,11 @@ $string['ministry_statement_text'] = '
 לצורך קידום הוראת המדעים בישראל, חוקרי המחלקה להוראת המדעים עושים שימוש מחקרי בנתונים המצטברים בסביבת פטל {$a} והכל בהתאם לכללי אתיקה רלוונטיים ו<a tabindex="-1" target="_blank" href="https://petel.stweizmann.org.il/chemistry/theme/petel/docs/he/petel_privacy_policy.pdf">מדיניות הפרטיות</a> של האתר.
 ';
 $string['movetopage'] = 'בחירת עמוד תצוגה: ';
+
+// EC-219
+$string['fixbuttonlabel'] = 'לסדר קטגוריה לשאלה';
+$string['fixpopuplabel'] = 'לסדר קטגוריה לשאלה';
+$string['fixlabel'] = 'לא בקטגוריה הנכונה';
+$string['fixpopupmessage'] = 'האם לשכפל שאלה קיימת ולהוריד שאלה הישנה?';
+$string['cancel'] = 'לא';
+$string['confirm'] = 'כן';
