@@ -577,10 +577,17 @@ class main_oer {
     }
 
     public static function is_activity_in_repository($cmid) {
-        global $CFG, $DB;
+        $mid = \local_metadata\mcontext::module()->get($cmid, 'ID');
 
-        list($categories, $courses, $activities) = self::get_main_structure_elements();
-
-        return in_array($cmid, $activities);
+        $cache = \cache::make('community_oer', 'oer_is_repository_cache');
+        if (!$repository = $cache->get('repository')) {
+            $repository = \community_oer\main_oer::get_repository_mids();
+            $cache->set('repository', $repository);
+        }
+        // if quiz is in repository shoow all
+        if (in_array($mid, $repository) && $cmid == $mid){
+            return false;
+        }
+        return in_array($mid, $repository);
     }
 }
