@@ -210,6 +210,11 @@ class question_oer {
             $flag = true;
         }
 
+        if (strpos($questiontext, 'MULTICHOICE_S') !== false || strpos($questiontext, '[[') !== false ||
+                strpos($questiontext, 'NUMERICAL') !== false) {
+            $flag = true;
+        }
+
         if (empty($questiontext) || $flag) {
             $qnametext = $obj->qname;
         } else {
