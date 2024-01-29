@@ -540,7 +540,11 @@ class qtype_formulas_renderer extends qtype_with_combined_feedback_renderer {
         $question = $qa->get_question();
         $part = $question->parts[$i];
 
-        $correctanswer = $question->format_text($question->correct_response_formatted($part),
+        $correctresponse = $question->correct_response_formatted($part);
+        $correctresponse = str_replace(',', ' ', $correctresponse);
+        $correctresponse = '<div style="direction: ltr;">' . $correctresponse . '</div>';
+
+        $correctanswer = $question->format_text($correctresponse,
                 $part->subqtextformat , $qa, 'qtype_formulas', 'answersubqtext', $part->id, false);
 
         if ($part->answernotunique) {
