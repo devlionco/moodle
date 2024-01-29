@@ -245,25 +245,30 @@ class format_flexsections_external extends external_api {
             $cmids = json_decode($cmids);
         }
 
+        $modinfo = get_fast_modinfo($params['courseid']);
+
         $result = [];
         foreach($cmids as $cmid) {
-            $modinfo = get_fast_modinfo($params['courseid']);
-            $cm = $modinfo->get_cm($cmid);
+            try {
+                $cm = $modinfo->get_cm($cmid);
 
-            // Grade status.
-            $data = [];
-            $data['gradestatus'] = format_flexsections_cm_grade_status($cm);
-            $data['submissionstatus'] = format_flexsections_cm_submission_status($cm);
-            $gradehtml = $OUTPUT->render_from_template('format_flexsections/activity_grade', $data);
+                // Grade status.
+                $data = [];
+                $data['gradestatus'] = format_flexsections_cm_grade_status($cm);
+                $data['submissionstatus'] = format_flexsections_cm_submission_status($cm);
+                $gradehtml = $OUTPUT->render_from_template('format_flexsections/activity_grade', $data);
 
-            // Check version updated of oercatalog activity.
-            $data = [];
-            list($status, $description) = \community_oer\reviews_oer::check_version_of_oercatalog_activity($cmid);
-            $data['show_version_updated_btn'] = $status;
-            $data['version_updated_btn_description'] = $description;
-            $oerversionhtml = $OUTPUT->render_from_template('format_flexsections/activity_version_update', $data);
+                // Check version updated of oercatalog activity.
+                $data = [];
+                list($status, $description) = \community_oer\reviews_oer::check_version_of_oercatalog_activity($cmid);
+                $data['show_version_updated_btn'] = $status;
+                $data['version_updated_btn_description'] = $description;
+                $oerversionhtml = $OUTPUT->render_from_template('format_flexsections/activity_version_update', $data);
 
-            $result[] = ['cmid' => $cmid, 'gradestatus' => $gradehtml, 'oerversion' => $oerversionhtml];
+                $result[] = ['cmid' => $cmid, 'gradestatus' => $gradehtml, 'oerversion' => $oerversionhtml];
+            } catch (Exception $e) {
+
+            }
         }
 
         return json_encode(['result' => $result]);
@@ -317,12 +322,16 @@ class format_flexsections_external extends external_api {
             ";
 
             if ($recent = $DB->get_record_sql($sql, [$USER->id, $COURSE->id])) {
-                $cm = $modinfo->get_cm($recent->cmid);
-                $data['cmlastaccess'] = [
-                        'cmid' => $recent->cmid,
-                        'cmname' => $cm->name,
-                        'cmurl' => $cm->url->out(),
-                ];
+                try {
+                    $cm = $modinfo->get_cm($recent->cmid);
+                    $data['cmlastaccess'] = [
+                            'cmid' => $recent->cmid,
+                            'cmname' => $cm->name,
+                            'cmurl' => $cm->url->out(),
+                    ];
+                } catch (Exception $e) {
+
+                }
             }
         }
 
