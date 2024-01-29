@@ -135,7 +135,11 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
                 if ($this->displayoptions->readonly) {
                     $cssclasses = " draggable answers readonly ";
                 }
-                 $cssclasses = $question->is_used($potentialanswer, $qa, $cssclasses);
+
+                if ($qa->get_state() != question_state::$todo) {
+                    $cssclasses = $question->is_used($potentialanswer, $qa, $cssclasses);
+                }
+
                 /* the question->id is necessary to make a draggable potential answer unique for multi question quiz pages */
                 $answeroptions .= '<span draggable="true" id="pa:_' . $question->id . '_' . $potentialanswerid++
                     . '" class= "' . $cssclasses . '">' .
@@ -177,8 +181,12 @@ class qtype_gapfill_renderer extends qtype_with_combined_feedback_renderer {
         $question = $qa->get_question();
         $fieldname = $question->field($place);
 
-        $currentanswer = $qa->get_last_qt_var($fieldname);
-        $currentanswer = htmlspecialchars_decode($currentanswer);
+        $currentanswer = '';
+        if ($qa->get_state() != question_state::$todo) {
+            $currentanswer = $qa->get_last_qt_var($fieldname);
+            $currentanswer = htmlspecialchars_decode($currentanswer);
+        }
+
         $rightanswer = $question->get_right_choice_for($place);
         $itemsettings = $this->get_itemsettings($rightanswer);
         if ($question->fixedgapsize == 1) {
