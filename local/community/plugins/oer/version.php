@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'community_oer';
 $plugin->release = 'INITIAL';
-$plugin->version = 2021101329;
+$plugin->version = 2024012901;
 $plugin->requires = 2016052300;

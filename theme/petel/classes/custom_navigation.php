@@ -72,6 +72,11 @@ class custom_navigation {
                     $gradingstudentsurl = new \moodle_url('/mod/quiz/report.php', array('id' => $cmid, 'mode' => 'gradingstudents'));
                     $PAGE->secondarynav->add(get_string('gradingstudentslink', 'theme_petel'), $gradingstudentsurl,
                             $PAGE->secondarynav::TYPE_CUSTOM, 'reportgradingstudents', 'reportgradingstudents');
+
+                     if(\community_oer\main_oer::is_activity_in_repository($cmid)){
+                         $PAGE->secondarynav->children->remove('questionbank');
+                         $PAGE->secondarynav->children->remove('mod_quiz_edit');
+                     }
                 }
             }
         }

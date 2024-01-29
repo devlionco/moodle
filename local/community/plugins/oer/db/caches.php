@@ -65,4 +65,12 @@ $definitions = [
                 'staticacceleration' => false,
                 'requirelockingread' => false
         ],
+
+        'oer_is_repository_cache' => [
+                'mode' => cache_store::MODE_APPLICATION,
+                'simplekeys' => true,
+                'simpledata' => true,
+                'staticacceleration' => false,
+                'requirelockingread' => false
+        ],
 ];
