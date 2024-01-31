@@ -31,29 +31,57 @@ $mid = required_param('mid', PARAM_INT);
 $clusters = optional_param('clusters', 5, PARAM_INT);
 $action = required_param('action', PARAM_TEXT);
 
-if ($action == 'add') {
-    $config = get_config('local_diagnostic');
-    $croncustommids = explode(',', $config->croncustommids);
-    if (!(in_array($mid, $croncustommids))) {
-        $croncustommids[] = $mid;
-    }
-    set_config('croncustommids', implode(',', $croncustommids), 'local_diagnostic');
-    $custommids = explode(',', $config->custommids);
-    if (!(in_array($mid, $custommids))) {
-        $custommids[] = $mid;
-    }
-    set_config('custommids', implode(',', $custommids), 'local_diagnostic');
-    set_config('activityclusternum_' . $mid, $clusters, 'local_diagnostic');
-} else if ($action == 'remove') {
-    $config = get_config('local_diagnostic');
+switch ($action) {
+    case "add":
+        $config = get_config('local_diagnostic');
+        $croncustommids = explode(',', $config->croncustommids);
+        if (!(in_array($mid, $croncustommids))) {
+            $croncustommids[] = $mid;
+        }
+        set_config('croncustommids', implode(',', $croncustommids), 'local_diagnostic');
+        $custommids = explode(',', $config->custommids);
+        if (!(in_array($mid, $custommids))) {
+            $custommids[] = $mid;
+        }
+        set_config('custommids', implode(',', $custommids), 'local_diagnostic');
+        set_config('activityclusternum_' . $mid, $clusters, 'local_diagnostic');
+        $returnurl = new \moodle_url('/admin/settings.php', ['section' => 'local_diagnostic']);
+        redirect($returnurl);
+        break;
+    case "remove":
+        $config = get_config('local_diagnostic');
+        $croncustommids = explode(',', $config->croncustommids);
+        $croncustommids = array_diff($croncustommids, [$mid]);
+        set_config('croncustommids', implode(',', $croncustommids), 'local_diagnostic');
+        $custommids = explode(',', $config->custommids);
+        $croncustommids = array_diff($custommids, [$mid]);
+        set_config('custommids', implode(',', $croncustommids), 'local_diagnostic');
+        $returnurl = new \moodle_url('/admin/settings.php', ['section' => 'local_diagnostic']);
+        redirect($returnurl);
+        break;
+    case "addandrun":
+        require_once $CFG->dirroot . '/local/diagnostic/classes/external.php';
+        $config = get_config('local_diagnostic');
+        $croncustommids = explode(',', $config->croncustommids);
+        if (!(in_array($mid, $croncustommids))) {
+            $croncustommids[] = $mid;
+        }
+        set_config('croncustommids', implode(',', $croncustommids), 'local_diagnostic');
+        $custommids = explode(',', $config->custommids);
+        if (!(in_array($mid, $custommids))) {
+            $custommids[] = $mid;
+        }
+        set_config('custommids', implode(',', $custommids), 'local_diagnostic');
+        set_config('activityclusternum_' . $mid, $clusters, 'local_diagnostic');
 
-    $croncustommids = explode(',', $config->croncustommids);
-    $croncustommids = array_diff($croncustommids, [$mid]);
-    set_config('croncustommids', implode(',', $croncustommids), 'local_diagnostic');
+        if ($cache = \local_diagnostic\cache::get_record(['mid' => $mid])) {
+            $cache->delete();
+        }
 
-    $custommids = explode(',', $config->custommids);
-    $croncustommids = array_diff($custommids, [$mid]);
-    set_config('custommids', implode(',', $croncustommids), 'local_diagnostic');
+        ob_start();
+        @local_diagnotic_rebuild([$mid]);
+        $result = ob_get_clean();
+        print_r($result);
+        break;
+    default:
 }
-$returnurl = new \moodle_url('/admin/settings.php', ['section' => 'local_diagnostic']);
-redirect($returnurl);
