@@ -1162,38 +1162,52 @@ class activity_help {
     }
 
     public static function usage_calculation($mode, $mid) {
-        global $DB;
+        global $DB, $CFG;
 
         $return = new \stdClass();
         $return->responses = $return->uniqueteacher = 0;
 
         if (in_array($mode, array("assign", "quiz", "questionnaire")) && is_numeric($mid)) {
+            $grwhere = '';
+            $grparams = [];
+            if ($mode == 'quiz') {
+                list($grwhere, $grparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
+            }
+
             $sql = "                    
                     SELECT 
+                        m.instanceid,
+                        cm.instance,
                         (SELECT  cc.name 
                         FROM {course} c 
-                        JOIN {course_categories} cc ON cc.id = c.category  WHERE c.id = cm.course) AS category
+                        JOIN {course_categories} cc ON cc.id = c.category  WHERE c.id = cm.course) AS category,
     
-                        ,CASE mo.name
+                        CASE mo.name
                         WHEN 'assign' THEN (SELECT COUNT(*) FROM {assign_submission} asg WHERE asg.assignment = cm.instance AND cm.module = 1 AND asg.status = 'submitted') 
-                        WHEN 'quiz' THEN (SELECT COUNT(*) FROM {quiz_attempts} q WHERE q.quiz = cm.instance AND q.state = 'finished')
+                        WHEN 'quiz' THEN (
+                                 SELECT COUNT(*) FROM {quiz_attempts} qa
+                                 JOIN {role_assignments} ra ON (qa.userid = ra.userid)
+                                     WHERE qa.quiz = cm.instance
+                                     AND ra.roleid $grwhere
+                                     AND qa.state = 'finished'
+                                     AND qa.preview = 0
+                                 )
                         WHEN 'questionnaire' THEN (SELECT COUNT(*) FROM {questionnaire_response} q 
                                                 WHERE cm.instance = q.questionnaireid AND cm.module = 24 AND q.complete='y')
                         END AS responses
-                        
-                        FROM (select * from {local_metadata} where data = " . $mid . ") as m
+                            
+                        FROM {local_metadata} as m
                         JOIN {local_metadata_field} mf ON m.fieldid = mf.id AND mf.contextlevel = 70 and mf.shortname = 'ID'
                         JOIN {course_modules} cm on cm.id = m.instanceid 
-                        JOIN {modules} mo ON mo.id = cm.module 
-                        GROUP BY category
+                        JOIN {modules} mo ON mo.id = cm.module
+                        WHERE m.data = " . $mid . "
                         ";
 
-            $copies = $DB->get_records_sql($sql);
+            $copies = $DB->get_records_sql($sql, $grparams);
 
             $minresponses = get_config('community_oer', 'min_student_response');
             $teachers = [];
             foreach ($copies as $copy) {
-
                 if (isset($copy->responses)) {
                     $return->responses += $copy->responses;
                     if ($copy->responses >= $minresponses) {
@@ -1205,6 +1219,11 @@ class activity_help {
             }
 
             $return->uniqueteacher = count($teachers);
+
+            if ($mode == 'quiz') {
+                mtrace('MODE: QUIZ, MID: ' . $mid . ', ATTEMPTS: ' . $return->responses . ', CMIDS COUNT: ' . count($copies));
+            }
+
         }
 
         return $return;
