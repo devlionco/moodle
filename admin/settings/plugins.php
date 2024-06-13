@@ -505,6 +505,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $settings->add(new admin_setting_configselect('question_preview/history',
             get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
 
+    $settings->add(new admin_setting_configcheckbox('question_preview/saveversions',
+            get_string('saveversions', 'question'), '', 0));
+
     // Settings for particular question types.
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('qtype');
     core_collator::asort_objects_by_property($plugins, 'displayname');

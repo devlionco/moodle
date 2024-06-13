@@ -364,6 +364,8 @@ class question_type {
      */
     public function save_question($question, $form) {
         global $USER, $DB;
+        $isnewversion = !get_config('question_preview', 'saveversions') ||
+                isset($form->saveinnewversion) || isset($form->saveinnewversionandcontinueediting) || !isset($question->id) || empty($question->id);
 
         // The actual update/insert done with multiple DB access, so we do it in a transaction.
         $transaction = $DB->start_delegated_transaction ();
@@ -470,7 +472,9 @@ class question_type {
         }
 
         // Create the question.
-        $question->id = $DB->insert_record('question', $question);
+        if ($isnewversion) {
+            $question->id = $DB->insert_record('question', $question);
+        }
         if (!$questionbankentry) {
             // Create a record for question_bank_entries, question_versions and question_references.
             $questionbankentry = new \stdClass();
@@ -486,22 +490,25 @@ class question_type {
         }
 
         // Create question_versions records.
-        $questionversion = new \stdClass();
-        $questionversion->questionbankentryid = $questionbankentry->id;
-        $questionversion->questionid = $question->id;
-        // Get the version and status from the parent question if parent is set.
-        if (!$question->parent) {
-            // Get the status field. It comes from the form, but for testing we can.
-            $status = $form->status ?? $question->status ??
-                \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
-            $questionversion->version = get_next_version($questionbankentry->id);
-            $questionversion->status = $status;
-        } else {
-            $parentversion = get_question_version($form->parent);
-            $questionversion->version = $parentversion[array_key_first($parentversion)]->version;
-            $questionversion->status = $parentversion[array_key_first($parentversion)]->status;
+        if ($isnewversion) {
+            $questionversion = new \stdClass();
+
+            $questionversion->questionbankentryid = $questionbankentry->id;
+            $questionversion->questionid = $question->id;
+            // Get the version and status from the parent question if parent is set.
+            if (!$question->parent) {
+                // Get the status field. It comes from the form, but for testing we can.
+                $status = $form->status ?? $question->status ??
+                        \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+                $questionversion->version = get_next_version($questionbankentry->id);
+                $questionversion->status = $status;
+            } else {
+                $parentversion = get_question_version($form->parent);
+                $questionversion->version = $parentversion[array_key_first($parentversion)]->version;
+                $questionversion->status = $parentversion[array_key_first($parentversion)]->status;
+            }
+            $questionversion->id = $DB->insert_record('question_versions', $questionversion);
         }
-        $questionversion->id = $DB->insert_record('question_versions', $questionversion);
 
         // Now, whether we are updating a existing question, or creating a new
         // one, we have to do the files processing and update the record.

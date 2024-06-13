@@ -277,8 +277,21 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->setType('makecopy', PARAM_INT);
 
         $buttonarray = array();
-        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
-                get_string('savechangesandcontinueediting', 'question'));
+
+        if (get_config('question_preview', 'saveversions')) {
+            $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+            $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                    get_string('savechangesandcontinueediting', 'question'));
+            $buttonarray[] = $mform->createElement('submit', 'saveinnewversion',
+                    get_string('saveinnewversion', 'question'));
+            $buttonarray[] = $mform->createElement('submit', 'saveinnewversionandcontinueediting',
+                    get_string('saveinnewversionandcontinueediting', 'question'));
+            $buttonarray[] = $mform->createElement('cancel');
+        }else{
+            $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                    get_string('savechangesandcontinueediting', 'question'));
+        }
+
         if ($this->can_preview()) {
             if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
                 $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link(
@@ -289,8 +302,9 @@ abstract class question_edit_form extends question_wizard_form {
 
         $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
         $mform->closeHeaderBefore('updatebuttonar');
-
-        $this->add_action_buttons(true, get_string('savechanges'));
+        if (!get_config('question_preview', 'saveversions')) {
+            $this->add_action_buttons(true, get_string('savechanges'));
+        }
 
         if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
                         $this->question->formoptions->cansaveasnew))) {
