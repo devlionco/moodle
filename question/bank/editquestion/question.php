@@ -311,7 +311,7 @@ if ($mform->is_cancelled()) {
     question_bank::notify_question_edited($question->id);
 
     // If we are saving and continuing to edit the question.
-    if (!empty($fromform->updatebutton)) {
+    if (!empty($fromform->updatebutton) || (!empty($fromform->saveinnewversionandcontinueediting) && !get_config('question_preview','saveversions'))) {
         $url->param('id', $question->id);
         $url->remove_params('makecopy');
         redirect($url);

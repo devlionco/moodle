@@ -544,6 +544,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $settings->add(new admin_setting_configselect('question_preview/history',
             get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
 
+    $settings->add(new admin_setting_configcheckbox('question_preview/saveversions',
+            get_string('saveversions', 'question'), '', 0));
+
     // Question editing settings.
     $settings = new admin_settingpage('qediting',
             get_string('questionediting', 'question'),
